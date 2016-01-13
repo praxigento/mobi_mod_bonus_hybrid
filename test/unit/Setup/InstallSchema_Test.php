@@ -2,7 +2,7 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-namespace Praxigento\BonusHybrid\Setup;
+namespace Praxigento\Bonus\Hybrid\Setup;
 
 include_once(__DIR__ . '/../phpunit_bootstrap.php');
 
