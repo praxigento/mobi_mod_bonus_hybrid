@@ -4,7 +4,7 @@
  *
  * User: Alex Gusev <alex@flancer64.com>
  */
-namespace Praxigento\Bonus\Hybrid;
+namespace Praxigento\BonusHybrid;
 
 class Config {
     const MODULE = 'Praxigento_BonusHybrid';
