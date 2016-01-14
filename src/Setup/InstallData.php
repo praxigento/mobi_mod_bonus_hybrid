@@ -4,7 +4,7 @@
  * .
  * User: Alex Gusev <alex@flancer64.com>
  */
-namespace Praxigento\Bonus\Hybrid\Setup;
+namespace Praxigento\BonusHybrid\Setup;
 
 class InstallData extends \Praxigento\Core\Setup\Data\Base {
 

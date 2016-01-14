@@ -15,7 +15,7 @@
       "src/registration.php"
     ],
     "psr-4": {
-      "Praxigento\\Bonus\\Hybrid\\": "src/"
+      "Praxigento\\BonusHybrid\\": "src/"
     }
   },
   "require": {
