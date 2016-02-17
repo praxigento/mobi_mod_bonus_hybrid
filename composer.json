@@ -19,7 +19,6 @@
     }
   },
   "require": {
-    "php": ">=5.3",
     "praxigento/mobi_mod_common_bonus_hybrid": "dev-master"
   }
 }
