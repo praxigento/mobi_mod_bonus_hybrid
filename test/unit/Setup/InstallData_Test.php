@@ -13,7 +13,7 @@ class InstallData_UnitTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
 
     public function test_constructor() {
         $obj = new InstallData();
-        $this->assertInstanceOf('Praxigento\BonusHybrid\Setup\InstallData', $obj);
+        $this->assertInstanceOf(\Praxigento\BonusHybrid\Setup\InstallData::class, $obj);
     }
 
 }
