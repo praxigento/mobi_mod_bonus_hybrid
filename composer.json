@@ -1,6 +1,6 @@
 {
   "name": "praxigento/mobi_mod_mage2_bonus_hybrid",
-  "description": "MOBI: Magento 2 integration code for Praxigento_BonusHybrid module.",
+  "description": "MOBI: Praxigento_BonusHybrid module.",
   "type": "magento2-module",
   "homepage": "https://github.com/praxigento/mobi_mod_mage2_bonus_hybrid",
   "license": "MIT",
