@@ -20,5 +20,7 @@
       "Praxigento\\Bonus\\Hybrid\\Lib\\Test\\": "test/fw"
     }
   },
-  "require": {}
+  "require": {
+    "praxigento/mobi_mod_mage2_bonus_base": "dev-master"
+  }
 }
