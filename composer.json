@@ -15,10 +15,10 @@
       "src/registration.php"
     ],
     "psr-4": {
-      "Praxigento\\BonusHybrid\\": "src/"
+      "Praxigento\\BonusHybrid\\": "src/",
+      "Praxigento\\Bonus\\Hybrid\\": "src/",
+      "Praxigento\\Bonus\\Hybrid\\Lib\\Test\\": "test/fw"
     }
   },
-  "require": {
-    "praxigento/mobi_mod_common_bonus_hybrid": "dev-master"
-  }
+  "require": {}
 }

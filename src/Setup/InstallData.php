@@ -10,7 +10,7 @@ use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Praxigento\Accounting\Lib\Entity\Type\Operation as TypeOperation;
 use Praxigento\Bonus\Base\Lib\Entity\Type\Calc as TypeCalc;
-use Praxigento\Bonus\Hybrid\Lib\Config as Cfg;
+use Praxigento\BonusHybrid\Config as Cfg;
 
 class InstallData extends \Praxigento\Core\Setup\Data\Base
 {
