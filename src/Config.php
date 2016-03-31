@@ -9,7 +9,7 @@ namespace Praxigento\BonusHybrid;
 use Praxigento\BonusBase\Config as BonusBaseCfg;
 use Praxigento\Downline\Config as DownlineCfg;
 use Praxigento\Pv\Config as PvCfg;
-use Praxigento\Wallet\Lib\Config as WalletCfg;
+use Praxigento\Wallet\Config as WalletCfg;
 
 class Config extends BonusBaseCfg
 {
