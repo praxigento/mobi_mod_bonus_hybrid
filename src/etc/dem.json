@@ -1,0 +1,347 @@
+{
+  "dBEAR": {
+    "package": {
+      "Praxigento": {
+        "alias": "prxgt",
+        "comment": "Root namespace for Praxigento modules",
+        "package": {
+          "Bonus": {
+            "alias": "bon",
+            "comment": "Bonus related structures",
+            "package": {
+              "Hybrid": {
+                "alias": "hyb",
+                "comment": "Hybrid bonus related structures",
+                "package": {
+                  "Compression": {
+                    "alias": "cmprs",
+                    "comment": "Compressed downline trees with additional calculation data.",
+                    "entity": {
+                      "PTC": {
+                        "alias": "ptc",
+                        "comment": "Compressed downline tree to calculate Personal, Team & Courtesy bonuses.",
+                        "attribute": {
+                          "CalculationId": {
+                            "alias": "calc_id",
+                            "comment": "Reference to the related calculation (type 'HYBRID_COMPRESS_FOR_PTC' is expected).",
+                            "nullable": false,
+                            "type": {"integer": {"unsigned": true}}
+                          },
+                          "CustomerId": {
+                            "alias": "customer_id",
+                            "comment": "Reference to the customer itself.",
+                            "nullable": false,
+                            "type": {"integer": {"unsigned": true}}
+                          },
+                          "ParentId": {
+                            "alias": "parent_id",
+                            "comment": "Reference to the customer's parent.",
+                            "nullable": false,
+                            "type": {"integer": {"unsigned": true}}
+                          },
+                          "Depth": {
+                            "alias": "depth",
+                            "comment": "Depth of the node in the tree.",
+                            "nullable": false,
+                            "default": 0,
+                            "type": {"integer": {"unsigned": true}}
+                          },
+                          "Path": {
+                            "alias": "path",
+                            "comment": "Path to the node - /1/2/3/.../",
+                            "nullable": false,
+                            "type": {"text": {"length": 255}}
+                          },
+                          "PersonalVolumes": {
+                            "alias": "pv",
+                            "comment": "Compressed value of the PV for the qualified customer.",
+                            "nullable": false,
+                            "type": {"numeric": {"precision": 12, "scale": 4}}
+                          },
+                          "TeamVolumes": {
+                            "alias": "tv",
+                            "comment": "TV value for the qualified customer.",
+                            "nullable": false,
+                            "type": {"numeric": {"precision": 12, "scale": 4}}
+                          },
+                          "OrganizationalVolumes": {
+                            "alias": "ov",
+                            "comment": "OV value for the qualified customer.",
+                            "nullable": false,
+                            "type": {"numeric": {"precision": 12, "scale": 4}}
+                          }
+                        },
+                        "index": {
+                          "primary": {"type": "primary", "aliases": ["calc_id", "customer_id"]}
+                        },
+                        "relation": {
+                          "toCalculation": {
+                            "own": {"aliases": ["calc_id"]},
+                            "reference": {
+                              "entity": {"completeAlias": "prxgt_bon_base_calc"},
+                              "aliases": ["id"]
+                            },
+                            "action": {"delete": "restrict", "update": "restrict"}
+                          },
+                          "toDownlineCustomer": {
+                            "own": {"aliases": ["customer_id"]},
+                            "reference": {
+                              "entity": {"completeAlias": "prxgt_dwnl_customer"},
+                              "aliases": ["customer_id"]
+                            },
+                            "action": {"delete": "restrict", "update": "restrict"}
+                          },
+                          "toDownlineCustomerAsParent": {
+                            "own": {"aliases": ["parent_id"]},
+                            "reference": {
+                              "entity": {"completeAlias": "prxgt_dwnl_customer"},
+                              "aliases": ["customer_id"]
+                            },
+                            "action": {"delete": "restrict", "update": "restrict"}
+                          }
+                        }
+                      },
+                      "OI": {
+                        "alias": "oi",
+                        "comment": "Compressed downline tree to calculate Override & Infinity bonuses.",
+                        "attribute": {
+                          "CalculationId": {
+                            "alias": "calc_id",
+                            "comment": "Reference to the related calculation (type 'HYBRID_COMPRESS_FOR_OI' is expected).",
+                            "nullable": false,
+                            "type": {"integer": {"unsigned": true}}
+                          },
+                          "CustomerId": {
+                            "alias": "customer_id",
+                            "comment": "Reference to the customer itself.",
+                            "nullable": false,
+                            "type": {"integer": {"unsigned": true}}
+                          },
+                          "Scheme": {
+                            "alias": "scheme",
+                            "comment": "Scheme code (DEFAULT or EU).",
+                            "nullable": false,
+                            "type": {"text": {"length": 8}}
+                          },
+                          "ParentId": {
+                            "alias": "parent_id",
+                            "comment": "Reference to the customer's parent.",
+                            "nullable": false,
+                            "type": {"integer": {"unsigned": true}}
+                          },
+                          "RankId": {
+                            "alias": "rank_id",
+                            "comment": "Reference to the customer's qualification rank.",
+                            "nullable": true,
+                            "type": {"integer": {"unsigned": true}}
+                          },
+                          "PersonalVolumes": {
+                            "alias": "pv",
+                            "comment": "Compressed value of the PV for the qualified customer.",
+                            "nullable": false,
+                            "type": {"numeric": {"precision": 12, "scale": 4}}
+                          },
+                          "PersonalVolumesInfinity": {
+                            "alias": "pv_inf",
+                            "comment": "All compressed PV used in Infinity bonus.",
+                            "nullable": false,
+                            "type": {"numeric": {"precision": 12, "scale": 4}}
+                          },
+                          "TeamVolumes": {
+                            "alias": "tv",
+                            "comment": "TV value for the qualified customer.",
+                            "nullable": false,
+                            "type": {"numeric": {"precision": 12, "scale": 4}}
+                          },
+                          "OvLegMax": {
+                            "alias": "ov_leg_max",
+                            "comment": "OV value for the leg with maximal amount.",
+                            "nullable": false,
+                            "type": {"numeric": {"precision": 12, "scale": 4}}
+                          },
+                          "OvLegSecond": {
+                            "alias": "ov_leg_second",
+                            "comment": "OV value for second leg of the customer.",
+                            "nullable": false,
+                            "type": {"numeric": {"precision": 12, "scale": 4}}
+                          },
+                          "OvLegSummary": {
+                            "alias": "ov_leg_summary",
+                            "comment": "OV value for the lest leg (summary for all other legs).",
+                            "nullable": false,
+                            "type": {"numeric": {"precision": 12, "scale": 4}}
+                          }
+                        },
+                        "index": {
+                          "primary": {"type": "primary", "aliases": ["calc_id", "customer_id", "scheme"]}
+                        },
+                        "relation": {
+                          "toCalculation": {
+                            "own": {"aliases": ["calc_id"]},
+                            "reference": {
+                              "entity": {"completeAlias": "prxgt_bon_base_calc"},
+                              "aliases": ["id"]
+                            },
+                            "action": {"delete": "restrict", "update": "restrict"}
+                          },
+                          "toDownlineCustomer": {
+                            "own": {"aliases": ["customer_id"]},
+                            "reference": {
+                              "entity": {"completeAlias": "prxgt_dwnl_customer"},
+                              "aliases": ["customer_id"]
+                            },
+                            "action": {"delete": "restrict", "update": "restrict"}
+                          },
+                          "toDownlineCustomerAsParent": {
+                            "own": {"aliases": ["parent_id"]},
+                            "reference": {
+                              "entity": {"completeAlias": "prxgt_dwnl_customer"},
+                              "aliases": ["customer_id"]
+                            },
+                            "action": {"delete": "restrict", "update": "restrict"}
+                          },
+                          "toRank": {
+                            "own": {"aliases": ["rank_id"]},
+                            "reference": {
+                              "entity": {"completeAlias": "prxgt_bon_base_rank"},
+                              "aliases": ["id"]
+                            },
+                            "action": {"delete": "restrict", "update": "restrict"}
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "Config": {
+                    "alias": "cfg",
+                    "comment": "Configuration parameters for calculations.",
+                    "entity": {
+                      "Override": {
+                        "alias": "override",
+                        "comment": "Configuration parameters for override bonus by rank and scheme.",
+                        "attribute": {
+                          "RankId": {
+                            "alias": "rank_id",
+                            "comment": "Reference to the rank.",
+                            "nullable": false,
+                            "type": {"integer": {"unsigned": true}}
+                          },
+                          "SchemeCode": {
+                            "alias": "scheme",
+                            "comment": "Scheme code (DEFAULT or EU).",
+                            "nullable": false,
+                            "type": {"text": {"length": 8}}
+                          },
+                          "Generation": {
+                            "alias": "generation",
+                            "comment": "# of the generation in the compressed tree.",
+                            "nullable": false,
+                            "default": 0,
+                            "type": {"integer": {"unsigned": true}}
+                          },
+                          "Percent": {
+                            "alias": "percent",
+                            "comment": "Percent to apply to calculate override bonus.",
+                            "nullable": false,
+                            "default": 0,
+                            "type": {"numeric": {"precision": 12, "scale": 4}}
+                          }
+                        },
+                        "index": {
+                          "primary": {"type": "primary", "aliases": ["rank_id", "scheme", "generation"]}
+                        },
+                        "relation": {
+                          "toRank": {
+                            "own": {"aliases": ["rank_id"]},
+                            "reference": {
+                              "entity": {"completeAlias": "prxgt_bon_base_rank"},
+                              "aliases": ["id"]
+                            },
+                            "action": {"delete": "restrict", "update": "restrict"}
+                          }
+                        }
+                      },
+                      "Parameter": {
+                        "alias": "param",
+                        "comment": "Common configuration parameters by rank and scheme.",
+                        "attribute": {
+                          "RankId": {
+                            "alias": "rank_id",
+                            "comment": "Reference to the rank.",
+                            "nullable": false,
+                            "type": {"integer": {"unsigned": true}}
+                          },
+                          "Scheme": {
+                            "alias": "scheme",
+                            "comment": "Scheme code (DEFAULT or EU).",
+                            "nullable": false,
+                            "type": {"text": {"length": 8}}
+                          },
+                          "QualifyPv": {
+                            "alias": "qualify_pv",
+                            "comment": "PV volume to be a qualified customer.",
+                            "nullable": false,
+                            "default": 0,
+                            "type": {"numeric": {"precision": 12, "scale": 4}}
+                          },
+                          "QualifyTv": {
+                            "alias": "qualify_tv",
+                            "comment": "TV volume to be a qualified customer.",
+                            "nullable": false,
+                            "default": 0,
+                            "type": {"numeric": {"precision": 12, "scale": 4}}
+                          },
+                          "LegMin": {
+                            "alias": "leg_min",
+                            "comment": "Qualification volume for the smallest leg.",
+                            "nullable": false,
+                            "default": 0,
+                            "type": {"numeric": {"precision": 12, "scale": 4}}
+                          },
+                          "LegMedium": {
+                            "alias": "leg_medium",
+                            "comment": "Qualification volume for the medium leg.",
+                            "nullable": false,
+                            "default": 0,
+                            "type": {"numeric": {"precision": 12, "scale": 4}}
+                          },
+                          "LegMax": {
+                            "alias": "leg_max",
+                            "comment": "Qualification volume for the largest leg.",
+                            "nullable": false,
+                            "default": 0,
+                            "type": {"numeric": {"precision": 12, "scale": 4}}
+                          },
+                          "Infinity": {
+                            "alias": "infinity",
+                            "comment": "Infinity Bonus percent.",
+                            "nullable": false,
+                            "default": 0,
+                            "type": {"numeric": {"precision": 12, "scale": 4}}
+                          }
+                        },
+                        "index": {
+                          "primary": {"type": "primary", "aliases": ["rank_id", "scheme"]}
+                        },
+                        "relation": {
+                          "toRank": {
+                            "own": {"aliases": ["rank_id"]},
+                            "reference": {
+                              "entity": {"completeAlias": "prxgt_bon_base_rank"},
+                              "aliases": ["id"]
+                            },
+                            "action": {"delete": "restrict", "update": "restrict"}
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
