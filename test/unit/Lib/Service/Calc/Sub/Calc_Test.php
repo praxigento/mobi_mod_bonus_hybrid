@@ -5,8 +5,8 @@
 namespace Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub;
 
 use Flancer32\Lib\DataObject;
-use Praxigento\Accounting\Lib\Entity\Account;
-use Praxigento\Accounting\Lib\Entity\Transaction;
+use Praxigento\Accounting\Data\Entity\Account;
+use Praxigento\Accounting\Data\Entity\Transaction;
 use Praxigento\Bonus\Hybrid\Lib\Defaults as Def;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Override as CfgOverride;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Param as CfgParam;

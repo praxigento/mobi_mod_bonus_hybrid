@@ -4,8 +4,8 @@
  */
 namespace Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub;
 
-use Praxigento\Accounting\Lib\Entity\Account;
-use Praxigento\Accounting\Lib\Entity\Transaction;
+use Praxigento\Accounting\Data\Entity\Account;
+use Praxigento\Accounting\Data\Entity\Transaction;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\Bonus\Hybrid\Lib\Defaults as Def;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Override as CfgOverride;

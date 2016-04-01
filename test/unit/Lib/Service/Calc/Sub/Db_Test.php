@@ -5,8 +5,8 @@
 namespace Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub;
 
 use Flancer32\Lib\DataObject;
-use Praxigento\Accounting\Lib\Entity\Account;
-use Praxigento\Accounting\Lib\Entity\Operation;
+use Praxigento\Accounting\Data\Entity\Account;
+use Praxigento\Accounting\Data\Entity\Operation;
 use Praxigento\Accounting\Lib\Service\Account\Response\Get as AccountGetResponse;
 use Praxigento\Accounting\Lib\Service\Account\Response\GetRepresentative as AccountGetRepresentativeResponse;
 use Praxigento\Accounting\Lib\Service\Operation\Response\Add as OperationAddResponse;

@@ -4,8 +4,8 @@
  */
 namespace Praxigento\Bonus\Hybrid\Lib\Test\Story01;
 
-use Praxigento\Accounting\Lib\Entity\Account;
-use Praxigento\Accounting\Lib\Entity\Transaction;
+use Praxigento\Accounting\Data\Entity\Account;
+use Praxigento\Accounting\Data\Entity\Transaction;
 use Praxigento\Accounting\Lib\Service\Account\Request\GetRepresentative as AccGetRepresentativeRequest;
 use Praxigento\Accounting\Lib\Service\Operation\Request\Add as AccOperationAddRequest;
 use Praxigento\Accounting\Lib\Service\Type\Asset\Request\GetByCode as AccTypeAssetGetByCodeRequest;
@@ -308,7 +308,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
         $respGetRepres = $this->_callAccAccount->getRepresentative($reqGetRepres);
         $accountIdRepres = $respGetRepres->getData(Account::ATTR_ID);;
         /* get all customer balances for WALLET_ACTIVE and create transactions */
-        $whereByAsset = Account::ATTR_ASSET_TYPE__ID . '=' . $assetId;
+        $whereByAsset = Account::ATTR_ASSET_TYPE_ID . '=' . $assetId;
         $whereByRepres = Account::ATTR_ID . '<>' . $accountIdRepres;
         $reqGetBalances = new RepoGetEntitiesRequest(Account::ENTITY_NAME, "$whereByAsset AND $whereByRepres");
         $respGetEntities = $this->_callRepo->getEntities($reqGetBalances);
@@ -380,7 +380,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
         $reqRepresAcc = new AccGetRepresentativeRequest();
         $reqRepresAcc->setAssetTypeId($assetTypeId);
         /* get data for PV accounts */
-        $where = Account::ATTR_ASSET_TYPE__ID . '=' . $assetTypeId;
+        $where = Account::ATTR_ASSET_TYPE_ID . '=' . $assetTypeId;
         $reqGetBalances = new RepoGetEntitiesRequest(Account::ENTITY_NAME, $where);
         $respGetBalances = $this->_callRepo->getEntities($reqGetBalances);
         $balanceData = $respGetBalances->getData();
@@ -418,7 +418,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
         $respRepresAcc = $this->_callAccAccount->getRepresentative($reqRepresAcc);
         $represAccId = $respRepresAcc->getData(Account::ATTR_ID);;
         /* get data for WALLET_ACTIVE accounts */
-        $where = Account::ATTR_ASSET_TYPE__ID . '=' . $assetTypeId;
+        $where = Account::ATTR_ASSET_TYPE_ID . '=' . $assetTypeId;
         $reqGetBalances = new RepoGetEntitiesRequest(Account::ENTITY_NAME, $where);
         $respGetBalances = $this->_callRepo->getEntities($reqGetBalances);
         $balanceData = $respGetBalances->getData();
@@ -465,7 +465,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
         $respRepresAcc = $this->_callAccAccount->getRepresentative($reqRepresAcc);
         $represAccId = $respRepresAcc->getData(Account::ATTR_ID);;
         /* get data for WALLET_ACTIVE accounts */
-        $where = Account::ATTR_ASSET_TYPE__ID . '=' . $assetTypeId;
+        $where = Account::ATTR_ASSET_TYPE_ID . '=' . $assetTypeId;
         $reqGetBalances = new RepoGetEntitiesRequest(Account::ENTITY_NAME, $where);
         $respGetBalances = $this->_callRepo->getEntities($reqGetBalances);
         $balanceData = $respGetBalances->getData();
@@ -512,7 +512,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
         $respRepresAcc = $this->_callAccAccount->getRepresentative($reqRepresAcc);
         $represAccId = $respRepresAcc->getData(Account::ATTR_ID);
         /* get data for WALLET_ACTIVE accounts */
-        $where = Account::ATTR_ASSET_TYPE__ID . '=' . $assetTypeId;
+        $where = Account::ATTR_ASSET_TYPE_ID . '=' . $assetTypeId;
         $reqGetBalances = new RepoGetEntitiesRequest(Account::ENTITY_NAME, $where);
         $respGetBalances = $this->_callRepo->getEntities($reqGetBalances);
         $balanceData = $respGetBalances->getData();

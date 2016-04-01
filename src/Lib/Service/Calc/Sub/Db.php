@@ -4,9 +4,9 @@
  */
 namespace Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub;
 
-use Praxigento\Accounting\Lib\Entity\Account;
-use Praxigento\Accounting\Lib\Entity\Operation;
-use Praxigento\Accounting\Lib\Entity\Transaction;
+use Praxigento\Accounting\Data\Entity\Account;
+use Praxigento\Accounting\Data\Entity\Operation;
+use Praxigento\Accounting\Data\Entity\Transaction;
 use Praxigento\Accounting\Lib\Service\Account\Request\Get as AccountGetRequest;
 use Praxigento\Accounting\Lib\Service\Account\Request\GetRepresentative as AccountGetRepresentativeRequest;
 use Praxigento\Accounting\Lib\Service\Operation\Request\Add as OperationAddRequest;
@@ -281,7 +281,7 @@ class Db extends \Praxigento\Core\Lib\Service\Base\Sub\Db {
         $on = "$asOper." . Operation::ATTR_ID . "=$asLog." . LogOpers::ATTR_OPER_ID;
         $query->joinLeft([ $asLog => $tblLog ], $on, null);
         // where
-        $whereByAssetType = "$asAcc." . Account::ATTR_ASSET_TYPE__ID . "=$assetId";
+        $whereByAssetType = "$asAcc." . Account::ATTR_ASSET_TYPE_ID . "=$assetId";
         $whereDateFrom = "$asTrans." . Transaction::ATTR_DATE_APPLIED . ">=" . $this->_getConn()->quote($tsFrom);
         $whereDateTo = "$asTrans." . Transaction::ATTR_DATE_APPLIED . "<=" . $this->_getConn()->quote($tsTo);
         $whereByOperType = "$asOper." . Operation::ATTR_TYPE_ID . "<>$operPvWriteOffId";
