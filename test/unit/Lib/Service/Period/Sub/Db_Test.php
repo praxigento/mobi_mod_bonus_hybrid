@@ -6,7 +6,7 @@ namespace Praxigento\Bonus\Hybrid\Lib\Service\Period\Sub;
 
 use Praxigento\Accounting\Lib\Entity\Account;
 use Praxigento\Accounting\Lib\Entity\Transaction;
-use Praxigento\Accounting\Lib\Entity\Type\Asset as TypeAsset;
+use Praxigento\Accounting\Data\Entity\Type\Asset as TypeAsset;
 use Praxigento\Bonus\Base\Lib\Service\Period\Response\GetLatest as BonusBasePeriodGetLatestResponse;
 use Praxigento\Bonus\Base\Lib\Service\Type\Calc\Response\GetByCode as BonusBaseTypeCalcResponse;
 use Praxigento\Core\Lib\Service\Repo\Response\AddEntity as RepoAddEntityResponse;
