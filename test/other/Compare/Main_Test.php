@@ -118,17 +118,17 @@ class Main_OtherTest extends BaseIntegrationTest {
 
     public function __construct() {
         parent::__construct();
-        $this->_callAccount = $this->_obm->get(\Praxigento\Accounting\Lib\Service\IAccount::class);
-        $this->_callOperation = $this->_obm->get(\Praxigento\Accounting\Lib\Service\IOperation::class);
-        $this->_callTypeAsset = $this->_obm->get(\Praxigento\Accounting\Lib\Service\ITypeAsset::class);
-        $this->_callTypeCalc = $this->_obm->get(\Praxigento\Bonus\Base\Lib\Service\ITypeCalc::class);
-        $this->_callCalc = $this->_obm->get(\Praxigento\Bonus\Hybrid\Lib\Service\ICalc::class);
-        $this->_callDownlineSnap = $this->_obm->get(\Praxigento\Downline\Lib\Service\ISnap::class);
-        $this->_callPeriod = $this->_obm->get(\Praxigento\Bonus\Hybrid\Lib\Service\IPeriod::class);
-        $this->_callRank = $this->_obm->get(\Praxigento\Bonus\Base\Lib\Service\IRank::class);
-        $this->_callPvTransfer = $this->_obm->get(\Praxigento\Pv\Lib\Service\ITransfer::class);
-        $this->_callRepo = $this->_obm->get(\Praxigento\Core\Lib\Service\IRepo::class);
-        $this->_toolScheme = $this->_obm->get(\Praxigento\Bonus\Hybrid\Lib\Tool\IScheme::class);
+        $this->_callAccount = $this->_manObj->get(\Praxigento\Accounting\Lib\Service\IAccount::class);
+        $this->_callOperation = $this->_manObj->get(\Praxigento\Accounting\Lib\Service\IOperation::class);
+        $this->_callTypeAsset = $this->_manObj->get(\Praxigento\Accounting\Lib\Service\ITypeAsset::class);
+        $this->_callTypeCalc = $this->_manObj->get(\Praxigento\Bonus\Base\Lib\Service\ITypeCalc::class);
+        $this->_callCalc = $this->_manObj->get(\Praxigento\Bonus\Hybrid\Lib\Service\ICalc::class);
+        $this->_callDownlineSnap = $this->_manObj->get(\Praxigento\Downline\Lib\Service\ISnap::class);
+        $this->_callPeriod = $this->_manObj->get(\Praxigento\Bonus\Hybrid\Lib\Service\IPeriod::class);
+        $this->_callRank = $this->_manObj->get(\Praxigento\Bonus\Base\Lib\Service\IRank::class);
+        $this->_callPvTransfer = $this->_manObj->get(\Praxigento\Pv\Lib\Service\ITransfer::class);
+        $this->_callRepo = $this->_manObj->get(\Praxigento\Core\Lib\Service\IRepo::class);
+        $this->_toolScheme = $this->_manObj->get(\Praxigento\Bonus\Hybrid\Lib\Tool\IScheme::class);
     }
 
     /**
