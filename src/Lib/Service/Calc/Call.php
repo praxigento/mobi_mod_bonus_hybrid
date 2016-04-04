@@ -6,45 +6,50 @@ namespace Praxigento\Bonus\Hybrid\Lib\Service\Calc;
 
 use Praxigento\Bonus\Base\Lib\Entity\Calculation;
 use Praxigento\Bonus\Base\Lib\Entity\Period;
-use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\Bonus\Hybrid\Lib\Defaults as Def;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Oi as OiCompress;
 use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc;
 use Praxigento\Bonus\Hybrid\Lib\Service\ICalc;
 use Praxigento\Bonus\Hybrid\Lib\Service\Period\Request\GetForDependentCalc as PeriodGetForDependentCalcRequest;
 use Praxigento\Bonus\Hybrid\Lib\Service\Period\Request\GetForWriteOff as PeriodGetForWriteOffRequest;
+use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\Core\Lib\Service\Base\Call as BaseCall;
 
-class Call extends BaseCall implements ICalc {
+class Call extends BaseCall implements ICalc
+{
     /** @var  \Praxigento\Accounting\Lib\Service\IAccount */
-    private $_callAcc;
-    /**
-     * @var \Praxigento\Bonus\Hybrid\Lib\Service\IPeriod
-     */
-    private $_callPeriod;
+    protected $_callAcc;
+    /** @var \Praxigento\Bonus\Hybrid\Lib\Service\IPeriod */
+    protected $_callPeriod;
     /** @var  Sub\Calc */
-    private $_subCalc;
+    protected $_subCalc;
     /** @var  Sub\Db */
-    private $_subDb;
+    protected $_subDb;
     /** @var  \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme */
-    private $_toolScheme;
+    protected $_toolScheme;
+    /** @var  \Praxigento\Core\Lib\Tool\Period */
+    protected $_toolPeriod;
+    /** @var  \Praxigento\Core\Repo\ITransactionManager */
+    protected $_manTrans;
 
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
-        \Praxigento\Core\Lib\Context\IDbAdapter $dba,
-        \Praxigento\Bonus\Hybrid\Lib\IToolbox $toolbox,
-        \Praxigento\Core\Lib\Service\IRepo $callRepo,
+        \Praxigento\Core\Lib\Tool\Period $toolPeriod,
+        \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme $toolScheme,
+        \Praxigento\Core\Repo\ITransactionManager $manTrans,
         \Praxigento\Accounting\Lib\Service\IAccount $callAcc,
-        \Praxigento\Bonus\Hybrid\Lib\Service\IPeriod $callBonusPersonalPeriod,
+        \Praxigento\Bonus\Hybrid\Lib\Service\IPeriod $callBonusPeriod,
         Sub\Db $subDb,
         Sub\Calc $subCalc
     ) {
-        parent::__construct($logger, $dba, $toolbox, $callRepo);
+        parent::__construct($logger);
+        $this->_toolPeriod = $toolPeriod;
+        $this->_toolScheme = $toolScheme;
+        $this->_manTrans = $manTrans;
         $this->_callAcc = $callAcc;
-        $this->_callPeriod = $callBonusPersonalPeriod;
+        $this->_callPeriod = $callBonusPeriod;
         $this->_subDb = $subDb;
         $this->_subCalc = $subCalc;
-        $this->_toolScheme = $toolbox->getScheme();
     }
 
     /**
@@ -54,12 +59,14 @@ class Call extends BaseCall implements ICalc {
      *
      * @return string
      */
-    private function _getCalculationsScheme($val) {
+    private function _getCalculationsScheme($val)
+    {
         $result = $val == Def::SCHEMA_EU ? Def::SCHEMA_EU : Def::SCHEMA_DEFAULT;
         return $result;
     }
 
-    public function bonusCourtesy(Request\BonusCourtesy $request) {
+    public function bonusCourtesy(Request\BonusCourtesy $request)
+    {
         $result = new Response\BonusCourtesy();
         $courtesyPercent = $request->getCourtesyBonusPercent();
         $datePerformed = $request->getDatePerformed();
@@ -69,8 +76,8 @@ class Call extends BaseCall implements ICalc {
         $reqGetPeriod->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_VALUE_TV);
         $reqGetPeriod->setDependentCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_COURTESY);
         $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
-        if($respGetPeriod->isSucceed()) {
-            $this->_getConn()->beginTransaction();
+        if ($respGetPeriod->isSucceed()) {
+            $trans = $this->_manTrans->transactionBegin();
             try {
                 /* working vars */
                 $thisPeriodData = $respGetPeriod->getDependentPeriodData();
@@ -96,15 +103,15 @@ class Call extends BaseCall implements ICalc {
                 /* calculates bonus and save operation with transactions */
                 $updates = $this->_subCalc->bonusCourtesy($compressPtc, $courtesyPercent, $levelsPersonal, $levelsTeam);
                 /* prepare data for updates */
-                $updatesForWallets = [ ];
-                foreach($updates as $custId => $items) {
-                    foreach($items as $item) {
+                $updatesForWallets = [];
+                foreach ($updates as $custId => $items) {
+                    foreach ($items as $item) {
                         $bonus = $item[Calc::A_VALUE];
                         $childId = $item[Calc::A_OTHER_ID];
-                        if($bonus > Cfg::DEF_ZERO) {
+                        if ($bonus > Cfg::DEF_ZERO) {
                             $updatesForWallets[] = [
-                                Calc::A_CUST_ID  => $custId,
-                                Calc::A_VALUE    => $bonus,
+                                Calc::A_CUST_ID => $custId,
+                                Calc::A_VALUE => $bonus,
                                 Calc::A_OTHER_ID => $childId
                             ];
                         }
@@ -124,13 +131,12 @@ class Call extends BaseCall implements ICalc {
                 $this->_subDb->saveLogOperations($operId, $thisCalcId);
                 $this->_subDb->markCalcComplete($thisCalcId);
                 /* finalize response as succeed */
-                $this->_getConn()->commit();
+                $this->_manTrans->transactionCommit($trans);
                 $result->setAsSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
-            } catch(\Exception $e) {
-                $this->_logger->error("Cannot process 'Courtesy Bonus' calculation. Exception: " . $e->getMessage());
-                $this->_getConn()->rollBack();
+            } finally {
+                $this->_manTrans->transactionClose($trans);
             }
         }
         $this->_logMemoryUsage();
@@ -138,13 +144,14 @@ class Call extends BaseCall implements ICalc {
         return $result;
     }
 
-    public function bonusInfinity(Request\BonusInfinity $request) {
+    public function bonusInfinity(Request\BonusInfinity $request)
+    {
         $result = new Response\BonusInfinity();
         $scheme = $this->_getCalculationsScheme($request->getScheme());
         $datePerformed = $request->getDatePerformed();
         $dateApplied = $request->getDateApplied();
         $this->_logger->info("'Infinity Bonus' calculation is started ($scheme scheme).");
-        if($scheme == Def::SCHEMA_EU) {
+        if ($scheme == Def::SCHEMA_EU) {
             $calcTypeBase = Cfg::CODE_TYPE_CALC_COMPRESS_FOR_OI_EU;
             $calcType = Cfg::CODE_TYPE_CALC_BONUS_INFINITY_EU;
         } else {
@@ -155,7 +162,7 @@ class Call extends BaseCall implements ICalc {
         $reqGetPeriod->setBaseCalcTypeCode($calcTypeBase);
         $reqGetPeriod->setDependentCalcTypeCode($calcType);
         $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
-        if($respGetPeriod->isSucceed()) {
+        if ($respGetPeriod->isSucceed()) {
             $this->_getConn()->beginTransaction();
             try {
                 /* working vars */
@@ -177,19 +184,19 @@ class Call extends BaseCall implements ICalc {
                 /* calculate bonus amounts */
                 $updates = $this->_subCalc->bonusInfinity($compressOi, $scheme, $cfgParams);
                 /* prepare update data */
-                $updatesForWallets = [ ];
-                $updatesForPvInf = [ ];
-                foreach($updates as $custId => $item) {
+                $updatesForWallets = [];
+                $updatesForPvInf = [];
+                foreach ($updates as $custId => $item) {
                     $pv = $item[Calc::A_PV];
                     $bonusEntries = $item[Calc::A_ENTRIES];
-                    $updatesForPvInf[$custId] = [ OiCompress::ATTR_PV_INF => $pv ];
-                    foreach($bonusEntries as $entry) {
+                    $updatesForPvInf[$custId] = [OiCompress::ATTR_PV_INF => $pv];
+                    foreach ($bonusEntries as $entry) {
                         $bonus = $entry[Calc::A_VALUE];
                         $childId = $entry[Calc::A_OTHER_ID];
-                        if($bonus > Cfg::DEF_ZERO) {
+                        if ($bonus > Cfg::DEF_ZERO) {
                             $updatesForWallets[] = [
-                                Calc::A_CUST_ID  => $custId,
-                                Calc::A_VALUE    => $bonus,
+                                Calc::A_CUST_ID => $custId,
+                                Calc::A_VALUE => $bonus,
                                 Calc::A_OTHER_ID => $childId
                             ];
                         }
@@ -219,7 +226,7 @@ class Call extends BaseCall implements ICalc {
                 $result->setAsSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 $this->_logger->error("Cannot process 'Infinity Bonus' calculation. Exception: " . $e->getMessage());
                 $this->_getConn()->rollback();
             }
@@ -234,13 +241,14 @@ class Call extends BaseCall implements ICalc {
      *
      * @return Response\BonusOverride
      */
-    public function bonusOverride(Request\BonusOverride $request) {
+    public function bonusOverride(Request\BonusOverride $request)
+    {
         $result = new Response\BonusOverride();
         $scheme = $this->_getCalculationsScheme($request->getScheme());
         $datePerformed = $request->getDatePerformed();
         $dateApplied = $request->getDateApplied();
         $this->_logger->info("'Override Bonus' calculation is started ($scheme scheme).");
-        if($scheme == Def::SCHEMA_EU) {
+        if ($scheme == Def::SCHEMA_EU) {
             $calcTypeBase = Cfg::CODE_TYPE_CALC_COMPRESS_FOR_OI_EU;
             $calcType = Cfg::CODE_TYPE_CALC_BONUS_OVERRIDE_EU;
         } else {
@@ -251,7 +259,7 @@ class Call extends BaseCall implements ICalc {
         $reqGetPeriod->setBaseCalcTypeCode($calcTypeBase);
         $reqGetPeriod->setDependentCalcTypeCode($calcType);
         $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
-        if($respGetPeriod->isSucceed()) {
+        if ($respGetPeriod->isSucceed()) {
             $this->_getConn()->beginTransaction();
             try {
                 /* working vars */
@@ -273,17 +281,17 @@ class Call extends BaseCall implements ICalc {
                 /* calculates bonus and save operation with transactions */
                 $updates = $this->_subCalc->bonusOverride($compressOi, $scheme, $cfgOverride);
                 /* prepare data for updates */
-                $updatesForWallets = [ ];
-                foreach($updates as $item) {
+                $updatesForWallets = [];
+                foreach ($updates as $item) {
                     $custId = $item[Calc::A_CUST_ID];
                     $bonusData = $item[Calc::A_ENTRIES];
-                    foreach($bonusData as $entry) {
+                    foreach ($bonusData as $entry) {
                         $bonus = $entry[Calc::A_VALUE];
                         $childId = $entry[Calc::A_OTHER_ID];
-                        if($bonus > Cfg::DEF_ZERO) {
+                        if ($bonus > Cfg::DEF_ZERO) {
                             $updatesForWallets[] = [
-                                Calc::A_CUST_ID  => $custId,
-                                Calc::A_VALUE    => $bonus,
+                                Calc::A_CUST_ID => $custId,
+                                Calc::A_VALUE => $bonus,
                                 Calc::A_OTHER_ID => $childId
                             ];
                         }
@@ -310,7 +318,7 @@ class Call extends BaseCall implements ICalc {
                 $result->setAsSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 $this->_logger->error("Cannot process 'Override Bonus' calculation. Exception: " . $e->getMessage());
                 $this->_getConn()->rollback();
             }
@@ -320,7 +328,8 @@ class Call extends BaseCall implements ICalc {
         return $result;
     }
 
-    public function bonusPersonal(Request\BonusPersonal $request) {
+    public function bonusPersonal(Request\BonusPersonal $request)
+    {
         $result = new Response\BonusPersonal();
         $scheme = $this->_getCalculationsScheme($request->getScheme());
         $datePerformed = $request->getDatePerformed();
@@ -328,7 +337,7 @@ class Call extends BaseCall implements ICalc {
         $this->_logger->info("'Personal Bonus' calculation is started. Scheme: $scheme, performed at: $datePerformed, applied at: $dateApplied.");
         $reqGetPeriod = new PeriodGetForDependentCalcRequest();
         $calcTypeBase = Cfg::CODE_TYPE_CALC_COMPRESS_FOR_PTC;
-        if($scheme == Def::SCHEMA_EU) {
+        if ($scheme == Def::SCHEMA_EU) {
             $calcType = Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_EU;
         } else {
             $calcType = Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_DEF;
@@ -336,8 +345,8 @@ class Call extends BaseCall implements ICalc {
         $reqGetPeriod->setBaseCalcTypeCode($calcTypeBase);
         $reqGetPeriod->setDependentCalcTypeCode($calcType);
         $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
-        if($respGetPeriod->isSucceed()) {
-            $this->_getConn()->beginTransaction();
+        if ($respGetPeriod->isSucceed()) {
+            $trans = $this->_manTrans->transactionBegin();
             try {
                 /* working vars */
                 $thisPeriodData = $respGetPeriod->getDependentPeriodData();
@@ -354,7 +363,7 @@ class Call extends BaseCall implements ICalc {
                 /* get compressed data by calculation ID */
                 $compressPtc = $this->_subDb->getCompressedPtcData($baseCalcId);
                 /* calculates bonus according to the calculation scheme */
-                if($scheme == Def::SCHEMA_EU) {
+                if ($scheme == Def::SCHEMA_EU) {
                     /* use EU scheme */
                     $treeFlat = $this->_subDb->getDownlineSnapshot($baseDsEnd);
                     $orders = $this->_subDb->getSaleOrdersForRebate($baseDsBegin, $baseDsEnd);
@@ -388,13 +397,13 @@ class Call extends BaseCall implements ICalc {
                 $this->_subDb->saveLogOperations($operId, $thisCalcId);
                 $this->_subDb->markCalcComplete($thisCalcId);
                 /* finalize response as succeed */
-                $this->_getConn()->commit();
+                $this->_manTrans->transactionCommit($trans);
                 $result->setAsSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
-            } catch(\Exception $e) {
-                $this->_logger->error("Cannot process 'Personal Bonus' calculation. Exception: " . $e->getMessage());
-                $this->_getConn()->rollback();
+            } finally {
+                // transaction will be rolled back if commit is not done (otherwise - do nothing)
+                $this->_manTrans->transactionClose($trans);
             }
         }
         $this->_logMemoryUsage();
@@ -402,7 +411,8 @@ class Call extends BaseCall implements ICalc {
         return $result;
     }
 
-    public function bonusTeam(Request\BonusTeam $request) {
+    public function bonusTeam(Request\BonusTeam $request)
+    {
         $result = new Response\BonusTeam();
         $scheme = $this->_getCalculationsScheme($request->getScheme());
         $courtesyPercent = $request->getCourtesyBonusPercent();
@@ -412,7 +422,7 @@ class Call extends BaseCall implements ICalc {
         $this->_logger->info("'Team Bonus' calculation is started.");
         $reqGetPeriod = new PeriodGetForDependentCalcRequest();
         $calcTypeBase = Cfg::CODE_TYPE_CALC_VALUE_TV;
-        if($scheme == Def::SCHEMA_EU) {
+        if ($scheme == Def::SCHEMA_EU) {
             $calcType = Cfg::CODE_TYPE_CALC_BONUS_TEAM_EU;
         } else {
             $calcType = Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF;
@@ -420,8 +430,8 @@ class Call extends BaseCall implements ICalc {
         $reqGetPeriod->setBaseCalcTypeCode($calcTypeBase);
         $reqGetPeriod->setDependentCalcTypeCode($calcType);
         $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
-        if($respGetPeriod->isSucceed()) {
-            $this->_getConn()->beginTransaction();
+        if ($respGetPeriod->isSucceed()) {
+            $trans = $this->_manTrans->transactionBegin();
             try {
                 /* working vars */
                 $thisPeriodData = $respGetPeriod->getDependentPeriodData();
@@ -442,7 +452,7 @@ class Call extends BaseCall implements ICalc {
                 /* get compressed data by calculation ID */
                 $compressPtc = $this->_subDb->getCompressedPtcData($ptcCompressCalcId);
                 /* calculate bonus values according to DEFAULT or EU schemes */
-                if($scheme == Def::SCHEMA_EU) {
+                if ($scheme == Def::SCHEMA_EU) {
                     $updates = $this->_subCalc->bonusTeamEu($compressPtc, $teamBonusPercent);
                     /* save operation with transactions */
                     $respAdd = $this->_subDb->saveOperationWalletActive(
@@ -459,7 +469,8 @@ class Call extends BaseCall implements ICalc {
                     /* get levels to calculate Personal and Team bonuses */
                     $levelsPersonal = $this->_subDb->getBonusLevels(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_DEF);
                     $levelsTeam = $this->_subDb->getBonusLevels(Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF);
-                    $updates = $this->_subCalc->bonusTeamDef($compressPtc, $levelsPersonal, $levelsTeam, $courtesyPercent);
+                    $updates = $this->_subCalc->bonusTeamDef($compressPtc, $levelsPersonal, $levelsTeam,
+                        $courtesyPercent);
                     /* save operation with transactions */
                     $respAdd = $this->_subDb->saveOperationWalletActive(
                         $updates,
@@ -474,13 +485,12 @@ class Call extends BaseCall implements ICalc {
                 $this->_subDb->saveLogOperations($operId, $thisCalcId);
                 $this->_subDb->markCalcComplete($thisCalcId);
                 /* finalize response as succeed */
-                $this->_getConn()->commit();
+                $this->_manTrans->transactionCommit($trans);
                 $result->setAsSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
-            } catch(\Exception $e) {
-                $this->_logger->error("Cannot process 'Team Bonus' calculation. Exception: " . $e->getMessage());
-                $this->_getConn()->rollback();
+            } finally {
+                $this->_manTrans->transactionClose($trans);
             }
         }
         $this->_logMemoryUsage();
@@ -488,11 +498,12 @@ class Call extends BaseCall implements ICalc {
         return $result;
     }
 
-    public function compressOi(Request\CompressOi $request) {
+    public function compressOi(Request\CompressOi $request)
+    {
         $result = new Response\CompressOi();
         $scheme = $this->_getCalculationsScheme($request->getScheme());
         $this->_logger->info("'OI Compression' calculation is started ($scheme scheme).");
-        if($scheme == Def::SCHEMA_EU) {
+        if ($scheme == Def::SCHEMA_EU) {
             $calcType = Cfg::CODE_TYPE_CALC_COMPRESS_FOR_OI_EU;
         } else {
             $calcType = Cfg::CODE_TYPE_CALC_COMPRESS_FOR_OI_DEF;
@@ -501,7 +512,7 @@ class Call extends BaseCall implements ICalc {
         $reqGetPeriod->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_VALUE_OV);
         $reqGetPeriod->setDependentCalcTypeCode($calcType);
         $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
-        if($respGetPeriod->isSucceed()) {
+        if ($respGetPeriod->isSucceed()) {
             $this->_getConn()->beginTransaction();
             try {
                 /* working vars */
@@ -533,7 +544,7 @@ class Call extends BaseCall implements ICalc {
                 $result->setAsSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 $this->_logger->error("Cannot process 'OI Compression' calculation. Exception: " . $e->getMessage());
                 $this->_getConn()->rollback();
             }
@@ -548,15 +559,16 @@ class Call extends BaseCall implements ICalc {
      *
      * @return Response\CompressPtc
      */
-    public function compressPtc(Request\CompressPtc $request) {
+    public function compressPtc(Request\CompressPtc $request)
+    {
         $result = new Response\CompressPtc();
         $this->_logger->info("'PTC Compression' calculation is started.");
         $reqGetPeriod = new PeriodGetForDependentCalcRequest();
         $reqGetPeriod->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
         $reqGetPeriod->setDependentCalcTypeCode(Cfg::CODE_TYPE_CALC_COMPRESS_FOR_PTC);
         $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
-        if($respGetPeriod->isSucceed()) {
-            $this->_getConn()->beginTransaction();
+        if ($respGetPeriod->isSucceed()) {
+            $trans = $this->_manTrans->transactionBegin();
             try {
                 /* working vars */
                 $thisPeriodData = $respGetPeriod->getDependentPeriodData();
@@ -575,13 +587,12 @@ class Call extends BaseCall implements ICalc {
                 $updates = $this->_subCalc->compressPtc($downlineSnap, $customersData, $transData);
                 $this->_subDb->saveCompressedPtc($updates, $thisCalcId);
                 $this->_subDb->markCalcComplete($thisCalcId);
-                $this->_getConn()->commit();
+                $this->_manTrans->transactionCommit($trans);
                 $result->setAsSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
-            } catch(\Exception $e) {
-                $this->_logger->error("Cannot process 'PTC Compression' calculation. Exception: " . $e->getMessage());
-                $this->_getConn()->rollback();
+            } finally {
+                $this->_manTrans->transactionClose($trans);
             }
         }
         $this->_logMemoryUsage();
@@ -594,18 +605,19 @@ class Call extends BaseCall implements ICalc {
      *
      * @return Response\PvWriteOff
      */
-    public function pvWriteOff(Request\PvWriteOff $request) {
+    public function pvWriteOff(Request\PvWriteOff $request)
+    {
         $result = new Response\PvWriteOff();
         $datePerformed = $request->getDatePerformed();
         $this->_logger->info("'PV Write Off' calculation is started.");
         $reqGetPeriod = new PeriodGetForWriteOffRequest();
         $respGetPeriod = $this->_callPeriod->getForWriteOff($reqGetPeriod);
-        if($respGetPeriod->isSucceed()) {
-            if($respGetPeriod->hasNoPvTransactionsYet()) {
+        if ($respGetPeriod->isSucceed()) {
+            if ($respGetPeriod->hasNoPvTransactionsYet()) {
                 $this->_logger->info("There is no PV transactions yet. Nothing to calculate.");
                 $result->setAsSucceed();
             } else {
-                $this->_getConn()->beginTransaction();
+                $trans = $this->_manTrans->transactionBegin();
                 try {
                     /* working vars */
                     $periodData = $respGetPeriod->getPeriodData();
@@ -617,17 +629,16 @@ class Call extends BaseCall implements ICalc {
                     $this->_logger->info("Processing period #$periodId ($periodBegin-$periodEnd), calculation #$calcId.");
                     $transData = $this->_subDb->getDataForWriteOff($calcId, $periodBegin, $periodEnd);
                     $updates = $this->_subCalc->pvWriteOff($transData);
-                    $dateApplied = $this->_toolbox->getPeriod()->getTimestampTo($periodEnd);
+                    $dateApplied = $this->_toolPeriod->getTimestampTo($periodEnd);
                     $operId = $this->_subDb->saveOperationPvWriteOff($updates, $datePerformed, $dateApplied);
                     $this->_subDb->saveLogPvWriteOff($transData, $operId, $calcId);
                     $this->_subDb->markCalcComplete($calcId);
-                    $this->_getConn()->commit();
+                    $this->_manTrans->transactionCommit($trans);
                     $result->setPeriodId($periodId);
                     $result->setCalcId($calcId);
                     $result->setAsSucceed();
-                } catch(\Exception $e) {
-                    $this->_logger->error("Cannot process 'PV Write Off' calculation. Exception: " . $e->getMessage());
-                    $this->_getConn()->rollback();
+                } finally {
+                    $this->_manTrans->transactionClose($trans);
                 }
             }
         }
@@ -641,15 +652,16 @@ class Call extends BaseCall implements ICalc {
      *
      * @return Response\ValueOv
      */
-    public function valueOv(Request\ValueOv $request) {
+    public function valueOv(Request\ValueOv $request)
+    {
         $result = new Response\ValueOv();
         $this->_logger->info("'OV Value' calculation is started.");
         $reqGetPeriod = new PeriodGetForDependentCalcRequest();
         $reqGetPeriod->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_COMPRESS_FOR_PTC);
         $reqGetPeriod->setDependentCalcTypeCode(Cfg::CODE_TYPE_CALC_VALUE_OV);
         $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
-        if($respGetPeriod->isSucceed()) {
-            $this->_getConn()->beginTransaction();
+        if ($respGetPeriod->isSucceed()) {
+            $trans = $this->_manTrans->transactionBegin();
             try {
                 /* working vars */
                 $thisPeriodData = $respGetPeriod->getDependentPeriodData();
@@ -668,13 +680,12 @@ class Call extends BaseCall implements ICalc {
                 $updates = $this->_subCalc->valueOv($compressPtc);
                 $this->_subDb->saveValueOv($updates, $baseCalcId);
                 $this->_subDb->markCalcComplete($thisCalcId);
-                $this->_getConn()->commit();
+                $this->_manTrans->transactionCommit($trans);
                 $result->setAsSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
-            } catch(\Exception $e) {
-                $this->_logger->error("Cannot process 'OV Value' calculation. Exception: " . $e->getMessage());
-                $this->_getConn()->rollback();
+            } finally {
+                $this->_manTrans->transactionClose($trans);
             }
         }
         $this->_logMemoryUsage();
@@ -682,15 +693,16 @@ class Call extends BaseCall implements ICalc {
         return $result;
     }
 
-    public function valueTv(Request\ValueTv $request) {
+    public function valueTv(Request\ValueTv $request)
+    {
         $result = new Response\ValueTv();
         $this->_logger->info("'TV Value' calculation is started.");
         $reqGetPeriod = new PeriodGetForDependentCalcRequest();
         $reqGetPeriod->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_COMPRESS_FOR_PTC);
         $reqGetPeriod->setDependentCalcTypeCode(Cfg::CODE_TYPE_CALC_VALUE_TV);
         $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
-        if($respGetPeriod->isSucceed()) {
-            $this->_getConn()->beginTransaction();
+        if ($respGetPeriod->isSucceed()) {
+            $trans = $this->_manTrans->transactionBegin();
             try {
                 /* working vars */
                 $thisPeriodData = $respGetPeriod->getDependentPeriodData();
@@ -709,13 +721,12 @@ class Call extends BaseCall implements ICalc {
                 $updates = $this->_subCalc->valueTv($compressPtc);
                 $this->_subDb->saveValueTv($updates, $baseCalcId);
                 $this->_subDb->markCalcComplete($thisCalcId);
-                $this->_getConn()->commit();
+                $this->_manTrans->transactionCommit($trans);
                 $result->setAsSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
-            } catch(\Exception $e) {
-                $this->_logger->error("Cannot process 'TV Value' calculation. Exception: " . $e->getMessage());
-                $this->_getConn()->rollback();
+            } finally {
+                $this->_manTrans->transactionClose($trans);
             }
         }
         $this->_logMemoryUsage();

@@ -6,17 +6,18 @@ namespace Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub;
 
 use Praxigento\Accounting\Data\Entity\Account;
 use Praxigento\Accounting\Data\Entity\Transaction;
-use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\Bonus\Hybrid\Lib\Defaults as Def;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Override as CfgOverride;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Param as CfgParam;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Oi as OiCompress;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Ptc as PtcCompress;
+use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\Downline\Data\Entity\Customer;
 use Praxigento\Downline\Data\Entity\Snap;
 use Praxigento\Downline\Lib\Service\Snap\Request\ExpandMinimal as DownlineSnapExtendMinimalRequest;
 
-class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
+class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base
+{
     /**
      * A_... - labels to access data in associative arrays.
      */
@@ -33,21 +34,26 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
     const DATA_PV = 'pv';
     const DATA_SNAP = 'snap';
     /** @var    \Praxigento\Downline\Lib\Service\ISnap */
-    private $_callDownlineSnap;
+    protected $_callDownlineSnap;
     /** @var \Praxigento\Downline\Lib\Tool\ITree */
-    private $_toolDownlineTree;
+    protected $_toolDownlineTree;
     /** @var  \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme */
-    private $_toolScheme;
+    protected $_toolScheme;
+    /** @var \Praxigento\Core\Lib\Tool\Format */
+    protected $_toolFormat;
 
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
-        \Praxigento\Bonus\Hybrid\Lib\IToolbox $toolbox,
-        \Praxigento\Downline\Lib\Service\ISnap $callDownlineSnap
+        \Praxigento\Core\Lib\Tool\Format $toolFormat,
+        \Praxigento\Downline\Lib\Tool\ITree $toolTree,
+        \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme $toolScheme,
+        \Praxigento\Downline\Lib\Service\ISnap $repoDownlineSnap
     ) {
-        parent::__construct($logger, $toolbox);
-        $this->_callDownlineSnap = $callDownlineSnap;
-        $this->_toolScheme = $toolbox->getScheme();
-        $this->_toolDownlineTree = $toolbox->getDownlineTree();
+        parent::__construct($logger);
+        $this->_callDownlineSnap = $repoDownlineSnap;
+        $this->_toolFormat = $toolFormat;
+        $this->_toolScheme = $toolScheme;
+        $this->_toolDownlineTree = $toolTree;
     }
 
     /**
@@ -56,19 +62,20 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
      *
      * @return string
      */
-    private function _calcBonusValue($value, $levels) {
+    private function _calcBonusValue($value, $levels)
+    {
         $mult = 0;
-        foreach($levels as $level => $percent) {
-            if($value < $level) {
+        foreach ($levels as $level => $percent) {
+            if ($value < $level) {
                 break;
-            } elseif($value == $level) {
+            } elseif ($value == $level) {
                 $mult = $percent;
                 break;
             }
             $mult = $percent;
         }
         $bonus = $value * $mult;
-        $result = $this->_toolbox->getFormat()->roundBonus($bonus);
+        $result = $this->_toolFormat->roundBonus($bonus);
         return $result;
     }
 
@@ -82,24 +89,25 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
      *
      * @return number
      */
-    public function _calcOverrideBonusByRank($custId, $cfgOvr, $mapGen, $mapById) {
-        $result = [ ];
-        if(isset($mapGen[$custId])) {
+    public function _calcOverrideBonusByRank($custId, $cfgOvr, $mapGen, $mapById)
+    {
+        $result = [];
+        if (isset($mapGen[$custId])) {
             $generations = $mapGen[$custId];
             /* this customer has generations in downline */
-            foreach($cfgOvr as $gen => $cfgData) {
+            foreach ($cfgOvr as $gen => $cfgData) {
                 $percent = $cfgData[CfgOverride::ATTR_PERCENT];
-                if($percent > 0) {
-                    if(isset($generations[$gen])) {
+                if ($percent > 0) {
+                    if (isset($generations[$gen])) {
                         /* this generation exists for the customer */
                         $team = $mapGen[$custId][$gen];
-                        foreach($team as $childId) {
+                        foreach ($team as $childId) {
                             $childData = $mapById[$childId];
                             $pv = $childData[OiCompress::ATTR_PV];
                             $bonus = $this->_toolbox->getFormat()->roundBonus($pv * $percent);
                             $this->_logger->debug("Customer #$custId has '$pv' PV for '$gen' generation and '$bonus' as override bonus part from child #$childId .");
                             $result[] = [
-                                self::A_VALUE    => $bonus,
+                                self::A_VALUE => $bonus,
                                 self::A_OTHER_ID => $childId
                             ];
                         }
@@ -117,11 +125,12 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
      *
      * @return array [[$custId, $parentId, $depth, $path], ...]
      */
-    private function _composeSnapUpdates($compressedData) {
+    private function _composeSnapUpdates($compressedData)
+    {
         $req = new DownlineSnapExtendMinimalRequest();
         /* convert to [$customer=>parent, ... ] form */
-        $converted = [ ];
-        foreach($compressedData as $custId => $data) {
+        $converted = [];
+        foreach ($compressedData as $custId => $data) {
             /* 0 - PV, 1 - parentId */
             $converted[$custId] = $data[1];
         }
@@ -141,10 +150,11 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
      *
      * @return array Downline Snap: [ $custId => [customer_id, depth, parent_id, path], ...]
      */
-    private function _getExpandedTreeSnap($data, $labelCustomerId, $labelParentId) {
+    private function _getExpandedTreeSnap($data, $labelCustomerId, $labelParentId)
+    {
         /* populate compressed data with depth & path values */
-        $tree = [ ];
-        foreach($data as $one) {
+        $tree = [];
+        foreach ($data as $one) {
             $custId = $one[$labelCustomerId];
             $parentId = $one[$labelParentId];
             $tree[$custId] = $parentId;
@@ -162,10 +172,11 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
      *
      * @return number
      */
-    private function _getLevelPercent($value, $levels) {
+    private function _getLevelPercent($value, $levels)
+    {
         $result = 0;
-        foreach($levels as $level => $percent) {
-            if($value < $level) {
+        foreach ($levels as $level => $percent) {
+            if ($value < $level) {
                 break;
             }
             $result = $percent;
@@ -173,11 +184,12 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
         return $result;
     }
 
-    private function _getMaxPercentForInfinityBonus($cfgParams) {
+    private function _getMaxPercentForInfinityBonus($cfgParams)
+    {
         $result = 0;
-        foreach($cfgParams as $scheme => $params) {
-            foreach($params as $item) {
-                if($item[CfgParam::ATTR_INFINITY] > $result) {
+        foreach ($cfgParams as $scheme => $params) {
+            foreach ($params as $item) {
+                if ($item[CfgParam::ATTR_INFINITY] > $result) {
                     $result = $item[CfgParam::ATTR_INFINITY];
                 }
             }
@@ -185,10 +197,11 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
         return $result;
     }
 
-    private function _getMaxPercentForPersonalBonus($levelsPersonal) {
+    private function _getMaxPercentForPersonalBonus($levelsPersonal)
+    {
         $result = 0;
-        foreach($levelsPersonal as $item) {
-            if($item > $result) {
+        foreach ($levelsPersonal as $item) {
+            if ($item > $result) {
                 $result = $item;
             }
         }
@@ -204,11 +217,12 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
      *
      * @return int
      */
-    public function _getMaxQualifiedRankId($compressOiEntry, $scheme, $cfgParam) {
+    public function _getMaxQualifiedRankId($compressOiEntry, $scheme, $cfgParam)
+    {
         $result = null;
         $custId = $compressOiEntry[OiCompress::ATTR_CUSTOMER_ID];
         $forcedRankId = $this->_toolScheme->getForcedQualificationRank($custId, $scheme);
-        if(is_null($forcedRankId)) {
+        if (is_null($forcedRankId)) {
             /* qualification params: PV & TV */
             $pv = $compressOiEntry[OiCompress::ATTR_PV];
             $tv = $compressOiEntry[OiCompress::ATTR_TV];
@@ -217,44 +231,44 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
             $legSecond = $compressOiEntry[OiCompress::ATTR_OV_LEG_SECOND];
             $legSummary = $compressOiEntry[OiCompress::ATTR_OV_LEG_SUMMARY];
             /* sort legs values to use in 3-legs qualification */
-            $sorted = [ $legMax, $legSecond, $legSummary ];
+            $sorted = [$legMax, $legSecond, $legSummary];
             sort($sorted);
             $sortedMax = $sorted[2];
             $sortedMedium = $sorted[1];
             $sortedMin = $sorted[0];
             /* lookup for the max qualified rank */
             $ranks = $cfgParam[$scheme];
-            foreach($ranks as $rank) {
+            foreach ($ranks as $rank) {
                 /* rank legs values */
                 $qpv = $rank[CfgParam::ATTR_QUALIFY_PV];
                 $qtv = $rank[CfgParam::ATTR_QUALIFY_TV];
                 $ovMax = $rank[CfgParam::ATTR_LEG_MAX];
                 $ovMedium = $rank[CfgParam::ATTR_LEG_MEDIUM];
                 $ovMin = $rank[CfgParam::ATTR_LEG_MIN];
-                if(
+                if (
                     ($pv >= $qpv) &&
                     ($tv >= $qtv)
                 ) {
 
-                    if(($ovMax > Cfg::DEF_ZERO) && ($ovMedium > Cfg::DEF_ZERO) && ($ovMin > Cfg::DEF_ZERO)) {
+                    if (($ovMax > Cfg::DEF_ZERO) && ($ovMedium > Cfg::DEF_ZERO) && ($ovMin > Cfg::DEF_ZERO)) {
                         /* use all 3 legs to qualification, compare sorted data */
-                        if(($sortedMax >= $ovMax) && ($sortedMedium >= $ovMedium) && ($sortedMin >= $ovMin)) {
+                        if (($sortedMax >= $ovMax) && ($sortedMedium >= $ovMedium) && ($sortedMin >= $ovMin)) {
                             $result = $rank[CfgParam::ATTR_RANK_ID];
                             break;
                         }
-                    } elseif(($ovMax > Cfg::DEF_ZERO) && ($ovMedium > Cfg::DEF_ZERO)) {
+                    } elseif (($ovMax > Cfg::DEF_ZERO) && ($ovMedium > Cfg::DEF_ZERO)) {
                         /* use 2 legs to qualification, compare original data */
-                        if(($legMax >= $ovMax) && ($legSecond >= $ovMedium)) {
+                        if (($legMax >= $ovMax) && ($legSecond >= $ovMedium)) {
                             $result = $rank[CfgParam::ATTR_RANK_ID];
                             break;
                         }
-                    } elseif($ovMax > Cfg::DEF_ZERO) {
+                    } elseif ($ovMax > Cfg::DEF_ZERO) {
                         /* use 1 leg to qualification, compare original data */
-                        if($legMax >= $ovMax) {
+                        if ($legMax >= $ovMax) {
                             $result = $rank[CfgParam::ATTR_RANK_ID];
                             break;
                         }
-                    } elseif(
+                    } elseif (
                         ($ovMax <= Cfg::DEF_ZERO) &&
                         ($ovMedium <= Cfg::DEF_ZERO) &&
                         ($ovMin <= Cfg::DEF_ZERO)
@@ -282,20 +296,21 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
      *
      * @return array [$custId=>[$genNum=>[$childId, ...], ...], ...]
      */
-    public function _mapByGeneration($mapByDepthDesc, $mapTreeExp) {
-        $result = [ ]; // [ $custId=>[$genId => $totalPv, ...], ... ]
-        foreach($mapByDepthDesc as $depth => $ids) {
-            foreach($ids as $custId) {
+    public function _mapByGeneration($mapByDepthDesc, $mapTreeExp)
+    {
+        $result = []; // [ $custId=>[$genId => $totalPv, ...], ... ]
+        foreach ($mapByDepthDesc as $depth => $ids) {
+            foreach ($ids as $custId) {
                 $path = $mapTreeExp[$custId][Snap::ATTR_PATH];
                 $parents = $this->_toolDownlineTree->getParentsFromPathReversed($path);
                 $level = 0;
-                foreach($parents as $parentId) {
+                foreach ($parents as $parentId) {
                     $level += 1;
-                    if(!isset($result[$parentId])) {
-                        $result[$parentId] = [ ];
+                    if (!isset($result[$parentId])) {
+                        $result[$parentId] = [];
                     }
-                    if(!isset($result[$parentId][$level])) {
-                        $result[$parentId][$level] = [ ];
+                    if (!isset($result[$parentId][$level])) {
+                        $result[$parentId][$level] = [];
                     }
                     $result[$parentId][$level][] = $custId;
                 }
@@ -312,9 +327,10 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
      *
      * @return array
      */
-    private function _mapById($data, $labelId) {
-        $result = [ ];
-        foreach($data as $one) {
+    private function _mapById($data, $labelId)
+    {
+        $result = [];
+        foreach ($data as $one) {
             $result[$one[$labelId]] = $one;
         }
         return $result;
@@ -331,12 +347,13 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
      *
      * @return array [$customerId => $pv, ...]
      */
-    public function _mapByPv($data, $labelCustId, $labelPv) {
-        $result = [ ];
-        foreach($data as $one) {
+    public function _mapByPv($data, $labelCustId, $labelPv)
+    {
+        $result = [];
+        foreach ($data as $one) {
             $customerId = $one[$labelCustId];
             $pv = $one[$labelPv];
-            if(isset($result[$customerId])) {
+            if (isset($result[$customerId])) {
                 $result[$customerId] += $pv;
             } else {
                 $result[$customerId] = $pv;
@@ -353,17 +370,18 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
      *
      * @return array [$custId => [$memberId, ...], ...]
      */
-    private function _mapByTeams($data, $labelCustId, $labelParentId) {
-        $result = [ ];
-        foreach($data as $one) {
+    private function _mapByTeams($data, $labelCustId, $labelParentId)
+    {
+        $result = [];
+        foreach ($data as $one) {
             $custId = $one[$labelCustId];
             $parentId = $one[$labelParentId];
-            if($custId == $parentId) {
+            if ($custId == $parentId) {
                 /* skip root nodes, root node is not a member of a team. */
                 continue;
             }
-            if(!isset($result[$parentId])) {
-                $result[$parentId] = [ ];
+            if (!isset($result[$parentId])) {
+                $result[$parentId] = [];
             }
             $result[$parentId][] = $custId;
         }
@@ -379,13 +397,14 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
      *
      * @return array  [$depth => [$custId, ...]]
      */
-    private function _mapByTreeDepthDesc($tree, $labelCustId, $labelDepth) {
-        $result = [ ];
-        foreach($tree as $one) {
+    private function _mapByTreeDepthDesc($tree, $labelCustId, $labelDepth)
+    {
+        $result = [];
+        foreach ($tree as $one) {
             $customerId = $one[$labelCustId];
             $depth = $one[$labelDepth];
-            if(!isset($result[$depth])) {
-                $result[$depth] = [ ];
+            if (!isset($result[$depth])) {
+                $result[$depth] = [];
             }
             $result[$depth][] = $customerId;
         }
@@ -394,9 +413,10 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
         return $result;
     }
 
-    private function _populateCompressedSnapWithPv($snap, $calculatedData) {
+    private function _populateCompressedSnapWithPv($snap, $calculatedData)
+    {
         $result = $snap;
-        foreach($calculatedData as $custId => $data) {
+        foreach ($calculatedData as $custId => $data) {
             /* 0 - PV, 1 - parentId */
             $result[$custId][PtcCompress::ATTR_PV] = $data[0];
         }
@@ -411,9 +431,10 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
      *
      * @return bool
      */
-    private function _shouldInterruptInfinityBonus($percent, $percentParent) {
+    private function _shouldInterruptInfinityBonus($percent, $percentParent)
+    {
         $result = false;
-        if(
+        if (
             ($percentParent > 0) &&
             ($percentParent <= $percent)
         ) {
@@ -422,14 +443,15 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
         return $result;
     }
 
-    public function bonusCourtesy($compressPtc, $percentCourtesy, $levelsPersonal, $levelsTeam) {
-        $result = [ ];
+    public function bonusCourtesy($compressPtc, $percentCourtesy, $levelsPersonal, $levelsTeam)
+    {
+        $result = [];
         $mapDataById = $this->_mapById($compressPtc, PtcCompress::ATTR_CUSTOMER_ID);
         $mapTeams = $this->_mapByTeams($compressPtc, PtcCompress::ATTR_CUSTOMER_ID, PtcCompress::ATTR_PARENT_ID);
-        foreach($compressPtc as $item) {
+        foreach ($compressPtc as $item) {
             $custId = $item[PtcCompress::ATTR_CUSTOMER_ID];
             $custScheme = $this->_toolScheme->getSchemeByCustomer($item);
-            if(
+            if (
                 isset($mapTeams[$custId]) &&
                 ($custScheme == Def::SCHEMA_DEFAULT)
             ) {
@@ -440,18 +462,18 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
                 $this->_logger->debug("Customer #$custId ($custRef) has $tv TV and $percentTeam% as max percent.");
                 /* for all front team members of the customer */
                 $team = $mapTeams[$custId];
-                foreach($team as $memberId) {
+                foreach ($team as $memberId) {
                     $pv = $mapDataById[$memberId][PtcCompress::ATTR_PV];
-                    if($pv > 0) {
+                    if ($pv > 0) {
                         $memberData = $mapDataById[$memberId];
                         $memberRef = $memberData[Customer::ATTR_HUMAN_REF];
                         $percentPv = $this->_getLevelPercent($pv, $levelsPersonal);
                         $percentDelta = $percentTeam - $percentPv;
-                        if($percentDelta > Cfg::DEF_ZERO) {
+                        if ($percentDelta > Cfg::DEF_ZERO) {
                             $this->_logger->debug("Member $memberId ($memberRef) has $pv PV, percent: $percentPv%, delta: $percentDelta% and does not give bonus part to customer #$custId ($custRef).");
                         } else {
-                            $bonusPart = $this->_toolbox->getFormat()->roundBonus($pv * $percentCourtesy);
-                            $result[$custId][] = [ self::A_VALUE => $bonusPart, self::A_OTHER_ID => $memberId ];
+                            $bonusPart = $this->_toolFormat->roundBonus($pv * $percentCourtesy);
+                            $result[$custId][] = [self::A_VALUE => $bonusPart, self::A_OTHER_ID => $memberId];
                             $this->_logger->debug("$bonusPart is a Courtesy Bonus part for customer #$custId ($custRef) from front member #$memberId ($memberRef) - pv: $pv, percent: $percentPv%, delta: $percentDelta%.");
                         }
                     }
@@ -463,8 +485,9 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
         return $result;
     }
 
-    public function bonusInfinity($compressOi, $scheme, $cfgParams) {
-        $result = [ ]; // [$custId=>[A_PV=>..., A_ENTRIES=>[A_VALUE=>..., A_OTHER_ID=>...]], ...]
+    public function bonusInfinity($compressOi, $scheme, $cfgParams)
+    {
+        $result = []; // [$custId=>[A_PV=>..., A_ENTRIES=>[A_VALUE=>..., A_OTHER_ID=>...]], ...]
         $mapById = $this->_mapById($compressOi, OiCompress::ATTR_CUSTOMER_ID);
         $mapTreeExp = $this->_getExpandedTreeSnap(
             $compressOi,
@@ -473,21 +496,21 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
         );
         $ibPercentMax = $this->_getMaxPercentForInfinityBonus($cfgParams);
         /* process downline tree */
-        foreach($mapTreeExp as $custId => $treeData) {
+        foreach ($mapTreeExp as $custId => $treeData) {
             $customerData = $mapById[$custId];
             $pv = $customerData[OiCompress::ATTR_PV];
-            if($pv > Cfg::DEF_ZERO) {
+            if ($pv > Cfg::DEF_ZERO) {
                 $path = $treeData[Snap::ATTR_PATH];
                 $parents = $this->_toolDownlineTree->getParentsFromPathReversed($path);
                 $prevParentIbPercent = 0;
                 $ibPercentDelta = $ibPercentMax - $prevParentIbPercent;
                 $isFirstGen = true; // first generation customers should not have an infinity bonus
-                foreach($parents as $parentId) {
+                foreach ($parents as $parentId) {
                     $parentData = $mapById[$parentId];
                     $parentRankId = $parentData[OiCompress::ATTR_RANK_ID];
                     $parentScheme = $this->_toolScheme->getSchemeByCustomer($parentData);
                     /* should parent get an Infinity bonus? */
-                    if(
+                    if (
                         isset($cfgParams[$scheme][$parentRankId]) &&
                         isset($cfgParams[$scheme][$parentRankId][CfgParam::ATTR_INFINITY]) &&
                         ($cfgParams[$scheme][$parentRankId][CfgParam::ATTR_INFINITY] > 0) &&
@@ -501,22 +524,22 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
                             $ibPercent,
                             $cfgParams
                         );
-                        if(
+                        if (
                             $shouldInterrupt ||
                             ($ibPercentDelta <= 0)
                         ) {
                             break;
                         } else {
                             /* calculate bonus value */
-                            if(!isset($result[$parentId])) {
-                                $result[$parentId] = [ self::A_PV => 0, self::A_ENTRIES => [ ] ];
+                            if (!isset($result[$parentId])) {
+                                $result[$parentId] = [self::A_PV => 0, self::A_ENTRIES => []];
                             }
                             $result[$parentId][self::A_PV] += $pv;
                             $ibPercent = $cfgParams[$scheme][$parentRankId][CfgParam::ATTR_INFINITY];
                             $percent = ($ibPercent <= $ibPercentDelta) ? $ibPercent : $ibPercentDelta;
                             $bonus = $this->_toolbox->getFormat()->roundBonus($pv * $percent);
                             $result[$parentId][self::A_ENTRIES][] = [
-                                self::A_VALUE    => $bonus,
+                                self::A_VALUE => $bonus,
                                 self::A_OTHER_ID => $custId
                             ];
                             /* re-save Infinity percent and decrease delta */
@@ -535,8 +558,9 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
         return $result;
     }
 
-    public function bonusOverride($compressOi, $scheme, $cfgOverride) {
-        $result = [ ];
+    public function bonusOverride($compressOi, $scheme, $cfgOverride)
+    {
+        $result = [];
         $mapById = $this->_mapById($compressOi, OiCompress::ATTR_CUSTOMER_ID);
         $mapTeams = $this->_mapByTeams($compressOi, OiCompress::ATTR_CUSTOMER_ID, OiCompress::ATTR_PARENT_ID);
         /* populate compressed data with depth & path values */
@@ -547,24 +571,25 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
         );
         $mapByDepthDesc = $this->_mapByTreeDepthDesc($mapTreeExp, Snap::ATTR_CUSTOMER_ID, Snap::ATTR_DEPTH);
         /* scan all levels starting from the bottom and collect PV by generations */
-        $mapGenerations = $this->_mapByGeneration($mapByDepthDesc, $mapTreeExp); // [ $custId=>[$genId => $totalPv, ...], ... ]
+        $mapGenerations = $this->_mapByGeneration($mapByDepthDesc,
+            $mapTreeExp); // [ $custId=>[$genId => $totalPv, ...], ... ]
         /* scan all customers and calculate bonus values */
-        foreach($compressOi as $custData) {
+        foreach ($compressOi as $custData) {
             $custId = $custData[OiCompress::ATTR_CUSTOMER_ID];
             $custRef = $custData[Customer::ATTR_HUMAN_REF];
             $rankId = $custData[OiCompress::ATTR_RANK_ID];
             $custScheme = $this->_toolScheme->getSchemeByCustomer($custData);
-            if(
+            if (
                 !is_null($rankId) &&
                 ($custScheme == $scheme)
             ) {
                 /* this is qualified manager */
                 $this->_logger->debug("Customer #$custId (#$custRef ) from scheme '$custScheme' is qualified to rank #$rankId.");
-                if(isset($cfgOverride[$scheme][$rankId])) {
+                if (isset($cfgOverride[$scheme][$rankId])) {
                     $cfgOvrEntry = $cfgOverride[$scheme][$rankId];
                     // calculate bonus value for $custId according rank configuration
                     $bonusData = $this->_calcOverrideBonusByRank($custId, $cfgOvrEntry, $mapGenerations, $mapById);
-                    $entry = [ self::A_CUST_ID => $custId, self::A_RANK_ID => $rankId, self::A_ENTRIES => $bonusData ];
+                    $entry = [self::A_CUST_ID => $custId, self::A_RANK_ID => $rankId, self::A_ENTRIES => $bonusData];
                     $result[] = $entry;
                 } else {
                     $this->_logger->error("There is incomplete override bonus configuration for scheme '$scheme' and rank #$rankId. ");
@@ -587,16 +612,17 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
      *
      * @return array [ ['custId'=>$v, 'amount'=>$v], ... ]
      */
-    public function bonusPersonalDef($compressPtc, $levels) {
-        $result = [ ];
-        foreach($compressPtc as $one) {
+    public function bonusPersonalDef($compressPtc, $levels)
+    {
+        $result = [];
+        foreach ($compressPtc as $one) {
             $custId = $one[PtcCompress::ATTR_CUSTOMER_ID];
             $pvValue = $one[PtcCompress::ATTR_PV];
             $scheme = $this->_toolScheme->getSchemeByCustomer($one);
-            if($scheme == Def::SCHEMA_DEFAULT) {
+            if ($scheme == Def::SCHEMA_DEFAULT) {
                 $bonusValue = $this->_calcBonusValue($pvValue, $levels);
-                if($bonusValue > 0) {
-                    $result[] = [ self::A_CUST_ID => $custId, self::A_VALUE => $bonusValue ];
+                if ($bonusValue > 0) {
+                    $result[] = [self::A_CUST_ID => $custId, self::A_VALUE => $bonusValue];
                 }
             }
         }
@@ -612,31 +638,32 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
      *
      * @return array [ ['custId'=>$v, 'ordrId'=>$v, 'amount'=>$v], ... ]
      */
-    public function bonusPersonalEu($treeSnap, $compressPtc, $orders) {
-        $result = [ ];
+    public function bonusPersonalEu($treeSnap, $compressPtc, $orders)
+    {
+        $result = [];
         $mapFlatById = $this->_mapById($treeSnap, Snap::ATTR_CUSTOMER_ID);
         $mapCompressById = $this->_mapById($compressPtc, PtcCompress::ATTR_CUSTOMER_ID);
-        foreach($orders as $custId => $items) {
-            foreach($items as $orderId => $amount) {
+        foreach ($orders as $custId => $items) {
+            foreach ($items as $orderId => $amount) {
                 $bonus = $amount * Def::REBATE_PERCENT;
                 $bonus = $this->_toolbox->getFormat()->roundBonus($bonus);
-                if(!isset($mapCompressById[$custId])) {
+                if (!isset($mapCompressById[$custId])) {
                     /* this is not qualified customer */
                     $bonus = $this->_toolbox->getFormat()->roundBonus($bonus / 2);
                     $result[] = [
                         self::A_CUST_ID => $custId,
                         self::A_ORDR_ID => $orderId,
-                        self::A_VALUE   => $bonus
+                        self::A_VALUE => $bonus
                     ];
                     $this->_logger->debug("Personal bonus (EU) '$bonus' is paid to unqualified customer #$custId for order #$orderId.");
                     $path = $mapFlatById[$custId][Snap::ATTR_PATH];
                     $parents = $this->_toolDownlineTree->getParentsFromPathReversed($path);
-                    foreach($parents as $parentId) {
-                        if(isset($mapCompressById[$parentId])) {
+                    foreach ($parents as $parentId) {
+                        if (isset($mapCompressById[$parentId])) {
                             $result[] = [
                                 self::A_CUST_ID => $parentId,
                                 self::A_ORDR_ID => $orderId,
-                                self::A_VALUE   => $bonus
+                                self::A_VALUE => $bonus
                             ];
                             $this->_logger->debug("Personal bonus (EU) '$bonus' is paid to qualified parent #$parentId of the unqualified customer #$custId for order #$orderId.");
                             break;
@@ -647,7 +674,7 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
                     $result[] = [
                         self::A_CUST_ID => $custId,
                         self::A_ORDR_ID => $orderId,
-                        self::A_VALUE   => $bonus
+                        self::A_VALUE => $bonus
                     ];
                     $this->_logger->debug("Personal bonus (EU) '$bonus' is paid to qualified customer #$custId for order #$orderId.");
                 }
@@ -666,46 +693,47 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
      *
      * @return array
      */
-    public function bonusTeamDef($compressPtc, $levelsPersonal, $levelsTeam, $courtesyPercent) {
-        $result = [ ];
+    public function bonusTeamDef($compressPtc, $levelsPersonal, $levelsTeam, $courtesyPercent)
+    {
+        $result = [];
         $mapDataById = $this->_mapById($compressPtc, PtcCompress::ATTR_CUSTOMER_ID);
         $mapTeams = $this->_mapByTeams($compressPtc, PtcCompress::ATTR_CUSTOMER_ID, PtcCompress::ATTR_PARENT_ID);
         $pbPercentMax = $this->_getMaxPercentForPersonalBonus($levelsPersonal);
-        foreach($mapDataById as $custId => $custData) {
+        foreach ($mapDataById as $custId => $custData) {
             $custData = $mapDataById[$custId];
             $custRef = $custData[Customer::ATTR_HUMAN_REF];
             $scheme = $this->_toolScheme->getSchemeByCustomer($custData);
-            if($scheme == Def::SCHEMA_DEFAULT) {
+            if ($scheme == Def::SCHEMA_DEFAULT) {
                 $pv = $custData[PtcCompress::ATTR_PV];
                 $pvForced = $this->_toolScheme->getForcedPv($custId, $scheme, $pv);
-                if($pvForced > $pv) {
+                if ($pvForced > $pv) {
                     $pv = $pvForced;
                     $this->_logger->debug("Customer #$custId (ref. #$custRef ) has forced qualification with PV=$pvForced.");
                 }
                 $pbPercent = $this->_getLevelPercent($pv, $levelsPersonal);
-                if($pv > Cfg::DEF_ZERO) {
+                if ($pv > Cfg::DEF_ZERO) {
                     /* traverse up to tree root to calculate team bonus values */
                     $path = $custData[PtcCompress::ATTR_PATH];
                     $parents = $this->_toolDownlineTree->getParentsFromPathReversed($path);
                     $pbPercentDelta = $pbPercentMax - $pbPercent;
                     $shouldApplyCourtasy = true;
-                    foreach($parents as $parentId) {
-                        if($pbPercentDelta > Cfg::DEF_ZERO) {
+                    foreach ($parents as $parentId) {
+                        if ($pbPercentDelta > Cfg::DEF_ZERO) {
                             /* get team qualification percent for  parent */
                             $parentData = $mapDataById[$parentId];
                             $parentRef = $parentData[Customer::ATTR_HUMAN_REF];
                             $parentScheme = $this->_toolScheme->getSchemeByCustomer($parentData);
                             $tv = $parentData[PtcCompress::ATTR_TV];
                             $tvForced = $this->_toolScheme->getForcedTv($parentId, $scheme, $tv);
-                            if($tvForced > $tv) {
+                            if ($tvForced > $tv) {
                                 $this->_logger->debug("Customer #$parentId (ref. #$parentRef ) has forced qualification with TV=$tvForced.");
                                 $tv = $tvForced;
                             }
                             $tbPercent = $this->_getLevelPercent($tv, $levelsTeam);
                             $tbPercentDelta = $tbPercent - $pbPercent;
-                            if($tbPercentDelta > Cfg::DEF_ZERO) {
+                            if ($tbPercentDelta > Cfg::DEF_ZERO) {
                                 /* parent's TV % should be more then customer's PV % */
-                                if(
+                                if (
                                     ($parentScheme != Def::SCHEMA_DEFAULT) &&
                                     ($tbPercentDelta > $courtesyPercent)
                                 ) {
@@ -713,38 +741,46 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
                                     $tbPercentDelta = $courtesyPercent;
 
                                 }
-                                if($tbPercentDelta >= $pbPercentDelta) {
+                                if ($tbPercentDelta >= $pbPercentDelta) {
                                     /* parent's TV allows him to get all team bonus from this customer */
-                                    $bonus = $this->_toolbox->getFormat()->roundBonus($pv * $pbPercentDelta);
-                                    $result[] = [ self::A_CUST_ID => $parentId, self::A_VALUE => $bonus, self::A_OTHER_ID => $custId ];
+                                    $bonus = $this->_toolFormat->roundBonus($pv * $pbPercentDelta);
+                                    $result[] = [
+                                        self::A_CUST_ID => $parentId,
+                                        self::A_VALUE => $bonus,
+                                        self::A_OTHER_ID => $custId
+                                    ];
                                     $this->_logger->debug("Customer #$parentId ($parentRef) has TV=$tv, %TB=$tbPercent,"
-                                                          . " and get '$bonus' ($pbPercentDelta%) as DEFAULT Team Bonus from "
-                                                          . "downline customer #$custId ($custRef) with PV=$pv and "
-                                                          . "%PV=$pbPercent, %delta=$pbPercentDelta. "
-                                                          . "All bonus is distributed.");
+                                        . " and get '$bonus' ($pbPercentDelta%) as DEFAULT Team Bonus from "
+                                        . "downline customer #$custId ($custRef) with PV=$pv and "
+                                        . "%PV=$pbPercent, %delta=$pbPercentDelta. "
+                                        . "All bonus is distributed.");
                                     break;
                                 } else {
                                     /* parent's TV allows him to get only part of the team bonus from this customer */
-                                    $bonus = $this->_toolbox->getFormat()->roundBonus($pv * $tbPercentDelta);
-                                    $result[] = [ self::A_CUST_ID => $parentId, self::A_VALUE => $bonus, self::A_OTHER_ID => $custId ];
+                                    $bonus = $this->_toolFormat->roundBonus($pv * $tbPercentDelta);
+                                    $result[] = [
+                                        self::A_CUST_ID => $parentId,
+                                        self::A_VALUE => $bonus,
+                                        self::A_OTHER_ID => $custId
+                                    ];
                                     $pbPercentDelta -= $tbPercentDelta;
                                     $this->_logger->debug("Customer #$parentId ($parentRef) has TV=$tv, %TB=$tbPercent,"
-                                                          . " and get '$bonus' ($tbPercentDelta%) as DEFAULT Team Bonus from "
-                                                          . "downline customer #$custId ($custRef) with PV=$pv and "
-                                                          . "%PV=$pbPercent, %delta=$tbPercentDelta. "
-                                                          . "Undistributed %delta is $pbPercentDelta%.");
+                                        . " and get '$bonus' ($tbPercentDelta%) as DEFAULT Team Bonus from "
+                                        . "downline customer #$custId ($custRef) with PV=$pv and "
+                                        . "%PV=$pbPercent, %delta=$tbPercentDelta. "
+                                        . "Undistributed %delta is $pbPercentDelta%.");
                                 }
                             } else {
                                 /* this parent has TV % less then customer's PV % and should not be granted  */
                                 $this->_logger->debug("Customer #$parentId (ref. #$parentRef) has TV=$tv, "
-                                                      . "%TB=$tbPercent is less then %PB=$pbPercent and should not "
-                                                      . "get Team Bonus.");
-                                if($shouldApplyCourtasy) {
+                                    . "%TB=$tbPercent is less then %PB=$pbPercent and should not "
+                                    . "get Team Bonus.");
+                                if ($shouldApplyCourtasy) {
                                     /* reduce delta to courtesy bonus percent if parent is not "father" */
                                     $pbPercentDelta -= $courtesyPercent;
                                     $this->_logger->debug("Customer #$parentId ($parentRef) is 'father' for the "
-                                                          . "customer #$custId ($custRef) %delta is decreased on "
-                                                          . "Courtesy Bonus percent (new value: $pbPercentDelta).");
+                                        . "customer #$custId ($custRef) %delta is decreased on "
+                                        . "Courtesy Bonus percent (new value: $pbPercentDelta).");
                                     $shouldApplyCourtasy = false;
                                 }
                             }
@@ -766,21 +802,22 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
         return $result;
     }
 
-    public function bonusTeamEu($compressPtc, $teamBonusPercent) {
-        $result = [ ];
+    public function bonusTeamEu($compressPtc, $teamBonusPercent)
+    {
+        $result = [];
         $mapDataById = $this->_mapById($compressPtc, PtcCompress::ATTR_CUSTOMER_ID);
-        foreach($mapDataById as $custId => $custData) {
+        foreach ($mapDataById as $custId => $custData) {
             $custData = $mapDataById[$custId];
             $custRef = $custData[Customer::ATTR_HUMAN_REF];
             $scheme = $this->_toolScheme->getSchemeByCustomer($custData);
-            if($scheme == Def::SCHEMA_EU) {
+            if ($scheme == Def::SCHEMA_EU) {
                 $pv = $custData[PtcCompress::ATTR_PV];
-                if($pv > Cfg::DEF_ZERO) {
+                if ($pv > Cfg::DEF_ZERO) {
                     $parentId = $custData[PtcCompress::ATTR_PARENT_ID];
                     $parentData = $mapDataById[$parentId];
                     $parentRef = $parentData[Customer::ATTR_HUMAN_REF];
                     $bonus = $this->_toolbox->getFormat()->roundBonus($pv * $teamBonusPercent);
-                    $result[] = [ self::A_CUST_ID => $parentId, self::A_VALUE => $bonus, self::A_OTHER_ID => $custId ];
+                    $result[] = [self::A_CUST_ID => $parentId, self::A_VALUE => $bonus, self::A_OTHER_ID => $custId];
                     $this->_logger->debug("Customer #$parentId (ref. #$parentRef ) has '$bonus' as EU Team Bonus from downline customer #$custId (ref. #$custRef ).");
                 } else {
                     $this->_logger->debug("Customer #$custId (ref. #$custRef ) has no PV ($pv PV) and could not participate in EU Team Bonus.");
@@ -800,44 +837,46 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
      *
      * @return array [$custId=>[$custId, $parentId, $pv, $ovLegMax, $ovLegSecond, $ovLegSummary], ...]
      */
-    public function compressOi($compressedPtc, $cfgParams, $scheme) {
-        $result = [ ];
+    public function compressOi($compressedPtc, $cfgParams, $scheme)
+    {
+        $result = [];
         $mapById = $this->_mapById($compressedPtc, PtcCompress::ATTR_CUSTOMER_ID);
-        $mapByDepth = $this->_mapByTreeDepthDesc($compressedPtc, PtcCompress::ATTR_CUSTOMER_ID, PtcCompress::ATTR_DEPTH);
+        $mapByDepth = $this->_mapByTreeDepthDesc($compressedPtc, PtcCompress::ATTR_CUSTOMER_ID,
+            PtcCompress::ATTR_DEPTH);
         $mapByTeam = $this->_mapByTeams($compressedPtc, PtcCompress::ATTR_CUSTOMER_ID, PtcCompress::ATTR_PARENT_ID);
-        foreach($mapByDepth as $level) {
-            foreach($level as $custId) {
+        foreach ($mapByDepth as $level) {
+            foreach ($level as $custId) {
                 /* compose data for one customer */
                 $custData = $mapById[$custId];
                 $parentId = $custData[PtcCompress::ATTR_PARENT_ID];
                 $pv = $custData[PtcCompress::ATTR_PV];
                 $tv = $custData[PtcCompress::ATTR_TV];
                 $resultEntry = [
-                    OiCompress::ATTR_SCHEME         => $scheme,
-                    OiCompress::ATTR_CUSTOMER_ID    => $custId,
-                    OiCompress::ATTR_PARENT_ID      => $parentId,
-                    OiCompress::ATTR_PV             => $pv,
-                    OiCompress::ATTR_TV             => $tv,
-                    OiCompress::ATTR_OV_LEG_MAX     => 0,
-                    OiCompress::ATTR_OV_LEG_SECOND  => 0,
+                    OiCompress::ATTR_SCHEME => $scheme,
+                    OiCompress::ATTR_CUSTOMER_ID => $custId,
+                    OiCompress::ATTR_PARENT_ID => $parentId,
+                    OiCompress::ATTR_PV => $pv,
+                    OiCompress::ATTR_TV => $tv,
+                    OiCompress::ATTR_OV_LEG_MAX => 0,
+                    OiCompress::ATTR_OV_LEG_SECOND => 0,
                     OiCompress::ATTR_OV_LEG_SUMMARY => 0
                 ];
                 /* calculate legs */
                 $isQualifiedCust = $this->isQualifiedManager($custId, $pv, $tv, $scheme, $cfgParams);
-                if($isQualifiedCust) {
+                if ($isQualifiedCust) {
                     /* this is qualified manager, calculate MAX leg, second leg and summary leg */
-                    if(isset($mapByTeam[$custId])) {
+                    if (isset($mapByTeam[$custId])) {
                         /* this customer has downline subtrees */
                         $team = $mapByTeam[$custId];
                         $legMax = $legSecond = $legSummary = 0;
-                        foreach($team as $memberId) {
+                        foreach ($team as $memberId) {
                             $ovMember = $mapById[$memberId][PtcCompress::ATTR_OV];
-                            if($ovMember > $legMax) {
+                            if ($ovMember > $legMax) {
                                 /* update MAX leg */
                                 $legSummary += $legSecond;
                                 $legSecond = $legMax;
                                 $legMax = $ovMember;
-                            } elseif($ovMember > $legSecond) {
+                            } elseif ($ovMember > $legSecond) {
                                 /* update second leg */
                                 $legSummary += $legSecond;
                                 $legSecond = $ovMember;
@@ -858,23 +897,24 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
                 $parentPv = $parentData[PtcCompress::ATTR_PV];
                 $parentTv = $parentData[PtcCompress::ATTR_TV];
                 $isQualifiedParent = $this->isQualifiedManager($parentId, $parentPv, $parentTv, $scheme, $cfgParams);
-                if(!$isQualifiedParent) {
+                if (!$isQualifiedParent) {
                     /* parent is not qualified, move this customer up to the closest qualified parent */
                     $path = $custData[PtcCompress::ATTR_PATH];
                     $parents = $this->_toolDownlineTree->getParentsFromPathReversed($path);
                     $foundParentId = null;
-                    foreach($parents as $newParentId) {
+                    foreach ($parents as $newParentId) {
                         $newParentData = $mapById[$newParentId];
                         $newParentPv = $newParentData[PtcCompress::ATTR_PV];
                         $newParentTv = $newParentData[PtcCompress::ATTR_TV];
-                        $isQualifiedNewParent = $this->isQualifiedManager($newParentId, $newParentPv, $newParentTv, $scheme, $cfgParams);
-                        if($isQualifiedNewParent) {
+                        $isQualifiedNewParent = $this->isQualifiedManager($newParentId, $newParentPv, $newParentTv,
+                            $scheme, $cfgParams);
+                        if ($isQualifiedNewParent) {
                             $foundParentId = $newParentId;
                             break;
                         }
                     }
                     unset($parents);
-                    if(is_null($foundParentId)) {
+                    if (is_null($foundParentId)) {
                         /* no qualified parent up to the root, make this customer as root customer  */
                         $resultEntry[OiCompress::ATTR_PARENT_ID] = $custId;
                     } else {
@@ -900,44 +940,45 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
      *
      * @return array data to save into prxgt_bon_hyb_compress
      */
-    public function compressPtc($treeSnap, $customers, $trans) {
+    public function compressPtc($treeSnap, $customers, $trans)
+    {
         $qLevels = $this->_toolScheme->getQualificationLevels();
         $forcedIds = $this->_toolScheme->getForcedQualificationCustomersIds();
         $this->_logger->info("PTC Compression parameters:" .
-                             " qualification levels=" . var_export($qLevels, true)
-                             . ", forced customers: " . var_export($forcedIds, true));
+            " qualification levels=" . var_export($qLevels, true)
+            . ", forced customers: " . var_export($forcedIds, true));
         /* array with results: [$customerId => [$pvCompressed, $parentCompressed], ... ]*/
-        $compressedTree = [ ];
+        $compressedTree = [];
         $mapCustomer = $this->_mapById($customers, Customer::ATTR_CUSTOMER_ID);
         $mapPv = $this->_mapByPv($trans, Account::ATTR_CUST_ID, Transaction::ATTR_VALUE);
         $mapDepth = $this->_mapByTreeDepthDesc($treeSnap, Snap::ATTR_CUSTOMER_ID, Snap::ATTR_DEPTH);
         $mapTeams = $this->_mapByTeams($treeSnap, Snap::ATTR_CUSTOMER_ID, Snap::ATTR_PARENT_ID);
-        foreach($mapDepth as $depth => $levelCustomers) {
-            foreach($levelCustomers as $custId) {
+        foreach ($mapDepth as $depth => $levelCustomers) {
+            foreach ($levelCustomers as $custId) {
                 $pv = isset($mapPv[$custId]) ? $mapPv[$custId] : 0;
                 $parentId = $treeSnap[$custId][Snap::ATTR_PARENT_ID];
                 $custData = $mapCustomer[$custId];
                 $scheme = $this->_toolScheme->getSchemeByCustomer($custData);
                 $level = $qLevels[$scheme]; // qualification level for current customer
-                if(
+                if (
                     ($pv >= $level) ||
                     (in_array($custId, $forcedIds))
                 ) {
-                    if(isset($compressedTree[$custId])) {
+                    if (isset($compressedTree[$custId])) {
                         $pvExist = $compressedTree[$custId][0];
                         $pvNew = $pv + $pvExist;
-                        $compressedTree[$custId] = [ $pvNew, $parentId ];
+                        $compressedTree[$custId] = [$pvNew, $parentId];
                     } else {
-                        $compressedTree[$custId] = [ $pv, $parentId ];
+                        $compressedTree[$custId] = [$pv, $parentId];
                     }
                 } else {
                     /* move PV up to the closest qualified parent (current customer's level is used for qualification) */
                     $path = $treeSnap[$custId][Snap::ATTR_PATH];
                     $parents = $this->_toolDownlineTree->getParentsFromPathReversed($path);
                     $foundParentId = null;
-                    foreach($parents as $newParentId) {
+                    foreach ($parents as $newParentId) {
                         $pvParent = isset($mapPv[$newParentId]) ? $mapPv[$newParentId] : 0;
-                        if(
+                        if (
                             ($pvParent >= $level) ||
                             (in_array($newParentId, $forcedIds))
                         ) {
@@ -947,11 +988,11 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
                     }
                     unset($parents);
                     /* add PV to this parent */
-                    if(
+                    if (
                         !is_null($foundParentId) &&
                         ($pv > 0)
                     ) {
-                        if(isset($compressedTree[$foundParentId])) {
+                        if (isset($compressedTree[$foundParentId])) {
                             $pvExist = $compressedTree[$foundParentId][0];
                             $pvNew = $pv + $pvExist;
                             $compressedTree[$foundParentId][0] = $pvNew;
@@ -961,10 +1002,10 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
                         $this->_logger->debug("$pv PV are transferred from customer #$custId to his qualified parent #$foundParentId .");
                     }
                     /* change parent for all siblings of the unqualified customer */
-                    if(isset($mapTeams[$custId])) {
+                    if (isset($mapTeams[$custId])) {
                         $team = $mapTeams[$custId];
-                        foreach($team as $memberId) {
-                            if(isset($compressedTree[$memberId])) {
+                        foreach ($team as $memberId) {
+                            if (isset($compressedTree[$memberId])) {
                                 /* if null set customer own id to indicate root node */
                                 $compressedTree[$memberId][1] = is_null($foundParentId) ? $memberId : $foundParentId;
                             }
@@ -984,17 +1025,18 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
         return $result;
     }
 
-    private function isQualifiedManager($custId, $pv, $tv, $scheme, $cfgParams) {
+    private function isQualifiedManager($custId, $pv, $tv, $scheme, $cfgParams)
+    {
         $result = false;
-        if(
+        if (
             ($pv > Cfg::DEF_ZERO) &&
             ($tv > Cfg::DEF_ZERO)
         ) {
             $params = $cfgParams[$scheme];
-            foreach($params as $param) {
+            foreach ($params as $param) {
                 $qpv = $param[CfgParam::ATTR_QUALIFY_PV];
                 $qtv = $param[CfgParam::ATTR_QUALIFY_TV];
-                if(
+                if (
                     ($pv >= $qpv) &&
                     ($tv >= $qtv)
                 ) {
@@ -1004,7 +1046,7 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
                 }
             }
         }
-        if(!$result) {
+        if (!$result) {
             /* check forced qualification */
             $rankId = $this->_toolScheme->getForcedQualificationRank($custId, $scheme);
             $result = ($rankId > 0);
@@ -1017,18 +1059,19 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
      *
      * @return array [$accId=>$pvWriteOff, ...]
      */
-    public function pvWriteOff($trans) {
-        $result = [ ];
-        foreach($trans as $one) {
+    public function pvWriteOff($trans)
+    {
+        $result = [];
+        foreach ($trans as $one) {
             $debitAccId = $one[Transaction::ATTR_DEBIT_ACC_ID];
             $creditAccId = $one[Transaction::ATTR_CREDIT_ACC_ID];
             $value = $one[Transaction::ATTR_VALUE];
-            if(isset($result[$debitAccId])) {
+            if (isset($result[$debitAccId])) {
                 $result[$debitAccId] -= $value;
             } else {
                 $result[$debitAccId] = -$value;
             }
-            if(isset($result[$creditAccId])) {
+            if (isset($result[$creditAccId])) {
                 $result[$creditAccId] += $value;
             } else {
                 $result[$creditAccId] = $value;
@@ -1037,19 +1080,20 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
         return $result;
     }
 
-    public function valueOv($compressPtc) {
-        $result = [ ];
+    public function valueOv($compressPtc)
+    {
+        $result = [];
         $mapById = $this->_mapById($compressPtc, PtcCompress::ATTR_CUSTOMER_ID);
         $mapDepth = $this->_mapByTreeDepthDesc($compressPtc, PtcCompress::ATTR_CUSTOMER_ID, PtcCompress::ATTR_DEPTH);
         $mapTeams = $this->_mapByTeams($compressPtc, PtcCompress::ATTR_CUSTOMER_ID, PtcCompress::ATTR_PARENT_ID);
-        foreach($mapDepth as $depth => $levelCustomers) {
+        foreach ($mapDepth as $depth => $levelCustomers) {
             $this->_logger->debug("Process level #$depth of the downline tree.");
-            foreach($levelCustomers as $custId) {
+            foreach ($levelCustomers as $custId) {
                 $ov = $mapById[$custId][PtcCompress::ATTR_PV];
-                if(isset($mapTeams[$custId])) {
+                if (isset($mapTeams[$custId])) {
                     /* add OV from front team members */
                     $team = $mapTeams[$custId];
-                    foreach($team as $memberId) {
+                    foreach ($team as $memberId) {
                         $ov += $result[$memberId];
                     }
                 }
@@ -1062,17 +1106,18 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
         return $result;
     }
 
-    public function valueTv($compressPtc) {
-        $result = [ ];
+    public function valueTv($compressPtc)
+    {
+        $result = [];
         $mapById = $this->_mapById($compressPtc, PtcCompress::ATTR_CUSTOMER_ID);
         $mapTeams = $this->_mapByTeams($compressPtc, PtcCompress::ATTR_CUSTOMER_ID, PtcCompress::ATTR_PARENT_ID);
-        foreach($compressPtc as $one) {
+        foreach ($compressPtc as $one) {
             $custId = $one[PtcCompress::ATTR_CUSTOMER_ID];
             $tv = $mapById[$custId][PtcCompress::ATTR_PV];
             $this->_logger->debug("Customer #$custId has own $tv PV.");
-            if(isset($mapTeams[$custId])) {
+            if (isset($mapTeams[$custId])) {
                 $frontTeam = $mapTeams[$custId];
-                foreach($frontTeam as $teamMemberId) {
+                foreach ($frontTeam as $teamMemberId) {
                     $memberPv = $mapById[$teamMemberId][PtcCompress::ATTR_PV];
                     $tv += $memberPv;
                     $this->_logger->debug("$memberPv PV is added to #$custId from member #$teamMemberId.");

@@ -11,33 +11,40 @@ use Praxigento\Accounting\Data\Entity\Type\Asset as TypeAsset;
 use Praxigento\Bonus\Base\Lib\Entity\Calculation;
 use Praxigento\Bonus\Base\Lib\Entity\Period;
 use Praxigento\Bonus\Base\Lib\Service\Period\Request\GetLatest as BonusBasePeriodGetLatestRequest;
-use Praxigento\Bonus\Base\Lib\Service\Type\Calc\Request\GetByCode as TypeCalcRequestGetByCode;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\Core\Lib\Service\Repo\Request\AddEntity as RepoAddEntityRequest;
 
-class Db extends \Praxigento\Core\Lib\Service\Base\Sub\Db {
+class Db extends \Praxigento\Core\Lib\Service\Base\Sub\Db
+{
     const DATA_CALC = 'calc';
     const DATA_PERIOD = 'period';
-    /**
-     * @var \Praxigento\Bonus\Base\Lib\Service\IPeriod
-     */
-    private $_callBonusBasePeriod;
-    /**
-     * @var \Praxigento\Bonus\Base\Lib\Service\ITypeCalc
-     */
-    private $_callTypeCalc;
+    /** @var \Praxigento\Bonus\Base\Lib\Service\IPeriod */
+    protected $_callBonusBasePeriod;
+    /** @var \Praxigento\BonusBase\Repo\Entity\Type\ICalc */
+    protected $_repoTypeCalc;
+    /** @var \Magento\Framework\App\ResourceConnection */
+    protected $_resource;
+    /** @var \Magento\Framework\DB\Adapter\AdapterInterface */
+    protected $_conn;
+    /** @var \Praxigento\Core\Repo\IBasic */
+    protected $_repoBasic;
+    /** @var  \Praxigento\Core\Lib\Tool\Date */
+    protected $_toolDate;
 
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
-        \Praxigento\Core\Lib\Context\IDbAdapter $dba,
-        \Praxigento\Core\Lib\IToolbox $toolbox,
-        \Praxigento\Core\Lib\Service\IRepo $callRepo,
+        \Magento\Framework\App\ResourceConnection $resource,
+        \Praxigento\Core\Lib\Tool\Date $toolDate,
+        \Praxigento\Core\Repo\IBasic $repoBasic,
         \Praxigento\Bonus\Base\Lib\Service\IPeriod $callBonusBasePeriod,
-        \Praxigento\Bonus\Base\Lib\Service\ITypeCalc $callTypeCalc
+        \Praxigento\BonusBase\Repo\Entity\Type\ICalc $repoTypeCalc
     ) {
-        parent::__construct($logger, $dba, $toolbox, $callRepo);
+        parent::__construct($logger);
+        $this->_resource = $resource;
+        $this->_conn = $resource->getConnection();
+        $this->_toolDate = $toolDate;
+        $this->_repoBasic = $repoBasic;
         $this->_callBonusBasePeriod = $callBonusBasePeriod;
-        $this->_callTypeCalc = $callTypeCalc;
+        $this->_repoTypeCalc = $repoTypeCalc;
     }
 
     /**
@@ -49,31 +56,28 @@ class Db extends \Praxigento\Core\Lib\Service\Base\Sub\Db {
      *
      * @return DataObject
      */
-    public function addNewPeriodAndCalc($calcTypeId, $dsBegin, $dsEnd) {
+    public function addNewPeriodAndCalc($calcTypeId, $dsBegin, $dsEnd)
+    {
         $result = new DataObject();
         /* add new period */
         $periodData = [
             Period::ATTR_CALC_TYPE_ID => $calcTypeId,
             Period::ATTR_DSTAMP_BEGIN => $dsBegin,
-            Period::ATTR_DSTAMP_END   => $dsEnd
+            Period::ATTR_DSTAMP_END => $dsEnd
         ];
-        $reqAdd = new RepoAddEntityRequest(Period::ENTITY_NAME, $periodData);
-        $respAdd = $this->_callRepo->addEntity($reqAdd);
-        $periodId = $respAdd->getIdInserted();
+        $periodId = $this->_repoBasic->addEntity(Period::ENTITY_NAME, $periodData);
         $this->_logger->info("New period #$periodId for calculation type #$calcTypeId is registered ($dsBegin-$dsEnd).");
         $periodData[Period::ATTR_ID] = $periodId;
         $result->setData(self::DATA_PERIOD, $periodData);
         /* add related calculation */
-        $dateStarted = $this->_toolbox->getDate()->getUtcNowForDb();
+        $dateStarted = $this->_toolDate->getUtcNowForDb();
         $calcData = [
-            Calculation::ATTR_PERIOD_ID    => $periodId,
+            Calculation::ATTR_PERIOD_ID => $periodId,
             Calculation::ATTR_DATE_STARTED => $dateStarted,
-            Calculation::ATTR_DATE_ENDED   => null,
-            Calculation::ATTR_STATE        => Cfg::CALC_STATE_STARTED
+            Calculation::ATTR_DATE_ENDED => null,
+            Calculation::ATTR_STATE => Cfg::CALC_STATE_STARTED
         ];
-        $reqAdd = new RepoAddEntityRequest(Calculation::ENTITY_NAME, $calcData);
-        $respAdd = $this->_callRepo->addEntity($reqAdd);
-        $calcId = $respAdd->getIdInserted();
+        $calcId = $this->_repoBasic->addEntity(Calculation::ENTITY_NAME, $calcData);
         $this->_logger->info("New calculation #$calcId for period #$periodId is registered.");
         $calcData[Calculation::ATTR_ID] = $calcId;
         $result->setData(self::DATA_CALC, $calcData);
@@ -85,40 +89,40 @@ class Db extends \Praxigento\Core\Lib\Service\Base\Sub\Db {
      *
      * @return int|null
      */
-    public function getCalcIdByCode($calcCode) {
-        $reqTypeCalc = new TypeCalcRequestGetByCode($calcCode);
-        $respTypeCalc = $this->_callTypeCalc->getByCode($reqTypeCalc);
-        $result = $respTypeCalc->getId();
+    public function getCalcIdByCode($calcCode)
+    {
+        $result = $this->_repoTypeCalc->getIdByCode($calcCode);
         return $result;
     }
 
     /**
      * Return timestamp for the first transaction related to PV.
      */
-    public function getFirstDateForPvTransactions() {
+    public function getFirstDateForPvTransactions()
+    {
         $asAcc = 'paa';
         $asTrans = 'pat';
         $asType = 'pata';
-        $tblAcc = $this->_getTableName(Account::ENTITY_NAME);
-        $tblTrans = $this->_getTableName(Transaction::ENTITY_NAME);
-        $tblType = $this->_getTableName(TypeAsset::ENTITY_NAME);
+        $tblAcc = $this->_conn->getTableName(Account::ENTITY_NAME);
+        $tblTrans = $this->_conn->getTableName(Transaction::ENTITY_NAME);
+        $tblType = $this->_conn->getTableName(TypeAsset::ENTITY_NAME);
         // SELECT FROM prxgt_acc_transaction pat
-        $query = $this->_getConn()->select();
-        $query->from([ $asTrans => $tblTrans ], [ Transaction::ATTR_DATE_APPLIED ]);
+        $query = $this->_conn->select();
+        $query->from([$asTrans => $tblTrans], [Transaction::ATTR_DATE_APPLIED]);
         // LEFT JOIN prxgt_acc_account paa ON paa.id = pat.debit_acc_id
         $on = $asAcc . '.' . Account::ATTR_ID . '=' . $asTrans . '.' . Transaction::ATTR_DEBIT_ACC_ID;
-        $query->join([ $asAcc => $tblAcc ], $on, null);
+        $query->join([$asAcc => $tblAcc], $on, null);
         // LEFT JOIN prxgt_acc_type_asset pata ON paa.asset_type_id = pata.id
         $on = $asAcc . '.' . Account::ATTR_ASSET_TYPE_ID . '=' . $asType . '.' . TypeAsset::ATTR_ID;
-        $query->join([ $asType => $tblType ], $on, null);
+        $query->join([$asType => $tblType], $on, null);
         // WHERE
-        $where = $asType . '.' . TypeAsset::ATTR_CODE . '=' . $this->_getConn()->quote(Cfg::CODE_TYPE_ASSET_PV);
+        $where = $asType . '.' . TypeAsset::ATTR_CODE . '=' . $this->_conn->quote(Cfg::CODE_TYPE_ASSET_PV);
         $query->where($where);
         // ORDER & LIMIT
         $query->order($asTrans . '.' . Transaction::ATTR_DATE_APPLIED . ' ASC');
         $query->limit(1);
         // $sql = (string)$query;
-        $result = $this->_getConn()->fetchOne($query);
+        $result = $this->_conn->fetchOne($query);
         return $result;
     }
 
@@ -127,7 +131,8 @@ class Db extends \Praxigento\Core\Lib\Service\Base\Sub\Db {
      *
      * @return \Praxigento\Bonus\Base\Lib\Service\Period\Response\GetLatest
      */
-    public function getLastPeriodData($calcTypeId) {
+    public function getLastPeriodData($calcTypeId)
+    {
         $reqLastPeriod = new BonusBasePeriodGetLatestRequest();
         $reqLastPeriod->setCalcTypeId($calcTypeId);
         $reqLastPeriod->setShouldGetLatestCalc(true);

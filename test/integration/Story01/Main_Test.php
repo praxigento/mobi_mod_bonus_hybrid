@@ -8,11 +8,9 @@ use Praxigento\Accounting\Data\Entity\Account;
 use Praxigento\Accounting\Data\Entity\Transaction;
 use Praxigento\Accounting\Lib\Service\Account\Request\GetRepresentative as AccGetRepresentativeRequest;
 use Praxigento\Accounting\Lib\Service\Operation\Request\Add as AccOperationAddRequest;
-use Praxigento\Accounting\Lib\Service\Type\Asset\Request\GetByCode as AccTypeAssetGetByCodeRequest;
 use Praxigento\Bonus\Base\Lib\Entity\Calculation;
 use Praxigento\Bonus\Base\Lib\Entity\Level;
 use Praxigento\Bonus\Base\Lib\Entity\Period;
-use Praxigento\Bonus\Base\Lib\Service\Type\Calc\Request\GetByCode as BonusTypeCalcGetByCodeRequest;
 use Praxigento\Bonus\Hybrid\Lib\Defaults as Def;
 use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\BonusCourtesy as BonusCalcCourtesyBonusRequest;
 use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\BonusPersonal as BonusCalcPersonalBonusRequest;
@@ -23,9 +21,6 @@ use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\ValueOv as BonusCalcOvCompr
 use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\ValueTv as BonusCalcTvCompressionRequest;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\Core\Lib\Context;
-use Praxigento\Core\Lib\Service\Repo\Request\AddEntity as RepoAddEntityRequest;
-use Praxigento\Core\Lib\Service\Repo\Request\GetEntities as RepoGetEntitiesRequest;
-use Praxigento\Core\Lib\Service\Repo\Request\GetEntityByPk as RepoGetByPkRequest;
 use Praxigento\Core\Lib\Test\BaseIntegrationTest;
 use Praxigento\Pv\Lib\Service\Transfer\Request\CreditToCustomer as PvTransferCreditToCustomerRequest;
 
@@ -45,30 +40,33 @@ class Main_IntegrationTest extends BaseIntegrationTest
     private $_callAccAccount;
     /** @var \Praxigento\Accounting\Lib\Service\IOperation */
     private $_callAccOperation;
-    /** @var \Praxigento\Accounting\Lib\Service\ITypeAsset */
-    private $_callAccTypeAsset;
-    /** @var \Praxigento\Bonus\Base\Lib\Service\ITypeCalc */
-    private $_callBonusTypeCalc;
     /** @var \Praxigento\Bonus\Hybrid\Lib\Service\ICalc */
     private $_callCalc;
     /** @var \Praxigento\Bonus\Hybrid\Lib\Service\IPeriod */
     private $_callPeriod;
     /** @var  \Praxigento\Pv\Lib\Service\ITransfer */
     private $_callPvTransfer;
-    /** @var \Praxigento\Core\Lib\Service\IRepo */
-    private $_callRepo;
+    /** @var \Praxigento\Core\Repo\IBasic */
+    private $_repoBasic;
+    /** @var  \Praxigento\Accounting\Repo\Entity\Type\IAsset */
+    private $_repoTypeAsset;
+    /** @var  \Praxigento\BonusBase\Repo\Entity\Type\ICalc */
+    private $_repoTypeCalc;
+    /** @var \Praxigento\Core\Lib\Tool\Period */
+    private $_toolPeriod;
 
     public function __construct()
     {
         parent::__construct();
+        $this->_toolPeriod = $this->_manObj->get(\Praxigento\Core\Lib\Tool\Period::class);
         $this->_callAccAccount = $this->_manObj->get(\Praxigento\Accounting\Lib\Service\IAccount::class);
         $this->_callAccOperation = $this->_manObj->get(\Praxigento\Accounting\Lib\Service\IOperation::class);
-        $this->_callAccTypeAsset = $this->_manObj->get(\Praxigento\Accounting\Lib\Service\ITypeAsset::class);
-        $this->_callBonusTypeCalc = $this->_manObj->get(\Praxigento\Bonus\Base\Lib\Service\ITypeCalc::class);
         $this->_callCalc = $this->_manObj->get(\Praxigento\Bonus\Hybrid\Lib\Service\ICalc::class);
         $this->_callPeriod = $this->_manObj->get(\Praxigento\Bonus\Hybrid\Lib\Service\IPeriod::class);
         $this->_callPvTransfer = $this->_manObj->get(\Praxigento\Pv\Lib\Service\ITransfer::class);
-        $this->_callRepo = $this->_manObj->get(\Praxigento\Core\Lib\Service\IRepo::class);
+        $this->_repoTypeAsset = $this->_manObj->get(\Praxigento\Accounting\Repo\Entity\Type\IAsset::class);
+        $this->_repoTypeCalc = $this->_manObj->get(\Praxigento\BonusBase\Repo\Entity\Type\ICalc::class);
+        $this->_repoBasic = $this->_manObj->get(\Praxigento\Core\Repo\IBasic::class);
     }
 
     /**
@@ -111,15 +109,13 @@ class Main_IntegrationTest extends BaseIntegrationTest
         $calcId = $response->getCalcId();
         /* validate period */
         $this->assertNotNull($periodId);
-        $reqGetEntity = new RepoGetByPkRequest(Period::ENTITY_NAME, [Period::ATTR_ID => $periodId]);
-        $respGetEntity = $this->_callRepo->getEntityByPk($reqGetEntity);
-        $this->assertEquals($expectedBegin, $respGetEntity->getData(Period::ATTR_DSTAMP_BEGIN));
-        $this->assertEquals($expectedEnd, $respGetEntity->getData(Period::ATTR_DSTAMP_END));
+        $data = $this->_repoBasic->getEntityByPk(Period::ENTITY_NAME, [Period::ATTR_ID => $periodId]);
+        $this->assertEquals($expectedBegin, $data[Period::ATTR_DSTAMP_BEGIN]);
+        $this->assertEquals($expectedEnd, $data[Period::ATTR_DSTAMP_END]);
         /* validate calculation */
         $this->assertNotNull($calcId);
-        $reqGetEntity = new RepoGetByPkRequest(Calculation::ENTITY_NAME, [Calculation::ATTR_ID => $calcId]);
-        $respGetEntity = $this->_callRepo->getEntityByPk($reqGetEntity);
-        $this->assertEquals(Cfg::CALC_STATE_COMPLETE, $respGetEntity->getData(Calculation::ATTR_STATE));
+        $data = $this->_repoBasic->getEntityByPk(Calculation::ENTITY_NAME, [Calculation::ATTR_ID => $calcId]);
+        $this->assertEquals(Cfg::CALC_STATE_COMPLETE, $data[Calculation::ATTR_STATE]);
         /* validate WALLET_ACTIVE balances */
         $this->_validateWalletsAfterCourtesy();
     }
@@ -127,7 +123,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
     private function _calcBonusPersonal($nextPeriodBegin, $expectedBegin, $expectedEnd)
     {
         /* perform operation by the first date of the next period */
-        $datePerformed = $this->_toolbox->getPeriod()->getTimestampTo($nextPeriodBegin);
+        $datePerformed = $this->_toolPeriod->getTimestampTo($nextPeriodBegin);
         $request = new BonusCalcPersonalBonusRequest();
         $request->setDatePerformed($datePerformed);
         $response = $this->_callCalc->bonusPersonal($request);
@@ -136,15 +132,13 @@ class Main_IntegrationTest extends BaseIntegrationTest
         $calcId = $response->getCalcId();
         /* validate period */
         $this->assertNotNull($periodId);
-        $reqGetEntity = new RepoGetByPkRequest(Period::ENTITY_NAME, [Period::ATTR_ID => $periodId]);
-        $respGetEntity = $this->_callRepo->getEntityByPk($reqGetEntity);
-        $this->assertEquals($expectedBegin, $respGetEntity->getData(Period::ATTR_DSTAMP_BEGIN));
-        $this->assertEquals($expectedEnd, $respGetEntity->getData(Period::ATTR_DSTAMP_END));
+        $data = $this->_repoBasic->getEntityByPk(Period::ENTITY_NAME, [Period::ATTR_ID => $periodId]);
+        $this->assertEquals($expectedBegin, $data[Period::ATTR_DSTAMP_BEGIN]);
+        $this->assertEquals($expectedEnd, $data[Period::ATTR_DSTAMP_END]);
         /* validate calculation */
         $this->assertNotNull($calcId);
-        $reqGetEntity = new RepoGetByPkRequest(Calculation::ENTITY_NAME, [Calculation::ATTR_ID => $calcId]);
-        $respGetEntity = $this->_callRepo->getEntityByPk($reqGetEntity);
-        $this->assertEquals(Cfg::CALC_STATE_COMPLETE, $respGetEntity->getData(Calculation::ATTR_STATE));
+        $data = $this->_repoBasic->getEntityByPk(Calculation::ENTITY_NAME, [Calculation::ATTR_ID => $calcId]);
+        $this->assertEquals(Cfg::CALC_STATE_COMPLETE, $data[Calculation::ATTR_STATE]);
         /* validate WALLET_ACTIVE balances */
         $this->_validateWalletsAfterPersonal();
     }
@@ -161,15 +155,13 @@ class Main_IntegrationTest extends BaseIntegrationTest
         $calcId = $response->getCalcId();
         /* validate period */
         $this->assertNotNull($periodId);
-        $reqGetEntity = new RepoGetByPkRequest(Period::ENTITY_NAME, [Period::ATTR_ID => $periodId]);
-        $respGetEntity = $this->_callRepo->getEntityByPk($reqGetEntity);
-        $this->assertEquals($expectedBegin, $respGetEntity->getData(Period::ATTR_DSTAMP_BEGIN));
-        $this->assertEquals($expectedEnd, $respGetEntity->getData(Period::ATTR_DSTAMP_END));
+        $data = $this->_repoBasic->getEntityByPk(Period::ENTITY_NAME, [Period::ATTR_ID => $periodId]);
+        $this->assertEquals($expectedBegin, $data[Period::ATTR_DSTAMP_BEGIN]);
+        $this->assertEquals($expectedEnd, $data[Period::ATTR_DSTAMP_END]);
         /* validate calculation */
         $this->assertNotNull($calcId);
-        $reqGetEntity = new RepoGetByPkRequest(Calculation::ENTITY_NAME, [Calculation::ATTR_ID => $calcId]);
-        $respGetEntity = $this->_callRepo->getEntityByPk($reqGetEntity);
-        $this->assertEquals(Cfg::CALC_STATE_COMPLETE, $respGetEntity->getData(Calculation::ATTR_STATE));
+        $data = $this->_repoBasic->getEntityByPk(Calculation::ENTITY_NAME, [Calculation::ATTR_ID => $calcId]);
+        $this->assertEquals(Cfg::CALC_STATE_COMPLETE, $data[Calculation::ATTR_STATE]);
         /* validate WALLET_ACTIVE balances */
         $this->_validateWalletsAfterTeam();
     }
@@ -190,15 +182,13 @@ class Main_IntegrationTest extends BaseIntegrationTest
         $calcId = $response->getCalcId();
         /* validate period */
         $this->assertNotNull($periodId);
-        $reqGetEntity = new RepoGetByPkRequest(Period::ENTITY_NAME, [Period::ATTR_ID => $periodId]);
-        $respGetEntity = $this->_callRepo->getEntityByPk($reqGetEntity);
-        $this->assertEquals($expectedBegin, $respGetEntity->getData(Period::ATTR_DSTAMP_BEGIN));
-        $this->assertEquals($expectedEnd, $respGetEntity->getData(Period::ATTR_DSTAMP_END));
+        $data = $this->_repoBasic->getEntityByPk(Period::ENTITY_NAME, [Period::ATTR_ID => $periodId]);
+        $this->assertEquals($expectedBegin, $data[Period::ATTR_DSTAMP_BEGIN]);
+        $this->assertEquals($expectedEnd, $data[Period::ATTR_DSTAMP_END]);
         /* validate calculation */
         $this->assertNotNull($calcId);
-        $reqGetEntity = new RepoGetByPkRequest(Calculation::ENTITY_NAME, [Calculation::ATTR_ID => $calcId]);
-        $respGetEntity = $this->_callRepo->getEntityByPk($reqGetEntity);
-        $this->assertEquals(Cfg::CALC_STATE_COMPLETE, $respGetEntity->getData(Calculation::ATTR_STATE));
+        $data = $this->_repoBasic->getEntityByPk(Calculation::ENTITY_NAME, [Calculation::ATTR_ID => $calcId]);
+        $this->assertEquals(Cfg::CALC_STATE_COMPLETE, $data[Calculation::ATTR_STATE]);
     }
 
     private function _calcPersonalBonusBefore()
@@ -237,15 +227,13 @@ class Main_IntegrationTest extends BaseIntegrationTest
         $calcId = $response->getCalcId();
         /* validate period */
         $this->assertNotNull($periodId);
-        $reqGetEntity = new RepoGetByPkRequest(Period::ENTITY_NAME, [Period::ATTR_ID => $periodId]);
-        $respGetEntity = $this->_callRepo->getEntityByPk($reqGetEntity);
-        $this->assertEquals($expectedBegin, $respGetEntity->getData(Period::ATTR_DSTAMP_BEGIN));
-        $this->assertEquals($expectedEnd, $respGetEntity->getData(Period::ATTR_DSTAMP_END));
+        $data = $this->_repoBasic->getEntityByPk(Period::ENTITY_NAME, [Period::ATTR_ID => $periodId]);
+        $this->assertEquals($expectedBegin, $data[Period::ATTR_DSTAMP_BEGIN]);
+        $this->assertEquals($expectedEnd, $data[Period::ATTR_DSTAMP_END]);
         /* validate calculation */
         $this->assertNotNull($calcId);
-        $reqGetEntity = new RepoGetByPkRequest(Calculation::ENTITY_NAME, [Calculation::ATTR_ID => $calcId]);
-        $respGetEntity = $this->_callRepo->getEntityByPk($reqGetEntity);
-        $this->assertEquals(Cfg::CALC_STATE_COMPLETE, $respGetEntity->getData(Calculation::ATTR_STATE));
+        $data = $this->_repoBasic->getEntityByPk(Calculation::ENTITY_NAME, [Calculation::ATTR_ID => $calcId]);
+        $this->assertEquals(Cfg::CALC_STATE_COMPLETE, $data[Calculation::ATTR_STATE]);
     }
 
     private function _calcValueOv($nextPeriodBegin, $expectedBegin, $expectedEnd)
@@ -260,15 +248,13 @@ class Main_IntegrationTest extends BaseIntegrationTest
         $calcId = $response->getCalcId();
         /* validate period */
         $this->assertNotNull($periodId);
-        $reqGetEntity = new RepoGetByPkRequest(Period::ENTITY_NAME, [Period::ATTR_ID => $periodId]);
-        $respGetEntity = $this->_callRepo->getEntityByPk($reqGetEntity);
-        $this->assertEquals($expectedBegin, $respGetEntity->getData(Period::ATTR_DSTAMP_BEGIN));
-        $this->assertEquals($expectedEnd, $respGetEntity->getData(Period::ATTR_DSTAMP_END));
+        $data = $this->_repoBasic->getEntityByPk(Period::ENTITY_NAME, [Period::ATTR_ID => $periodId]);
+        $this->assertEquals($expectedBegin, $data[Period::ATTR_DSTAMP_BEGIN]);
+        $this->assertEquals($expectedEnd, $data[Period::ATTR_DSTAMP_END]);
         /* validate calculation */
         $this->assertNotNull($calcId);
-        $reqGetEntity = new RepoGetByPkRequest(Calculation::ENTITY_NAME, [Calculation::ATTR_ID => $calcId]);
-        $respGetEntity = $this->_callRepo->getEntityByPk($reqGetEntity);
-        $this->assertEquals(Cfg::CALC_STATE_COMPLETE, $respGetEntity->getData(Calculation::ATTR_STATE));
+        $data = $this->_repoBasic->getEntityByPk(Calculation::ENTITY_NAME, [Calculation::ATTR_ID => $calcId]);
+        $this->assertEquals(Cfg::CALC_STATE_COMPLETE, $data[Calculation::ATTR_STATE]);
     }
 
     private function _calcValueTv($nextPeriodBegin, $expectedBegin, $expectedEnd)
@@ -283,15 +269,13 @@ class Main_IntegrationTest extends BaseIntegrationTest
         $calcId = $response->getCalcId();
         /* validate period */
         $this->assertNotNull($periodId);
-        $reqGetEntity = new RepoGetByPkRequest(Period::ENTITY_NAME, [Period::ATTR_ID => $periodId]);
-        $respGetEntity = $this->_callRepo->getEntityByPk($reqGetEntity);
-        $this->assertEquals($expectedBegin, $respGetEntity->getData(Period::ATTR_DSTAMP_BEGIN));
-        $this->assertEquals($expectedEnd, $respGetEntity->getData(Period::ATTR_DSTAMP_END));
+        $data = $this->_repoBasic->getEntityByPk(Period::ENTITY_NAME, [Period::ATTR_ID => $periodId]);
+        $this->assertEquals($expectedBegin, $data[Period::ATTR_DSTAMP_BEGIN]);
+        $this->assertEquals($expectedEnd, $data[Period::ATTR_DSTAMP_END]);
         /* validate calculation */
         $this->assertNotNull($calcId);
-        $reqGetEntity = new RepoGetByPkRequest(Calculation::ENTITY_NAME, [Calculation::ATTR_ID => $calcId]);
-        $respGetEntity = $this->_callRepo->getEntityByPk($reqGetEntity);
-        $this->assertEquals(Cfg::CALC_STATE_COMPLETE, $respGetEntity->getData(Calculation::ATTR_STATE));
+        $data = $this->_repoBasic->getEntityByPk(Calculation::ENTITY_NAME, [Calculation::ATTR_ID => $calcId]);
+        $this->assertEquals(Cfg::CALC_STATE_COMPLETE, $data[Calculation::ATTR_STATE]);
     }
 
     /**
@@ -300,8 +284,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
     private function _resetWalletBalances()
     {
         /* get WALLET_ACTIVE asset ID */
-        $respAssetTypeId = $this->_callAccTypeAsset->getByCode(new AccTypeAssetGetByCodeRequest(Cfg::CODE_TYPE_ASSET_WALLET_ACTIVE));
-        $assetId = $respAssetTypeId->getId();
+        $assetId = $this->_repoTypeAsset->getIdByCode(Cfg::CODE_TYPE_ASSET_WALLET_ACTIVE);
         /* get WALLET_ACTIVE representative account */
         $reqGetRepres = new AccGetRepresentativeRequest();
         $reqGetRepres->setAssetTypeCode(Cfg::CODE_TYPE_ASSET_WALLET_ACTIVE);
@@ -310,11 +293,9 @@ class Main_IntegrationTest extends BaseIntegrationTest
         /* get all customer balances for WALLET_ACTIVE and create transactions */
         $whereByAsset = Account::ATTR_ASSET_TYPE_ID . '=' . $assetId;
         $whereByRepres = Account::ATTR_ID . '<>' . $accountIdRepres;
-        $reqGetBalances = new RepoGetEntitiesRequest(Account::ENTITY_NAME, "$whereByAsset AND $whereByRepres");
-        $respGetEntities = $this->_callRepo->getEntities($reqGetBalances);
-        $accounts = $respGetEntities->getData();
+        $accounts = $this->_repoBasic->getEntities(Account::ENTITY_NAME, null, "$whereByAsset AND $whereByRepres");
         $trans = [];
-        $datePerformed = $this->_toolbox->getPeriod()->getTimestampTo(self::DATE_FEB_PERIOD_BEGIN);
+        $datePerformed = $this->_toolPeriod->getTimestampTo(self::DATE_FEB_PERIOD_BEGIN);
         $dateApplied = $datePerformed;
         foreach ($accounts as $account) {
             $balance = $account[Account::ATTR_BALANCE];
@@ -339,34 +320,28 @@ class Main_IntegrationTest extends BaseIntegrationTest
 
     private function _setBonusLevelsPersonal()
     {
-        $resp = $this->_callBonusTypeCalc->getByCode(new BonusTypeCalcGetByCodeRequest(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_DEF));
-        $calTypeId = $resp->getId();
+        $calTypeId = $this->_repoTypeCalc->getIdByCode(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_DEF);
         $data = [
             [Level::ATTR_CALC_TYPE_ID => $calTypeId, Level::ATTR_LEVEL => 0, Level::ATTR_PERCENT => 0],
             [Level::ATTR_CALC_TYPE_ID => $calTypeId, Level::ATTR_LEVEL => 50, Level::ATTR_PERCENT => 0.05],
             [Level::ATTR_CALC_TYPE_ID => $calTypeId, Level::ATTR_LEVEL => 100, Level::ATTR_PERCENT => 0.1]
         ];
-        $req = new RepoAddEntityRequest(Level::ENTITY_NAME);
         foreach ($data as $item) {
-            $req->setBind($item);
-            $this->_callRepo->addEntity($req);
+            $this->_repoBasic->addEntity(Level::ENTITY_NAME, $item);
         }
         $this->_logger->debug("Personal Bonus levels are set.");
     }
 
     private function _setBonusLevelsTeam()
     {
-        $resp = $this->_callBonusTypeCalc->getByCode(new BonusTypeCalcGetByCodeRequest(Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF));
-        $calTypeId = $resp->getId();
+        $calTypeId = $this->_repoTypeCalc->getIdByCode(Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF);
         $data = [
             [Level::ATTR_CALC_TYPE_ID => $calTypeId, Level::ATTR_LEVEL => 0, Level::ATTR_PERCENT => 0],
             [Level::ATTR_CALC_TYPE_ID => $calTypeId, Level::ATTR_LEVEL => 500, Level::ATTR_PERCENT => 0.10],
             [Level::ATTR_CALC_TYPE_ID => $calTypeId, Level::ATTR_LEVEL => 1000, Level::ATTR_PERCENT => 0.15]
         ];
-        $req = new RepoAddEntityRequest(Level::ENTITY_NAME);
         foreach ($data as $item) {
-            $req->setBind($item);
-            $this->_callRepo->addEntity($req);
+            $this->_repoBasic->addEntity(Level::ENTITY_NAME, $item);
         }
         $this->_logger->debug("Team Bonus levels are set.");
     }
@@ -374,16 +349,13 @@ class Main_IntegrationTest extends BaseIntegrationTest
     private function _validatePvAccsEmpty()
     {
         /* get Asset Type ID foe WALLET_ACTIVE */
-        $respAssetTypeId = $this->_callAccTypeAsset->getByCode(new AccTypeAssetGetByCodeRequest(Cfg::CODE_TYPE_ASSET_PV));
-        $assetTypeId = $respAssetTypeId->getId();
+        $assetTypeId = $this->_repoTypeAsset->getIdByCode(Cfg::CODE_TYPE_ASSET_PV);
         /* get representative account for PV */
         $reqRepresAcc = new AccGetRepresentativeRequest();
         $reqRepresAcc->setAssetTypeId($assetTypeId);
         /* get data for PV accounts */
         $where = Account::ATTR_ASSET_TYPE_ID . '=' . $assetTypeId;
-        $reqGetBalances = new RepoGetEntitiesRequest(Account::ENTITY_NAME, $where);
-        $respGetBalances = $this->_callRepo->getEntities($reqGetBalances);
-        $balanceData = $respGetBalances->getData();
+        $balanceData = $this->_repoBasic->getEntities(Account::ENTITY_NAME, null, $where);
         /* convert balances to form that is relative to customer index (not id) */
         foreach ($balanceData as $one) {
             $balance = $one[Account::ATTR_BALANCE];
@@ -410,8 +382,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
             13 => 0
         ];
         /* get Asset Type ID foe WALLET_ACTIVE */
-        $respAssetTypeId = $this->_callAccTypeAsset->getByCode(new AccTypeAssetGetByCodeRequest(Cfg::CODE_TYPE_ASSET_WALLET_ACTIVE));
-        $assetTypeId = $respAssetTypeId->getId();
+        $assetTypeId = $this->_repoTypeAsset->getIdByCode(Cfg::CODE_TYPE_ASSET_WALLET_ACTIVE);
         /* get representative account for WALLET_ACTIVE */
         $reqRepresAcc = new AccGetRepresentativeRequest();
         $reqRepresAcc->setAssetTypeId($assetTypeId);
@@ -419,9 +390,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
         $represAccId = $respRepresAcc->getData(Account::ATTR_ID);;
         /* get data for WALLET_ACTIVE accounts */
         $where = Account::ATTR_ASSET_TYPE_ID . '=' . $assetTypeId;
-        $reqGetBalances = new RepoGetEntitiesRequest(Account::ENTITY_NAME, $where);
-        $respGetBalances = $this->_callRepo->getEntities($reqGetBalances);
-        $balanceData = $respGetBalances->getData();
+        $balanceData = $this->_repoBasic->getEntities(Account::ENTITY_NAME, null, $where);
         /* convert balances to form that is relative to customer index (not id) */
         foreach ($balanceData as $one) {
             $accId = $one[Account::ATTR_ID];
@@ -457,8 +426,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
             13 => 0
         ];
         /* get Asset Type ID for WALLET_ACTIVE */
-        $respAssetTypeId = $this->_callAccTypeAsset->getByCode(new AccTypeAssetGetByCodeRequest(Cfg::CODE_TYPE_ASSET_WALLET_ACTIVE));
-        $assetTypeId = $respAssetTypeId->getId();
+        $assetTypeId = $this->_repoTypeAsset->getIdByCode(Cfg::CODE_TYPE_ASSET_WALLET_ACTIVE);
         /* get representative account for WALLET_ACTIVE */
         $reqRepresAcc = new AccGetRepresentativeRequest();
         $reqRepresAcc->setAssetTypeId($assetTypeId);
@@ -466,9 +434,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
         $represAccId = $respRepresAcc->getData(Account::ATTR_ID);;
         /* get data for WALLET_ACTIVE accounts */
         $where = Account::ATTR_ASSET_TYPE_ID . '=' . $assetTypeId;
-        $reqGetBalances = new RepoGetEntitiesRequest(Account::ENTITY_NAME, $where);
-        $respGetBalances = $this->_callRepo->getEntities($reqGetBalances);
-        $balanceData = $respGetBalances->getData();
+        $balanceData = $this->_repoBasic->getEntities(Account::ENTITY_NAME, null, $where);
         /* convert balances to form that is relative to customer index (not id) */
         foreach ($balanceData as $one) {
             $accId = $one[Account::ATTR_ID];
@@ -504,8 +470,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
             13 => 0
         ];
         /* get Asset Type ID foe WALLET_ACTIVE */
-        $respAssetTypeId = $this->_callAccTypeAsset->getByCode(new AccTypeAssetGetByCodeRequest(Cfg::CODE_TYPE_ASSET_WALLET_ACTIVE));
-        $assetTypeId = $respAssetTypeId->getId();
+        $assetTypeId = $this->_repoTypeAsset->getIdByCode(Cfg::CODE_TYPE_ASSET_WALLET_ACTIVE);
         /* get representative account for WALLET_ACTIVE */
         $reqRepresAcc = new AccGetRepresentativeRequest();
         $reqRepresAcc->setAssetTypeId($assetTypeId);
@@ -513,9 +478,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
         $represAccId = $respRepresAcc->getData(Account::ATTR_ID);
         /* get data for WALLET_ACTIVE accounts */
         $where = Account::ATTR_ASSET_TYPE_ID . '=' . $assetTypeId;
-        $reqGetBalances = new RepoGetEntitiesRequest(Account::ENTITY_NAME, $where);
-        $respGetBalances = $this->_callRepo->getEntities($reqGetBalances);
-        $balanceData = $respGetBalances->getData();
+        $balanceData = $this->_repoBasic->getEntities(Account::ENTITY_NAME, null, $where);
         /* convert balances to form that is relative to customer index (not id) */
         foreach ($balanceData as $one) {
             $accId = $one[Account::ATTR_ID];
