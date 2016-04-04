@@ -18,7 +18,7 @@ use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\CompressOi as CalcCompressO
 use Praxigento\Core\Lib\Context;
 use Praxigento\Core\Lib\Service\Repo\Request\AddEntity as RepoAddEntityRequest;
 use Praxigento\Core\Lib\Test\BaseIntegrationTest;
-use Praxigento\Downline\Lib\Entity\Snap;
+use Praxigento\Downline\Data\Entity\Snap;
 use Praxigento\Downline\Lib\Service\Snap\Request\ExpandMinimal as SnapExtendMinimalRequest;
 
 include_once(__DIR__ . '/../phpunit_bootstrap.php');

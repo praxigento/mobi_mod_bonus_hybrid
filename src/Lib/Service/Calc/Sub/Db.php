@@ -27,7 +27,7 @@ use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Ptc as PtcCompress;
 use Praxigento\Core\Lib\Service\Repo\Request\AddEntity as RepoAddEntityRequest;
 use Praxigento\Core\Lib\Service\Repo\Request\GetEntities as RepoGetEntitiesRequest;
 use Praxigento\Core\Lib\Service\Repo\Request\UpdateEntity as RepoUpdateEntityRequest;
-use Praxigento\Downline\Lib\Entity\Customer;
+use Praxigento\Downline\Data\Entity\Customer;
 use Praxigento\Downline\Lib\Service\Snap\Request\GetStateOnDate as DownlineSnapGetStateOnDateRequest;
 use Praxigento\Pv\Lib\Entity\Sale as PvSale;
 

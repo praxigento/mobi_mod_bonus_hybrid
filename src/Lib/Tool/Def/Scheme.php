@@ -9,7 +9,7 @@ use Praxigento\Bonus\Base\Lib\Entity\Rank;
 use Praxigento\Bonus\Hybrid\Lib\Defaults as Def;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Param as CfgParam;
 use Praxigento\Core\Lib\Service\Repo\Request\GetEntities as RepoGetEntitiesRequest;
-use Praxigento\Downline\Lib\Entity\Customer;
+use Praxigento\Downline\Data\Entity\Customer;
 
 class Scheme implements \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme {
     const A_RANK_ID = 'RankId';

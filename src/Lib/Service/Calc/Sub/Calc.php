@@ -12,8 +12,8 @@ use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Override as CfgOverride;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Param as CfgParam;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Oi as OiCompress;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Ptc as PtcCompress;
-use Praxigento\Downline\Lib\Entity\Customer;
-use Praxigento\Downline\Lib\Entity\Snap;
+use Praxigento\Downline\Data\Entity\Customer;
+use Praxigento\Downline\Data\Entity\Snap;
 use Praxigento\Downline\Lib\Service\Snap\Request\ExpandMinimal as DownlineSnapExtendMinimalRequest;
 
 class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base {

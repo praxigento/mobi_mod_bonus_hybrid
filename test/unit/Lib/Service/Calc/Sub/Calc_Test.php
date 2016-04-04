@@ -13,8 +13,8 @@ use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Param as CfgParam;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Oi as OiCompress;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Ptc as PtcCompress;
 use Praxigento\Core\Lib\Tool\Format as ToolFormat;
-use Praxigento\Downline\Lib\Entity\Customer;
-use Praxigento\Downline\Lib\Entity\Snap;
+use Praxigento\Downline\Data\Entity\Customer;
+use Praxigento\Downline\Data\Entity\Snap;
 use Praxigento\Downline\Lib\Service\Snap\Response\ExpandMinimal as DownlineSnapExtendMinimalResponse;
 use Praxigento\Downline\Lib\Tool\Def\Tree as ToolDownlineTree;
 
