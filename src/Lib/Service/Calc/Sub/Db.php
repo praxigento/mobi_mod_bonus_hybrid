@@ -29,7 +29,7 @@ use Praxigento\Core\Lib\Service\Repo\Request\GetEntities as RepoGetEntitiesReque
 use Praxigento\Core\Lib\Service\Repo\Request\UpdateEntity as RepoUpdateEntityRequest;
 use Praxigento\Downline\Data\Entity\Customer;
 use Praxigento\Downline\Lib\Service\Snap\Request\GetStateOnDate as DownlineSnapGetStateOnDateRequest;
-use Praxigento\Pv\Lib\Entity\Sale as PvSale;
+use Praxigento\Pv\Data\Entity\Sale as PvSale;
 
 class Db extends \Praxigento\Core\Lib\Service\Base\Sub\Db {
 

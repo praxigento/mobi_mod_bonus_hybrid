@@ -23,7 +23,7 @@ use Praxigento\Core\Lib\Service\Repo\Response\AddEntity as RepoAddEntityResponse
 use Praxigento\Core\Lib\Service\Repo\Response\GetEntities as RepoGetEntitiesResponse;
 use Praxigento\Core\Lib\Service\Repo\Response\UpdateEntity as RepoUpdateEntityResponse;
 use Praxigento\Downline\Lib\Service\Snap\Response\GetStateOnDate as DownlineSnapGetStateOnDateResponse;
-use Praxigento\Pv\Lib\Entity\Sale as PvSale;
+use Praxigento\Pv\Data\Entity\Sale as PvSale;
 
 include_once(__DIR__ . '/../../../../phpunit_bootstrap.php');
 

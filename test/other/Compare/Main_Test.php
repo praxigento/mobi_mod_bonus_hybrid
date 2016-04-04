@@ -35,7 +35,7 @@ use Praxigento\Downline\Data\Entity\Snap;
 use Praxigento\Downline\Lib\Service\Customer\Request\Add as CustomerAddRequest;
 use Praxigento\Downline\Lib\Service\Snap\Request\Calc as SnapCalcRequest;
 use Praxigento\Downline\Lib\Service\Snap\Request\ExpandMinimal as SnapExtendMinimalRequest;
-use Praxigento\Pv\Lib\Entity\Sale as PvSale;
+use Praxigento\Pv\Data\Entity\Sale as PvSale;
 use Praxigento\Pv\Lib\Service\Transfer\Request\CreditToCustomer as PvTransferCreditToCustomerRequest;
 
 include_once(__DIR__ . '/../phpunit_bootstrap.php');
