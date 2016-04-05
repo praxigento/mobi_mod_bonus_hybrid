@@ -21,7 +21,6 @@ use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Param as CfgParam;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Oi as OiCompress;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Ptc as PtcCompress;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\Core\Lib\Service\Repo\Request\AddEntity as RepoAddEntityRequest;
 use Praxigento\Core\Lib\Service\Repo\Request\UpdateEntity as RepoUpdateEntityRequest;
 use Praxigento\Downline\Data\Entity\Customer;
 use Praxigento\Downline\Lib\Service\Snap\Request\GetStateOnDate as DownlineSnapGetStateOnDateRequest;
@@ -50,11 +49,14 @@ class Db extends \Praxigento\Core\Lib\Service\Base\Sub\Db
     protected $_repoBasic;
     /** @var  \Praxigento\Core\Lib\Tool\Date */
     protected $_toolDate;
+    /** @var  \Praxigento\Core\Lib\Tool\Period */
+    protected $_toolPeriod;
 
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\App\ResourceConnection $resource,
         \Praxigento\Core\Lib\Tool\Date $toolDate,
+        \Praxigento\Core\Lib\Tool\Period $toolPeriod,
         \Praxigento\Accounting\Lib\Service\IAccount $callAccount,
         \Praxigento\Accounting\Lib\Service\IOperation $repoOper,
         \Praxigento\BonusBase\Repo\Entity\Type\ICalc $repoTypeCalc,
@@ -67,6 +69,7 @@ class Db extends \Praxigento\Core\Lib\Service\Base\Sub\Db
         $this->_resource = $resource;
         $this->_conn = $resource->getConnection();
         $this->_toolDate = $toolDate;
+        $this->_toolPeriod = $toolPeriod;
         $this->_callAccount = $callAccount;
         $this->_callDownlineSnap = $callDownlineSnap;
         $this->_callOper = $repoOper;
@@ -415,8 +418,8 @@ class Db extends \Praxigento\Core\Lib\Service\Base\Sub\Db
         ];
         $query->joinLeft([$asMageCust => $tblMageCust], $on, $cols);
         // where
-        $from = $this->_toolbox->getPeriod()->getTimestampFrom($dsBegin);
-        $to = $this->_toolbox->getPeriod()->getTimestampTo($dsEnd);
+        $from = $this->_toolPeriod->getTimestampFrom($dsBegin);
+        $to = $this->_toolPeriod->getTimestampTo($dsEnd);
         $whereFrom = PvSale::ATTR_DATE_PAID . '>=' . $this->_conn->quote($from);
         $whereTo = PvSale::ATTR_DATE_PAID . '<=' . $this->_conn->quote($to);
         $wherePv = PvSale::ATTR_TOTAL . ">0";
@@ -512,19 +515,15 @@ class Db extends \Praxigento\Core\Lib\Service\Base\Sub\Db
         if (count($updates) != count($transIds)) {
             throw new \Exception("Cannot log transactions for the sale orders, sizes of the arrays are not equal.");
         }
-        $req = new RepoAddEntityRequest(LogSales::ENTITY_NAME);
         foreach ($updates as $i => $item) {
             $transId = $transIds[$i];
             $saleId = $item[Calc::A_ORDR_ID];
-            $req->setBind([
+            $bind = [
                 LogSales::ATTR_TRANS_ID => $transId,
                 LogSales::ATTR_SALES_ORDER_ID => $saleId
 
-            ]);
-            $resp = $this->_callRepo->addEntity($req);
-            if (!$resp->isSucceed()) {
-                throw new \Exception("Cannot add new record () to log transactions for the sale orders.");
-            }
+            ];
+            $this->_repoBasic->addEntity(LogSales::ENTITY_NAME, $bind);
         }
     }
 
@@ -540,7 +539,7 @@ class Db extends \Praxigento\Core\Lib\Service\Base\Sub\Db
     public function saveOperationPvWriteOff($updates, $datePerformed = null, $dateApplied = null)
     {
         /* prepare additional data */
-        $datePerformed = is_null($datePerformed) ? $this->_toolbox->getDate()->getUtcNowForDb() : $datePerformed;
+        $datePerformed = is_null($datePerformed) ? $this->_toolDate->getUtcNowForDb() : $datePerformed;
         $dateApplied = is_null($dateApplied) ? $datePerformed : $dateApplied;
         /* get asset type ID */
         $assetTypeId = $this->_repoTypeAsset->getIdByCode(Cfg::CODE_TYPE_ASSET_PV);
