@@ -163,7 +163,7 @@ class Call extends BaseCall implements ICalc
         $reqGetPeriod->setDependentCalcTypeCode($calcType);
         $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         if ($respGetPeriod->isSucceed()) {
-            $this->_getConn()->beginTransaction();
+            $trans = $this->_manTrans->transactionBegin();
             try {
                 /* working vars */
                 $thisPeriodData = $respGetPeriod->getDependentPeriodData();
@@ -222,13 +222,12 @@ class Call extends BaseCall implements ICalc
                 $this->_subDb->saveLogOperations($operId, $thisCalcId);
                 $this->_subDb->markCalcComplete($thisCalcId);
                 /* finalize response as succeed */
-                $this->_getConn()->commit();
+                $this->_manTrans->transactionCommit($trans);
                 $result->setAsSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
-            } catch (\Exception $e) {
-                $this->_logger->error("Cannot process 'Infinity Bonus' calculation. Exception: " . $e->getMessage());
-                $this->_getConn()->rollback();
+            } finally {
+                $this->_manTrans->transactionClose($trans);
             }
         }
         $this->_logMemoryUsage();
@@ -260,7 +259,7 @@ class Call extends BaseCall implements ICalc
         $reqGetPeriod->setDependentCalcTypeCode($calcType);
         $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         if ($respGetPeriod->isSucceed()) {
-            $this->_getConn()->beginTransaction();
+            $trans = $this->_manTrans->transactionBegin();
             try {
                 /* working vars */
                 $thisPeriodData = $respGetPeriod->getDependentPeriodData();
@@ -314,13 +313,12 @@ class Call extends BaseCall implements ICalc
                 $this->_subDb->saveLogOperations($operId, $thisCalcId);
                 $this->_subDb->markCalcComplete($thisCalcId);
                 /* finalize response as succeed */
-                $this->_getConn()->commit();
+                $this->_manTrans->transactionCommit($trans);
                 $result->setAsSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
-            } catch (\Exception $e) {
-                $this->_logger->error("Cannot process 'Override Bonus' calculation. Exception: " . $e->getMessage());
-                $this->_getConn()->rollback();
+            } finally {
+                $this->_manTrans->transactionClose($trans);
             }
         }
         $this->_logMemoryUsage();
@@ -513,7 +511,7 @@ class Call extends BaseCall implements ICalc
         $reqGetPeriod->setDependentCalcTypeCode($calcType);
         $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         if ($respGetPeriod->isSucceed()) {
-            $this->_getConn()->beginTransaction();
+            $trans = $this->_manTrans->transactionBegin();
             try {
                 /* working vars */
                 $thisPeriodData = $respGetPeriod->getDependentPeriodData();
@@ -540,13 +538,12 @@ class Call extends BaseCall implements ICalc
                 /* save updates and mark calculation complete */
                 $this->_subDb->saveCompressedOi($updates, $thisCalcId);
                 $this->_subDb->markCalcComplete($thisCalcId);
-                $this->_getConn()->commit();
+                $this->_manTrans->transactionCommit($trans);
                 $result->setAsSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
-            } catch (\Exception $e) {
-                $this->_logger->error("Cannot process 'OI Compression' calculation. Exception: " . $e->getMessage());
-                $this->_getConn()->rollback();
+            } finally {
+                $this->_manTrans->transactionClose($trans);
             }
         }
         $this->_logMemoryUsage();

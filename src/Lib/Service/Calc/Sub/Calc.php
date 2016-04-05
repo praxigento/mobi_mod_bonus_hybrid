@@ -104,7 +104,7 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base
                         foreach ($team as $childId) {
                             $childData = $mapById[$childId];
                             $pv = $childData[OiCompress::ATTR_PV];
-                            $bonus = $this->_toolbox->getFormat()->roundBonus($pv * $percent);
+                            $bonus = $this->_toolFormat->roundBonus($pv * $percent);
                             $this->_logger->debug("Customer #$custId has '$pv' PV for '$gen' generation and '$bonus' as override bonus part from child #$childId .");
                             $result[] = [
                                 self::A_VALUE => $bonus,
@@ -537,7 +537,7 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base
                             $result[$parentId][self::A_PV] += $pv;
                             $ibPercent = $cfgParams[$scheme][$parentRankId][CfgParam::ATTR_INFINITY];
                             $percent = ($ibPercent <= $ibPercentDelta) ? $ibPercent : $ibPercentDelta;
-                            $bonus = $this->_toolbox->getFormat()->roundBonus($pv * $percent);
+                            $bonus = $this->_toolFormat->roundBonus($pv * $percent);
                             $result[$parentId][self::A_ENTRIES][] = [
                                 self::A_VALUE => $bonus,
                                 self::A_OTHER_ID => $custId
@@ -646,10 +646,10 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base
         foreach ($orders as $custId => $items) {
             foreach ($items as $orderId => $amount) {
                 $bonus = $amount * Def::REBATE_PERCENT;
-                $bonus = $this->_toolbox->getFormat()->roundBonus($bonus);
+                $bonus = $this->_toolFormat->roundBonus($bonus);
                 if (!isset($mapCompressById[$custId])) {
                     /* this is not qualified customer */
-                    $bonus = $this->_toolbox->getFormat()->roundBonus($bonus / 2);
+                    $bonus = $this->_toolFormat->roundBonus($bonus / 2);
                     $result[] = [
                         self::A_CUST_ID => $custId,
                         self::A_ORDR_ID => $orderId,
@@ -816,7 +816,7 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base
                     $parentId = $custData[PtcCompress::ATTR_PARENT_ID];
                     $parentData = $mapDataById[$parentId];
                     $parentRef = $parentData[Customer::ATTR_HUMAN_REF];
-                    $bonus = $this->_toolbox->getFormat()->roundBonus($pv * $teamBonusPercent);
+                    $bonus = $this->_toolFormat->roundBonus($pv * $teamBonusPercent);
                     $result[] = [self::A_CUST_ID => $parentId, self::A_VALUE => $bonus, self::A_OTHER_ID => $custId];
                     $this->_logger->debug("Customer #$parentId (ref. #$parentRef ) has '$bonus' as EU Team Bonus from downline customer #$custId (ref. #$custRef ).");
                 } else {

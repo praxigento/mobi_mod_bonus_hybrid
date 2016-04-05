@@ -22,7 +22,6 @@ use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Oi as OiCompress;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Ptc as PtcCompress;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\Core\Lib\Service\Repo\Request\AddEntity as RepoAddEntityRequest;
-use Praxigento\Core\Lib\Service\Repo\Request\GetEntities as RepoGetEntitiesRequest;
 use Praxigento\Core\Lib\Service\Repo\Request\UpdateEntity as RepoUpdateEntityRequest;
 use Praxigento\Downline\Data\Entity\Customer;
 use Praxigento\Downline\Lib\Service\Snap\Request\GetStateOnDate as DownlineSnapGetStateOnDateRequest;
@@ -100,9 +99,7 @@ class Db extends \Praxigento\Core\Lib\Service\Base\Sub\Db
     public function getCfgOverride()
     {
         $result = [];
-        $req = new RepoGetEntitiesRequest(CfgOverride::ENTITY_NAME);
-        $resp = $this->_callRepo->getEntities($req);
-        $data = $resp->getData();
+        $data = $this->_repoBasic->getEntities(CfgOverride::ENTITY_NAME);
         foreach ($data as $one) {
             $scheme = $one[CfgOverride::ATTR_SCHEME];
             $rankId = $one[CfgOverride::ATTR_RANK_ID];
@@ -126,9 +123,7 @@ class Db extends \Praxigento\Core\Lib\Service\Base\Sub\Db
             CfgParam::ATTR_LEG_MEDIUM . ' DESC',
             CfgParam::ATTR_LEG_MIN . ' DESC'
         ];
-        $req = new RepoGetEntitiesRequest(CfgParam::ENTITY_NAME, null, null, $order);
-        $resp = $this->_callRepo->getEntities($req);
-        $data = $resp->getData();
+        $data = $this->_repoBasic->getEntities(CfgParam::ENTITY_NAME, null, null, $order);
         foreach ($data as $one) {
             $scheme = $one[CfgParam::ATTR_SCHEME];
             $rankId = $one[CfgParam::ATTR_RANK_ID];
@@ -451,11 +446,9 @@ class Db extends \Praxigento\Core\Lib\Service\Base\Sub\Db
 
     public function saveCompressedOi($data, $calcId)
     {
-        $req = new RepoAddEntityRequest(OiCompress::ENTITY_NAME);
         foreach ($data as $one) {
             $one[OiCompress::ATTR_CALC_ID] = $calcId;
-            $req->setBind($one);
-            $this->_callRepo->addEntity($req);
+            $this->_repoBasic->addEntity(OiCompress::ENTITY_NAME, $one);
         }
     }
 
@@ -661,10 +654,10 @@ class Db extends \Praxigento\Core\Lib\Service\Base\Sub\Db
         $req = new RepoUpdateEntityRequest(OiCompress::ENTITY_NAME);
         foreach ($updates as $custId => $bind) {
             $req->setBind($bind);
-            $whereByCalcId = OiCompress::ATTR_CALC_ID . '=' . $calcId;
-            $whereByCustId = OiCompress::ATTR_CUSTOMER_ID . '=' . $custId;
-            $req->setWhere("$whereByCalcId AND $whereByCustId");
-            $this->_callRepo->updateEntity($req);
+            $whereByCalcId = OiCompress::ATTR_CALC_ID . '=' . (int)$calcId;
+            $whereByCustId = OiCompress::ATTR_CUSTOMER_ID . '=' . (int)$custId;
+            $where = "$whereByCalcId AND $whereByCustId";
+            $this->_repoBasic->updateEntity(OiCompress::ENTITY_NAME, $bind, $where);
         }
     }
 
