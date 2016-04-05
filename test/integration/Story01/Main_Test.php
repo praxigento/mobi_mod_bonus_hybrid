@@ -494,15 +494,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
             }
         }
     }
-
-    public function setUp()
-    {
-        parent::setUp();
-        /* clear cached data */
-        $this->_callAccAccount->cacheReset();
-        $this->_callPvTransfer->cacheReset();
-    }
-
+    
     public function test_main()
     {
         $this->_logger->debug('Story01 in Hybrid Bonus Integration tests is started.');
