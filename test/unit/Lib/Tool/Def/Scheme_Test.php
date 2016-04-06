@@ -12,7 +12,7 @@ use Praxigento\Downline\Data\Entity\Customer;
 
 include_once(__DIR__ . '/../../../phpunit_bootstrap.php');
 
-class Scheme_UnitTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
+class Scheme_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
     private $FORCED_CFG_PARAMS = [
         [
             Rank::ATTR_CODE           => Def::RANK_PRESIDENT,

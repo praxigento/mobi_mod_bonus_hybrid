@@ -13,7 +13,7 @@ use Praxigento\Core\Lib\Service\Repo\Response\AddEntity as RepoAddEntityResponse
 
 include_once(__DIR__ . '/../../../../phpunit_bootstrap.php');
 
-class Db_UnitTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
+class Db_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
 
     public function test_getFirstDateForPvTransactions() {
         /** === Test Data === */

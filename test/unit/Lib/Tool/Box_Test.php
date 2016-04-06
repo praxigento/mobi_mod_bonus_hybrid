@@ -6,7 +6,7 @@ namespace Praxigento\Bonus\Hybrid\Lib\Tool;
 
 include_once(__DIR__ . '/../../phpunit_bootstrap.php');
 
-class Box_UnitTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
+class Box_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
 
     public function test_getters() {
         /** === Test Data === */

@@ -14,7 +14,7 @@ use Praxigento\Bonus\Hybrid\Lib\Service\Period\Response\BasedOnPvWriteOff as Bas
 
 include_once(__DIR__ . '/../../../../phpunit_bootstrap.php');
 
-class BasedCalcs_UnitTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
+class BasedCalcs_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
 
     public function test_getDependentCalcData_isBasePeriod_isBaseCalc_isDependPeriod_diffDates() {
         /** === Test Data === */
