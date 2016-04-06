@@ -9,12 +9,12 @@ use Praxigento\Bonus\Base\Lib\Entity\Period;
 use Praxigento\Bonus\Hybrid\Lib\Service\IPeriod;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\Core\Lib\Service\Base\Call as BaseCall;
-use Praxigento\Core\Lib\Tool\Period as ToolPeriod;
+use Praxigento\Core\Tool\IPeriod as ToolPeriod;
 
 class Call extends BaseCall implements IPeriod
 {
 
-    /** @var  \Praxigento\Core\Lib\Tool\Period */
+    /** @var  \Praxigento\Core\Tool\IPeriod */
     protected $_toolPeriod;
     /** @var  Sub\Db */
     private $_subDb;
@@ -23,7 +23,7 @@ class Call extends BaseCall implements IPeriod
 
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
-        \Praxigento\Core\Lib\Tool\Period $toolPeriod,
+        \Praxigento\Core\Tool\IPeriod $toolPeriod,
         Sub\Db $subDb,
         Sub\BasedCalcs $subBasedCalcs
     ) {

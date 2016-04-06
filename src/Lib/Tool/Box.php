@@ -10,9 +10,9 @@ namespace Praxigento\Bonus\Hybrid\Lib\Tool;
 use Praxigento\Bonus\Hybrid\Lib\IToolbox;
 use Praxigento\Core\Lib\Tool\Box as CoreToolBox;
 use Praxigento\Core\Lib\Tool\Convert;
-use Praxigento\Core\Lib\Tool\Date;
-use Praxigento\Core\Lib\Tool\Format;
-use Praxigento\Core\Lib\Tool\Period;
+use Praxigento\Core\Tool\IDate;
+use Praxigento\Core\Tool\IFormat;
+use Praxigento\Core\Tool\IPeriod;
 use Praxigento\Downline\Lib\Tool\ITree;
 
 class Box extends CoreToolBox implements IToolbox {

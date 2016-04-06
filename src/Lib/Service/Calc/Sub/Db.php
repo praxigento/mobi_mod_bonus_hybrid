@@ -47,16 +47,16 @@ class Db extends \Praxigento\Core\Lib\Service\Base\Sub\Db
     protected $_conn;
     /** @var \Praxigento\Core\Repo\IBasic */
     protected $_repoBasic;
-    /** @var  \Praxigento\Core\Lib\Tool\Date */
+    /** @var  \Praxigento\Core\Tool\IDate */
     protected $_toolDate;
-    /** @var  \Praxigento\Core\Lib\Tool\Period */
+    /** @var  \Praxigento\Core\Tool\IPeriod */
     protected $_toolPeriod;
 
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\App\ResourceConnection $resource,
-        \Praxigento\Core\Lib\Tool\Date $toolDate,
-        \Praxigento\Core\Lib\Tool\Period $toolPeriod,
+        \Praxigento\Core\Tool\IDate $toolDate,
+        \Praxigento\Core\Tool\IPeriod $toolPeriod,
         \Praxigento\Accounting\Lib\Service\IAccount $callAccount,
         \Praxigento\Accounting\Lib\Service\IOperation $repoOper,
         \Praxigento\BonusBase\Repo\Entity\Type\ICalc $repoTypeCalc,

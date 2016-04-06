@@ -120,7 +120,7 @@ class Main_OtherTest extends BaseIntegrationTest
     private $_repoTypeCalc;
     /** @var \Praxigento\BonusBase\Repo\Entity\IRank */
     private $_repoRank;
-    /** @var  \Praxigento\Core\Lib\Tool\Date */
+    /** @var  \Praxigento\Core\Tool\IDate */
     private $_toolDate;
 
     public function __construct()
@@ -137,7 +137,7 @@ class Main_OtherTest extends BaseIntegrationTest
         $this->_repoTypeCalc = $this->_manObj->get(\Praxigento\BonusBase\Repo\Entity\Type\ICalc::class);
         $this->_repoRank = $this->_manObj->get(\Praxigento\BonusBase\Repo\Entity\IRank::class);
         $this->_toolScheme = $this->_manObj->get(\Praxigento\Bonus\Hybrid\Lib\Tool\IScheme::class);
-        $this->_toolDate = $this->_manObj->get(\Praxigento\Core\Lib\Tool\Date::class);
+        $this->_toolDate = $this->_manObj->get(\Praxigento\Core\Tool\IDate::class);
     }
 
     /**
@@ -329,7 +329,7 @@ class Main_OtherTest extends BaseIntegrationTest
         /* create tree map sorted by level from top to bottom */
         $mapByDepthAsc = $this->_mapTreeByDepth($mapTree, Snap::ATTR_CUSTOMER_ID, Snap::ATTR_DEPTH);
         /* create customers in downline one by one */
-        $period = $this->_toolbox->getPeriod();
+        $period = $this->_toolPeriod;
         $dateAdded = $period->getTimestampFrom(self::DS_CUSTOMER_ADDED);
         foreach ($mapByDepthAsc as $depth => $ids) {
             foreach ($ids as $id) {
@@ -368,7 +368,7 @@ class Main_OtherTest extends BaseIntegrationTest
             $mlmId = $one[0];
             $amount = $one[1];
             $custId = $this->_getMageIdByMlmId($mlmId);
-            $ts = $this->_toolbox->getPeriod()->getTimestampTo(self::DS_CUSTOMER_ADDED);
+            $ts = $this->_toolPeriod->getTimestampTo(self::DS_CUSTOMER_ADDED);
             $bind = [
                 Cfg::E_SALE_ORDER_A_CUSTOMER_ID => $custId,
                 Cfg::E_SALE_ORDER_A_BASE_GRAND_TOTAL => $amount,
@@ -390,7 +390,7 @@ class Main_OtherTest extends BaseIntegrationTest
     {
         $csv = $this->_readCsvFile($path = __DIR__ . '/data/pv_balances.csv');
         $reqAddPv = new PvTransferCreditToCustomerRequest();
-        $ts = $this->_toolbox->getPeriod()->getTimestampTo(self::DS_CUSTOMER_ADDED);
+        $ts = $this->_toolPeriod->getTimestampTo(self::DS_CUSTOMER_ADDED);
         $reqAddPv->setData(PvTransferCreditToCustomerRequest::DATE_APPLIED, $ts);
         foreach ($csv as $item) {
             $mlmId = $item[0];

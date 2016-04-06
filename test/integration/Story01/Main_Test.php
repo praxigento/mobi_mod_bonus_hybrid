@@ -52,13 +52,10 @@ class Main_IntegrationTest extends BaseIntegrationTest
     private $_repoTypeAsset;
     /** @var  \Praxigento\BonusBase\Repo\Entity\Type\ICalc */
     private $_repoTypeCalc;
-    /** @var \Praxigento\Core\Lib\Tool\Period */
-    private $_toolPeriod;
 
     public function __construct()
     {
         parent::__construct();
-        $this->_toolPeriod = $this->_manObj->get(\Praxigento\Core\Lib\Tool\Period::class);
         $this->_callAccAccount = $this->_manObj->get(\Praxigento\Accounting\Lib\Service\IAccount::class);
         $this->_callAccOperation = $this->_manObj->get(\Praxigento\Accounting\Lib\Service\IOperation::class);
         $this->_callCalc = $this->_manObj->get(\Praxigento\Bonus\Hybrid\Lib\Service\ICalc::class);
@@ -82,7 +79,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
         $reqAddPv = new PvTransferCreditToCustomerRequest();
         foreach ($this->_mapCustomerMageIdByIndex as $ref => $custId) {
             $pvToAdd = $PV_MAX - $ref * $PV_STEP;
-            $ts = $this->_toolbox->getPeriod()->getTimestampTo($dsToday);
+            $ts = $this->_toolPeriod->getTimestampTo($dsToday);
             $reqAddPv->setData(PvTransferCreditToCustomerRequest::TO_CUSTOMER_ID, $custId);
             $reqAddPv->setData(PvTransferCreditToCustomerRequest::VALUE, $pvToAdd);
             $reqAddPv->setData(PvTransferCreditToCustomerRequest::DATE_APPLIED, $ts);
@@ -92,14 +89,14 @@ class Main_IntegrationTest extends BaseIntegrationTest
             } else {
                 $this->_logger->debug("Cannot add '$pvToAdd' PV to customer #$ref (mageID: $custId).");
             }
-            $dsToday = $this->_toolbox->getPeriod()->getPeriodNext($dsToday);
+            $dsToday = $this->_toolPeriod->getPeriodNext($dsToday);
         }
     }
 
     private function _calcBonusCourtesy($nextPeriodBegin, $expectedBegin, $expectedEnd)
     {
         /* perform operation by the first date of the next period */
-        $datePerformed = $this->_toolbox->getPeriod()->getTimestampTo($nextPeriodBegin);
+        $datePerformed = $this->_toolPeriod->getTimestampTo($nextPeriodBegin);
         $request = new BonusCalcCourtesyBonusRequest();
         $request->setDatePerformed($datePerformed);
         $request->setCourtesyBonusPercent(self::COURTESY_BONUS_PERCENT);
@@ -146,7 +143,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
     private function _calcBonusTeam($nextPeriodBegin, $expectedBegin, $expectedEnd)
     {
         /* perform operation by the first date of the next period */
-        $datePerformed = $this->_toolbox->getPeriod()->getTimestampTo($nextPeriodBegin);
+        $datePerformed = $this->_toolPeriod->getTimestampTo($nextPeriodBegin);
         $request = new BonusCalcTeamBonusRequest();
         $request->setDatePerformed($datePerformed);
         $response = $this->_callCalc->bonusTeam($request);
@@ -169,7 +166,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
     private function _calcCompressionPtc($nextPeriodBegin, $expectedBegin, $expectedEnd)
     {
         /* perform operation by the first date of the next period */
-        $datePerformed = $this->_toolbox->getPeriod()->getTimestampTo($nextPeriodBegin);
+        $datePerformed = $this->_toolPeriod->getTimestampTo($nextPeriodBegin);
         $request = new BonusCalcPvCompressionRequest();
         $request->setDatePerformed($datePerformed);
         $request->setQualificationLevels([
@@ -218,7 +215,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
     private function _calcPvWriteOffPeriod($nextPeriodBegin, $expectedBegin, $expectedEnd)
     {
         /* perform operation by the first date of the next period */
-        $datePerformed = $this->_toolbox->getPeriod()->getTimestampTo($nextPeriodBegin);
+        $datePerformed = $this->_toolPeriod->getTimestampTo($nextPeriodBegin);
         $request = new BonusCalcPvWriteOffRequest();
         $request->setDatePerformed($datePerformed);
         $response = $this->_callCalc->pvWriteOff($request);
@@ -239,7 +236,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
     private function _calcValueOv($nextPeriodBegin, $expectedBegin, $expectedEnd)
     {
         /* perform operation by the first date of the next period */
-        $datePerformed = $this->_toolbox->getPeriod()->getTimestampTo($nextPeriodBegin);
+        $datePerformed = $this->_toolPeriod->getTimestampTo($nextPeriodBegin);
         $request = new BonusCalcOvCompressionRequest();
         $request->setDatePerformed($datePerformed);
         $response = $this->_callCalc->valueOv($request);
@@ -260,7 +257,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
     private function _calcValueTv($nextPeriodBegin, $expectedBegin, $expectedEnd)
     {
         /* perform operation by the first date of the next period */
-        $datePerformed = $this->_toolbox->getPeriod()->getTimestampTo($nextPeriodBegin);
+        $datePerformed = $this->_toolPeriod->getTimestampTo($nextPeriodBegin);
         $request = new BonusCalcTvCompressionRequest();
         $request->setDatePerformed($datePerformed);
         $response = $this->_callCalc->valueTv($request);
@@ -494,7 +491,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
             }
         }
     }
-    
+
     public function test_main()
     {
         $this->_logger->debug('Story01 in Hybrid Bonus Integration tests is started.');

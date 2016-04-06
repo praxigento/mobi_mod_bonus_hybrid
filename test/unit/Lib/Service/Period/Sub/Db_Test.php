@@ -78,7 +78,7 @@ class Db_UnitTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
         $mLogger = $this->_mockLogger();
         $mConn = $this->_mockConnection();
         $mDba = $this->_mockDbAdapter(null, $mConn);
-        $mToolDate = $this->_mockFor('\Praxigento\Core\Lib\Tool\Date');
+        $mToolDate = $this->_mockFor('\Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
         $mCallBonusBasePeriod = $this->_mockFor('\Praxigento\Bonus\Base\Lib\Service\IPeriod');

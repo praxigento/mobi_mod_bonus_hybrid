@@ -6,21 +6,21 @@ namespace Praxigento\Bonus\Hybrid\Lib\Service\Period\Sub;
 
 use Praxigento\Bonus\Base\Lib\Entity\Calculation;
 use Praxigento\Bonus\Base\Lib\Entity\Period;
-use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\Bonus\Hybrid\Lib\Service\Period\Response\BasedOnCompression as BasedOnCompressionResponse;
 use Praxigento\Bonus\Hybrid\Lib\Service\Period\Response\BasedOnPvWriteOff as BasedOnPvWriteOffResponse;
 use Praxigento\Bonus\Hybrid\Lib\Service\Period\Response\GetForDependentCalc as PeriodGetForDependentCalcResponse;
+use Praxigento\BonusHybrid\Config as Cfg;
 
-class BasedCalcs extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
+class BasedCalcs extends \Praxigento\Core\Lib\Service\Base\Sub\Base
+{
     /** @var  Db */
     private $_subDb;
 
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
-        \Praxigento\Core\Lib\IToolbox $toolbox,
         Db $subDb
     ) {
-        parent::__construct($logger, $toolbox);
+        parent::__construct($logger);
         $this->_subDb = $subDb;
     }
 
@@ -31,7 +31,8 @@ class BasedCalcs extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
      *
      * @return PeriodGetForDependentCalcResponse
      */
-    public function getDependentCalcData($dependentCalcTypeCode, $baseCalcTypeCode) {
+    public function getDependentCalcData($dependentCalcTypeCode, $baseCalcTypeCode)
+    {
         $result = new PeriodGetForDependentCalcResponse();
         /* get IDs for calculations codes */
         $dependentCalcTypeId = $this->_subDb->getCalcIdByCode($dependentCalcTypeCode);
@@ -39,7 +40,7 @@ class BasedCalcs extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
         /* get the last base period data */
         $respBasePeriod = $this->_subDb->getLastPeriodData($baseCalcTypeId);
         $basePeriodData = $respBasePeriod->getPeriodData();
-        if(is_null($basePeriodData)) {
+        if (is_null($basePeriodData)) {
             $this->_logger->warning("There is no period for '$baseCalcTypeCode' calculation  yet. '$dependentCalcTypeCode' could not be calculated.");
         } else {
             $result->setBasePeriodData($basePeriodData);
@@ -47,7 +48,7 @@ class BasedCalcs extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
             $result->setBaseCalcData($baseCalcData);
             $baseDsBegin = $basePeriodData[Period::ATTR_DSTAMP_BEGIN];
             $baseDsEnd = $basePeriodData[Period::ATTR_DSTAMP_END];
-            if(
+            if (
                 is_array($baseCalcData) &&
                 isset($baseCalcData[Calculation::ATTR_STATE]) &&
                 ($baseCalcData[Calculation::ATTR_STATE] == Cfg::CALC_STATE_COMPLETE)
@@ -56,10 +57,11 @@ class BasedCalcs extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
                 $respDependentPeriod = $this->_subDb->getLastPeriodData($dependentCalcTypeId);
                 $dependPeriodData = $respDependentPeriod->getPeriodData();
                 $dependentCalcData = $respDependentPeriod->getCalcData();
-                if(is_null($dependPeriodData)) {
+                if (is_null($dependPeriodData)) {
                     /* there is no dependent period */
                     $this->_logger->warning("There is no period data for calculation '$dependentCalcTypeCode'. New period and related calculation will be created.");
-                    $dependPeriodData = $this->_subDb->addNewPeriodAndCalc($dependentCalcTypeId, $baseDsBegin, $baseDsEnd);
+                    $dependPeriodData = $this->_subDb->addNewPeriodAndCalc($dependentCalcTypeId, $baseDsBegin,
+                        $baseDsEnd);
                     $result->setDependentPeriodData($dependPeriodData->getData(Db::DATA_PERIOD));
                     $result->setDependentCalcData($dependPeriodData->getData(Db::DATA_CALC));
                     $result->setAsSucceed();
@@ -67,13 +69,13 @@ class BasedCalcs extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
                     /* there is dependent period */
                     $dependentDsBegin = $dependPeriodData[Period::ATTR_DSTAMP_BEGIN];
                     $dependentDsEnd = $dependPeriodData[Period::ATTR_DSTAMP_END];
-                    if(
+                    if (
                         ($dependentDsBegin == $baseDsBegin) &&
                         ($dependentDsEnd == $baseDsEnd)
                     ) {
                         /* dependent period has the same begin/end as related base period */
                         $this->_logger->info("There is base '$baseCalcTypeCode' period for dependent '$dependentCalcTypeCode' period ($dependentDsBegin-$dependentDsEnd).");
-                        if(
+                        if (
                             is_array($dependentCalcData) &&
                             isset($dependentCalcData[Calculation::ATTR_STATE]) &&
                             ($dependentCalcData[Calculation::ATTR_STATE] == Cfg::CALC_STATE_COMPLETE)
@@ -90,7 +92,8 @@ class BasedCalcs extends \Praxigento\Core\Lib\Service\Base\Sub\Base {
                     } else {
                         /* dependent period has different begin/end then related base period */
                         $this->_logger->warning("There is no period for '$dependentCalcTypeCode' calculation based on '$baseCalcTypeCode' ($baseDsBegin-$baseDsEnd). New period and related calculation will be created.");
-                        $dependPeriodData = $this->_subDb->addNewPeriodAndCalc($dependentCalcTypeId, $baseDsBegin, $baseDsEnd);
+                        $dependPeriodData = $this->_subDb->addNewPeriodAndCalc($dependentCalcTypeId, $baseDsBegin,
+                            $baseDsEnd);
                         $result->setDependentPeriodData($dependPeriodData->getData(Db::DATA_PERIOD));
                         $result->setDependentCalcData($dependPeriodData->getData(Db::DATA_CALC));
                         $result->setAsSucceed();

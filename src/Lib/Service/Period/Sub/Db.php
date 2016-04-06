@@ -27,13 +27,13 @@ class Db extends \Praxigento\Core\Lib\Service\Base\Sub\Db
     protected $_conn;
     /** @var \Praxigento\Core\Repo\IBasic */
     protected $_repoBasic;
-    /** @var  \Praxigento\Core\Lib\Tool\Date */
+    /** @var  \Praxigento\Core\Tool\IDate */
     protected $_toolDate;
 
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\App\ResourceConnection $resource,
-        \Praxigento\Core\Lib\Tool\Date $toolDate,
+        \Praxigento\Core\Tool\IDate $toolDate,
         \Praxigento\Core\Repo\IBasic $repoBasic,
         \Praxigento\Bonus\Base\Lib\Service\IPeriod $callBonusBasePeriod,
         \Praxigento\BonusBase\Repo\Entity\Type\ICalc $repoTypeCalc

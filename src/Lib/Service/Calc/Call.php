@@ -27,14 +27,14 @@ class Call extends BaseCall implements ICalc
     protected $_subDb;
     /** @var  \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme */
     protected $_toolScheme;
-    /** @var  \Praxigento\Core\Lib\Tool\Period */
+    /** @var  \Praxigento\Core\Tool\IPeriod */
     protected $_toolPeriod;
     /** @var  \Praxigento\Core\Repo\ITransactionManager */
     protected $_manTrans;
 
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
-        \Praxigento\Core\Lib\Tool\Period $toolPeriod,
+        \Praxigento\Core\Tool\IPeriod $toolPeriod,
         \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme $toolScheme,
         \Praxigento\Core\Repo\ITransactionManager $manTrans,
         \Praxigento\Accounting\Lib\Service\IAccount $callAcc,

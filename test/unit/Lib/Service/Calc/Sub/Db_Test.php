@@ -36,7 +36,7 @@ class Db_UnitTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
         $mLogger = $this->_mockLogger();
         $mConn = $this->_mockConnection();
         $mDba = $this->_mockDbAdapter(null, $mConn);
-        $mToolDate = $this->_mockFor('Praxigento\Core\Lib\Tool\Date');
+        $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
@@ -334,7 +334,7 @@ class Db_UnitTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
         $mLogger = $this->_mockLogger();
         $mConn = $this->_mockConnection();
         $mDba = $this->_mockDbAdapter(null, $mConn);
-        $mToolDate = $this->_mockFor('Praxigento\Core\Lib\Tool\Date');
+        $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
@@ -565,7 +565,7 @@ class Db_UnitTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
         $mLogger = $this->_mockLogger();
         $mConn = $this->_mockConnection();
         $mDba = $this->_mockDbAdapter(null, $mConn);
-        $mToolPeriod = $this->_mockFor('Praxigento\Core\Lib\Tool\Period');
+        $mToolPeriod = $this->_mockFor('Praxigento\Core\Tool\IPeriod');
         $mToolbox = $this->_mockToolbox(null, null, null, $mToolPeriod);
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
@@ -624,7 +624,7 @@ class Db_UnitTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
         $mLogger = $this->_mockLogger();
         $mConn = $this->_mockConnection();
         $mDba = $this->_mockDbAdapter(null, $mConn);
-        $mToolDate = $this->_mockFor('Praxigento\Core\Lib\Tool\Date');
+        $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
@@ -679,7 +679,7 @@ class Db_UnitTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
         $mLogger = $this->_mockLogger();
         $mConn = $this->_mockConnection();
         $mDba = $this->_mockDbAdapter(null, $mConn);
-        $mToolDate = $this->_mockFor('Praxigento\Core\Lib\Tool\Date');
+        $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
@@ -729,7 +729,7 @@ class Db_UnitTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
         $mLogger = $this->_mockLogger();
         $mConn = $this->_mockConnection();
         $mDba = $this->_mockDbAdapter(null, $mConn);
-        $mToolDate = $this->_mockFor('Praxigento\Core\Lib\Tool\Date');
+        $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
@@ -776,7 +776,7 @@ class Db_UnitTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
         $mLogger = $this->_mockLogger();
         $mConn = $this->_mockConnection();
         $mDba = $this->_mockDbAdapter(null, $mConn);
-        $mToolDate = $this->_mockFor('Praxigento\Core\Lib\Tool\Date');
+        $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
@@ -822,7 +822,7 @@ class Db_UnitTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
         $mLogger = $this->_mockLogger();
         $mConn = $this->_mockConnection();
         $mDba = $this->_mockDbAdapter(null, $mConn);
-        $mToolDate = $this->_mockFor('Praxigento\Core\Lib\Tool\Date');
+        $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
@@ -873,7 +873,7 @@ class Db_UnitTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
         $mLogger = $this->_mockLogger();
         $mConn = $this->_mockConnection();
         $mDba = $this->_mockDbAdapter(null, $mConn);
-        $mToolDate = $this->_mockFor('Praxigento\Core\Lib\Tool\Date');
+        $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
@@ -910,7 +910,7 @@ class Db_UnitTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
         $mLogger = $this->_mockLogger();
         $mConn = $this->_mockConnection();
         $mDba = $this->_mockDbAdapter(null, $mConn);
-        $mToolDate = $this->_mockFor('Praxigento\Core\Lib\Tool\Date');
+        $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
@@ -955,7 +955,7 @@ class Db_UnitTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
         $mLogger = $this->_mockLogger();
         $mConn = $this->_mockConnection();
         $mDba = $this->_mockDbAdapter(null, $mConn);
-        $mToolDate = $this->_mockFor('Praxigento\Core\Lib\Tool\Date');
+        $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
@@ -1001,7 +1001,7 @@ class Db_UnitTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
         $mLogger = $this->_mockLogger();
         $mConn = $this->_mockConnection();
         $mDba = $this->_mockDbAdapter(null, $mConn);
-        $mToolDate = $this->_mockFor('Praxigento\Core\Lib\Tool\Date');
+        $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
@@ -1047,7 +1047,7 @@ class Db_UnitTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
         $mLogger = $this->_mockLogger();
         $mConn = $this->_mockConnection();
         $mDba = $this->_mockDbAdapter(null, $mConn);
-        $mToolDate = $this->_mockFor('Praxigento\Core\Lib\Tool\Date');
+        $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
@@ -1098,7 +1098,7 @@ class Db_UnitTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
         $mLogger = $this->_mockLogger();
         $mConn = $this->_mockConnection();
         $mDba = $this->_mockDbAdapter(null, $mConn);
-        $mToolDate = $this->_mockFor('Praxigento\Core\Lib\Tool\Date');
+        $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
@@ -1144,7 +1144,7 @@ class Db_UnitTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
         $mLogger = $this->_mockLogger();
         $mConn = $this->_mockConnection();
         $mDba = $this->_mockDbAdapter(null, $mConn);
-        $mToolDate = $this->_mockFor('Praxigento\Core\Lib\Tool\Date');
+        $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
@@ -1228,7 +1228,7 @@ class Db_UnitTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
         $mLogger = $this->_mockLogger();
         $mConn = $this->_mockConnection();
         $mDba = $this->_mockDbAdapter(null, $mConn);
-        $mToolDate = $this->_mockFor('Praxigento\Core\Lib\Tool\Date');
+        $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');

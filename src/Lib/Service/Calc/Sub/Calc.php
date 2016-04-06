@@ -39,12 +39,12 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base
     protected $_toolDownlineTree;
     /** @var  \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme */
     protected $_toolScheme;
-    /** @var \Praxigento\Core\Lib\Tool\Format */
+    /** @var \Praxigento\Core\Tool\IFormat */
     protected $_toolFormat;
 
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
-        \Praxigento\Core\Lib\Tool\Format $toolFormat,
+        \Praxigento\Core\Tool\IFormat $toolFormat,
         \Praxigento\Downline\Lib\Tool\ITree $toolTree,
         \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme $toolScheme,
         \Praxigento\Downline\Lib\Service\ISnap $repoDownlineSnap
