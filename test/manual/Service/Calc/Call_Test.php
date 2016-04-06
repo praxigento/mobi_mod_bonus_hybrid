@@ -5,7 +5,7 @@
 namespace Praxigento\Bonus\Hybrid\Lib\Service\Calc;
 
 use Praxigento\Bonus\Hybrid\Lib\Defaults as Def;
-use Praxigento\Core\Lib\Context;
+
 
 include_once(__DIR__ . '/../../phpunit_bootstrap.php');
 
@@ -15,7 +15,7 @@ class Call_ManualTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
     const TEAM_BONUS_PERCENT_EU = 0.05;
 
     public function test_bonusCourtesy() {
-        $obm = Context::instance()->getObjectManager();
+        $obm = \Magento\Framework\App\ObjectManager::getInstance();
         /** @var  $call \Praxigento\Bonus\Hybrid\Lib\Service\ICalc */
         $call = $obm->get('Praxigento\Bonus\Hybrid\Lib\Service\ICalc');
         $request = new Request\BonusCourtesy();
@@ -25,7 +25,7 @@ class Call_ManualTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
     }
 
     public function test_bonusInfinity_Def() {
-        $obm = Context::instance()->getObjectManager();
+        $obm = \Magento\Framework\App\ObjectManager::getInstance();
         /** @var  $call \Praxigento\Bonus\Hybrid\Lib\Service\ICalc */
         $call = $obm->get('Praxigento\Bonus\Hybrid\Lib\Service\ICalc');
         $request = new Request\BonusInfinity();
@@ -35,7 +35,7 @@ class Call_ManualTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
     }
 
     public function test_bonusInfinity_Eu() {
-        $obm = Context::instance()->getObjectManager();
+        $obm = \Magento\Framework\App\ObjectManager::getInstance();
         /** @var  $call \Praxigento\Bonus\Hybrid\Lib\Service\ICalc */
         $call = $obm->get('Praxigento\Bonus\Hybrid\Lib\Service\ICalc');
         $request = new Request\BonusInfinity();
@@ -45,7 +45,7 @@ class Call_ManualTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
     }
 
     public function test_bonusOverride_Def() {
-        $obm = Context::instance()->getObjectManager();
+        $obm = \Magento\Framework\App\ObjectManager::getInstance();
         /** @var  $call \Praxigento\Bonus\Hybrid\Lib\Service\ICalc */
         $call = $obm->get('Praxigento\Bonus\Hybrid\Lib\Service\ICalc');
         $request = new Request\BonusOverride();
@@ -55,7 +55,7 @@ class Call_ManualTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
     }
 
     public function test_bonusOverride_Eu() {
-        $obm = Context::instance()->getObjectManager();
+        $obm = \Magento\Framework\App\ObjectManager::getInstance();
         /** @var  $call \Praxigento\Bonus\Hybrid\Lib\Service\ICalc */
         $call = $obm->get('Praxigento\Bonus\Hybrid\Lib\Service\ICalc');
         $request = new Request\BonusOverride();
@@ -65,7 +65,7 @@ class Call_ManualTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
     }
 
     public function test_bonusPersonal_Def() {
-        $obm = Context::instance()->getObjectManager();
+        $obm = \Magento\Framework\App\ObjectManager::getInstance();
         /** @var  $call \Praxigento\Bonus\Hybrid\Lib\Service\ICalc */
         $call = $obm->get('Praxigento\Bonus\Hybrid\Lib\Service\ICalc');
         $request = new Request\BonusPersonal();
@@ -75,7 +75,7 @@ class Call_ManualTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
     }
 
     public function test_bonusPersonal_Eu() {
-        $obm = Context::instance()->getObjectManager();
+        $obm = \Magento\Framework\App\ObjectManager::getInstance();
         /** @var  $call \Praxigento\Bonus\Hybrid\Lib\Service\ICalc */
         $call = $obm->get('Praxigento\Bonus\Hybrid\Lib\Service\ICalc');
         $request = new Request\BonusPersonal();
@@ -85,7 +85,7 @@ class Call_ManualTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
     }
 
     public function test_bonusTeam_Def() {
-        $obm = Context::instance()->getObjectManager();
+        $obm = \Magento\Framework\App\ObjectManager::getInstance();
         /** @var  $call \Praxigento\Bonus\Hybrid\Lib\Service\ICalc */
         $call = $obm->get('Praxigento\Bonus\Hybrid\Lib\Service\ICalc');
         $request = new Request\BonusTeam();
@@ -96,7 +96,7 @@ class Call_ManualTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
     }
 
     public function test_bonusTeam_Eu() {
-        $obm = Context::instance()->getObjectManager();
+        $obm = \Magento\Framework\App\ObjectManager::getInstance();
         /** @var  $call \Praxigento\Bonus\Hybrid\Lib\Service\ICalc */
         $call = $obm->get('Praxigento\Bonus\Hybrid\Lib\Service\ICalc');
         $request = new Request\BonusTeam();
@@ -107,7 +107,7 @@ class Call_ManualTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
     }
 
     public function test_compressOi_Def() {
-        $obm = Context::instance()->getObjectManager();
+        $obm = \Magento\Framework\App\ObjectManager::getInstance();
         /** @var  $call \Praxigento\Bonus\Hybrid\Lib\Service\ICalc */
         $call = $obm->get('Praxigento\Bonus\Hybrid\Lib\Service\ICalc');
         $request = new Request\CompressOi();
@@ -117,7 +117,7 @@ class Call_ManualTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
     }
 
     public function test_compressOi_Eu() {
-        $obm = Context::instance()->getObjectManager();
+        $obm = \Magento\Framework\App\ObjectManager::getInstance();
         /** @var  $call \Praxigento\Bonus\Hybrid\Lib\Service\ICalc */
         $call = $obm->get('Praxigento\Bonus\Hybrid\Lib\Service\ICalc');
         $request = new Request\CompressOi();
@@ -127,7 +127,7 @@ class Call_ManualTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
     }
 
     public function test_compressPtc() {
-        $obm = Context::instance()->getObjectManager();
+        $obm = \Magento\Framework\App\ObjectManager::getInstance();
         /** @var  $call \Praxigento\Bonus\Hybrid\Lib\Service\ICalc */
         $call = $obm->get('Praxigento\Bonus\Hybrid\Lib\Service\ICalc');
         $request = new Request\CompressPtc();
@@ -137,7 +137,7 @@ class Call_ManualTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
 
 
     public function test_pvWriteOff() {
-        $obm = Context::instance()->getObjectManager();
+        $obm = \Magento\Framework\App\ObjectManager::getInstance();
         /** @var  $call \Praxigento\Bonus\Hybrid\Lib\Service\ICalc */
         $call = $obm->get('Praxigento\Bonus\Hybrid\Lib\Service\ICalc');
         $request = new Request\PvWriteOff();
@@ -146,7 +146,7 @@ class Call_ManualTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
     }
 
     public function test_valueOv() {
-        $obm = Context::instance()->getObjectManager();
+        $obm = \Magento\Framework\App\ObjectManager::getInstance();
         /** @var  $call \Praxigento\Bonus\Hybrid\Lib\Service\ICalc */
         $call = $obm->get('Praxigento\Bonus\Hybrid\Lib\Service\ICalc');
         $request = new Request\ValueOv();
@@ -155,7 +155,7 @@ class Call_ManualTest extends \Praxigento\Core\Lib\Test\BaseTestCase {
     }
 
     public function test_valueTv() {
-        $obm = Context::instance()->getObjectManager();
+        $obm = \Magento\Framework\App\ObjectManager::getInstance();
         /** @var  $call \Praxigento\Bonus\Hybrid\Lib\Service\ICalc */
         $call = $obm->get('Praxigento\Bonus\Hybrid\Lib\Service\ICalc');
         $request = new Request\ValueTv();
