@@ -11,7 +11,8 @@ use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Param as CfgParam;
 use Praxigento\Core\Lib\Service\Repo\Request\GetEntities as RepoGetEntitiesRequest;
 use Praxigento\Downline\Data\Entity\Customer;
 
-class Scheme implements \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme {
+class Scheme implements \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme
+{
     const A_RANK_ID = 'RankId';
     const A_SCHEME = 'Scheme';
     /**
@@ -20,11 +21,11 @@ class Scheme implements \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme {
      * @var array [$mlmId=>[$schema, $rankCode], ...]
      */
     private $QUALIFIED_CUSTOMERS = [
-        '770000001' => [ Def::SCHEMA_DEFAULT, Def::RANK_PRESIDENT ],
-        '777163048' => [ Def::SCHEMA_DEFAULT, Def::RANK_EXEC_DIRECTOR ],
-        '777017725' => [ Def::SCHEMA_DEFAULT, Def::RANK_PRESIDENT ],
-        '790003045' => [ Def::SCHEMA_EU, Def::RANK_MANAGER ],
-        '790003049' => [ Def::SCHEMA_EU, Def::RANK_MANAGER ]
+        '770000001' => [Def::SCHEMA_DEFAULT, Def::RANK_PRESIDENT],
+        '777163048' => [Def::SCHEMA_DEFAULT, Def::RANK_EXEC_DIRECTOR],
+        '777017725' => [Def::SCHEMA_DEFAULT, Def::RANK_PRESIDENT],
+        '790003045' => [Def::SCHEMA_EU, Def::RANK_MANAGER],
+        '790003049' => [Def::SCHEMA_EU, Def::RANK_MANAGER]
     ];
     /**
      * @var array of the customers with forced qualification.
@@ -36,8 +37,6 @@ class Scheme implements \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme {
      * @var array [$custId=>[$schema=>[A_RANK_ID=>$rankId, A_CFG_PARAMS=>[...]], ...], ...]
      */
     private $_cachedForcedRanks = null;
-    /** @var \Praxigento\Bonus\Base\Lib\Service\IRank */
-    private $_callRank;
     /** @var \Praxigento\Core\Lib\Service\IRepo */
     protected $_callRepo;
     /** @var  \Praxigento\Core\Lib\Context\IDbAdapter */
@@ -46,22 +45,20 @@ class Scheme implements \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme {
     protected $_logger;
 
     /**
-     * @param \Psr\Log\LoggerInterface                $logger
+     * @param \Psr\Log\LoggerInterface $logger
      * @param \Praxigento\Core\Lib\Context\IDbAdapter $dba
-     * @param \Praxigento\Core\Lib\IToolbox           $toolbox
-     * @param \Praxigento\Core\Lib\Service\IRepo      $callRepo
+     * @param \Praxigento\Core\Lib\IToolbox $toolbox
+     * @param \Praxigento\Core\Lib\Service\IRepo $callRepo
      */
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
         \Praxigento\Core\Lib\Context\IDbAdapter $dba,
-        \Praxigento\Core\Lib\Service\IRepo $callRepo,
-        \Praxigento\Bonus\Base\Lib\Service\IRank $callRank
+        \Praxigento\Core\Lib\Service\IRepo $callRepo
 
     ) {
         $this->_logger = $logger;
         $this->_dba = $dba;
         $this->_callRepo = $callRepo;
-        $this->_callRank = $callRank;
     }
 
     /**
@@ -76,7 +73,8 @@ class Scheme implements \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme {
      *
      * @return array [$rankCode => [$scheme=>[$data], ...], ...]
      */
-    private function _getCfgParamsByRanks() {
+    private function _getCfgParamsByRanks()
+    {
         /* aliases and tables */
         $asParams = 'pbhcp';
         $asRank = 'pbhr';
@@ -84,15 +82,15 @@ class Scheme implements \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme {
         $tblRank = $this->_getTableName(Rank::ENTITY_NAME);
         // FROM prxgt_bon_hyb_cfg_param pbhcp
         $query = $this->_getConn()->select();
-        $query->from([ $asParams => $tblParams ]);
+        $query->from([$asParams => $tblParams]);
         // LEFT JOIN prxgt_bon_hyb_rank pbhr ON pbhcp.rank_id = pbhr.id
         $on = "$asParams." . CfgParam::ATTR_RANK_ID . "=$asRank." . Rank::ATTR_ID;
-        $cols = [ Rank::ATTR_CODE ];
-        $query->joinLeft([ $asRank => $tblRank ], $on, $cols);
+        $cols = [Rank::ATTR_CODE];
+        $query->joinLeft([$asRank => $tblRank], $on, $cols);
         // $sql = (string)$query;
         $entries = $this->_getConn()->fetchAll($query);
-        $result = [ ];
-        foreach($entries as $entry) {
+        $result = [];
+        foreach ($entries as $entry) {
             $rankCode = $entry[Rank::ATTR_CODE];
             $rankScheme = $entry[CfgParam::ATTR_SCHEME];
             $result[$rankCode][$rankScheme] = $entry;
@@ -100,7 +98,8 @@ class Scheme implements \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme {
         return $result;
     }
 
-    protected function _getConn() {
+    protected function _getConn()
+    {
         return $this->_dba->getDefaultConnection();
     }
 
@@ -109,37 +108,40 @@ class Scheme implements \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme {
      *
      * @return array [[Customer::ATTR_CUSTOMER_ID=>..., Customer::ATTR_HUMAN_REF=>...], ...]
      */
-    private function _getForcedCustomersIds() {
+    private function _getForcedCustomersIds()
+    {
         $mlmIds = array_keys($this->QUALIFIED_CUSTOMERS);
         $where = '';
-        foreach($mlmIds as $one) {
+        foreach ($mlmIds as $one) {
             /* skip first iteration */
-            if(strlen($where) > 0) {
+            if (strlen($where) > 0) {
                 $where .= ' OR ';
             }
             $quoted = $this->_getConn()->quote($one);
             $where .= Customer::ATTR_HUMAN_REF . "=\"$quoted\"";
         }
-        $cols = [ Customer::ATTR_CUSTOMER_ID, Customer::ATTR_HUMAN_REF ];
+        $cols = [Customer::ATTR_CUSTOMER_ID, Customer::ATTR_HUMAN_REF];
         $req = new RepoGetEntitiesRequest(Customer::ENTITY_NAME, $where, $cols);
         $resp = $this->_callRepo->getEntities($req);
         $result = $resp->getData();
         return $result;
     }
 
-    protected function _getTableName($entityName) {
+    protected function _getTableName($entityName)
+    {
         $result = $this->_dba->getTableName($entityName);
         return $result;
     }
 
-    public function getForcedPv($custId, $scheme, $pv) {
+    public function getForcedPv($custId, $scheme, $pv)
+    {
         $result = $pv;
         /* be sure to have _cached data */
         $this->getForcedQualificationCustomers();
-        if(in_array($custId, $this->_cachedForcedCustomerIds)) {
+        if (in_array($custId, $this->_cachedForcedCustomerIds)) {
             $custData = $this->_cachedForcedRanks[$custId];
             $qpv = $custData[$scheme][CfgParam::ATTR_QUALIFY_PV];
-            if($result < $qpv) {
+            if ($result < $qpv) {
                 $result = $qpv;
             }
         }
@@ -151,14 +153,15 @@ class Scheme implements \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme {
      *
      * @return array
      */
-    public function getForcedQualificationCustomers() {
-        if(is_null($this->_cachedForcedRanks)) {
+    public function getForcedQualificationCustomers()
+    {
+        if (is_null($this->_cachedForcedRanks)) {
             /* get Customer IDs from DB to map ranks to Mage IDs instead of MLM IDs */
             $custIds = $this->_getForcedCustomersIds();
             /* get all ranks with configuration parameters for all schemes */
             $ranks = $this->_getCfgParamsByRanks();
-            $this->_cachedForcedRanks = [ ];
-            foreach($custIds as $item) {
+            $this->_cachedForcedRanks = [];
+            foreach ($custIds as $item) {
                 $custId = $item[Customer::ATTR_CUSTOMER_ID];
                 $ref = $item[Customer::ATTR_HUMAN_REF];
                 $rankCode = $this->QUALIFIED_CUSTOMERS[$ref][1];
@@ -171,47 +174,52 @@ class Scheme implements \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme {
         return $this->_cachedForcedRanks;
     }
 
-    public function getForcedQualificationCustomersIds() {
+    public function getForcedQualificationCustomersIds()
+    {
         $this->getForcedQualificationCustomers();
         return $this->_cachedForcedCustomerIds;
     }
 
-    public function getForcedQualificationRank($custId, $scheme) {
+    public function getForcedQualificationRank($custId, $scheme)
+    {
         $result = null;
         $forced = $this->getForcedQualificationCustomers();
-        if(isset($forced[$custId][$scheme])) {
+        if (isset($forced[$custId][$scheme])) {
             $result = $forced[$custId][$scheme][CfgParam::ATTR_RANK_ID];
         }
         return $result;
     }
 
-    public function getForcedTv($custId, $scheme, $tv) {
+    public function getForcedTv($custId, $scheme, $tv)
+    {
         $result = $tv;
         /* be sure to have _cached data */
         $this->getForcedQualificationCustomers();
-        if(in_array($custId, $this->_cachedForcedCustomerIds)) {
+        if (in_array($custId, $this->_cachedForcedCustomerIds)) {
             $custData = $this->_cachedForcedRanks[$custId];
             $qpv = $custData[$scheme][CfgParam::ATTR_QUALIFY_TV];
-            if($result < $qpv) {
+            if ($result < $qpv) {
                 $result = $qpv;
             }
         }
         return $result;
     }
 
-    public function getQualificationLevels() {
+    public function getQualificationLevels()
+    {
         $result = [
             Def::SCHEMA_DEFAULT => Def::PV_QUALIFICATION_LEVEL_DEF,
-            Def::SCHEMA_EU      => Def::PV_QUALIFICATION_LEVEL_EU
+            Def::SCHEMA_EU => Def::PV_QUALIFICATION_LEVEL_EU
         ];
         return $result;
     }
 
-    public function getSchemeByCustomer($data) {
+    public function getSchemeByCustomer($data)
+    {
         $result = Def::SCHEMA_DEFAULT;
         $countryCode = $data[Customer::ATTR_COUNTRY_CODE];
         $code = strtoupper($countryCode);
-        if(
+        if (
             ($code == 'AT') ||
             ($code == 'DE') ||
             ($code == 'ES')
