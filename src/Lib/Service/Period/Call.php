@@ -8,7 +8,7 @@ use Praxigento\Bonus\Base\Lib\Entity\Calculation;
 use Praxigento\Bonus\Base\Lib\Entity\Period;
 use Praxigento\Bonus\Hybrid\Lib\Service\IPeriod;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\Core\Lib\Service\Base\Call as BaseCall;
+use Praxigento\Core\Service\Base\Call as BaseCall;
 use Praxigento\Core\Tool\IPeriod as ToolPeriod;
 
 class Call extends BaseCall implements IPeriod

@@ -4,6 +4,6 @@
  */
 namespace Praxigento\Bonus\Hybrid\Lib\Service\Period\Request;
 
-class GetForWriteOff extends \Praxigento\Core\Lib\Service\Base\Request {
+class GetForWriteOff extends \Praxigento\Core\Service\Base\Request {
 
 }

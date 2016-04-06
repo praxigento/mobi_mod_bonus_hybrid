@@ -10,7 +10,7 @@ namespace Praxigento\Bonus\Hybrid\Lib\Service\Period\Response;
  * @method array getCalcData()
  * @method void setCalcData(array $data)
  */
-class GetForWriteOff extends \Praxigento\Core\Lib\Service\Base\Response {
+class GetForWriteOff extends \Praxigento\Core\Service\Base\Response {
     const HAS_NO_PV_TRANSACTIONS_YET = 'has_no_pv_transactions_yet';
 
     /**

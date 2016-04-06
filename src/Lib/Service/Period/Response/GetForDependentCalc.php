@@ -16,6 +16,6 @@ namespace Praxigento\Bonus\Hybrid\Lib\Service\Period\Response;
  * @method array getDependentPeriodData()
  * @method void setDependentPeriodData(array $data)
  */
-class GetForDependentCalc extends \Praxigento\Core\Lib\Service\Base\Response {
+class GetForDependentCalc extends \Praxigento\Core\Service\Base\Response {
 
 }

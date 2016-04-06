@@ -76,14 +76,6 @@ class Main_OtherTest extends BaseIntegrationTest
     private $_callPeriod;
     /** @var  \Praxigento\Pv\Lib\Service\ITransfer */
     private $_callPvTransfer;
-    /** @var \Praxigento\Bonus\Base\Lib\Service\IRank */
-    private $_callRank;
-    /** @var \Praxigento\Core\Lib\Service\IRepo */
-    private $_callRepo;
-    /** @var \Praxigento\Accounting\Lib\Service\ITypeAsset */
-    private $_callTypeAsset;
-    /** @var \Praxigento\Bonus\Base\Lib\Service\ITypeCalc */
-    private $_callTypeCalc;
     /**
      * @var array [$mlmId=>['personal'=>99.99, ...], ...]
      */
@@ -110,18 +102,18 @@ class Main_OtherTest extends BaseIntegrationTest
      * @var array [ $index => $mlmId, ... ]
      */
     private $_mapCustomerMlmIdByIndex = [];
-    /** @var  \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme */
-    private $_toolScheme;
     /** @var \Praxigento\Core\Repo\IBasic */
     private $_repoBasic;
+    /** @var \Praxigento\BonusBase\Repo\Entity\IRank */
+    private $_repoRank;
     /** @var  \Praxigento\Accounting\Repo\Entity\Type\IAsset */
     private $_repoTypeAsset;
     /** @var  \Praxigento\BonusBase\Repo\Entity\Type\ICalc */
     private $_repoTypeCalc;
-    /** @var \Praxigento\BonusBase\Repo\Entity\IRank */
-    private $_repoRank;
     /** @var  \Praxigento\Core\Tool\IDate */
     private $_toolDate;
+    /** @var  \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme */
+    private $_toolScheme;
 
     public function __construct()
     {

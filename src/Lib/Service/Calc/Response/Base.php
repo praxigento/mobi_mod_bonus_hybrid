@@ -11,6 +11,6 @@ namespace Praxigento\Bonus\Hybrid\Lib\Service\Calc\Response;
  * @method int getPeriodId()
  * @method void setPeriodId(int $data)
  */
-class Base extends \Praxigento\Core\Lib\Service\Base\Response {
+class Base extends \Praxigento\Core\Service\Base\Response {
 
 }

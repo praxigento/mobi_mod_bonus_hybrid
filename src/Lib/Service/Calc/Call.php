@@ -13,7 +13,7 @@ use Praxigento\Bonus\Hybrid\Lib\Service\ICalc;
 use Praxigento\Bonus\Hybrid\Lib\Service\Period\Request\GetForDependentCalc as PeriodGetForDependentCalcRequest;
 use Praxigento\Bonus\Hybrid\Lib\Service\Period\Request\GetForWriteOff as PeriodGetForWriteOffRequest;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\Core\Lib\Service\Base\Call as BaseCall;
+use Praxigento\Core\Service\Base\Call as BaseCall;
 
 class Call extends BaseCall implements ICalc
 {

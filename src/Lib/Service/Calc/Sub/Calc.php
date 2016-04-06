@@ -16,7 +16,7 @@ use Praxigento\Downline\Data\Entity\Customer;
 use Praxigento\Downline\Data\Entity\Snap;
 use Praxigento\Downline\Lib\Service\Snap\Request\ExpandMinimal as DownlineSnapExtendMinimalRequest;
 
-class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base
+class Calc
 {
     /**
      * A_... - labels to access data in associative arrays.
@@ -35,12 +35,14 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base
     const DATA_SNAP = 'snap';
     /** @var    \Praxigento\Downline\Lib\Service\ISnap */
     protected $_callDownlineSnap;
+    /** @var \Psr\Log\LoggerInterface */
+    protected $_logger;
     /** @var \Praxigento\Downline\Lib\Tool\ITree */
     protected $_toolDownlineTree;
-    /** @var  \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme */
-    protected $_toolScheme;
     /** @var \Praxigento\Core\Tool\IFormat */
     protected $_toolFormat;
+    /** @var  \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme */
+    protected $_toolScheme;
 
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
@@ -49,7 +51,7 @@ class Calc extends \Praxigento\Core\Lib\Service\Base\Sub\Base
         \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme $toolScheme,
         \Praxigento\Downline\Lib\Service\ISnap $repoDownlineSnap
     ) {
-        parent::__construct($logger);
+        $this->_logger = $logger;
         $this->_callDownlineSnap = $repoDownlineSnap;
         $this->_toolFormat = $toolFormat;
         $this->_toolScheme = $toolScheme;

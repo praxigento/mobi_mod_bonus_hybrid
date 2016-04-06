@@ -11,8 +11,10 @@ use Praxigento\Bonus\Hybrid\Lib\Service\Period\Response\BasedOnPvWriteOff as Bas
 use Praxigento\Bonus\Hybrid\Lib\Service\Period\Response\GetForDependentCalc as PeriodGetForDependentCalcResponse;
 use Praxigento\BonusHybrid\Config as Cfg;
 
-class BasedCalcs extends \Praxigento\Core\Lib\Service\Base\Sub\Base
+class BasedCalcs 
 {
+    /** @var \Psr\Log\LoggerInterface */
+    protected $_logger;
     /** @var  Db */
     private $_subDb;
 
@@ -20,7 +22,7 @@ class BasedCalcs extends \Praxigento\Core\Lib\Service\Base\Sub\Base
         \Psr\Log\LoggerInterface $logger,
         Db $subDb
     ) {
-        parent::__construct($logger);
+        $this->_logger = $logger;
         $this->_subDb = $subDb;
     }
 

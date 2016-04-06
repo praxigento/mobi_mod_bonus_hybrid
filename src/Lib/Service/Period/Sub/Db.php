@@ -13,20 +13,22 @@ use Praxigento\Bonus\Base\Lib\Entity\Period;
 use Praxigento\Bonus\Base\Lib\Service\Period\Request\GetLatest as BonusBasePeriodGetLatestRequest;
 use Praxigento\BonusHybrid\Config as Cfg;
 
-class Db extends \Praxigento\Core\Lib\Service\Base\Sub\Db
+class Db
 {
     const DATA_CALC = 'calc';
     const DATA_PERIOD = 'period';
     /** @var \Praxigento\Bonus\Base\Lib\Service\IPeriod */
     protected $_callBonusBasePeriod;
+    /** @var \Magento\Framework\DB\Adapter\AdapterInterface */
+    protected $_conn;
+    /** @var \Psr\Log\LoggerInterface */
+    protected $_logger;
+    /** @var \Praxigento\Core\Repo\IBasic */
+    protected $_repoBasic;
     /** @var \Praxigento\BonusBase\Repo\Entity\Type\ICalc */
     protected $_repoTypeCalc;
     /** @var \Magento\Framework\App\ResourceConnection */
     protected $_resource;
-    /** @var \Magento\Framework\DB\Adapter\AdapterInterface */
-    protected $_conn;
-    /** @var \Praxigento\Core\Repo\IBasic */
-    protected $_repoBasic;
     /** @var  \Praxigento\Core\Tool\IDate */
     protected $_toolDate;
 
@@ -38,7 +40,7 @@ class Db extends \Praxigento\Core\Lib\Service\Base\Sub\Db
         \Praxigento\Bonus\Base\Lib\Service\IPeriod $callBonusBasePeriod,
         \Praxigento\BonusBase\Repo\Entity\Type\ICalc $repoTypeCalc
     ) {
-        parent::__construct($logger);
+        $this->_logger = $logger;
         $this->_resource = $resource;
         $this->_conn = $resource->getConnection();
         $this->_toolDate = $toolDate;

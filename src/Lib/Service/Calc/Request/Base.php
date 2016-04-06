@@ -12,6 +12,6 @@ namespace Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request;
  * @method string getScheme() Type of the calculation scheme (DEFAULT or EU).
  * @method void setScheme(string $data)
  */
-class Base extends \Praxigento\Core\Lib\Service\Base\Request {
+class Base extends \Praxigento\Core\Service\Base\Request {
 
 }

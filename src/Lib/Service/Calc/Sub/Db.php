@@ -26,7 +26,7 @@ use Praxigento\Downline\Data\Entity\Customer;
 use Praxigento\Downline\Lib\Service\Snap\Request\GetStateOnDate as DownlineSnapGetStateOnDateRequest;
 use Praxigento\Pv\Data\Entity\Sale as PvSale;
 
-class Db extends \Praxigento\Core\Lib\Service\Base\Sub\Db
+class Db
 {
 
     /** @var  \Praxigento\Accounting\Lib\Service\IAccount */
@@ -35,6 +35,12 @@ class Db extends \Praxigento\Core\Lib\Service\Base\Sub\Db
     protected $_callDownlineSnap;
     /** @var  \Praxigento\Accounting\Lib\Service\IOperation */
     protected $_callOper;
+    /** @var \Magento\Framework\DB\Adapter\AdapterInterface */
+    protected $_conn;
+    /** @var \Psr\Log\LoggerInterface */
+    protected $_logger;
+    /** @var \Praxigento\Core\Repo\IBasic */
+    protected $_repoBasic;
     /** @var  \Praxigento\Accounting\Repo\Entity\Type\IAsset */
     protected $_repoTypeAsset;
     /** @var \Praxigento\BonusBase\Repo\Entity\Type\ICalc */
@@ -43,10 +49,6 @@ class Db extends \Praxigento\Core\Lib\Service\Base\Sub\Db
     protected $_repoTypeOper;
     /** @var \Magento\Framework\App\ResourceConnection */
     protected $_resource;
-    /** @var \Magento\Framework\DB\Adapter\AdapterInterface */
-    protected $_conn;
-    /** @var \Praxigento\Core\Repo\IBasic */
-    protected $_repoBasic;
     /** @var  \Praxigento\Core\Tool\IDate */
     protected $_toolDate;
     /** @var  \Praxigento\Core\Tool\IPeriod */
@@ -65,7 +67,7 @@ class Db extends \Praxigento\Core\Lib\Service\Base\Sub\Db
         \Praxigento\Accounting\Repo\Entity\Type\IAsset $repoTypeAsset,
         \Praxigento\Accounting\Repo\Entity\Type\IOperation $repoTypeOper
     ) {
-        parent::__construct($logger);
+        $this->_logger = $logger;
         $this->_resource = $resource;
         $this->_conn = $resource->getConnection();
         $this->_toolDate = $toolDate;
