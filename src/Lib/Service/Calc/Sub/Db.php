@@ -21,7 +21,6 @@ use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Param as CfgParam;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Oi as OiCompress;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Ptc as PtcCompress;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\Core\Lib\Service\Repo\Request\UpdateEntity as RepoUpdateEntityRequest;
 use Praxigento\Downline\Data\Entity\Customer;
 use Praxigento\Downline\Lib\Service\Snap\Request\GetStateOnDate as DownlineSnapGetStateOnDateRequest;
 use Praxigento\Pv\Data\Entity\Sale as PvSale;
@@ -652,9 +651,7 @@ class Db
      */
     public function saveUpdatesOiCompress($updates, $calcId)
     {
-        $req = new RepoUpdateEntityRequest(OiCompress::ENTITY_NAME);
         foreach ($updates as $custId => $bind) {
-            $req->setBind($bind);
             $whereByCalcId = OiCompress::ATTR_CALC_ID . '=' . (int)$calcId;
             $whereByCustId = OiCompress::ATTR_CUSTOMER_ID . '=' . (int)$custId;
             $where = "$whereByCalcId AND $whereByCustId";
@@ -689,7 +686,6 @@ class Db
      */
     public function saveValueTv($data, $calcId)
     {
-        $req = new RepoUpdateEntityRequest(PtcCompress::ENTITY_NAME);
         foreach ($data as $custId => $tv) {
             $whereByCalcId = PtcCompress::ATTR_CALC_ID . '=' . $calcId;
             $whereByCustId = PtcCompress::ATTR_CUSTOMER_ID . '=' . $custId;

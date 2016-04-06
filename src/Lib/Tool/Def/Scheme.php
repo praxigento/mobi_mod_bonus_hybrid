@@ -8,10 +8,14 @@ namespace Praxigento\Bonus\Hybrid\Lib\Tool\Def;
 use Praxigento\Bonus\Base\Lib\Entity\Rank;
 use Praxigento\Bonus\Hybrid\Lib\Defaults as Def;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Param as CfgParam;
-use Praxigento\Core\Lib\Service\Repo\Request\GetEntities as RepoGetEntitiesRequest;
 use Praxigento\Downline\Data\Entity\Customer;
 
-class Scheme implements \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme
+/**
+ * TODO: move this tool to Repo section or extract DB related methods to standalone class.
+ */
+class Scheme
+    extends \Praxigento\Core\Repo\Def\Base
+    implements \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme
 {
     const A_RANK_ID = 'RankId';
     const A_SCHEME = 'Scheme';
@@ -37,29 +41,20 @@ class Scheme implements \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme
      * @var array [$custId=>[$schema=>[A_RANK_ID=>$rankId, A_CFG_PARAMS=>[...]], ...], ...]
      */
     private $_cachedForcedRanks = null;
-    /** @var \Praxigento\Core\Lib\Service\IRepo */
-    protected $_callRepo;
-    /** @var  \Praxigento\Core\Lib\Context\IDbAdapter */
-    protected $_dba;
-    /** @var \Psr\Log\LoggerInterface */
-    protected $_logger;
+    /** @var \Praxigento\Core\Repo\IBasic */
+    protected $_repoBasic;
 
     /**
-     * @param \Psr\Log\LoggerInterface $logger
-     * @param \Praxigento\Core\Lib\Context\IDbAdapter $dba
-     * @param \Praxigento\Core\Lib\IToolbox $toolbox
-     * @param \Praxigento\Core\Lib\Service\IRepo $callRepo
+     * Scheme constructor.
      */
     public function __construct(
-        \Psr\Log\LoggerInterface $logger,
-        \Praxigento\Core\Lib\Context\IDbAdapter $dba,
-        \Praxigento\Core\Lib\Service\IRepo $callRepo
-
+        \Magento\Framework\App\ResourceConnection $resource,
+        \Praxigento\Core\Repo\IBasic $repoBasic
     ) {
-        $this->_logger = $logger;
-        $this->_dba = $dba;
-        $this->_callRepo = $callRepo;
+        parent::__construct($resource);
+        $this->_repoBasic = $repoBasic;
     }
+
 
     /**
      * Get all ranks configuration parameters to create map for forced customers.
@@ -78,17 +73,17 @@ class Scheme implements \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme
         /* aliases and tables */
         $asParams = 'pbhcp';
         $asRank = 'pbhr';
-        $tblParams = $this->_getTableName(CfgParam::ENTITY_NAME);
-        $tblRank = $this->_getTableName(Rank::ENTITY_NAME);
+        $tblParams = $this->_conn->getTableName(CfgParam::ENTITY_NAME);
+        $tblRank = $this->_conn->getTableName(Rank::ENTITY_NAME);
         // FROM prxgt_bon_hyb_cfg_param pbhcp
-        $query = $this->_getConn()->select();
+        $query = $this->_conn->select();
         $query->from([$asParams => $tblParams]);
         // LEFT JOIN prxgt_bon_hyb_rank pbhr ON pbhcp.rank_id = pbhr.id
         $on = "$asParams." . CfgParam::ATTR_RANK_ID . "=$asRank." . Rank::ATTR_ID;
         $cols = [Rank::ATTR_CODE];
         $query->joinLeft([$asRank => $tblRank], $on, $cols);
         // $sql = (string)$query;
-        $entries = $this->_getConn()->fetchAll($query);
+        $entries = $this->_conn->fetchAll($query);
         $result = [];
         foreach ($entries as $entry) {
             $rankCode = $entry[Rank::ATTR_CODE];
@@ -96,11 +91,6 @@ class Scheme implements \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme
             $result[$rankCode][$rankScheme] = $entry;
         }
         return $result;
-    }
-
-    protected function _getConn()
-    {
-        return $this->_dba->getDefaultConnection();
     }
 
     /**
@@ -117,19 +107,11 @@ class Scheme implements \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme
             if (strlen($where) > 0) {
                 $where .= ' OR ';
             }
-            $quoted = $this->_getConn()->quote($one);
+            $quoted = $this->_conn->quote($one);
             $where .= Customer::ATTR_HUMAN_REF . "=\"$quoted\"";
         }
         $cols = [Customer::ATTR_CUSTOMER_ID, Customer::ATTR_HUMAN_REF];
-        $req = new RepoGetEntitiesRequest(Customer::ENTITY_NAME, $where, $cols);
-        $resp = $this->_callRepo->getEntities($req);
-        $result = $resp->getData();
-        return $result;
-    }
-
-    protected function _getTableName($entityName)
-    {
-        $result = $this->_dba->getTableName($entityName);
+        $result = $this->_repoBasic->getEntities(Customer::ENTITY_NAME, $cols, $where);
         return $result;
     }
 
