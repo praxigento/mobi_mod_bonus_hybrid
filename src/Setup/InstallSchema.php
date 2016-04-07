@@ -12,7 +12,6 @@ use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Param as CfgParam;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Oi as OiCompress;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Ptc as PtcCompress;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Config as HybridCfg;
-use Praxigento\Core\Lib\Setup\Db as Db;
 
 class InstallSchema extends \Praxigento\Core\Setup\Schema\Base
 {
