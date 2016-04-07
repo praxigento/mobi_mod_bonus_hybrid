@@ -5,8 +5,6 @@
  */
 namespace Praxigento\BonusHybrid\Setup;
 
-use Magento\Framework\Setup\ModuleContextInterface;
-use Magento\Framework\Setup\SchemaSetupInterface;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Override as CfgOverride;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Param as CfgParam;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Oi as OiCompress;
