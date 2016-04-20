@@ -38,7 +38,7 @@ class Db
     protected $_conn;
     /** @var \Psr\Log\LoggerInterface */
     protected $_logger;
-    /** @var \Praxigento\Core\Repo\IBasic */
+    /** @var \Praxigento\Core\Repo\IGeneric */
     protected $_repoBasic;
     /** @var  \Praxigento\Accounting\Repo\Entity\Type\IAsset */
     protected $_repoTypeAsset;
@@ -62,7 +62,7 @@ class Db
         \Praxigento\Accounting\Lib\Service\IOperation $repoOper,
         \Praxigento\BonusBase\Repo\Entity\Type\ICalc $repoTypeCalc,
         \Praxigento\Downline\Lib\Service\ISnap $callDownlineSnap,
-        \Praxigento\Core\Repo\IBasic $repoBasic,
+        \Praxigento\Core\Repo\IGeneric $repoBasic,
         \Praxigento\Accounting\Repo\Entity\Type\IAsset $repoTypeAsset,
         \Praxigento\Accounting\Repo\Entity\Type\IOperation $repoTypeOper
     ) {

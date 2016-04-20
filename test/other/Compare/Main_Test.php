@@ -102,7 +102,7 @@ class Main_OtherTest extends BaseIntegrationTest
      * @var array [ $index => $mlmId, ... ]
      */
     private $_mapCustomerMlmIdByIndex = [];
-    /** @var \Praxigento\Core\Repo\IBasic */
+    /** @var \Praxigento\Core\Repo\IGeneric */
     private $_repoBasic;
     /** @var \Praxigento\BonusBase\Repo\Entity\IRank */
     private $_repoRank;
@@ -124,7 +124,7 @@ class Main_OtherTest extends BaseIntegrationTest
         $this->_callDownlineSnap = $this->_manObj->get(\Praxigento\Downline\Lib\Service\ISnap::class);
         $this->_callPeriod = $this->_manObj->get(\Praxigento\Bonus\Hybrid\Lib\Service\IPeriod::class);
         $this->_callPvTransfer = $this->_manObj->get(\Praxigento\Pv\Lib\Service\ITransfer::class);
-        $this->_repoBasic = $this->_manObj->get(\Praxigento\Core\Repo\IBasic::class);
+        $this->_repoBasic = $this->_manObj->get(\Praxigento\Core\Repo\IGeneric::class);
         $this->_repoTypeAsset = $this->_manObj->get(\Praxigento\Accounting\Repo\Entity\Type\IAsset::class);
         $this->_repoTypeCalc = $this->_manObj->get(\Praxigento\BonusBase\Repo\Entity\Type\ICalc::class);
         $this->_repoRank = $this->_manObj->get(\Praxigento\BonusBase\Repo\Entity\IRank::class);

@@ -23,7 +23,7 @@ class Db
     protected $_conn;
     /** @var \Psr\Log\LoggerInterface */
     protected $_logger;
-    /** @var \Praxigento\Core\Repo\IBasic */
+    /** @var \Praxigento\Core\Repo\IGeneric */
     protected $_repoBasic;
     /** @var \Praxigento\BonusBase\Repo\Entity\Type\ICalc */
     protected $_repoTypeCalc;
@@ -36,7 +36,7 @@ class Db
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\App\ResourceConnection $resource,
         \Praxigento\Core\Tool\IDate $toolDate,
-        \Praxigento\Core\Repo\IBasic $repoBasic,
+        \Praxigento\Core\Repo\IGeneric $repoBasic,
         \Praxigento\Bonus\Base\Lib\Service\IPeriod $callBonusBasePeriod,
         \Praxigento\BonusBase\Repo\Entity\Type\ICalc $repoTypeCalc
     ) {

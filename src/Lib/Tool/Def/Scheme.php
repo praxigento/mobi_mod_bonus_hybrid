@@ -41,7 +41,7 @@ class Scheme
      * @var array [$custId=>[$schema=>[A_RANK_ID=>$rankId, A_CFG_PARAMS=>[...]], ...], ...]
      */
     private $_cachedForcedRanks = null;
-    /** @var \Praxigento\Core\Repo\IBasic */
+    /** @var \Praxigento\Core\Repo\IGeneric */
     protected $_repoBasic;
 
     /**
@@ -49,7 +49,7 @@ class Scheme
      */
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resource,
-        \Praxigento\Core\Repo\IBasic $repoBasic
+        \Praxigento\Core\Repo\IGeneric $repoBasic
     ) {
         parent::__construct($resource);
         $this->_repoBasic = $repoBasic;
