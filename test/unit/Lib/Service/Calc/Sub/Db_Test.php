@@ -641,7 +641,7 @@ class Db_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
             ->willReturn($TS_NOW);
         // $resp = $this->_callRepo->updateEntity($req);
         $mRespUpdate = new RepoUpdateEntityResponse();
-        $mRespUpdate->setAsSucceed();
+        $mRespUpdate->markSucceed();
         $mCallRepo
             ->expects($this->once())
             ->method('updateEntity')
@@ -839,7 +839,7 @@ class Db_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
             ->method('addEntity')
             ->willReturn($mResp);
         // if(!$resp->isSucceed()) {...}
-        $mResp->setAsSucceed();
+        $mResp->markSucceed();
 
         /**
          * Prepare request and perform call.
@@ -1064,7 +1064,7 @@ class Db_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
             ->method('addEntity')
             ->willReturn($mResp);
         // if(!$resp->isSucceed()) {...}
-        $mResp->setAsSucceed();
+        $mResp->markSucceed();
 
         /**
          * Prepare request and perform call.

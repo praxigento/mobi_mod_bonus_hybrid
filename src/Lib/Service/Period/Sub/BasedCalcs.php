@@ -66,7 +66,7 @@ class BasedCalcs
                         $baseDsEnd);
                     $result->setDependentPeriodData($dependPeriodData->getData(Db::DATA_PERIOD));
                     $result->setDependentCalcData($dependPeriodData->getData(Db::DATA_CALC));
-                    $result->setAsSucceed();
+                    $result->markSucceed();
                 } else {
                     /* there is dependent period */
                     $dependentDsBegin = $dependPeriodData[Period::ATTR_DSTAMP_BEGIN];
@@ -89,7 +89,7 @@ class BasedCalcs
                             $this->_logger->warning("There is '$dependentCalcTypeCode' period without complete calculation. Continue calculation for this period.");
                             $result->setDependentPeriodData($dependPeriodData);
                             $result->setDependentCalcData($dependentCalcData);
-                            $result->setAsSucceed();
+                            $result->markSucceed();
                         }
                     } else {
                         /* dependent period has different begin/end then related base period */
@@ -98,7 +98,7 @@ class BasedCalcs
                             $baseDsEnd);
                         $result->setDependentPeriodData($dependPeriodData->getData(Db::DATA_PERIOD));
                         $result->setDependentCalcData($dependPeriodData->getData(Db::DATA_CALC));
-                        $result->setAsSucceed();
+                        $result->markSucceed();
                     }
                 }
             } else {

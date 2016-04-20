@@ -39,7 +39,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
             ->method('getForDependentCalc')
             ->willReturn($mRespGetPeriod);
         // if($respGetPeriod->isSucceed())
-        $mRespGetPeriod->setAsSucceed();
+        $mRespGetPeriod->markSucceed();
         // $updates = $this->_subCalc->bonusCourtesy($compressPtc, $courtesyPercent, $levelsPersonal, $levelsTeam);
         $mSubCalc
             ->expects($this->once())
@@ -101,7 +101,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
             ->method('getForDependentCalc')
             ->willReturn($mRespGetPeriod);
         // if($respGetPeriod->isSucceed())
-        $mRespGetPeriod->setAsSucceed();
+        $mRespGetPeriod->markSucceed();
         // $this->_getConn()->beginTransaction();
         $mConn
             ->expects($this->once())
@@ -196,7 +196,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
             ->method('getForDependentCalc')
             ->willReturn($mRespGetPeriod);
         // if($respGetPeriod->isSucceed())
-        $mRespGetPeriod->setAsSucceed();
+        $mRespGetPeriod->markSucceed();
         // $updates = $this->_subCalc->bonusOverride($compressOi, $scheme, $cfgOverride);
         $mSubCalc
             ->expects($this->once())
@@ -263,7 +263,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
             ->method('getForDependentCalc')
             ->willReturn($mRespGetPeriod);
         // if($respGetPeriod->isSucceed())
-        $mRespGetPeriod->setAsSucceed();
+        $mRespGetPeriod->markSucceed();
         // $updates = $this->_subCalc->bonusInfinity($compressOi, $scheme, $cfgOverride);
         $mSubCalc
             ->expects($this->once())
@@ -353,7 +353,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
             ->method('getForDependentCalc')
             ->willReturn($mRespGetPeriod);
         // if($respGetPeriod->isSucceed())
-        $mRespGetPeriod->setAsSucceed();
+        $mRespGetPeriod->markSucceed();
         // $updates = $this->_subCalc->bonusOverride($compressOi, $scheme, $cfgOverride);
         $mSubCalc
             ->expects($this->once())
@@ -419,7 +419,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
             ->method('getForDependentCalc')
             ->willReturn($mRespGetPeriod);
         // if($respGetPeriod->isSucceed())
-        $mRespGetPeriod->setAsSucceed();
+        $mRespGetPeriod->markSucceed();
         // $updates = $this->_subCalc->bonusOverride($compressOi, $scheme, $cfgOverride);
         $mSubCalc
             ->expects($this->once())
@@ -514,7 +514,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
             ->method('getForDependentCalc')
             ->willReturn($mRespGetPeriod);
         // if($respGetPeriod->isSucceed())
-        $mRespGetPeriod->setAsSucceed();
+        $mRespGetPeriod->markSucceed();
         // $this->_conn->beginTransaction();
         $mConn
             ->expects($this->once())
@@ -592,7 +592,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
             ->method('getForDependentCalc')
             ->willReturn($mRespGetPeriod);
         // if($respGetPeriod->isSucceed())
-        $mRespGetPeriod->setAsSucceed();
+        $mRespGetPeriod->markSucceed();
         // $this->_conn->beginTransaction();
         $mConn
             ->expects($this->once())
@@ -668,7 +668,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
             ->method('getForDependentCalc')
             ->willReturn($mRespGetPeriod);
         // if($respGetPeriod->isSucceed())
-        $mRespGetPeriod->setAsSucceed();
+        $mRespGetPeriod->markSucceed();
         // $this->_conn->beginTransaction();
         $mConn
             ->expects($this->once())
@@ -757,7 +757,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
             ->method('getForDependentCalc')
             ->willReturn($mRespGetPeriod);
         // if($respGetPeriod->isSucceed())
-        $mRespGetPeriod->setAsSucceed();
+        $mRespGetPeriod->markSucceed();
         // $respAdd = $this->_subDb->saveOperationWalletActive(..)
         $mRespAdd = new DataObject();
         $mSubDb
@@ -810,7 +810,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
             ->method('getForDependentCalc')
             ->willReturn($mRespGetPeriod);
         // if($respGetPeriod->isSucceed())
-        $mRespGetPeriod->setAsSucceed();
+        $mRespGetPeriod->markSucceed();
         // $respAdd = $this->_subDb->saveOperationWalletActive(..)
         $mRespAdd = new DataObject();
         $mSubDb
@@ -864,7 +864,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
             ->method('getForDependentCalc')
             ->willReturn($mRespGetPeriod);
         // if($respGetPeriod->isSucceed())
-        $mRespGetPeriod->setAsSucceed();
+        $mRespGetPeriod->markSucceed();
         // $respAdd = $this->_subDb->saveOperationWalletActive(..)
         $mRespAdd = new DataObject();
         $mSubDb
@@ -956,7 +956,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
             ->method('getForDependentCalc')
             ->willReturn($mRespGetPeriod);
         // if($respGetPeriod->isSucceed())
-        $mRespGetPeriod->setAsSucceed();
+        $mRespGetPeriod->markSucceed();
         // $this->_conn->commit();
         $mConn
             ->expects($this->once())
@@ -1003,7 +1003,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
             ->method('getForDependentCalc')
             ->willReturn($mRespGetPeriod);
         // if($respGetPeriod->isSucceed())
-        $mRespGetPeriod->setAsSucceed();
+        $mRespGetPeriod->markSucceed();
         // $calcData = $respGetPeriod->getCalcData();
         $mRespGetPeriod->setCalcData([ Calculation::ATTR_ID => $CALC_ID ]);
         // $this->_conn->beginTransaction();
@@ -1101,7 +1101,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
             ->method('getForDependentCalc')
             ->willReturn($mRespGetPeriod);
         // if($respGetPeriod->isSucceed())
-        $mRespGetPeriod->setAsSucceed();
+        $mRespGetPeriod->markSucceed();
         // $calcData = $respGetPeriod->getCalcData();
         $mRespGetPeriod->setCalcData([ Calculation::ATTR_ID => $CALC_ID ]);
         // $this->_conn->beginTransaction();
@@ -1162,7 +1162,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
             ->method('getForDependentCalc')
             ->willReturn($mRespGetPeriod);
         // if($respGetPeriod->isSucceed())
-        $mRespGetPeriod->setAsSucceed();
+        $mRespGetPeriod->markSucceed();
         // $calcData = $respGetPeriod->getCalcData();
         $mRespGetPeriod->setCalcData([ Calculation::ATTR_ID => $CALC_ID ]);
         // $this->_conn->beginTransaction();
@@ -1258,7 +1258,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
 
         // $respGetPeriod = $this->_callBonusPersonalPeriod->getForWriteOff($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForWriteOffResponse();
-        $mRespGetPeriod->setAsSucceed();
+        $mRespGetPeriod->markSucceed();
         $mRespGetPeriod->setPeriodData([
             Period::ATTR_ID           => $PERIOD_ID,
             Period::ATTR_DSTAMP_BEGIN => $PERIOD_BEGIN,
@@ -1312,7 +1312,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
 
         // $respGetPeriod = $this->_callBonusPersonalPeriod->getForWriteOff($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForWriteOffResponse();
-        $mRespGetPeriod->setAsSucceed();
+        $mRespGetPeriod->markSucceed();
         $mCallBonusPersonalPeriod
             ->expects($this->once())
             ->method('getForWriteOff')
@@ -1360,7 +1360,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
 
         // $respGetPeriod = $this->_callBonusPersonalPeriod->getForWriteOff($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForWriteOffResponse();
-        $mRespGetPeriod->setAsSucceed();
+        $mRespGetPeriod->markSucceed();
         $mRespGetPeriod->setHasNoPvTransactionsYet();
         $mCallBonusPersonalPeriod
             ->expects($this->once())
@@ -1445,7 +1445,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
             ->method('getForDependentCalc')
             ->willReturn($mRespGetPeriod);
         // if($respGetPeriod->isSucceed())
-        $mRespGetPeriod->setAsSucceed();
+        $mRespGetPeriod->markSucceed();
         // $this->_conn->commit();
         $mConn
             ->expects($this->once())
@@ -1489,7 +1489,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
             ->method('getForDependentCalc')
             ->willReturn($mRespGetPeriod);
         // if($respGetPeriod->isSucceed())
-        $mRespGetPeriod->setAsSucceed();
+        $mRespGetPeriod->markSucceed();
         // $this->_conn->commit();
         $mConn
             ->expects($this->once())
@@ -1573,7 +1573,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
             ->method('getForDependentCalc')
             ->willReturn($mRespGetPeriod);
         // if($respGetPeriod->isSucceed())
-        $mRespGetPeriod->setAsSucceed();
+        $mRespGetPeriod->markSucceed();
         // $this->_conn->commit();
         $mConn
             ->expects($this->once())
@@ -1617,7 +1617,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
             ->method('getForDependentCalc')
             ->willReturn($mRespGetPeriod);
         // if($respGetPeriod->isSucceed())
-        $mRespGetPeriod->setAsSucceed();
+        $mRespGetPeriod->markSucceed();
         // $this->_conn->commit();
         $mConn
             ->expects($this->once())

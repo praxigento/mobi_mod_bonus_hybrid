@@ -23,6 +23,6 @@ class GetForWriteOff extends \Praxigento\Core\Service\Base\Response {
 
     public function setHasNoPvTransactionsYet() {
         $this->setData(self::HAS_NO_PV_TRANSACTIONS_YET, true);
-        $this->setAsSucceed();
+        $this->markSucceed();
     }
 }

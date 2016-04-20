@@ -132,7 +132,7 @@ class Call extends BaseCall implements ICalc
                 $this->_subDb->markCalcComplete($thisCalcId);
                 /* finalize response as succeed */
                 $this->_manTrans->transactionCommit($trans);
-                $result->setAsSucceed();
+                $result->markSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
             } finally {
@@ -223,7 +223,7 @@ class Call extends BaseCall implements ICalc
                 $this->_subDb->markCalcComplete($thisCalcId);
                 /* finalize response as succeed */
                 $this->_manTrans->transactionCommit($trans);
-                $result->setAsSucceed();
+                $result->markSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
             } finally {
@@ -314,7 +314,7 @@ class Call extends BaseCall implements ICalc
                 $this->_subDb->markCalcComplete($thisCalcId);
                 /* finalize response as succeed */
                 $this->_manTrans->transactionCommit($trans);
-                $result->setAsSucceed();
+                $result->markSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
             } finally {
@@ -396,7 +396,7 @@ class Call extends BaseCall implements ICalc
                 $this->_subDb->markCalcComplete($thisCalcId);
                 /* finalize response as succeed */
                 $this->_manTrans->transactionCommit($trans);
-                $result->setAsSucceed();
+                $result->markSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
             } finally {
@@ -484,7 +484,7 @@ class Call extends BaseCall implements ICalc
                 $this->_subDb->markCalcComplete($thisCalcId);
                 /* finalize response as succeed */
                 $this->_manTrans->transactionCommit($trans);
-                $result->setAsSucceed();
+                $result->markSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
             } finally {
@@ -539,7 +539,7 @@ class Call extends BaseCall implements ICalc
                 $this->_subDb->saveCompressedOi($updates, $thisCalcId);
                 $this->_subDb->markCalcComplete($thisCalcId);
                 $this->_manTrans->transactionCommit($trans);
-                $result->setAsSucceed();
+                $result->markSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
             } finally {
@@ -585,7 +585,7 @@ class Call extends BaseCall implements ICalc
                 $this->_subDb->saveCompressedPtc($updates, $thisCalcId);
                 $this->_subDb->markCalcComplete($thisCalcId);
                 $this->_manTrans->transactionCommit($trans);
-                $result->setAsSucceed();
+                $result->markSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
             } finally {
@@ -612,7 +612,7 @@ class Call extends BaseCall implements ICalc
         if ($respGetPeriod->isSucceed()) {
             if ($respGetPeriod->hasNoPvTransactionsYet()) {
                 $this->_logger->info("There is no PV transactions yet. Nothing to calculate.");
-                $result->setAsSucceed();
+                $result->markSucceed();
             } else {
                 $trans = $this->_manTrans->transactionBegin();
                 try {
@@ -633,7 +633,7 @@ class Call extends BaseCall implements ICalc
                     $this->_manTrans->transactionCommit($trans);
                     $result->setPeriodId($periodId);
                     $result->setCalcId($calcId);
-                    $result->setAsSucceed();
+                    $result->markSucceed();
                 } finally {
                     $this->_manTrans->transactionClose($trans);
                 }
@@ -678,7 +678,7 @@ class Call extends BaseCall implements ICalc
                 $this->_subDb->saveValueOv($updates, $baseCalcId);
                 $this->_subDb->markCalcComplete($thisCalcId);
                 $this->_manTrans->transactionCommit($trans);
-                $result->setAsSucceed();
+                $result->markSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
             } finally {
@@ -719,7 +719,7 @@ class Call extends BaseCall implements ICalc
                 $this->_subDb->saveValueTv($updates, $baseCalcId);
                 $this->_subDb->markCalcComplete($thisCalcId);
                 $this->_manTrans->transactionCommit($trans);
-                $result->setAsSucceed();
+                $result->markSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
             } finally {

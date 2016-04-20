@@ -91,7 +91,7 @@ class Db_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
             ->method('addEntity')
             ->willReturn($mRespAdd);
         // if($respAdd->isSucceed())
-        $mRespAdd->setAsSucceed();
+        $mRespAdd->markSucceed();
         // $periodId = $respAdd->getIdInserted();
         $mRespAdd->setIdInserted($ID_INSERTED);
         /**
@@ -147,7 +147,7 @@ class Db_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
 
         // $result = $this->_callBonusBasePeriod->getLatest($reqLastPeriod);
         $mResult = new BonusBasePeriodGetLatestResponse();
-        $mResult->setAsSucceed();
+        $mResult->markSucceed();
         $mCallBonusBasePeriod
             ->expects($this->once())
             ->method('getLatest')

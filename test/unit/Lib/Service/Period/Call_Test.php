@@ -31,7 +31,7 @@ class Call_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
 
         // $result = $this->_subBasedCalcs->getDependentCalcData($dependentCalcTypeCode, $baseCalcTypeCode);
         $mResult = new PeriodGetForDependentCalcResponse();
-        $mResult->setAsSucceed();
+        $mResult->markSucceed();
         $mSubWriteOff
             ->expects($this->once())
             ->method('getDependentCalcData')
@@ -82,7 +82,7 @@ class Call_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
             ->willReturn($CALC_TYPE_ID);
         // $respWriteOffLastPeriod = $this->_subDb->getLastPeriodData($calcWriteOffId);
         $mRespLastPeriod = new BonusBasePeriodGetLatestResponse ();
-        $mRespLastPeriod->setAsSucceed();
+        $mRespLastPeriod->markSucceed();
         $mRespLastPeriod->setPeriodData([
             Period::ATTR_ID         => $FOUND_PERIOD_ID,
             Period::ATTR_DSTAMP_END => $FOUND_PERIOD_END
@@ -157,7 +157,7 @@ class Call_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
             ->willReturn($CALC_TYPE_ID);
         // $respWriteOffLastPeriod = $this->_subDb->getLastPeriodData($calcWriteOffId);
         $mRespLastPeriod = new BonusBasePeriodGetLatestResponse ();
-        $mRespLastPeriod->setAsSucceed();
+        $mRespLastPeriod->markSucceed();
         $mRespLastPeriod->setPeriodData([
             Period::ATTR_ID         => $FOUND_PERIOD_ID,
             Period::ATTR_DSTAMP_END => $FOUND_PERIOD_END
@@ -210,7 +210,7 @@ class Call_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
             ->willReturn($CALC_TYPE_ID);
         // $respWriteOffLastPeriod = $this->_subDb->getLastPeriodData($calcWriteOffId);
         $mRespLastPeriod = new BonusBasePeriodGetLatestResponse ();
-        $mRespLastPeriod->setAsSucceed();
+        $mRespLastPeriod->markSucceed();
         $mRespLastPeriod->setPeriodData([
             Period::ATTR_ID => $FOUND_PERIOD_ID
         ]);
@@ -260,7 +260,7 @@ class Call_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
             ->willReturn($CALC_TYPE_ID);
         // $respWriteOffLastPeriod = $this->_subDb->getLastPeriodData($calcWriteOffId);
         $mRespWriteOffLastPeriod = new PeriodGetLatestResponse();
-        $mRespWriteOffLastPeriod->setAsSucceed();
+        $mRespWriteOffLastPeriod->markSucceed();
         $mSubDb
             ->expects($this->once())
             ->method('getLastPeriodData')
@@ -327,7 +327,7 @@ class Call_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
             ->willReturn($CALC_TYPE_ID);
         // $respWriteOffLastPeriod = $this->_subDb->getLastPeriodData($calcWriteOffId);
         $mRespLastPeriod = new BonusBasePeriodGetLatestResponse ();
-        $mRespLastPeriod->setAsSucceed();
+        $mRespLastPeriod->markSucceed();
         $mSubDb
             ->expects($this->once())
             ->method('getLastPeriodData')

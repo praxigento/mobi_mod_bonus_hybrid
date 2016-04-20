@@ -79,7 +79,7 @@ class Call extends BaseCall implements IPeriod
                 $periodWriteOffData = $this->_subDb->addNewPeriodAndCalc($calcWriteOffId, $dsBegin, $dsEnd);
                 $result->setPeriodData($periodWriteOffData->getData(Sub\Db::DATA_PERIOD));
                 $result->setCalcData($periodWriteOffData->getData(Sub\Db::DATA_CALC));
-                $result->setAsSucceed();
+                $result->markSucceed();
             }
         } else {
             $result->setPeriodData($periodWriteOffData);
@@ -88,7 +88,7 @@ class Call extends BaseCall implements IPeriod
             $calcData = $respWriteOffLastPeriod->getCalcData();
             if ($calcData === false) {
                 $this->_logger->info("There is no calculation data for existing period. Use existing period data.");
-                $result->setAsSucceed();
+                $result->markSucceed();
             } else {
                 if (
                     is_array($calcData) &&
@@ -104,11 +104,11 @@ class Call extends BaseCall implements IPeriod
                     $periodWriteOffData = $this->_subDb->addNewPeriodAndCalc($calcWriteOffId, $dsNextBegin, $dsNextEnd);
                     $result->setPeriodData($periodWriteOffData->getData(Sub\Db::DATA_PERIOD));
                     $result->setCalcData($periodWriteOffData->getData(Sub\Db::DATA_CALC));
-                    $result->setAsSucceed();
+                    $result->markSucceed();
                 } else {
                     $this->_logger->info("There is no complete calculation for existing period. Use existing period data.");
                     $result->setCalcData($calcData);
-                    $result->setAsSucceed();
+                    $result->markSucceed();
                 }
             }
         }
