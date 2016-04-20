@@ -9,14 +9,21 @@ use Praxigento\Bonus\Base\Lib\Entity\Calculation;
 use Praxigento\Bonus\Base\Lib\Entity\Period;
 use Praxigento\Bonus\Base\Lib\Service\Period\Response\GetLatest as BonusBasePeriodGetLatestResponse;
 use Praxigento\Bonus\Base\Lib\Service\Period\Response\GetLatest as PeriodGetLatestResponse;
-use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\Bonus\Hybrid\Lib\Service\Period\Response\GetForDependentCalc as PeriodGetForDependentCalcResponse;
+use Praxigento\BonusHybrid\Config as Cfg;
 
 include_once(__DIR__ . '/../../../phpunit_bootstrap.php');
 
-class Call_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
+class Call_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase
+{
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->markTestSkipped('Test is deprecated after M1 & M2 merge is done.');
+    }
 
-    public function test_getForDependentCalc() {
+    public function test_getForDependentCalc()
+    {
         /** === Test Data === */
         $CALC_TYPE_CODE_BASE = 1024;
         $CALC_TYPE_CODE_DEPEND = 512;
@@ -56,7 +63,8 @@ class Call_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
         $this->assertTrue($resp->isSucceed());
     }
 
-    public function test_getForWriteOff_isPeriodData_calcComplete() {
+    public function test_getForWriteOff_isPeriodData_calcComplete()
+    {
         /** === Test Data === */
         $CALC_TYPE_ID = 1024;
         $PERIOD_MONTH = '201512';
@@ -84,11 +92,11 @@ class Call_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
         $mRespLastPeriod = new BonusBasePeriodGetLatestResponse ();
         $mRespLastPeriod->markSucceed();
         $mRespLastPeriod->setPeriodData([
-            Period::ATTR_ID         => $FOUND_PERIOD_ID,
+            Period::ATTR_ID => $FOUND_PERIOD_ID,
             Period::ATTR_DSTAMP_END => $FOUND_PERIOD_END
         ]);
         $mRespLastPeriod->setCalcData([
-            Calculation::ATTR_ID    => $FOUND_CALC_ID,
+            Calculation::ATTR_ID => $FOUND_CALC_ID,
             Calculation::ATTR_STATE => Cfg::CALC_STATE_COMPLETE
         ]);
         $mSubDb
@@ -134,7 +142,8 @@ class Call_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
         $this->assertTrue($resp->isSucceed());
     }
 
-    public function test_getForWriteOff_isPeriodData_calcIncomplete() {
+    public function test_getForWriteOff_isPeriodData_calcIncomplete()
+    {
         /** === Test Data === */
         $CALC_TYPE_ID = 1024;
         $FOUND_PERIOD_ID = 2048;
@@ -159,11 +168,11 @@ class Call_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
         $mRespLastPeriod = new BonusBasePeriodGetLatestResponse ();
         $mRespLastPeriod->markSucceed();
         $mRespLastPeriod->setPeriodData([
-            Period::ATTR_ID         => $FOUND_PERIOD_ID,
+            Period::ATTR_ID => $FOUND_PERIOD_ID,
             Period::ATTR_DSTAMP_END => $FOUND_PERIOD_END
         ]);
         $mRespLastPeriod->setCalcData([
-            Calculation::ATTR_ID    => $FOUND_CALC_ID,
+            Calculation::ATTR_ID => $FOUND_CALC_ID,
             Calculation::ATTR_STATE => Cfg::CALC_STATE_STARTED
         ]);
         $mSubDb
@@ -189,7 +198,8 @@ class Call_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
         $this->assertTrue(is_array($resp->getCalcData()));
     }
 
-    public function test_getForWriteOff_isPeriodData_noCalc() {
+    public function test_getForWriteOff_isPeriodData_noCalc()
+    {
         /** === Test Data === */
         $CALC_TYPE_ID = 1024;
         $FOUND_PERIOD_ID = 2048;
@@ -236,7 +246,8 @@ class Call_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
         $this->assertTrue($resp->isSucceed());
     }
 
-    public function test_getForWriteOff_noPeriodData_isTransactions() {
+    public function test_getForWriteOff_noPeriodData_isTransactions()
+    {
         /** === Test Data === */
         $CALC_TYPE_ID = 1024;
         $DATE_FIRST_PV_TRANS = 'first PV trans timestamp';
@@ -307,7 +318,8 @@ class Call_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
         $this->assertTrue($resp->isSucceed());
     }
 
-    public function test_getForWriteOff_noPeriodData_noTransactions() {
+    public function test_getForWriteOff_noPeriodData_noTransactions()
+    {
         /** === Test Data === */
         $CALC_TYPE_ID = 1024;
         /** === Mocks === */

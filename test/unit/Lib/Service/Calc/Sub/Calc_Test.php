@@ -20,48 +20,56 @@ use Praxigento\Downline\Lib\Tool\Def\Tree as ToolDownlineTree;
 
 include_once(__DIR__ . '/../../../../phpunit_bootstrap.php');
 
-class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
+class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
+{
     private $CFG_OVERRIDE = [
         Def::SCHEMA_DEFAULT => [
-            1 => [ CfgParam::ATTR_RANK_ID => 1 ]
+            1 => [CfgParam::ATTR_RANK_ID => 1]
         ]
     ];
     private $CFG_PARAMS = [
         Def::SCHEMA_DEFAULT => [
             1 => [
-                CfgParam::ATTR_RANK_ID    => 1,
-                CfgParam::ATTR_INFINITY   => 0.03,
+                CfgParam::ATTR_RANK_ID => 1,
+                CfgParam::ATTR_INFINITY => 0.03,
                 CfgParam::ATTR_QUALIFY_PV => 10,
                 CfgParam::ATTR_QUALIFY_TV => 100,
-                CfgParam::ATTR_LEG_MAX    => 300,
+                CfgParam::ATTR_LEG_MAX => 300,
                 CfgParam::ATTR_LEG_MEDIUM => 200,
-                CfgParam::ATTR_LEG_MIN    => 100
+                CfgParam::ATTR_LEG_MIN => 100
             ],
             2 => [
-                CfgParam::ATTR_RANK_ID    => 2,
-                CfgParam::ATTR_INFINITY   => 0.02,
+                CfgParam::ATTR_RANK_ID => 2,
+                CfgParam::ATTR_INFINITY => 0.02,
                 CfgParam::ATTR_QUALIFY_PV => 10,
                 CfgParam::ATTR_QUALIFY_TV => 100,
-                CfgParam::ATTR_LEG_MAX    => 300,
+                CfgParam::ATTR_LEG_MAX => 300,
                 CfgParam::ATTR_LEG_MEDIUM => 200,
-                CfgParam::ATTR_LEG_MIN    => 100
+                CfgParam::ATTR_LEG_MIN => 100
             ]
         ]
     ];
     private $COURTESY_PERCENT = 0.05;
     /** @var array Levels  for Personal Bonus */
-    private $LEVELS_PERS = [ 0 => 0, 50 => 0.05, 100 => 0.10, 500 => 0.15, 750 => 0.2 ];
+    private $LEVELS_PERS = [0 => 0, 50 => 0.05, 100 => 0.10, 500 => 0.15, 750 => 0.2];
     /** @var array Levels  for Team Bonus */
-    private $LEVELS_TEAM = [ 0 => 0, 50 => 0.10, 500 => 0.15, 750 => 0.2 ];
+    private $LEVELS_TEAM = [0 => 0, 50 => 0.10, 500 => 0.15, 750 => 0.2];
 
-    public function test__calcOverrideBonusByRank() {
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->markTestSkipped('Test is deprecated after M1 & M2 merge is done.');
+    }
+
+    public function test__calcOverrideBonusByRank()
+    {
         /** === Test Data === */
         $CUST_ID = 1;
-        $CFG_OVR = [ 2 => [ CfgOverride::ATTR_PERCENT => 0.10 ] ];
-        $MAP_GEN = [ $CUST_ID => [ 2 => [ 2, 3 ] ] ];
+        $CFG_OVR = [2 => [CfgOverride::ATTR_PERCENT => 0.10]];
+        $MAP_GEN = [$CUST_ID => [2 => [2, 3]]];
         $MAP_ID = [
-            2 => [ OiCompress::ATTR_PV => 100 ],
-            3 => [ OiCompress::ATTR_PV => 10 ]
+            2 => [OiCompress::ATTR_PV => 100],
+            3 => [OiCompress::ATTR_PV => 10]
         ];
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
@@ -78,70 +86,74 @@ class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertTrue(is_array($data));
     }
 
-    public function test__getMaxQualifiedRankId() {
+    public function test__getMaxQualifiedRankId()
+    {
         /** === Test Data === */
         $LEGS_3 = [
-            OiCompress::ATTR_CUSTOMER_ID    => 1,
-            OiCompress::ATTR_PV             => 100,
-            OiCompress::ATTR_TV             => 1000,
-            OiCompress::ATTR_OV_LEG_MAX     => 310,
-            OiCompress::ATTR_OV_LEG_SECOND  => 210,
+            OiCompress::ATTR_CUSTOMER_ID => 1,
+            OiCompress::ATTR_PV => 100,
+            OiCompress::ATTR_TV => 1000,
+            OiCompress::ATTR_OV_LEG_MAX => 310,
+            OiCompress::ATTR_OV_LEG_SECOND => 210,
             OiCompress::ATTR_OV_LEG_SUMMARY => 110
         ];
         $LEGS_2 = [
-            OiCompress::ATTR_CUSTOMER_ID    => 2,
-            OiCompress::ATTR_PV             => 100,
-            OiCompress::ATTR_TV             => 1000,
-            OiCompress::ATTR_OV_LEG_MAX     => 310,
-            OiCompress::ATTR_OV_LEG_SECOND  => 210,
+            OiCompress::ATTR_CUSTOMER_ID => 2,
+            OiCompress::ATTR_PV => 100,
+            OiCompress::ATTR_TV => 1000,
+            OiCompress::ATTR_OV_LEG_MAX => 310,
+            OiCompress::ATTR_OV_LEG_SECOND => 210,
             OiCompress::ATTR_OV_LEG_SUMMARY => 0
         ];
         $LEGS_1 = [
-            OiCompress::ATTR_CUSTOMER_ID    => 3,
-            OiCompress::ATTR_PV             => 100,
-            OiCompress::ATTR_TV             => 1000,
-            OiCompress::ATTR_OV_LEG_MAX     => 310,
-            OiCompress::ATTR_OV_LEG_SECOND  => 0,
+            OiCompress::ATTR_CUSTOMER_ID => 3,
+            OiCompress::ATTR_PV => 100,
+            OiCompress::ATTR_TV => 1000,
+            OiCompress::ATTR_OV_LEG_MAX => 310,
+            OiCompress::ATTR_OV_LEG_SECOND => 0,
             OiCompress::ATTR_OV_LEG_SUMMARY => 0
         ];
         $LEGS_0 = [
-            OiCompress::ATTR_CUSTOMER_ID    => 3,
-            OiCompress::ATTR_PV             => 100,
-            OiCompress::ATTR_TV             => 1000,
-            OiCompress::ATTR_OV_LEG_MAX     => 0,
-            OiCompress::ATTR_OV_LEG_SECOND  => 0,
+            OiCompress::ATTR_CUSTOMER_ID => 3,
+            OiCompress::ATTR_PV => 100,
+            OiCompress::ATTR_TV => 1000,
+            OiCompress::ATTR_OV_LEG_MAX => 0,
+            OiCompress::ATTR_OV_LEG_SECOND => 0,
             OiCompress::ATTR_OV_LEG_SUMMARY => 0
         ];
         $CFG_PARAM = [
             Def::SCHEMA_DEFAULT => [
                 [
-                    CfgParam::ATTR_RANK_ID    => 64,
+                    CfgParam::ATTR_RANK_ID => 64,
                     CfgParam::ATTR_QUALIFY_PV => 10,
                     CfgParam::ATTR_QUALIFY_TV => 10,
-                    CfgParam::ATTR_LEG_MAX    => 300,
+                    CfgParam::ATTR_LEG_MAX => 300,
                     CfgParam::ATTR_LEG_MEDIUM => 200,
-                    CfgParam::ATTR_LEG_MIN    => 100
-                ], [
-                    CfgParam::ATTR_RANK_ID    => 32,
+                    CfgParam::ATTR_LEG_MIN => 100
+                ],
+                [
+                    CfgParam::ATTR_RANK_ID => 32,
                     CfgParam::ATTR_QUALIFY_PV => 10,
                     CfgParam::ATTR_QUALIFY_TV => 10,
-                    CfgParam::ATTR_LEG_MAX    => 300,
+                    CfgParam::ATTR_LEG_MAX => 300,
                     CfgParam::ATTR_LEG_MEDIUM => 200,
-                    CfgParam::ATTR_LEG_MIN    => 0
-                ], [
-                    CfgParam::ATTR_RANK_ID    => 16,
+                    CfgParam::ATTR_LEG_MIN => 0
+                ],
+                [
+                    CfgParam::ATTR_RANK_ID => 16,
                     CfgParam::ATTR_QUALIFY_PV => 10,
                     CfgParam::ATTR_QUALIFY_TV => 10,
-                    CfgParam::ATTR_LEG_MAX    => 300,
+                    CfgParam::ATTR_LEG_MAX => 300,
                     CfgParam::ATTR_LEG_MEDIUM => 0,
-                    CfgParam::ATTR_LEG_MIN    => 0
-                ], [
-                    CfgParam::ATTR_RANK_ID    => 8,
+                    CfgParam::ATTR_LEG_MIN => 0
+                ],
+                [
+                    CfgParam::ATTR_RANK_ID => 8,
                     CfgParam::ATTR_QUALIFY_PV => 10,
                     CfgParam::ATTR_QUALIFY_TV => 10,
-                    CfgParam::ATTR_LEG_MAX    => 0,
+                    CfgParam::ATTR_LEG_MAX => 0,
                     CfgParam::ATTR_LEG_MEDIUM => 0,
-                    CfgParam::ATTR_LEG_MIN    => 0
+                    CfgParam::ATTR_LEG_MIN => 0
                 ]
             ]
         ];
@@ -172,17 +184,18 @@ class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertNotNull($data);
     }
 
-    public function test__mapByGeneration() {
+    public function test__mapByGeneration()
+    {
         /** === Test Data === */
         $DATA = [
-            0 => [ 1 ],
-            1 => [ 2 ],
-            2 => [ 3 ]
+            0 => [1],
+            1 => [2],
+            2 => [3]
         ];
         $TREE = [
-            1 => [ Snap::ATTR_PATH => '/' ],
-            2 => [ Snap::ATTR_PATH => '/1/' ],
-            3 => [ Snap::ATTR_PATH => '/1/2/' ]
+            1 => [Snap::ATTR_PATH => '/'],
+            2 => [Snap::ATTR_PATH => '/1/'],
+            3 => [Snap::ATTR_PATH => '/1/2/']
         ];
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
@@ -199,11 +212,12 @@ class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertTrue(is_array($data));
     }
 
-    public function test__mapByPv() {
+    public function test__mapByPv()
+    {
         /** === Test Data === */
         $DATA = [
-            [ 'CustId' => 1, 'PV' => 10 ],
-            [ 'CustId' => 1, 'PV' => 20 ]
+            ['CustId' => 1, 'PV' => 10],
+            ['CustId' => 1, 'PV' => 20]
         ];
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
@@ -219,30 +233,33 @@ class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertTrue(is_array($data));
     }
 
-    public function test_bonusCourtesy() {
+    public function test_bonusCourtesy()
+    {
         /** === Test Data === */
         $COMPRESSED = [
             [
                 PtcCompress::ATTR_CUSTOMER_ID => 1,
-                Customer::ATTR_HUMAN_REF      => 'ref01',
-                Customer::ATTR_COUNTRY_CODE   => 'LV',
-                PtcCompress::ATTR_PARENT_ID   => 1,
-                PtcCompress::ATTR_PV          => 25,
-                PtcCompress::ATTR_TV          => 205
-            ], [
+                Customer::ATTR_HUMAN_REF => 'ref01',
+                Customer::ATTR_COUNTRY_CODE => 'LV',
+                PtcCompress::ATTR_PARENT_ID => 1,
+                PtcCompress::ATTR_PV => 25,
+                PtcCompress::ATTR_TV => 205
+            ],
+            [
                 PtcCompress::ATTR_CUSTOMER_ID => 2,
-                Customer::ATTR_HUMAN_REF      => 'ref02',
-                Customer::ATTR_COUNTRY_CODE   => 'LV',
-                PtcCompress::ATTR_PARENT_ID   => 1,
-                PtcCompress::ATTR_PV          => 60,
-                PtcCompress::ATTR_TV          => 0
-            ], [
+                Customer::ATTR_HUMAN_REF => 'ref02',
+                Customer::ATTR_COUNTRY_CODE => 'LV',
+                PtcCompress::ATTR_PARENT_ID => 1,
+                PtcCompress::ATTR_PV => 60,
+                PtcCompress::ATTR_TV => 0
+            ],
+            [
                 PtcCompress::ATTR_CUSTOMER_ID => 3,
-                Customer::ATTR_HUMAN_REF      => 'ref03',
-                Customer::ATTR_COUNTRY_CODE   => 'LV',
-                PtcCompress::ATTR_PARENT_ID   => 1,
-                PtcCompress::ATTR_PV          => 120,
-                PtcCompress::ATTR_TV          => 0
+                Customer::ATTR_HUMAN_REF => 'ref03',
+                Customer::ATTR_COUNTRY_CODE => 'LV',
+                PtcCompress::ATTR_PARENT_ID => 1,
+                PtcCompress::ATTR_PV => 120,
+                PtcCompress::ATTR_TV => 0
             ]
         ];
         /** === Mocks === */
@@ -276,66 +293,71 @@ class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertTrue(is_array($res));
     }
 
-    public function test_bonusInfinity() {
+    public function test_bonusInfinity()
+    {
         /** === Test Data === */
         $COMPRESSED_OI = [
             [
                 OiCompress::ATTR_CUSTOMER_ID => 1,
-                OiCompress::ATTR_PARENT_ID   => 1,
-                OiCompress::ATTR_RANK_ID     => 1,
-                OiCompress::ATTR_PV          => 100,
-                Customer::ATTR_COUNTRY_CODE  => 'LV'
-            ], [
+                OiCompress::ATTR_PARENT_ID => 1,
+                OiCompress::ATTR_RANK_ID => 1,
+                OiCompress::ATTR_PV => 100,
+                Customer::ATTR_COUNTRY_CODE => 'LV'
+            ],
+            [
                 OiCompress::ATTR_CUSTOMER_ID => 2,
-                OiCompress::ATTR_PARENT_ID   => 1,
-                OiCompress::ATTR_RANK_ID     => 2,
-                OiCompress::ATTR_PV          => 100,
-                Customer::ATTR_COUNTRY_CODE  => 'LV'
-            ], [
+                OiCompress::ATTR_PARENT_ID => 1,
+                OiCompress::ATTR_RANK_ID => 2,
+                OiCompress::ATTR_PV => 100,
+                Customer::ATTR_COUNTRY_CODE => 'LV'
+            ],
+            [
                 OiCompress::ATTR_CUSTOMER_ID => 3,
-                OiCompress::ATTR_PARENT_ID   => 2,
-                OiCompress::ATTR_RANK_ID     => 1,
-                OiCompress::ATTR_PV          => 100,
-                Customer::ATTR_COUNTRY_CODE  => 'LV'
-            ], [
+                OiCompress::ATTR_PARENT_ID => 2,
+                OiCompress::ATTR_RANK_ID => 1,
+                OiCompress::ATTR_PV => 100,
+                Customer::ATTR_COUNTRY_CODE => 'LV'
+            ],
+            [
                 OiCompress::ATTR_CUSTOMER_ID => 4,
-                OiCompress::ATTR_PARENT_ID   => 3,
-                OiCompress::ATTR_RANK_ID     => 2,
-                OiCompress::ATTR_PV          => 100,
-                Customer::ATTR_COUNTRY_CODE  => 'LV'
-            ], [
+                OiCompress::ATTR_PARENT_ID => 3,
+                OiCompress::ATTR_RANK_ID => 2,
+                OiCompress::ATTR_PV => 100,
+                Customer::ATTR_COUNTRY_CODE => 'LV'
+            ],
+            [
                 OiCompress::ATTR_CUSTOMER_ID => 5,
-                OiCompress::ATTR_PARENT_ID   => 4,
-                OiCompress::ATTR_RANK_ID     => 2,
-                OiCompress::ATTR_PV          => 100,
-                Customer::ATTR_COUNTRY_CODE  => 'LV'
+                OiCompress::ATTR_PARENT_ID => 4,
+                OiCompress::ATTR_RANK_ID => 2,
+                OiCompress::ATTR_PV => 100,
+                Customer::ATTR_COUNTRY_CODE => 'LV'
             ]
         ];
         $MAP_TREE_EXP = [
             1 => [
                 OiCompress::ATTR_CUSTOMER_ID => 1,
-                OiCompress::ATTR_RANK_ID     => 1,
-                Snap::ATTR_PATH              => '/'
+                OiCompress::ATTR_RANK_ID => 1,
+                Snap::ATTR_PATH => '/'
             ],
             2 => [
                 OiCompress::ATTR_CUSTOMER_ID => 2,
-                OiCompress::ATTR_RANK_ID     => 2,
-                Snap::ATTR_PATH              => '/1/'
+                OiCompress::ATTR_RANK_ID => 2,
+                Snap::ATTR_PATH => '/1/'
             ],
             3 => [
                 OiCompress::ATTR_CUSTOMER_ID => 3,
-                OiCompress::ATTR_RANK_ID     => 1,
-                Snap::ATTR_PATH              => '/1/2/'
+                OiCompress::ATTR_RANK_ID => 1,
+                Snap::ATTR_PATH => '/1/2/'
             ],
             4 => [
                 OiCompress::ATTR_CUSTOMER_ID => 4,
-                OiCompress::ATTR_RANK_ID     => 2,
-                Snap::ATTR_PATH              => '/1/2/3/'
+                OiCompress::ATTR_RANK_ID => 2,
+                Snap::ATTR_PATH => '/1/2/3/'
             ],
             5 => [
                 OiCompress::ATTR_CUSTOMER_ID => 5,
-                OiCompress::ATTR_RANK_ID     => 2,
-                Snap::ATTR_PATH              => '/1/2/3/4/'
+                OiCompress::ATTR_RANK_ID => 2,
+                Snap::ATTR_PATH => '/1/2/3/4/'
             ]
         ];
         /** === Mocks === */
@@ -370,23 +392,25 @@ class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertTrue(is_array($res));
     }
 
-    public function test_bonusOverride() {
+    public function test_bonusOverride()
+    {
         /** === Test Data === */
         $COMPRESSED_OI = [
             [
                 OiCompress::ATTR_CUSTOMER_ID => 1,
-                Customer::ATTR_HUMAN_REF     => 'ref01',
-                OiCompress::ATTR_PARENT_ID   => 1,
-                OiCompress::ATTR_RANK_ID     => 1,
-                OiCompress::ATTR_PV          => 100,
-                Customer::ATTR_COUNTRY_CODE  => 'LV'
-            ], [ // incomplete CFG_OVERRIDE
+                Customer::ATTR_HUMAN_REF => 'ref01',
+                OiCompress::ATTR_PARENT_ID => 1,
+                OiCompress::ATTR_RANK_ID => 1,
+                OiCompress::ATTR_PV => 100,
+                Customer::ATTR_COUNTRY_CODE => 'LV'
+            ],
+            [ // incomplete CFG_OVERRIDE
                 OiCompress::ATTR_CUSTOMER_ID => 2,
-                Customer::ATTR_HUMAN_REF     => 'ref02',
-                OiCompress::ATTR_PARENT_ID   => 1,
-                OiCompress::ATTR_RANK_ID     => 2,
-                OiCompress::ATTR_PV          => 100,
-                Customer::ATTR_COUNTRY_CODE  => 'LV'
+                Customer::ATTR_HUMAN_REF => 'ref02',
+                OiCompress::ATTR_PARENT_ID => 1,
+                OiCompress::ATTR_RANK_ID => 2,
+                OiCompress::ATTR_PV => 100,
+                Customer::ATTR_COUNTRY_CODE => 'LV'
             ]
         ];
         /** === Mocks === */
@@ -405,7 +429,7 @@ class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
             ->method('expandMinimal')
             ->willReturn($mRespExt);
         // $result = $respExt->getSnapData();
-        $mRespExt->setSnapData([ ]);
+        $mRespExt->setSnapData([]);
 
         // $scheme = $this->_toolScheme->getSchemeByCustomer($one);
         $mToolScheme
@@ -421,17 +445,19 @@ class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertTrue(is_array($res));
     }
 
-    public function test_bonusPersonalDef() {
+    public function test_bonusPersonalDef()
+    {
         /** === Test Data === */
         $COMPRESSED_PTC = [
             [
                 PtcCompress::ATTR_CUSTOMER_ID => 2,
-                PtcCompress::ATTR_PV          => 100,
-                Customer::ATTR_COUNTRY_CODE   => 'LV'
-            ], [
+                PtcCompress::ATTR_PV => 100,
+                Customer::ATTR_COUNTRY_CODE => 'LV'
+            ],
+            [
                 PtcCompress::ATTR_CUSTOMER_ID => 3,
-                PtcCompress::ATTR_PV          => 20,
-                Customer::ATTR_COUNTRY_CODE   => 'LV'
+                PtcCompress::ATTR_PV => 20,
+                Customer::ATTR_COUNTRY_CODE => 'LV'
             ]
         ];
         /** === Mocks === */
@@ -455,21 +481,22 @@ class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertTrue(is_array($res));
     }
 
-    public function test_bonusPersonalEu() {
+    public function test_bonusPersonalEu()
+    {
         /** === Test Data === */
         $TREE = [
-            [ Snap::ATTR_CUSTOMER_ID => 3, Snap::ATTR_PARENT_ID => 2, Snap::ATTR_PATH => '/2/' ]
+            [Snap::ATTR_CUSTOMER_ID => 3, Snap::ATTR_PARENT_ID => 2, Snap::ATTR_PATH => '/2/']
         ];
         $COMPRESSED_PTC = [
             [
                 PtcCompress::ATTR_CUSTOMER_ID => 2,
-                PtcCompress::ATTR_PV          => 100,
-                Customer::ATTR_COUNTRY_CODE   => 'LV'
+                PtcCompress::ATTR_PV => 100,
+                Customer::ATTR_COUNTRY_CODE => 'LV'
             ]
         ];
         $ORDERS = [
-            2 => [ 31 => 100 ],
-            3 => [ 32 => 200 ]
+            2 => [31 => 100],
+            3 => [32 => 200]
         ];
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
@@ -494,81 +521,90 @@ class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertTrue(is_array($res));
     }
 
-    public function test_bonusTeamDef() {
+    public function test_bonusTeamDef()
+    {
         /** === Test Data === */
         $COMPRESSED = [
             [ // forced PV
                 PtcCompress::ATTR_CUSTOMER_ID => 1,
-                Customer::ATTR_HUMAN_REF      => 'ref_1',
-                Customer::ATTR_COUNTRY_CODE   => 'LV',
-                PtcCompress::ATTR_PARENT_ID   => 1,
-                PtcCompress::ATTR_PATH        => '/',
-                PtcCompress::ATTR_PV          => 0,
-                PtcCompress::ATTR_TV          => 0
-            ], [ // parent with %TV not more then his child
+                Customer::ATTR_HUMAN_REF => 'ref_1',
+                Customer::ATTR_COUNTRY_CODE => 'LV',
+                PtcCompress::ATTR_PARENT_ID => 1,
+                PtcCompress::ATTR_PATH => '/',
+                PtcCompress::ATTR_PV => 0,
+                PtcCompress::ATTR_TV => 0
+            ],
+            [ // parent with %TV not more then his child
                 PtcCompress::ATTR_CUSTOMER_ID => 22,
-                Customer::ATTR_HUMAN_REF      => 'ref_22',
-                Customer::ATTR_COUNTRY_CODE   => 'LV',
-                PtcCompress::ATTR_PARENT_ID   => 1,
-                PtcCompress::ATTR_PATH        => '/1/',
-                PtcCompress::ATTR_PV          => 75,
-                PtcCompress::ATTR_TV          => 800
-            ], [ // child for parent with %TV not more then his child
+                Customer::ATTR_HUMAN_REF => 'ref_22',
+                Customer::ATTR_COUNTRY_CODE => 'LV',
+                PtcCompress::ATTR_PARENT_ID => 1,
+                PtcCompress::ATTR_PATH => '/1/',
+                PtcCompress::ATTR_PV => 75,
+                PtcCompress::ATTR_TV => 800
+            ],
+            [ // child for parent with %TV not more then his child
                 PtcCompress::ATTR_CUSTOMER_ID => 222,
-                Customer::ATTR_HUMAN_REF      => 'ref_222',
-                Customer::ATTR_COUNTRY_CODE   => 'LV',
-                PtcCompress::ATTR_PARENT_ID   => 22,
-                PtcCompress::ATTR_PATH        => '/1/22/',
-                PtcCompress::ATTR_PV          => 75,
-                PtcCompress::ATTR_TV          => 0
-            ], [ // EU customer
+                Customer::ATTR_HUMAN_REF => 'ref_222',
+                Customer::ATTR_COUNTRY_CODE => 'LV',
+                PtcCompress::ATTR_PARENT_ID => 22,
+                PtcCompress::ATTR_PATH => '/1/22/',
+                PtcCompress::ATTR_PV => 75,
+                PtcCompress::ATTR_TV => 0
+            ],
+            [ // EU customer
                 PtcCompress::ATTR_CUSTOMER_ID => 21,
-                Customer::ATTR_HUMAN_REF      => 'ref_21',
-                Customer::ATTR_COUNTRY_CODE   => 'DE',
-                PtcCompress::ATTR_PARENT_ID   => 1,
-                PtcCompress::ATTR_PATH        => '/1/',
-                PtcCompress::ATTR_PV          => 0,
-                PtcCompress::ATTR_TV          => 800
-            ], [ // EU customer with %PB less then courtesy
+                Customer::ATTR_HUMAN_REF => 'ref_21',
+                Customer::ATTR_COUNTRY_CODE => 'DE',
+                PtcCompress::ATTR_PARENT_ID => 1,
+                PtcCompress::ATTR_PATH => '/1/',
+                PtcCompress::ATTR_PV => 0,
+                PtcCompress::ATTR_TV => 800
+            ],
+            [ // EU customer with %PB less then courtesy
                 PtcCompress::ATTR_CUSTOMER_ID => 2,
-                Customer::ATTR_HUMAN_REF      => 'ref_2',
-                Customer::ATTR_COUNTRY_CODE   => 'DE',
-                PtcCompress::ATTR_PARENT_ID   => 21,
-                PtcCompress::ATTR_PATH        => '/1/21/',
-                PtcCompress::ATTR_PV          => 60,
-                PtcCompress::ATTR_TV          => 800
-            ], [ // forced TV, EU customer with %PB more then courtesy
+                Customer::ATTR_HUMAN_REF => 'ref_2',
+                Customer::ATTR_COUNTRY_CODE => 'DE',
+                PtcCompress::ATTR_PARENT_ID => 21,
+                PtcCompress::ATTR_PATH => '/1/21/',
+                PtcCompress::ATTR_PV => 60,
+                PtcCompress::ATTR_TV => 800
+            ],
+            [ // forced TV, EU customer with %PB more then courtesy
                 PtcCompress::ATTR_CUSTOMER_ID => 3,
-                Customer::ATTR_HUMAN_REF      => 'ref_3',
-                Customer::ATTR_COUNTRY_CODE   => 'DE',
-                PtcCompress::ATTR_PARENT_ID   => 1,
-                PtcCompress::ATTR_PATH        => '/1/21/2/',
-                PtcCompress::ATTR_PV          => 120,
-                PtcCompress::ATTR_TV          => 0
-            ], [ // leaf node
+                Customer::ATTR_HUMAN_REF => 'ref_3',
+                Customer::ATTR_COUNTRY_CODE => 'DE',
+                PtcCompress::ATTR_PARENT_ID => 1,
+                PtcCompress::ATTR_PATH => '/1/21/2/',
+                PtcCompress::ATTR_PV => 120,
+                PtcCompress::ATTR_TV => 0
+            ],
+            [ // leaf node
                 PtcCompress::ATTR_CUSTOMER_ID => 4,
-                Customer::ATTR_HUMAN_REF      => 'ref_4',
-                Customer::ATTR_COUNTRY_CODE   => 'LV',
-                PtcCompress::ATTR_PARENT_ID   => 1,
-                PtcCompress::ATTR_PATH        => '/1/21/2/3/',
-                PtcCompress::ATTR_PV          => 50,
-                PtcCompress::ATTR_TV          => 0
-            ], [ // has max %PB, no TB
+                Customer::ATTR_HUMAN_REF => 'ref_4',
+                Customer::ATTR_COUNTRY_CODE => 'LV',
+                PtcCompress::ATTR_PARENT_ID => 1,
+                PtcCompress::ATTR_PATH => '/1/21/2/3/',
+                PtcCompress::ATTR_PV => 50,
+                PtcCompress::ATTR_TV => 0
+            ],
+            [ // has max %PB, no TB
                 PtcCompress::ATTR_CUSTOMER_ID => 5,
-                Customer::ATTR_HUMAN_REF      => 'ref_5',
-                Customer::ATTR_COUNTRY_CODE   => 'LV',
-                PtcCompress::ATTR_PARENT_ID   => 1,
-                PtcCompress::ATTR_PATH        => '/1/21/2/3/',
-                PtcCompress::ATTR_PV          => 1000,
-                PtcCompress::ATTR_TV          => 0
-            ], [
+                Customer::ATTR_HUMAN_REF => 'ref_5',
+                Customer::ATTR_COUNTRY_CODE => 'LV',
+                PtcCompress::ATTR_PARENT_ID => 1,
+                PtcCompress::ATTR_PATH => '/1/21/2/3/',
+                PtcCompress::ATTR_PV => 1000,
+                PtcCompress::ATTR_TV => 0
+            ],
+            [
                 PtcCompress::ATTR_CUSTOMER_ID => 6,
-                Customer::ATTR_HUMAN_REF      => 'ref_6',
-                Customer::ATTR_COUNTRY_CODE   => 'LV',
-                PtcCompress::ATTR_PARENT_ID   => 1,
-                PtcCompress::ATTR_PATH        => '/1/',
-                PtcCompress::ATTR_PV          => 0,
-                PtcCompress::ATTR_TV          => 0
+                Customer::ATTR_HUMAN_REF => 'ref_6',
+                Customer::ATTR_COUNTRY_CODE => 'LV',
+                PtcCompress::ATTR_PARENT_ID => 1,
+                PtcCompress::ATTR_PATH => '/1/',
+                PtcCompress::ATTR_PV => 0,
+                PtcCompress::ATTR_TV => 0
             ]
         ];
         /** === Mocks === */
@@ -587,7 +623,7 @@ class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
                 $args = func_get_args();
                 $item = $args[0];
                 $result = Def::SCHEMA_DEFAULT;
-                if(
+                if (
                     isset($item[Customer::ATTR_COUNTRY_CODE]) &&
                     ($item[Customer::ATTR_COUNTRY_CODE] != 'LV')
                 ) {
@@ -628,27 +664,30 @@ class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertTrue(is_array($res));
     }
 
-    public function test_bonusTeamEu() {
+    public function test_bonusTeamEu()
+    {
         /** === Test Data === */
         $COMPRESSED_PTC = [
             [
                 PtcCompress::ATTR_CUSTOMER_ID => 2,
-                PtcCompress::ATTR_PARENT_ID   => 2,
-                PtcCompress::ATTR_PV          => 100,
-                Customer::ATTR_HUMAN_REF      => 'ref_2',
-                Customer::ATTR_COUNTRY_CODE   => 'LV'
-            ], [ //DEFAULT scheme
+                PtcCompress::ATTR_PARENT_ID => 2,
+                PtcCompress::ATTR_PV => 100,
+                Customer::ATTR_HUMAN_REF => 'ref_2',
+                Customer::ATTR_COUNTRY_CODE => 'LV'
+            ],
+            [ //DEFAULT scheme
                 PtcCompress::ATTR_CUSTOMER_ID => 3,
-                PtcCompress::ATTR_PARENT_ID   => 3,
-                PtcCompress::ATTR_PV          => 100,
-                Customer::ATTR_HUMAN_REF      => 'ref_3',
-                Customer::ATTR_COUNTRY_CODE   => 'DE'
-            ], [ // with 0 PV
+                PtcCompress::ATTR_PARENT_ID => 3,
+                PtcCompress::ATTR_PV => 100,
+                Customer::ATTR_HUMAN_REF => 'ref_3',
+                Customer::ATTR_COUNTRY_CODE => 'DE'
+            ],
+            [ // with 0 PV
                 PtcCompress::ATTR_CUSTOMER_ID => 4,
-                PtcCompress::ATTR_PARENT_ID   => 4,
-                PtcCompress::ATTR_PV          => 0,
-                Customer::ATTR_HUMAN_REF      => 'ref_4',
-                Customer::ATTR_COUNTRY_CODE   => 'LV'
+                PtcCompress::ATTR_PARENT_ID => 4,
+                PtcCompress::ATTR_PV => 0,
+                Customer::ATTR_HUMAN_REF => 'ref_4',
+                Customer::ATTR_COUNTRY_CODE => 'LV'
             ]
         ];
         /** === Mocks === */
@@ -681,99 +720,109 @@ class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertTrue(is_array($res));
     }
 
-    public function test_compressOi() {
+    public function test_compressOi()
+    {
         /** === Test Data === */
         $COMPRESSED_PTC = [
             [ // forced qualification
                 PtcCompress::ATTR_CUSTOMER_ID => 1,
-                PtcCompress::ATTR_PARENT_ID   => 1,
-                PtcCompress::ATTR_PATH        => '/',
-                PtcCompress::ATTR_DEPTH       => 0,
-                PtcCompress::ATTR_PV          => 100,
-                PtcCompress::ATTR_TV          => 0,
-                PtcCompress::ATTR_OV          => 100000,
-                Customer::ATTR_COUNTRY_CODE   => 'LV'
-            ], [ // qualified parent
+                PtcCompress::ATTR_PARENT_ID => 1,
+                PtcCompress::ATTR_PATH => '/',
+                PtcCompress::ATTR_DEPTH => 0,
+                PtcCompress::ATTR_PV => 100,
+                PtcCompress::ATTR_TV => 0,
+                PtcCompress::ATTR_OV => 100000,
+                Customer::ATTR_COUNTRY_CODE => 'LV'
+            ],
+            [ // qualified parent
                 PtcCompress::ATTR_CUSTOMER_ID => 2,
-                PtcCompress::ATTR_PARENT_ID   => 1,
-                PtcCompress::ATTR_PATH        => '/1/',
-                PtcCompress::ATTR_DEPTH       => 1,
-                PtcCompress::ATTR_PV          => 100,
-                PtcCompress::ATTR_TV          => 100,
-                PtcCompress::ATTR_OV          => 100000,
-                Customer::ATTR_COUNTRY_CODE   => 'LV'
-            ], [ // unqualified parent
+                PtcCompress::ATTR_PARENT_ID => 1,
+                PtcCompress::ATTR_PATH => '/1/',
+                PtcCompress::ATTR_DEPTH => 1,
+                PtcCompress::ATTR_PV => 100,
+                PtcCompress::ATTR_TV => 100,
+                PtcCompress::ATTR_OV => 100000,
+                Customer::ATTR_COUNTRY_CODE => 'LV'
+            ],
+            [ // unqualified parent
                 PtcCompress::ATTR_CUSTOMER_ID => 3,
-                PtcCompress::ATTR_PARENT_ID   => 1,
-                PtcCompress::ATTR_PATH        => '/1/',
-                PtcCompress::ATTR_DEPTH       => 1,
-                PtcCompress::ATTR_PV          => 0,
-                PtcCompress::ATTR_TV          => 0,
-                PtcCompress::ATTR_OV          => 100000,
-                Customer::ATTR_COUNTRY_CODE   => 'LV'
-            ], [ // qualified child 1 for qualified parent
+                PtcCompress::ATTR_PARENT_ID => 1,
+                PtcCompress::ATTR_PATH => '/1/',
+                PtcCompress::ATTR_DEPTH => 1,
+                PtcCompress::ATTR_PV => 0,
+                PtcCompress::ATTR_TV => 0,
+                PtcCompress::ATTR_OV => 100000,
+                Customer::ATTR_COUNTRY_CODE => 'LV'
+            ],
+            [ // qualified child 1 for qualified parent
                 PtcCompress::ATTR_CUSTOMER_ID => 21,
-                PtcCompress::ATTR_PARENT_ID   => 2,
-                PtcCompress::ATTR_PATH        => '/1/2/',
-                PtcCompress::ATTR_DEPTH       => 2,
-                PtcCompress::ATTR_PV          => 100,
-                PtcCompress::ATTR_TV          => 200,
-                PtcCompress::ATTR_OV          => 100000,
-                Customer::ATTR_COUNTRY_CODE   => 'LV'
-            ], [ // qualified child 2 for qualified parent
+                PtcCompress::ATTR_PARENT_ID => 2,
+                PtcCompress::ATTR_PATH => '/1/2/',
+                PtcCompress::ATTR_DEPTH => 2,
+                PtcCompress::ATTR_PV => 100,
+                PtcCompress::ATTR_TV => 200,
+                PtcCompress::ATTR_OV => 100000,
+                Customer::ATTR_COUNTRY_CODE => 'LV'
+            ],
+            [ // qualified child 2 for qualified parent
                 PtcCompress::ATTR_CUSTOMER_ID => 22,
-                PtcCompress::ATTR_PARENT_ID   => 2,
-                PtcCompress::ATTR_PATH        => '/1/2/',
-                PtcCompress::ATTR_DEPTH       => 2,
-                PtcCompress::ATTR_PV          => 100,
-                PtcCompress::ATTR_TV          => 300,
-                PtcCompress::ATTR_OV          => 100000,
-                Customer::ATTR_COUNTRY_CODE   => 'LV'
-            ], [ // qualified child 3 for qualified parent
+                PtcCompress::ATTR_PARENT_ID => 2,
+                PtcCompress::ATTR_PATH => '/1/2/',
+                PtcCompress::ATTR_DEPTH => 2,
+                PtcCompress::ATTR_PV => 100,
+                PtcCompress::ATTR_TV => 300,
+                PtcCompress::ATTR_OV => 100000,
+                Customer::ATTR_COUNTRY_CODE => 'LV'
+            ],
+            [ // qualified child 3 for qualified parent
                 PtcCompress::ATTR_CUSTOMER_ID => 23,
-                PtcCompress::ATTR_PARENT_ID   => 2,
-                PtcCompress::ATTR_PATH        => '/1/2/',
-                PtcCompress::ATTR_DEPTH       => 2,
-                PtcCompress::ATTR_PV          => 100,
-                PtcCompress::ATTR_TV          => 300,
-                PtcCompress::ATTR_OV          => 100000,
-                Customer::ATTR_COUNTRY_CODE   => 'LV'
-            ], [ // qualified child 4 for qualified parent
+                PtcCompress::ATTR_PARENT_ID => 2,
+                PtcCompress::ATTR_PATH => '/1/2/',
+                PtcCompress::ATTR_DEPTH => 2,
+                PtcCompress::ATTR_PV => 100,
+                PtcCompress::ATTR_TV => 300,
+                PtcCompress::ATTR_OV => 100000,
+                Customer::ATTR_COUNTRY_CODE => 'LV'
+            ],
+            [ // qualified child 4 for qualified parent
                 PtcCompress::ATTR_CUSTOMER_ID => 21,
-                PtcCompress::ATTR_PARENT_ID   => 2,
-                PtcCompress::ATTR_PATH        => '/1/2/',
-                PtcCompress::ATTR_DEPTH       => 2,
-                PtcCompress::ATTR_PV          => 100,
-                PtcCompress::ATTR_TV          => 300,
-                PtcCompress::ATTR_OV          => 100000,
-                Customer::ATTR_COUNTRY_CODE   => 'LV'
-            ], [ // qualified child for unqualified parent
+                PtcCompress::ATTR_PARENT_ID => 2,
+                PtcCompress::ATTR_PATH => '/1/2/',
+                PtcCompress::ATTR_DEPTH => 2,
+                PtcCompress::ATTR_PV => 100,
+                PtcCompress::ATTR_TV => 300,
+                PtcCompress::ATTR_OV => 100000,
+                Customer::ATTR_COUNTRY_CODE => 'LV'
+            ],
+            [ // qualified child for unqualified parent
                 PtcCompress::ATTR_CUSTOMER_ID => 31,
-                PtcCompress::ATTR_PARENT_ID   => 3,
-                PtcCompress::ATTR_PATH        => '/1/3/',
-                PtcCompress::ATTR_DEPTH       => 2,
-                PtcCompress::ATTR_PV          => 100,
-                PtcCompress::ATTR_TV          => 100,
-                PtcCompress::ATTR_OV          => 100000,
-                Customer::ATTR_COUNTRY_CODE   => 'LV'
-            ], [ // unqualified root
+                PtcCompress::ATTR_PARENT_ID => 3,
+                PtcCompress::ATTR_PATH => '/1/3/',
+                PtcCompress::ATTR_DEPTH => 2,
+                PtcCompress::ATTR_PV => 100,
+                PtcCompress::ATTR_TV => 100,
+                PtcCompress::ATTR_OV => 100000,
+                Customer::ATTR_COUNTRY_CODE => 'LV'
+            ],
+            [ // unqualified root
                 PtcCompress::ATTR_CUSTOMER_ID => 4,
-                PtcCompress::ATTR_PARENT_ID   => 4,
-                PtcCompress::ATTR_PATH        => '/',
-                PtcCompress::ATTR_DEPTH       => 0,
-                PtcCompress::ATTR_PV          => 0,
-                PtcCompress::ATTR_TV          => 0,
-                PtcCompress::ATTR_OV          => 100000,
-                Customer::ATTR_COUNTRY_CODE   => 'LV'
-            ], [ // qualified child for unqualified root
+                PtcCompress::ATTR_PARENT_ID => 4,
+                PtcCompress::ATTR_PATH => '/',
+                PtcCompress::ATTR_DEPTH => 0,
+                PtcCompress::ATTR_PV => 0,
+                PtcCompress::ATTR_TV => 0,
+                PtcCompress::ATTR_OV => 100000,
+                Customer::ATTR_COUNTRY_CODE => 'LV'
+            ],
+            [ // qualified child for unqualified root
                 PtcCompress::ATTR_CUSTOMER_ID => 41,
-                PtcCompress::ATTR_PARENT_ID   => 4,
-                PtcCompress::ATTR_PATH        => '/4/',
-                PtcCompress::ATTR_DEPTH       => 1,
-                PtcCompress::ATTR_PV          => 1000,
-                PtcCompress::ATTR_TV          => 1000,
-                PtcCompress::ATTR_OV          => 100000,
-                Customer::ATTR_COUNTRY_CODE   => 'LV'
+                PtcCompress::ATTR_PARENT_ID => 4,
+                PtcCompress::ATTR_PATH => '/4/',
+                PtcCompress::ATTR_DEPTH => 1,
+                PtcCompress::ATTR_PV => 1000,
+                PtcCompress::ATTR_TV => 1000,
+                PtcCompress::ATTR_OV => 100000,
+                Customer::ATTR_COUNTRY_CODE => 'LV'
             ]
         ];
         /** === Mocks === */
@@ -791,7 +840,7 @@ class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
             ->willReturnCallback(function () {
                 $args = func_get_args();
                 $result = null;
-                if($args[0] == 1) {
+                if ($args[0] == 1) {
                     $result = 1;
                 }
                 return $result;
@@ -813,36 +862,72 @@ class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertTrue(is_array($res));
     }
 
-    public function test_compressPtc() {
+    public function test_compressPtc()
+    {
         /** === Test Data === */
         $CUSTS = [
-            [ Customer::ATTR_CUSTOMER_ID => 1 ],
-            [ Customer::ATTR_CUSTOMER_ID => 2 ],
-            [ Customer::ATTR_CUSTOMER_ID => 3 ],
-            [ Customer::ATTR_CUSTOMER_ID => 4 ],
-            [ Customer::ATTR_CUSTOMER_ID => 5 ],
-            [ Customer::ATTR_CUSTOMER_ID => 6 ],
-            [ Customer::ATTR_CUSTOMER_ID => 7 ]
+            [Customer::ATTR_CUSTOMER_ID => 1],
+            [Customer::ATTR_CUSTOMER_ID => 2],
+            [Customer::ATTR_CUSTOMER_ID => 3],
+            [Customer::ATTR_CUSTOMER_ID => 4],
+            [Customer::ATTR_CUSTOMER_ID => 5],
+            [Customer::ATTR_CUSTOMER_ID => 6],
+            [Customer::ATTR_CUSTOMER_ID => 7]
         ];
         $TREE = [
-            1 => [ Snap::ATTR_CUSTOMER_ID => 1, Snap::ATTR_PARENT_ID => 1, Snap::ATTR_DEPTH => 0, Snap::ATTR_PATH => '/' ],
-            2 => [ Snap::ATTR_CUSTOMER_ID => 2, Snap::ATTR_PARENT_ID => 1, Snap::ATTR_DEPTH => 1, Snap::ATTR_PATH => '/1/' ],
-            3 => [ Snap::ATTR_CUSTOMER_ID => 3, Snap::ATTR_PARENT_ID => 2, Snap::ATTR_DEPTH => 2, Snap::ATTR_PATH => '/1/2/' ],
-            4 => [ Snap::ATTR_CUSTOMER_ID => 4, Snap::ATTR_PARENT_ID => 3, Snap::ATTR_DEPTH => 3, Snap::ATTR_PATH => '/1/2/3/' ],
-            5 => [ Snap::ATTR_CUSTOMER_ID => 5, Snap::ATTR_PARENT_ID => 4, Snap::ATTR_DEPTH => 4, Snap::ATTR_PATH => '/1/2/3/4/' ],
-            6 => [ Snap::ATTR_CUSTOMER_ID => 6, Snap::ATTR_PARENT_ID => 5, Snap::ATTR_DEPTH => 5, Snap::ATTR_PATH => '/1/2/3/4/5/' ],
-            7 => [ Snap::ATTR_CUSTOMER_ID => 7, Snap::ATTR_PARENT_ID => 3, Snap::ATTR_DEPTH => 3, Snap::ATTR_PATH => '/1/2/3/' ],
+            1 => [
+                Snap::ATTR_CUSTOMER_ID => 1,
+                Snap::ATTR_PARENT_ID => 1,
+                Snap::ATTR_DEPTH => 0,
+                Snap::ATTR_PATH => '/'
+            ],
+            2 => [
+                Snap::ATTR_CUSTOMER_ID => 2,
+                Snap::ATTR_PARENT_ID => 1,
+                Snap::ATTR_DEPTH => 1,
+                Snap::ATTR_PATH => '/1/'
+            ],
+            3 => [
+                Snap::ATTR_CUSTOMER_ID => 3,
+                Snap::ATTR_PARENT_ID => 2,
+                Snap::ATTR_DEPTH => 2,
+                Snap::ATTR_PATH => '/1/2/'
+            ],
+            4 => [
+                Snap::ATTR_CUSTOMER_ID => 4,
+                Snap::ATTR_PARENT_ID => 3,
+                Snap::ATTR_DEPTH => 3,
+                Snap::ATTR_PATH => '/1/2/3/'
+            ],
+            5 => [
+                Snap::ATTR_CUSTOMER_ID => 5,
+                Snap::ATTR_PARENT_ID => 4,
+                Snap::ATTR_DEPTH => 4,
+                Snap::ATTR_PATH => '/1/2/3/4/'
+            ],
+            6 => [
+                Snap::ATTR_CUSTOMER_ID => 6,
+                Snap::ATTR_PARENT_ID => 5,
+                Snap::ATTR_DEPTH => 5,
+                Snap::ATTR_PATH => '/1/2/3/4/5/'
+            ],
+            7 => [
+                Snap::ATTR_CUSTOMER_ID => 7,
+                Snap::ATTR_PARENT_ID => 3,
+                Snap::ATTR_DEPTH => 3,
+                Snap::ATTR_PATH => '/1/2/3/'
+            ],
         ];
         $TRANS = [
-            [ Account::ATTR_CUST_ID => 2, Transaction::ATTR_VALUE => 20 ],
-            [ Account::ATTR_CUST_ID => 3, Transaction::ATTR_VALUE => 20 ],
-            [ Account::ATTR_CUST_ID => 4, Transaction::ATTR_VALUE => 20 ],
-            [ Account::ATTR_CUST_ID => 5, Transaction::ATTR_VALUE => 25 ],
-            [ Account::ATTR_CUST_ID => 6, Transaction::ATTR_VALUE => 250 ],
-            [ Account::ATTR_CUST_ID => 7, Transaction::ATTR_VALUE => 20 ]
+            [Account::ATTR_CUST_ID => 2, Transaction::ATTR_VALUE => 20],
+            [Account::ATTR_CUST_ID => 3, Transaction::ATTR_VALUE => 20],
+            [Account::ATTR_CUST_ID => 4, Transaction::ATTR_VALUE => 20],
+            [Account::ATTR_CUST_ID => 5, Transaction::ATTR_VALUE => 25],
+            [Account::ATTR_CUST_ID => 6, Transaction::ATTR_VALUE => 250],
+            [Account::ATTR_CUST_ID => 7, Transaction::ATTR_VALUE => 20]
         ];
-        $Q_LEVELS = [ Def::SCHEMA_DEFAULT => 50, Def::SCHEMA_EU => 100 ];
-        $FORCED_IDS = [ 1, 2 ];
+        $Q_LEVELS = [Def::SCHEMA_DEFAULT => 50, Def::SCHEMA_EU => 100];
+        $FORCED_IDS = [1, 2];
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
         $mToolScheme = $this->_mockFor('\Praxigento\Bonus\Hybrid\Lib\Tool\IScheme');
@@ -868,7 +953,7 @@ class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         // private function _composeSnapUpdates($calculatedData)
         // $resp = $this->_callDownlineSnap->expandMinimal($req);
         $mResp = new DownlineSnapExtendMinimalResponse();
-        $mResp->setSnapData([ ]);
+        $mResp->setSnapData([]);
         $mCallDownlineSnap
             ->expects($this->once())
             ->method('expandMinimal')
@@ -882,21 +967,24 @@ class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertTrue(is_array($data));
     }
 
-    public function test_pvWriteOff() {
+    public function test_pvWriteOff()
+    {
         /** === Test Data === */
         $TRANSACTIONS = [
             [
-                Transaction::ATTR_DEBIT_ACC_ID  => 2,
+                Transaction::ATTR_DEBIT_ACC_ID => 2,
                 Transaction::ATTR_CREDIT_ACC_ID => 4,
-                Transaction::ATTR_VALUE         => 10
-            ], [
-                Transaction::ATTR_DEBIT_ACC_ID  => 2,
+                Transaction::ATTR_VALUE => 10
+            ],
+            [
+                Transaction::ATTR_DEBIT_ACC_ID => 2,
                 Transaction::ATTR_CREDIT_ACC_ID => 8,
-                Transaction::ATTR_VALUE         => 20
-            ], [
-                Transaction::ATTR_DEBIT_ACC_ID  => 4,
+                Transaction::ATTR_VALUE => 20
+            ],
+            [
+                Transaction::ATTR_DEBIT_ACC_ID => 4,
                 Transaction::ATTR_CREDIT_ACC_ID => 8,
-                Transaction::ATTR_VALUE         => 30
+                Transaction::ATTR_VALUE => 30
             ]
         ];
         /** === Mocks === */
@@ -913,24 +1001,27 @@ class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertTrue(is_array($res));
     }
 
-    public function test_valueOv() {
+    public function test_valueOv()
+    {
         /** === Test Data === */
         $COMPRESSION = [
-            1    => [
+            1 => [
                 PtcCompress::ATTR_CUSTOMER_ID => 1,
-                PtcCompress::ATTR_PARENT_ID   => 1,
-                PtcCompress::ATTR_PV          => 325,
-                PtcCompress::ATTR_DEPTH       => 0
-            ], 2 => [
+                PtcCompress::ATTR_PARENT_ID => 1,
+                PtcCompress::ATTR_PV => 325,
+                PtcCompress::ATTR_DEPTH => 0
+            ],
+            2 => [
                 PtcCompress::ATTR_CUSTOMER_ID => 2,
-                PtcCompress::ATTR_PARENT_ID   => 1,
-                PtcCompress::ATTR_PV          => 300,
-                PtcCompress::ATTR_DEPTH       => 1
-            ], 3 => [
+                PtcCompress::ATTR_PARENT_ID => 1,
+                PtcCompress::ATTR_PV => 300,
+                PtcCompress::ATTR_DEPTH => 1
+            ],
+            3 => [
                 PtcCompress::ATTR_CUSTOMER_ID => 3,
-                PtcCompress::ATTR_PARENT_ID   => 1,
-                PtcCompress::ATTR_PV          => 700,
-                PtcCompress::ATTR_DEPTH       => 1
+                PtcCompress::ATTR_PARENT_ID => 1,
+                PtcCompress::ATTR_PV => 700,
+                PtcCompress::ATTR_DEPTH => 1
             ]
         ];
         /** === Mocks === */
@@ -947,12 +1038,13 @@ class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertTrue(is_array($data));
     }
 
-    public function test_valueTv() {
+    public function test_valueTv()
+    {
         /** === Test Data === */
         $COMPRESSION = [
-            1 => [ PtcCompress::ATTR_CUSTOMER_ID => 1, PtcCompress::ATTR_PARENT_ID => 1, PtcCompress::ATTR_PV => 325 ],
-            2 => [ PtcCompress::ATTR_CUSTOMER_ID => 2, PtcCompress::ATTR_PARENT_ID => 1, PtcCompress::ATTR_PV => 300 ],
-            3 => [ PtcCompress::ATTR_CUSTOMER_ID => 3, PtcCompress::ATTR_PARENT_ID => 1, PtcCompress::ATTR_PV => 700 ]
+            1 => [PtcCompress::ATTR_CUSTOMER_ID => 1, PtcCompress::ATTR_PARENT_ID => 1, PtcCompress::ATTR_PV => 325],
+            2 => [PtcCompress::ATTR_CUSTOMER_ID => 2, PtcCompress::ATTR_PARENT_ID => 1, PtcCompress::ATTR_PV => 300],
+            3 => [PtcCompress::ATTR_CUSTOMER_ID => 3, PtcCompress::ATTR_PARENT_ID => 1, PtcCompress::ATTR_PV => 700]
         ];
         /** === Mocks === */
         $mLogger = $this->_mockLogger();

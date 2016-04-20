@@ -14,11 +14,19 @@ use Praxigento\Bonus\Hybrid\Lib\Service\Period\Response\GetForWriteOff as BonusP
 
 include_once(__DIR__ . '/../../../phpunit_bootstrap.php');
 
-class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
+class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
+{
     const PV_COMPRESSION_LEVEL_DEF = 50;
     const PV_COMPRESSION_LEVEL_EU = 100;
 
-    public function test_bonusCourtesy_isPeriod() {
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->markTestSkipped('Test is deprecated after M1 & M2 merge is done.');
+    }
+
+    public function test_bonusCourtesy_isPeriod()
+    {
         /** === Test Data === */
         $COURTESY_BONUS_PERCENT = 0.05;
         /** === Mocks === */
@@ -44,7 +52,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $mSubCalc
             ->expects($this->once())
             ->method('bonusCourtesy')
-            ->willReturn([ 2 => [ [ Calc::A_VALUE => 10, Calc::A_OTHER_ID => 4 ] ] ]);
+            ->willReturn([2 => [[Calc::A_VALUE => 10, Calc::A_OTHER_ID => 4]]]);
         //  $respAdd = $this->_subDb->saveOperationWalletActive(...)
         $mRespAdd = new DataObject();
         $mSubDb
@@ -54,7 +62,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         // $operId = $respAdd->getOperationId();
         $mRespAdd->setOperationId(21);
         // $transIds = $respAdd->getTransactionsIds();
-        $mRespAdd->setTransactionsIds([ ]);
+        $mRespAdd->setTransactionsIds([]);
         // $this->_conn->commit();
         $mConn
             ->expects($this->once())
@@ -80,7 +88,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertTrue($resp->isSucceed());
     }
 
-    public function test_bonusCourtesy_isPeriod_exception() {
+    public function test_bonusCourtesy_isPeriod_exception()
+    {
         /** === Test Data === */
         $COURTESY_BONUS_PERCENT = 0.05;
         /** === Mocks === */
@@ -135,7 +144,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertFalse($resp->isSucceed());
     }
 
-    public function test_bonusCourtesy_noPeriod() {
+    public function test_bonusCourtesy_noPeriod()
+    {
         /** === Test Data === */
         $COURTESY_BONUS_PERCENT = 0.05;
         /** === Mocks === */
@@ -176,7 +186,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertFalse($resp->isSucceed());
     }
 
-    public function test_bonusInfinity_isPeriod_Def() {
+    public function test_bonusInfinity_isPeriod_Def()
+    {
         /** === Test Data === */
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
@@ -204,9 +215,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
             ->willReturn([
                 [
                     Calc::A_CUST_ID => 1,
-                    Calc::A_PV      => 100,
+                    Calc::A_PV => 100,
                     Calc::A_ENTRIES => [
-                        [ Calc::A_VALUE => 10, Calc::A_OTHER_ID => 4 ]
+                        [Calc::A_VALUE => 10, Calc::A_OTHER_ID => 4]
                     ]
                 ]
             ]);
@@ -218,7 +229,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
             ->willReturn($mRespAdd);
         //  $operId = $respAdd->getOperationId();
         $mRespAdd->getOperationId(32);
-        $mRespAdd->getTransactionsIds([ 2, 3 ]);
+        $mRespAdd->getTransactionsIds([2, 3]);
         // $this->_conn->commit();
         $mConn
             ->expects($this->once())
@@ -243,7 +254,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertTrue($resp->isSucceed());
     }
 
-    public function test_bonusInfinity_isPeriod_exception() {
+    public function test_bonusInfinity_isPeriod_exception()
+    {
         /** === Test Data === */
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
@@ -293,7 +305,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertFalse($resp->isSucceed());
     }
 
-    public function test_bonusInfinity_noPeriod_Eu() {
+    public function test_bonusInfinity_noPeriod_Eu()
+    {
         /** === Test Data === */
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
@@ -333,7 +346,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertFalse($resp->isSucceed());
     }
 
-    public function test_bonusOverride_isPeriod_Def() {
+    public function test_bonusOverride_isPeriod_Def()
+    {
         /** === Test Data === */
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
@@ -362,7 +376,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
                 [
                     Calc::A_CUST_ID => 1,
                     Calc::A_ENTRIES => [
-                        [ Calc::A_VALUE => 10, Calc::A_OTHER_ID => 4 ]
+                        [Calc::A_VALUE => 10, Calc::A_OTHER_ID => 4]
                     ]
                 ]
             ]);
@@ -374,7 +388,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
             ->willReturn($mRespAdd);
         //  $operId = $respAdd->getOperationId();
         $mRespAdd->getOperationId(32);
-        $mRespAdd->getTransactionsIds([ 2, 3 ]);
+        $mRespAdd->getTransactionsIds([2, 3]);
         // $this->_conn->commit();
         $mConn
             ->expects($this->once())
@@ -399,7 +413,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertTrue($resp->isSucceed());
     }
 
-    public function test_bonusOverride_isPeriod_exception() {
+    public function test_bonusOverride_isPeriod_exception()
+    {
         /** === Test Data === */
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
@@ -449,7 +464,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertFalse($resp->isSucceed());
     }
 
-    public function test_bonusOverride_noPeriod_Eu() {
+    public function test_bonusOverride_noPeriod_Eu()
+    {
         /** === Test Data === */
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
@@ -489,7 +505,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertFalse($resp->isSucceed());
     }
 
-    public function test_bonusPersonal_isPeriod_Def() {
+    public function test_bonusPersonal_isPeriod_Def()
+    {
         /** === Test Data === */
         $PERIOD_BONUS_ID = 1;
         $CALC_BONUS_ID = 2;
@@ -527,16 +544,16 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         // $persBonusPeriodData = $respGetPeriod->getDependentPeriodData();
         // $persBonusPeriodId = $persBonusPeriodData[Period::ATTR_ID];
         $mRespGetPeriod->setDependentPeriodData([
-            Period::ATTR_ID           => $PERIOD_BONUS_ID,
+            Period::ATTR_ID => $PERIOD_BONUS_ID,
             Period::ATTR_DSTAMP_BEGIN => 'from',
-            Period::ATTR_DSTAMP_END   => 'to'
+            Period::ATTR_DSTAMP_END => 'to'
         ]);
         // $pvCompressPeriodData = $respGetPeriod->getBasePeriodData();
         // $pvCompressDsBegin = $pvCompressPeriodData[Period::ATTR_DSTAMP_BEGIN];
         // $pvCompressDsEnd = $pvCompressPeriodData[Period::ATTR_DSTAMP_END];
         $mRespGetPeriod->setBasePeriodData([
             Period::ATTR_DSTAMP_BEGIN => 'from',
-            Period::ATTR_DSTAMP_END   => 'to'
+            Period::ATTR_DSTAMP_END => 'to'
         ]);
         // $respAdd = $this->_subDb->saveOperationWalletActive(..)
         $mRespAdd = new DataObject();
@@ -567,7 +584,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertEquals($CALC_BONUS_ID, $resp->getCalcId());
     }
 
-    public function test_bonusPersonal_isPeriod_Eu() {
+    public function test_bonusPersonal_isPeriod_Eu()
+    {
         /** === Test Data === */
         $PERIOD_BONUS_ID = 1;
         $CALC_BONUS_ID = 2;
@@ -605,16 +623,16 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         // $persBonusPeriodData = $respGetPeriod->getDependentPeriodData();
         // $persBonusPeriodId = $persBonusPeriodData[Period::ATTR_ID];
         $mRespGetPeriod->setDependentPeriodData([
-            Period::ATTR_ID           => $PERIOD_BONUS_ID,
+            Period::ATTR_ID => $PERIOD_BONUS_ID,
             Period::ATTR_DSTAMP_BEGIN => 'from',
-            Period::ATTR_DSTAMP_END   => 'to'
+            Period::ATTR_DSTAMP_END => 'to'
         ]);
         // $pvCompressPeriodData = $respGetPeriod->getBasePeriodData();
         // $pvCompressDsBegin = $pvCompressPeriodData[Period::ATTR_DSTAMP_BEGIN];
         // $pvCompressDsEnd = $pvCompressPeriodData[Period::ATTR_DSTAMP_END];
         $mRespGetPeriod->setBasePeriodData([
             Period::ATTR_DSTAMP_BEGIN => 'from',
-            Period::ATTR_DSTAMP_END   => 'to'
+            Period::ATTR_DSTAMP_END => 'to'
         ]);
         // $respAdd = $this->_subDb->saveOperationWalletActive(..)
         $mRespAdd = new DataObject();
@@ -646,7 +664,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertEquals($CALC_BONUS_ID, $resp->getCalcId());
     }
 
-    public function test_bonusPersonal_isPeriod_exception() {
+    public function test_bonusPersonal_isPeriod_exception()
+    {
         /** === Test Data === */
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
@@ -697,7 +716,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertFalse($resp->isSucceed());
     }
 
-    public function test_bonusPersonal_noPeriod() {
+    public function test_bonusPersonal_noPeriod()
+    {
         /** === Test Data === */
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
@@ -736,7 +756,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertFalse($resp->isSucceed());
     }
 
-    public function test_bonusTeam_isPeriod_Def() {
+    public function test_bonusTeam_isPeriod_Def()
+    {
         /** === Test Data === */
         $OPERATION_ID = 3;
         /** === Mocks === */
@@ -789,7 +810,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertTrue($resp->isSucceed());
     }
 
-    public function test_bonusTeam_isPeriod_Eu() {
+    public function test_bonusTeam_isPeriod_Eu()
+    {
         /** === Test Data === */
         $OPERATION_ID = 3;
         /** === Mocks === */
@@ -843,7 +865,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertTrue($resp->isSucceed());
     }
 
-    public function test_bonusTeam_isPeriod_exception() {
+    public function test_bonusTeam_isPeriod_exception()
+    {
         /** === Test Data === */
         $OPERATION_ID = 3;
         /** === Mocks === */
@@ -897,7 +920,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertFalse($resp->isSucceed());
     }
 
-    public function test_bonusTeam_noPeriod() {
+    public function test_bonusTeam_noPeriod()
+    {
         /** === Test Data === */
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
@@ -936,7 +960,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertFalse($resp->isSucceed());
     }
 
-    public function test_compressOi_isPeriod_Def() {
+    public function test_compressOi_isPeriod_Def()
+    {
         /** === Test Data === */
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
@@ -980,7 +1005,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertTrue($resp->isSucceed());
     }
 
-    public function test_compressOi_isPeriod_Eu_exception() {
+    public function test_compressOi_isPeriod_Eu_exception()
+    {
         /** === Test Data === */
         $CALC_ID = 21;
         /** === Mocks === */
@@ -1005,7 +1031,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         // if($respGetPeriod->isSucceed())
         $mRespGetPeriod->markSucceed();
         // $calcData = $respGetPeriod->getCalcData();
-        $mRespGetPeriod->setCalcData([ Calculation::ATTR_ID => $CALC_ID ]);
+        $mRespGetPeriod->setCalcData([Calculation::ATTR_ID => $CALC_ID]);
         // $this->_conn->beginTransaction();
         $mConn
             ->expects($this->once())
@@ -1039,7 +1065,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertFalse($resp->isSucceed());
     }
 
-    public function test_compressOi_noPeriod() {
+    public function test_compressOi_noPeriod()
+    {
         /** === Test Data === */
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
@@ -1078,7 +1105,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertFalse($resp->isSucceed());
     }
 
-    public function test_compressPtc_isPeriod() {
+    public function test_compressPtc_isPeriod()
+    {
         /** === Test Data === */
         $CALC_ID = 21;
         /** === Mocks === */
@@ -1103,15 +1131,15 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         // if($respGetPeriod->isSucceed())
         $mRespGetPeriod->markSucceed();
         // $calcData = $respGetPeriod->getCalcData();
-        $mRespGetPeriod->setCalcData([ Calculation::ATTR_ID => $CALC_ID ]);
+        $mRespGetPeriod->setCalcData([Calculation::ATTR_ID => $CALC_ID]);
         // $this->_conn->beginTransaction();
         $mConn
             ->expects($this->once())
             ->method('beginTransaction');
         // $updates = $this->_subCalc->compressPtc($downlineSnap, $transData, $compressLevel);
         $mUpdates = new DataObject();
-        $mUpdates->setData(Sub\Calc::DATA_SNAP, [ ]);
-        $mUpdates->setData(Sub\Calc::DATA_PV, [ ]);
+        $mUpdates->setData(Sub\Calc::DATA_SNAP, []);
+        $mUpdates->setData(Sub\Calc::DATA_PV, []);
         $mSubCalc
             ->expects($this->once())
             ->method('compressPtc')
@@ -1139,7 +1167,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertTrue($resp->isSucceed());
     }
 
-    public function test_compressPtc_isPeriod_exception() {
+    public function test_compressPtc_isPeriod_exception()
+    {
         /** === Test Data === */
         $CALC_ID = 21;
         /** === Mocks === */
@@ -1164,7 +1193,7 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         // if($respGetPeriod->isSucceed())
         $mRespGetPeriod->markSucceed();
         // $calcData = $respGetPeriod->getCalcData();
-        $mRespGetPeriod->setCalcData([ Calculation::ATTR_ID => $CALC_ID ]);
+        $mRespGetPeriod->setCalcData([Calculation::ATTR_ID => $CALC_ID]);
         // $this->_conn->beginTransaction();
         $mConn
             ->expects($this->once())
@@ -1197,7 +1226,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertFalse($resp->isSucceed());
     }
 
-    public function test_compressPtc_noPeriod() {
+    public function test_compressPtc_noPeriod()
+    {
         /** === Test Data === */
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
@@ -1236,13 +1266,14 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertFalse($resp->isSucceed());
     }
 
-    public function test_pvWriteOff_isPeriod() {
+    public function test_pvWriteOff_isPeriod()
+    {
         /** === Test Data === */
         $PERIOD_ID = 1;
         $PERIOD_BEGIN = '20151201';
         $PERIOD_END = '20151231';
         $CALC_ID = 2;
-        $UPDATES = [ ];
+        $UPDATES = [];
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
         $mConn = $this->_mockConnection();
@@ -1260,11 +1291,11 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $mRespGetPeriod = new BonusPersonalPeriodGetForWriteOffResponse();
         $mRespGetPeriod->markSucceed();
         $mRespGetPeriod->setPeriodData([
-            Period::ATTR_ID           => $PERIOD_ID,
+            Period::ATTR_ID => $PERIOD_ID,
             Period::ATTR_DSTAMP_BEGIN => $PERIOD_BEGIN,
-            Period::ATTR_DSTAMP_END   => $PERIOD_END
+            Period::ATTR_DSTAMP_END => $PERIOD_END
         ]);
-        $mRespGetPeriod->setCalcData([ Calculation::ATTR_ID => $CALC_ID ]);
+        $mRespGetPeriod->setCalcData([Calculation::ATTR_ID => $CALC_ID]);
         $mCallBonusPersonalPeriod
             ->expects($this->once())
             ->method('getForWriteOff')
@@ -1295,7 +1326,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertEquals($CALC_ID, $resp->getCalcId());
     }
 
-    public function test_pvWriteOff_isPeriod_exception() {
+    public function test_pvWriteOff_isPeriod_exception()
+    {
         /** === Test Data === */
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
@@ -1345,7 +1377,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertFalse($resp->isSucceed());
     }
 
-    public function test_pvWriteOff_isPeriod_noTransactions() {
+    public function test_pvWriteOff_isPeriod_noTransactions()
+    {
         /** === Test Data === */
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
@@ -1386,7 +1419,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertTrue($resp->isSucceed());
     }
 
-    public function test_pvWriteOff_noPeriod() {
+    public function test_pvWriteOff_noPeriod()
+    {
         /** === Test Data === */
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
@@ -1425,7 +1459,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertFalse($resp->isSucceed());
     }
 
-    public function test_valueOv_isPeriod() {
+    public function test_valueOv_isPeriod()
+    {
         /** === Test Data === */
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
@@ -1469,7 +1504,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertTrue($resp->isSucceed());
     }
 
-    public function test_valueOv_isPeriod_exception() {
+    public function test_valueOv_isPeriod_exception()
+    {
         /** === Test Data === */
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
@@ -1514,7 +1550,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertFalse($resp->isSucceed());
     }
 
-    public function test_valueOv_noPeriod() {
+    public function test_valueOv_noPeriod()
+    {
         /** === Test Data === */
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
@@ -1553,7 +1590,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertFalse($resp->isSucceed());
     }
 
-    public function test_valueTv_isPeriod() {
+    public function test_valueTv_isPeriod()
+    {
         /** === Test Data === */
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
@@ -1597,7 +1635,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertTrue($resp->isSucceed());
     }
 
-    public function test_valueTv_isPeriod_exception() {
+    public function test_valueTv_isPeriod_exception()
+    {
         /** === Test Data === */
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
@@ -1642,7 +1681,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase {
         $this->assertFalse($resp->isSucceed());
     }
 
-    public function test_valueTv_noPeriod() {
+    public function test_valueTv_noPeriod()
+    {
         /** === Test Data === */
         /** === Mocks === */
         $mLogger = $this->_mockLogger();

@@ -8,15 +8,22 @@ use Flancer32\Lib\DataObject;
 use Praxigento\Bonus\Base\Lib\Entity\Calculation;
 use Praxigento\Bonus\Base\Lib\Entity\Period;
 use Praxigento\Bonus\Base\Lib\Service\Period\Response\GetLatest as BasePeriodGetLatestResponse;
-use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\Bonus\Hybrid\Lib\Service\Period\Response\BasedOnCompression as BasedOnCompressionResponse;
 use Praxigento\Bonus\Hybrid\Lib\Service\Period\Response\BasedOnPvWriteOff as BasedOnPvWriteOffResponse;
+use Praxigento\BonusHybrid\Config as Cfg;
 
 include_once(__DIR__ . '/../../../../phpunit_bootstrap.php');
 
-class BasedCalcs_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
+class BasedCalcs_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase
+{
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->markTestSkipped('Test is deprecated after M1 & M2 merge is done.');
+    }
 
-    public function test_getDependentCalcData_isBasePeriod_isBaseCalc_isDependPeriod_diffDates() {
+    public function test_getDependentCalcData_isBasePeriod_isBaseCalc_isDependPeriod_diffDates()
+    {
         /** === Test Data === */
         $CALC_TYPE_CODE_BASE = Cfg::CODE_TYPE_CALC_VALUE_TV;
         $CALC_TYPE_CODE_DEPEND = Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF;
@@ -51,7 +58,7 @@ class BasedCalcs_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
         // $basePeriodData = $respBasePeriod->getPeriodData();
         $mRespBasePeriod->setPeriodData([
             Period::ATTR_DSTAMP_BEGIN => $PERIOD_BEGIN,
-            Period::ATTR_DSTAMP_END   => $PERIOD_END
+            Period::ATTR_DSTAMP_END => $PERIOD_END
         ]);
         // $baseCalcData = $respBasePeriod->getCalcData();
         $mRespBasePeriod->setCalcData([
@@ -67,14 +74,14 @@ class BasedCalcs_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
         // $dependPeriodData = $respDependentPeriod->getPeriodData();
         $mRespDependentPeriod->setPeriodData([
             Period::ATTR_DSTAMP_BEGIN => $PERIOD_BEGIN . 'diff',
-            Period::ATTR_DSTAMP_END   => $PERIOD_END . 'diff'
+            Period::ATTR_DSTAMP_END => $PERIOD_END . 'diff'
         ]);
         // $dependentCalcData = $respDependentPeriod->getCalcData();
-        $mRespDependentPeriod->setCalcData([ ]);
+        $mRespDependentPeriod->setCalcData([]);
         // $dependPeriodData = $this->_subDb->addNewPeriodAndCalc($dependentCalcTypeId, $baseDsBegin, $baseDsEnd);
         $mDependPeriodData = new DataObject([
-            Db::DATA_PERIOD => [ Period::ATTR_ID => $PERIOD_DEPEND_ID ],
-            Db::DATA_CALC   => [ Calculation::ATTR_ID => $CALC_DEPEND_ID ]
+            Db::DATA_PERIOD => [Period::ATTR_ID => $PERIOD_DEPEND_ID],
+            Db::DATA_CALC => [Calculation::ATTR_ID => $CALC_DEPEND_ID]
         ]);
         $mSubDb
             ->expects($this->at(4))
@@ -91,7 +98,8 @@ class BasedCalcs_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
         $this->assertEquals($CALC_DEPEND_ID, $resp->getData('DependentCalcData/id'));
     }
 
-    public function test_getDependentCalcData_isBasePeriod_isBaseCalc_isDependPeriod_sameDates_complete() {
+    public function test_getDependentCalcData_isBasePeriod_isBaseCalc_isDependPeriod_sameDates_complete()
+    {
         /** === Test Data === */
         $CALC_TYPE_CODE_BASE = Cfg::CODE_TYPE_CALC_VALUE_TV;
         $CALC_TYPE_CODE_DEPEND = Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF;
@@ -126,7 +134,7 @@ class BasedCalcs_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
         // $basePeriodData = $respBasePeriod->getPeriodData();
         $mRespBasePeriod->setPeriodData([
             Period::ATTR_DSTAMP_BEGIN => $PERIOD_BEGIN,
-            Period::ATTR_DSTAMP_END   => $PERIOD_END
+            Period::ATTR_DSTAMP_END => $PERIOD_END
         ]);
         // $baseCalcData = $respBasePeriod->getCalcData();
         $mRespBasePeriod->setCalcData([
@@ -141,13 +149,13 @@ class BasedCalcs_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
             ->willReturn($mRespDependentPeriod);
         // $dependPeriodData = $respDependentPeriod->getPeriodData();
         $mRespDependentPeriod->setPeriodData([
-            Period::ATTR_ID           => $PERIOD_DEPEND_ID,
+            Period::ATTR_ID => $PERIOD_DEPEND_ID,
             Period::ATTR_DSTAMP_BEGIN => $PERIOD_BEGIN,
-            Period::ATTR_DSTAMP_END   => $PERIOD_END
+            Period::ATTR_DSTAMP_END => $PERIOD_END
         ]);
         // $dependentCalcData = $respDependentPeriod->getCalcData();
         $mRespDependentPeriod->setCalcData([
-            Calculation::ATTR_ID    => $CALC_DEPEND_ID,
+            Calculation::ATTR_ID => $CALC_DEPEND_ID,
             Calculation::ATTR_STATE => Cfg::CALC_STATE_COMPLETE
         ]);
 
@@ -160,7 +168,8 @@ class BasedCalcs_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
         $this->assertFalse($resp->isSucceed());
     }
 
-    public function test_getDependentCalcData_isBasePeriod_isBaseCalc_isDependPeriod_sameDates_incomplete() {
+    public function test_getDependentCalcData_isBasePeriod_isBaseCalc_isDependPeriod_sameDates_incomplete()
+    {
         /** === Test Data === */
         $CALC_TYPE_CODE_BASE = Cfg::CODE_TYPE_CALC_VALUE_TV;
         $CALC_TYPE_CODE_DEPEND = Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF;
@@ -195,7 +204,7 @@ class BasedCalcs_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
         // $basePeriodData = $respBasePeriod->getPeriodData();
         $mRespBasePeriod->setPeriodData([
             Period::ATTR_DSTAMP_BEGIN => $PERIOD_BEGIN,
-            Period::ATTR_DSTAMP_END   => $PERIOD_END
+            Period::ATTR_DSTAMP_END => $PERIOD_END
         ]);
         // $baseCalcData = $respBasePeriod->getCalcData();
         $mRespBasePeriod->setCalcData([
@@ -210,9 +219,9 @@ class BasedCalcs_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
             ->willReturn($mRespDependentPeriod);
         // $dependPeriodData = $respDependentPeriod->getPeriodData();
         $mRespDependentPeriod->setPeriodData([
-            Period::ATTR_ID           => $PERIOD_DEPEND_ID,
+            Period::ATTR_ID => $PERIOD_DEPEND_ID,
             Period::ATTR_DSTAMP_BEGIN => $PERIOD_BEGIN,
-            Period::ATTR_DSTAMP_END   => $PERIOD_END
+            Period::ATTR_DSTAMP_END => $PERIOD_END
         ]);
         // $dependentCalcData = $respDependentPeriod->getCalcData();
         $mRespDependentPeriod->setCalcData([
@@ -230,7 +239,8 @@ class BasedCalcs_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
         $this->assertEquals($CALC_DEPEND_ID, $resp->getData('DependentCalcData/id'));
     }
 
-    public function test_getDependentCalcData_isBasePeriod_isBaseCalc_noDependPeriod() {
+    public function test_getDependentCalcData_isBasePeriod_isBaseCalc_noDependPeriod()
+    {
         /** === Test Data === */
         $CALC_TYPE_CODE_BASE = Cfg::CODE_TYPE_CALC_VALUE_TV;
         $CALC_TYPE_CODE_DEPEND = Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF;
@@ -265,7 +275,7 @@ class BasedCalcs_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
         // $basePeriodData = $respBasePeriod->getPeriodData();
         $mRespBasePeriod->setPeriodData([
             Period::ATTR_DSTAMP_BEGIN => $PERIOD_BEGIN,
-            Period::ATTR_DSTAMP_END   => $PERIOD_END
+            Period::ATTR_DSTAMP_END => $PERIOD_END
         ]);
         // $baseCalcData = $respBasePeriod->getCalcData();
         $mRespBasePeriod->setCalcData([
@@ -281,8 +291,8 @@ class BasedCalcs_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
         // if(is_null($dependPeriodData)) {
         // $dependPeriodData = $this->_subDb->addNewPeriodAndCalc($dependentCalcTypeId, $baseDsBegin, $baseDsEnd);
         $mDependPeriodData = new DataObject([
-            Db::DATA_PERIOD => [ Period::ATTR_ID => $PERIOD_DEPEND_ID ],
-            Db::DATA_CALC   => [ Calculation::ATTR_ID => $CALC_DEPEND_ID ]
+            Db::DATA_PERIOD => [Period::ATTR_ID => $PERIOD_DEPEND_ID],
+            Db::DATA_CALC => [Calculation::ATTR_ID => $CALC_DEPEND_ID]
         ]);
         $mSubDb
             ->expects($this->at(4))
@@ -300,7 +310,8 @@ class BasedCalcs_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
 
     }
 
-    public function test_getDependentCalcData_isBasePeriod_noBaseCalc() {
+    public function test_getDependentCalcData_isBasePeriod_noBaseCalc()
+    {
         /** === Test Data === */
         $CALC_CODE_BASE = Cfg::CODE_TYPE_CALC_VALUE_TV;
         $CALC_CODE_DEPEND = Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF;
@@ -331,7 +342,7 @@ class BasedCalcs_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
         // $basePeriodData = $respBasePeriod->getPeriodData();
         $mRespBasePeriod->setPeriodData([
             Period::ATTR_DSTAMP_BEGIN => 'begin',
-            Period::ATTR_DSTAMP_END   => 'end'
+            Period::ATTR_DSTAMP_END => 'end'
         ]);
         /**
          * Prepare request and perform call.
@@ -342,7 +353,8 @@ class BasedCalcs_UnitTest extends \Praxigento\Core\Lib\Test\BaseMockeryCase {
         $this->assertFalse($resp->isSucceed());
     }
 
-    public function test_getDependentCalcData_noBasePeriod() {
+    public function test_getDependentCalcData_noBasePeriod()
+    {
         /** === Test Data === */
         $CALC_CODE_BASE = Cfg::CODE_TYPE_CALC_VALUE_TV;
         $CALC_CODE_DEPEND = Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF;
