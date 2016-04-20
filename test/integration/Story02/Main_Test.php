@@ -14,7 +14,7 @@ use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\BonusOverride as CalcBonusO
 use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\CompressOi as CalcCompressOiRequest;
 use Praxigento\BonusHybrid\Config as Cfg;
 
-use Praxigento\Core\Lib\Test\BaseIntegrationTest;
+use Praxigento\Core\Test\BaseIntegrationTest;
 use Praxigento\Downline\Data\Entity\Snap;
 use Praxigento\Downline\Lib\Service\Snap\Request\ExpandMinimal as SnapExtendMinimalRequest;
 

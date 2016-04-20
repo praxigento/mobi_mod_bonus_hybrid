@@ -21,7 +21,7 @@ use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\ValueOv as BonusCalcOvCompr
 use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\ValueTv as BonusCalcTvCompressionRequest;
 use Praxigento\BonusHybrid\Config as Cfg;
 
-use Praxigento\Core\Lib\Test\BaseIntegrationTest;
+use Praxigento\Core\Test\BaseIntegrationTest;
 use Praxigento\Pv\Lib\Service\Transfer\Request\CreditToCustomer as PvTransferCreditToCustomerRequest;
 
 include_once(__DIR__ . '/../phpunit_bootstrap.php');

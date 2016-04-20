@@ -26,7 +26,7 @@ use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\ValueOv as BonusCalcValueOv
 use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\ValueTv as BonusCalcValueTvRequest;
 use Praxigento\BonusHybrid\Config as Cfg;
 
-use Praxigento\Core\Lib\Test\BaseIntegrationTest;
+use Praxigento\Core\Test\BaseIntegrationTest;
 use Praxigento\Downline\Data\Entity\Snap;
 use Praxigento\Downline\Lib\Service\Customer\Request\Add as CustomerAddRequest;
 use Praxigento\Downline\Lib\Service\Snap\Request\Calc as SnapCalcRequest;
