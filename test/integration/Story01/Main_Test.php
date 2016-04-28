@@ -6,8 +6,8 @@ namespace Praxigento\Bonus\Hybrid\Lib\Test\Story01;
 
 use Praxigento\Accounting\Data\Entity\Account;
 use Praxigento\Accounting\Data\Entity\Transaction;
-use Praxigento\Accounting\Lib\Service\Account\Request\GetRepresentative as AccGetRepresentativeRequest;
-use Praxigento\Accounting\Lib\Service\Operation\Request\Add as AccOperationAddRequest;
+use Praxigento\Accounting\Service\Account\Request\GetRepresentative as AccGetRepresentativeRequest;
+use Praxigento\Accounting\Service\Operation\Request\Add as AccOperationAddRequest;
 use Praxigento\Bonus\Base\Lib\Entity\Calculation;
 use Praxigento\Bonus\Base\Lib\Entity\Level;
 use Praxigento\Bonus\Base\Lib\Entity\Period;
@@ -36,9 +36,9 @@ class Main_IntegrationTest extends BaseIntegrationTest
     const DATE_PERIOD_BEGIN = '20150101';
     const PV_QUALIFICATION_LEVEL_DEF = 50;
     const PV_QUALIFICATION_LEVEL_EU = 100;
-    /** @var \Praxigento\Accounting\Lib\Service\IAccount */
+    /** @var \Praxigento\Accounting\Service\IAccount */
     private $_callAccAccount;
-    /** @var \Praxigento\Accounting\Lib\Service\IOperation */
+    /** @var \Praxigento\Accounting\Service\IOperation */
     private $_callAccOperation;
     /** @var \Praxigento\Bonus\Hybrid\Lib\Service\ICalc */
     private $_callCalc;
@@ -56,8 +56,8 @@ class Main_IntegrationTest extends BaseIntegrationTest
     public function __construct()
     {
         parent::__construct();
-        $this->_callAccAccount = $this->_manObj->get(\Praxigento\Accounting\Lib\Service\IAccount::class);
-        $this->_callAccOperation = $this->_manObj->get(\Praxigento\Accounting\Lib\Service\IOperation::class);
+        $this->_callAccAccount = $this->_manObj->get(\Praxigento\Accounting\Service\IAccount::class);
+        $this->_callAccOperation = $this->_manObj->get(\Praxigento\Accounting\Service\IOperation::class);
         $this->_callCalc = $this->_manObj->get(\Praxigento\Bonus\Hybrid\Lib\Service\ICalc::class);
         $this->_callPeriod = $this->_manObj->get(\Praxigento\Bonus\Hybrid\Lib\Service\IPeriod::class);
         $this->_callPvTransfer = $this->_manObj->get(\Praxigento\Pv\Lib\Service\ITransfer::class);

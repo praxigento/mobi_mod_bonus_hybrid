@@ -17,7 +17,7 @@ use Praxigento\Core\Service\Base\Call as BaseCall;
 
 class Call extends BaseCall implements ICalc
 {
-    /** @var  \Praxigento\Accounting\Lib\Service\IAccount */
+    /** @var  \Praxigento\Accounting\Service\IAccount */
     protected $_callAcc;
     /** @var \Praxigento\Bonus\Hybrid\Lib\Service\IPeriod */
     protected $_callPeriod;
@@ -37,7 +37,7 @@ class Call extends BaseCall implements ICalc
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
         \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme $toolScheme,
         \Praxigento\Core\Repo\ITransactionManager $manTrans,
-        \Praxigento\Accounting\Lib\Service\IAccount $callAcc,
+        \Praxigento\Accounting\Service\IAccount $callAcc,
         \Praxigento\Bonus\Hybrid\Lib\Service\IPeriod $callBonusPeriod,
         Sub\Db $subDb,
         Sub\Calc $subCalc

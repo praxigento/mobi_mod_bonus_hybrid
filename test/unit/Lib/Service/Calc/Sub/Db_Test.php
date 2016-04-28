@@ -7,11 +7,11 @@ namespace Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub;
 use Flancer32\Lib\DataObject;
 use Praxigento\Accounting\Data\Entity\Account;
 use Praxigento\Accounting\Data\Entity\Operation;
-use Praxigento\Accounting\Lib\Service\Account\Response\Get as AccountGetResponse;
-use Praxigento\Accounting\Lib\Service\Account\Response\GetRepresentative as AccountGetRepresentativeResponse;
-use Praxigento\Accounting\Lib\Service\Operation\Response\Add as OperationAddResponse;
-use Praxigento\Accounting\Lib\Service\Type\Asset\Response\GetByCode as TypeAssetGetByCodeResponse;
-use Praxigento\Accounting\Lib\Service\Type\Operation\Response\GetByCode as TypeOperationGetByCodeResponse;
+use Praxigento\Accounting\Service\Account\Response\Get as AccountGetResponse;
+use Praxigento\Accounting\Service\Account\Response\GetRepresentative as AccountGetRepresentativeResponse;
+use Praxigento\Accounting\Service\Operation\Response\Add as OperationAddResponse;
+use Praxigento\Accounting\Service\Type\Asset\Response\GetByCode as TypeAssetGetByCodeResponse;
+use Praxigento\Accounting\Service\Type\Operation\Response\GetByCode as TypeOperationGetByCodeResponse;
 use Praxigento\Bonus\Base\Lib\Entity\Level;
 use Praxigento\Bonus\Base\Lib\Service\Type\Calc\Response\GetByCode as TypeCalcGetByCodeResponse;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Override as CfgOverride;
@@ -46,11 +46,11 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
-        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
-        $mCallOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\IOperation');
-        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeAsset');
+        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
+        $mCallOper = $this->_mockFor('Praxigento\Accounting\Service\IOperation');
+        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Service\ITypeAsset');
         $mCallTypeCalc = $this->_mockFor('Praxigento\Bonus\Base\Lib\Service\ITypeCalc');
-        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeOperation');
+        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Service\ITypeOperation');
         $mCallDownlineSnap = $this->_mockFor('Praxigento\Downline\Lib\Service\ISnap');
 
         // $respCalcType = $this->_callTypeCalc->getByCode(new TypeCalcGetByCodeRequest(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_FLAT));
@@ -105,11 +105,11 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $mDba = $this->_mockDbAdapter(null, $mConn);
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
-        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
-        $mCallOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\IOperation');
-        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeAsset');
+        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
+        $mCallOper = $this->_mockFor('Praxigento\Accounting\Service\IOperation');
+        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Service\ITypeAsset');
         $mCallTypeCalc = $this->_mockFor('Praxigento\Bonus\Base\Lib\Service\ITypeCalc');
-        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeOperation');
+        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Service\ITypeOperation');
         $mCallDownlineSnap = $this->_mockFor('Praxigento\Downline\Lib\Service\ISnap');
 
 
@@ -158,11 +158,11 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $mDba = $this->_mockDbAdapter(null, $mConn);
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
-        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
-        $mCallOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\IOperation');
-        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeAsset');
+        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
+        $mCallOper = $this->_mockFor('Praxigento\Accounting\Service\IOperation');
+        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Service\ITypeAsset');
         $mCallTypeCalc = $this->_mockFor('Praxigento\Bonus\Base\Lib\Service\ITypeCalc');
-        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeOperation');
+        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Service\ITypeOperation');
         $mCallDownlineSnap = $this->_mockFor('Praxigento\Downline\Lib\Service\ISnap');
 
 
@@ -206,11 +206,11 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $mDba = $this->_mockDbAdapter(null, $mConn);
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
-        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
-        $mCallOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\IOperation');
-        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeAsset');
+        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
+        $mCallOper = $this->_mockFor('Praxigento\Accounting\Service\IOperation');
+        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Service\ITypeAsset');
         $mCallTypeCalc = $this->_mockFor('Praxigento\Bonus\Base\Lib\Service\ITypeCalc');
-        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeOperation');
+        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Service\ITypeOperation');
         $mCallDownlineSnap = $this->_mockFor('Praxigento\Downline\Lib\Service\ISnap');
 
         // $query = $this->_getConn()->select();
@@ -255,11 +255,11 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $mDba = $this->_mockDbAdapter(null, $mConn);
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
-        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
-        $mCallOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\IOperation');
-        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeAsset');
+        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
+        $mCallOper = $this->_mockFor('Praxigento\Accounting\Service\IOperation');
+        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Service\ITypeAsset');
         $mCallTypeCalc = $this->_mockFor('Praxigento\Bonus\Base\Lib\Service\ITypeCalc');
-        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeOperation');
+        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Service\ITypeOperation');
         $mCallDownlineSnap = $this->_mockFor('Praxigento\Downline\Lib\Service\ISnap');
 
         // $query = $this->_getConn()->select();
@@ -303,11 +303,11 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $mDba = $this->_mockDbAdapter(null, $mConn);
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
-        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
-        $mCallOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\IOperation');
-        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeAsset');
+        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
+        $mCallOper = $this->_mockFor('Praxigento\Accounting\Service\IOperation');
+        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Service\ITypeAsset');
         $mCallTypeCalc = $this->_mockFor('Praxigento\Bonus\Base\Lib\Service\ITypeCalc');
-        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeOperation');
+        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Service\ITypeOperation');
         $mCallDownlineSnap = $this->_mockFor('Praxigento\Downline\Lib\Service\ISnap');
 
         // $resp = $this->_callRepo->getEntities($req);
@@ -350,11 +350,11 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
-        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
-        $mCallOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\IOperation');
-        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeAsset');
+        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
+        $mCallOper = $this->_mockFor('Praxigento\Accounting\Service\IOperation');
+        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Service\ITypeAsset');
         $mCallTypeCalc = $this->_mockFor('Praxigento\Bonus\Base\Lib\Service\ITypeCalc');
-        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeOperation');
+        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Service\ITypeOperation');
         $mCallDownlineSnap = $this->_mockFor('Praxigento\Downline\Lib\Service\ISnap');
 
         // $resp = $this->_callDownlineSnap->getStateOnDate($req);
@@ -399,11 +399,11 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $mDba = $this->_mockDbAdapter(null, $mConn);
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
-        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
-        $mCallOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\IOperation');
-        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeAsset');
+        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
+        $mCallOper = $this->_mockFor('Praxigento\Accounting\Service\IOperation');
+        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Service\ITypeAsset');
         $mCallTypeCalc = $this->_mockFor('Praxigento\Bonus\Base\Lib\Service\ITypeCalc');
-        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeOperation');
+        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Service\ITypeOperation');
         $mCallDownlineSnap = $this->_mockFor('Praxigento\Downline\Lib\Service\ISnap');
 
         // $respCalcType = $this->_callTypeCalc->getByCode(new TypeCalcGetByCodeRequest($calcTypeCode));
@@ -457,11 +457,11 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $mDba = $this->_mockDbAdapter(null, $mConn);
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
-        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
-        $mCallOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\IOperation');
-        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeAsset');
+        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
+        $mCallOper = $this->_mockFor('Praxigento\Accounting\Service\IOperation');
+        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Service\ITypeAsset');
         $mCallTypeCalc = $this->_mockFor('Praxigento\Bonus\Base\Lib\Service\ITypeCalc');
-        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeOperation');
+        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Service\ITypeOperation');
         $mCallDownlineSnap = $this->_mockFor('Praxigento\Downline\Lib\Service\ISnap');
 
         // $respGetByCode = $this->_callTypeOper->getByCode(new TypeOperGetByCodeRequest(Cfg::CODE_TYPE_OPER_PV_WRITE_OFF));
@@ -518,11 +518,11 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $mDba = $this->_mockDbAdapter(null, $mConn);
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
-        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
-        $mCallOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\IOperation');
-        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeAsset');
+        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
+        $mCallOper = $this->_mockFor('Praxigento\Accounting\Service\IOperation');
+        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Service\ITypeAsset');
         $mCallTypeCalc = $this->_mockFor('Praxigento\Bonus\Base\Lib\Service\ITypeCalc');
-        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeOperation');
+        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Service\ITypeOperation');
         $mCallDownlineSnap = $this->_mockFor('Praxigento\Downline\Lib\Service\ISnap');
 
         // $respGetByCode = $this->_callTypeAsset->getByCode(new TypeAssetGetByCodeRequest(Cfg::CODE_TYPE_ASSET_PV));
@@ -585,11 +585,11 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $mToolPeriod = $this->_mockFor('Praxigento\Core\Tool\IPeriod');
         $mToolbox = $this->_mockToolbox(null, null, null, $mToolPeriod);
         $mCallRepo = $this->_mockCallRepo();
-        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
-        $mCallOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\IOperation');
-        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeAsset');
+        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
+        $mCallOper = $this->_mockFor('Praxigento\Accounting\Service\IOperation');
+        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Service\ITypeAsset');
         $mCallTypeCalc = $this->_mockFor('Praxigento\Bonus\Base\Lib\Service\ITypeCalc');
-        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeOperation');
+        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Service\ITypeOperation');
         $mCallDownlineSnap = $this->_mockFor('Praxigento\Downline\Lib\Service\ISnap');
 
         // $resp = $this->_callDownlineSnap->getStateOnDate($req);
@@ -645,11 +645,11 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
-        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
-        $mCallOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\IOperation');
-        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeAsset');
+        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
+        $mCallOper = $this->_mockFor('Praxigento\Accounting\Service\IOperation');
+        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Service\ITypeAsset');
         $mCallTypeCalc = $this->_mockFor('Praxigento\Bonus\Base\Lib\Service\ITypeCalc');
-        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeOperation');
+        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Service\ITypeOperation');
         $mCallDownlineSnap = $this->_mockFor('Praxigento\Downline\Lib\Service\ISnap');
 
         // $tsEnded = $this->_toolbox->getDate()->getUtcNowForDb();
@@ -701,11 +701,11 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
-        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
-        $mCallOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\IOperation');
-        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeAsset');
+        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
+        $mCallOper = $this->_mockFor('Praxigento\Accounting\Service\IOperation');
+        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Service\ITypeAsset');
         $mCallTypeCalc = $this->_mockFor('Praxigento\Bonus\Base\Lib\Service\ITypeCalc');
-        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeOperation');
+        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Service\ITypeOperation');
         $mCallDownlineSnap = $this->_mockFor('Praxigento\Downline\Lib\Service\ISnap');
 
         // $this->_callRepo->addEntity($req);
@@ -753,11 +753,11 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
-        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
-        $mCallOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\IOperation');
-        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeAsset');
+        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
+        $mCallOper = $this->_mockFor('Praxigento\Accounting\Service\IOperation');
+        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Service\ITypeAsset');
         $mCallTypeCalc = $this->_mockFor('Praxigento\Bonus\Base\Lib\Service\ITypeCalc');
-        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeOperation');
+        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Service\ITypeOperation');
         $mCallDownlineSnap = $this->_mockFor('Praxigento\Downline\Lib\Service\ISnap');
 
         // $this->_callRepo->addEntity($req);
@@ -801,11 +801,11 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
-        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
-        $mCallOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\IOperation');
-        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeAsset');
+        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
+        $mCallOper = $this->_mockFor('Praxigento\Accounting\Service\IOperation');
+        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Service\ITypeAsset');
         $mCallTypeCalc = $this->_mockFor('Praxigento\Bonus\Base\Lib\Service\ITypeCalc');
-        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeOperation');
+        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Service\ITypeOperation');
         $mCallDownlineSnap = $this->_mockFor('Praxigento\Downline\Lib\Service\ISnap');
 
         // $this->_callRepo->addEntity($req);
@@ -848,11 +848,11 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
-        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
-        $mCallOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\IOperation');
-        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeAsset');
+        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
+        $mCallOper = $this->_mockFor('Praxigento\Accounting\Service\IOperation');
+        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Service\ITypeAsset');
         $mCallTypeCalc = $this->_mockFor('Praxigento\Bonus\Base\Lib\Service\ITypeCalc');
-        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeOperation');
+        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Service\ITypeOperation');
         $mCallDownlineSnap = $this->_mockFor('Praxigento\Downline\Lib\Service\ISnap');
 
         // $this->_callRepo->addEntity($req);
@@ -900,11 +900,11 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
-        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
-        $mCallOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\IOperation');
-        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeAsset');
+        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
+        $mCallOper = $this->_mockFor('Praxigento\Accounting\Service\IOperation');
+        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Service\ITypeAsset');
         $mCallTypeCalc = $this->_mockFor('Praxigento\Bonus\Base\Lib\Service\ITypeCalc');
-        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeOperation');
+        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Service\ITypeOperation');
         $mCallDownlineSnap = $this->_mockFor('Praxigento\Downline\Lib\Service\ISnap');
 
         /**
@@ -938,11 +938,11 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
-        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
-        $mCallOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\IOperation');
-        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeAsset');
+        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
+        $mCallOper = $this->_mockFor('Praxigento\Accounting\Service\IOperation');
+        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Service\ITypeAsset');
         $mCallTypeCalc = $this->_mockFor('Praxigento\Bonus\Base\Lib\Service\ITypeCalc');
-        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeOperation');
+        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Service\ITypeOperation');
         $mCallDownlineSnap = $this->_mockFor('Praxigento\Downline\Lib\Service\ISnap');
 
         // $this->_callRepo->addEntity($req);
@@ -984,11 +984,11 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
-        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
-        $mCallOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\IOperation');
-        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeAsset');
+        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
+        $mCallOper = $this->_mockFor('Praxigento\Accounting\Service\IOperation');
+        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Service\ITypeAsset');
         $mCallTypeCalc = $this->_mockFor('Praxigento\Bonus\Base\Lib\Service\ITypeCalc');
-        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeOperation');
+        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Service\ITypeOperation');
         $mCallDownlineSnap = $this->_mockFor('Praxigento\Downline\Lib\Service\ISnap');
 
         // $this->_callRepo->addEntity($req);
@@ -1031,11 +1031,11 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
-        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
-        $mCallOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\IOperation');
-        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeAsset');
+        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
+        $mCallOper = $this->_mockFor('Praxigento\Accounting\Service\IOperation');
+        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Service\ITypeAsset');
         $mCallTypeCalc = $this->_mockFor('Praxigento\Bonus\Base\Lib\Service\ITypeCalc');
-        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeOperation');
+        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Service\ITypeOperation');
         $mCallDownlineSnap = $this->_mockFor('Praxigento\Downline\Lib\Service\ISnap');
 
         // $this->_callRepo->addEntity($req);
@@ -1078,11 +1078,11 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
-        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
-        $mCallOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\IOperation');
-        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeAsset');
+        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
+        $mCallOper = $this->_mockFor('Praxigento\Accounting\Service\IOperation');
+        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Service\ITypeAsset');
         $mCallTypeCalc = $this->_mockFor('Praxigento\Bonus\Base\Lib\Service\ITypeCalc');
-        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeOperation');
+        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Service\ITypeOperation');
         $mCallDownlineSnap = $this->_mockFor('Praxigento\Downline\Lib\Service\ISnap');
 
         // $this->_callRepo->addEntity($req);
@@ -1130,11 +1130,11 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
-        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
-        $mCallOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\IOperation');
-        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeAsset');
+        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
+        $mCallOper = $this->_mockFor('Praxigento\Accounting\Service\IOperation');
+        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Service\ITypeAsset');
         $mCallTypeCalc = $this->_mockFor('Praxigento\Bonus\Base\Lib\Service\ITypeCalc');
-        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeOperation');
+        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Service\ITypeOperation');
         $mCallDownlineSnap = $this->_mockFor('Praxigento\Downline\Lib\Service\ISnap');
 
         /**
@@ -1177,11 +1177,11 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
-        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
-        $mCallOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\IOperation');
-        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeAsset');
+        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
+        $mCallOper = $this->_mockFor('Praxigento\Accounting\Service\IOperation');
+        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Service\ITypeAsset');
         $mCallTypeCalc = $this->_mockFor('Praxigento\Bonus\Base\Lib\Service\ITypeCalc');
-        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeOperation');
+        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Service\ITypeOperation');
         $mCallDownlineSnap = $this->_mockFor('Praxigento\Downline\Lib\Service\ISnap');
 
         // $datePerformed = $this->_toolbox->getDate()->getUtcNowForDb();
@@ -1262,11 +1262,11 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $mToolDate = $this->_mockFor('Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
-        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
-        $mCallOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\IOperation');
-        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeAsset');
+        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
+        $mCallOper = $this->_mockFor('Praxigento\Accounting\Service\IOperation');
+        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Service\ITypeAsset');
         $mCallTypeCalc = $this->_mockFor('Praxigento\Bonus\Base\Lib\Service\ITypeCalc');
-        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeOperation');
+        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Service\ITypeOperation');
         $mCallDownlineSnap = $this->_mockFor('Praxigento\Downline\Lib\Service\ISnap');
 
         // $datePerformed = $this->_toolbox->getDate()->getUtcNowForDb();
@@ -1344,11 +1344,11 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $mDba = $this->_mockDbAdapter(null, $mConn);
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
-        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
-        $mCallOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\IOperation');
-        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeAsset');
+        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
+        $mCallOper = $this->_mockFor('Praxigento\Accounting\Service\IOperation');
+        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Service\ITypeAsset');
         $mCallTypeCalc = $this->_mockFor('Praxigento\Bonus\Base\Lib\Service\ITypeCalc');
-        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeOperation');
+        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Service\ITypeOperation');
         $mCallDownlineSnap = $this->_mockFor('Praxigento\Downline\Lib\Service\ISnap');
 
         // $this->_callRepo->updateEntity($req);
@@ -1388,11 +1388,11 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $mDba = $this->_mockDbAdapter(null, $mConn);
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
-        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
-        $mCallOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\IOperation');
-        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeAsset');
+        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
+        $mCallOper = $this->_mockFor('Praxigento\Accounting\Service\IOperation');
+        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Service\ITypeAsset');
         $mCallTypeCalc = $this->_mockFor('Praxigento\Bonus\Base\Lib\Service\ITypeCalc');
-        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeOperation');
+        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Service\ITypeOperation');
         $mCallDownlineSnap = $this->_mockFor('Praxigento\Downline\Lib\Service\ISnap');
 
         // $this->_callRepo->updateEntity($req);
@@ -1432,11 +1432,11 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $mDba = $this->_mockDbAdapter(null, $mConn);
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
-        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Lib\Service\IAccount');
-        $mCallOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\IOperation');
-        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeAsset');
+        $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
+        $mCallOper = $this->_mockFor('Praxigento\Accounting\Service\IOperation');
+        $mCallTypeAsset = $this->_mockFor('Praxigento\Accounting\Service\ITypeAsset');
         $mCallTypeCalc = $this->_mockFor('Praxigento\Bonus\Base\Lib\Service\ITypeCalc');
-        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Lib\Service\ITypeOperation');
+        $mCallTypeOper = $this->_mockFor('Praxigento\Accounting\Service\ITypeOperation');
         $mCallDownlineSnap = $this->_mockFor('Praxigento\Downline\Lib\Service\ISnap');
 
         // $this->_callRepo->updateEntity($req);

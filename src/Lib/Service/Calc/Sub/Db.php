@@ -7,9 +7,9 @@ namespace Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub;
 use Praxigento\Accounting\Data\Entity\Account;
 use Praxigento\Accounting\Data\Entity\Operation;
 use Praxigento\Accounting\Data\Entity\Transaction;
-use Praxigento\Accounting\Lib\Service\Account\Request\Get as AccountGetRequest;
-use Praxigento\Accounting\Lib\Service\Account\Request\GetRepresentative as AccountGetRepresentativeRequest;
-use Praxigento\Accounting\Lib\Service\Operation\Request\Add as OperationAddRequest;
+use Praxigento\Accounting\Service\Account\Request\Get as AccountGetRequest;
+use Praxigento\Accounting\Service\Account\Request\GetRepresentative as AccountGetRepresentativeRequest;
+use Praxigento\Accounting\Service\Operation\Request\Add as OperationAddRequest;
 use Praxigento\Bonus\Base\Lib\Entity\Calculation;
 use Praxigento\Bonus\Base\Lib\Entity\Level;
 use Praxigento\Bonus\Base\Lib\Entity\Log\Customers as LogCustomers;
@@ -28,11 +28,11 @@ use Praxigento\Pv\Data\Entity\Sale as PvSale;
 class Db
 {
 
-    /** @var  \Praxigento\Accounting\Lib\Service\IAccount */
+    /** @var  \Praxigento\Accounting\Service\IAccount */
     protected $_callAccount;
     /** @var  \Praxigento\Downline\Lib\Service\ISnap */
     protected $_callDownlineSnap;
-    /** @var  \Praxigento\Accounting\Lib\Service\IOperation */
+    /** @var  \Praxigento\Accounting\Service\IOperation */
     protected $_callOper;
     /** @var \Magento\Framework\DB\Adapter\AdapterInterface */
     protected $_conn;
@@ -58,8 +58,8 @@ class Db
         \Magento\Framework\App\ResourceConnection $resource,
         \Praxigento\Core\Tool\IDate $toolDate,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
-        \Praxigento\Accounting\Lib\Service\IAccount $callAccount,
-        \Praxigento\Accounting\Lib\Service\IOperation $repoOper,
+        \Praxigento\Accounting\Service\IAccount $callAccount,
+        \Praxigento\Accounting\Service\IOperation $repoOper,
         \Praxigento\BonusBase\Repo\Entity\Type\ICalc $repoTypeCalc,
         \Praxigento\Downline\Lib\Service\ISnap $callDownlineSnap,
         \Praxigento\Core\Repo\IGeneric $repoBasic,
@@ -590,7 +590,7 @@ class Db
      * @param null $datePerformed
      * @param null $dateApplied
      *
-     * @return \Praxigento\Accounting\Lib\Service\Operation\Response\Add
+     * @return \Praxigento\Accounting\Service\Operation\Response\Add
      */
     public function saveOperationWalletActive($updates, $operTypeCode, $datePerformed = null, $dateApplied = null)
     {

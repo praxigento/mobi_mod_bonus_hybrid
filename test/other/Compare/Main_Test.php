@@ -66,11 +66,11 @@ class Main_OtherTest extends BaseIntegrationTest
     private $_calcIdCompressOiDef = null;
     private $_calcIdCompressOiEu = null;
     private $_calcIdCompressPtc = null;
-    /** @var \Praxigento\Accounting\Lib\Service\IAccount */
+    /** @var \Praxigento\Accounting\Service\IAccount */
     private $_callAccount;
     /** @var \Praxigento\Bonus\Hybrid\Lib\Service\ICalc */
     private $_callCalc;
-    /** @var \Praxigento\Accounting\Lib\Service\IOperation */
+    /** @var \Praxigento\Accounting\Service\IOperation */
     private $_callOperation;
     /** @var \Praxigento\Bonus\Hybrid\Lib\Service\IPeriod */
     private $_callPeriod;
@@ -118,8 +118,8 @@ class Main_OtherTest extends BaseIntegrationTest
     public function __construct()
     {
         parent::__construct();
-        $this->_callAccount = $this->_manObj->get(\Praxigento\Accounting\Lib\Service\IAccount::class);
-        $this->_callOperation = $this->_manObj->get(\Praxigento\Accounting\Lib\Service\IOperation::class);
+        $this->_callAccount = $this->_manObj->get(\Praxigento\Accounting\Service\IAccount::class);
+        $this->_callOperation = $this->_manObj->get(\Praxigento\Accounting\Service\IOperation::class);
         $this->_callCalc = $this->_manObj->get(\Praxigento\Bonus\Hybrid\Lib\Service\ICalc::class);
         $this->_callDownlineSnap = $this->_manObj->get(\Praxigento\Downline\Lib\Service\ISnap::class);
         $this->_callPeriod = $this->_manObj->get(\Praxigento\Bonus\Hybrid\Lib\Service\IPeriod::class);
