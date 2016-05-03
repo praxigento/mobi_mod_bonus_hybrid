@@ -32,7 +32,7 @@ use Praxigento\Downline\Lib\Service\Customer\Request\Add as CustomerAddRequest;
 use Praxigento\Downline\Lib\Service\Snap\Request\Calc as SnapCalcRequest;
 use Praxigento\Downline\Lib\Service\Snap\Request\ExpandMinimal as SnapExtendMinimalRequest;
 use Praxigento\Pv\Data\Entity\Sale as PvSale;
-use Praxigento\Pv\Lib\Service\Transfer\Request\CreditToCustomer as PvTransferCreditToCustomerRequest;
+use Praxigento\Pv\Service\Transfer\Request\CreditToCustomer as PvTransferCreditToCustomerRequest;
 
 include_once(__DIR__ . '/../phpunit_bootstrap.php');
 
@@ -74,7 +74,7 @@ class Main_OtherTest extends BaseIntegrationTest
     private $_callOperation;
     /** @var \Praxigento\Bonus\Hybrid\Lib\Service\IPeriod */
     private $_callPeriod;
-    /** @var  \Praxigento\Pv\Lib\Service\ITransfer */
+    /** @var  \Praxigento\Pv\Service\ITransfer */
     private $_callPvTransfer;
     /**
      * @var array [$mlmId=>['personal'=>99.99, ...], ...]
@@ -123,7 +123,7 @@ class Main_OtherTest extends BaseIntegrationTest
         $this->_callCalc = $this->_manObj->get(\Praxigento\Bonus\Hybrid\Lib\Service\ICalc::class);
         $this->_callDownlineSnap = $this->_manObj->get(\Praxigento\Downline\Lib\Service\ISnap::class);
         $this->_callPeriod = $this->_manObj->get(\Praxigento\Bonus\Hybrid\Lib\Service\IPeriod::class);
-        $this->_callPvTransfer = $this->_manObj->get(\Praxigento\Pv\Lib\Service\ITransfer::class);
+        $this->_callPvTransfer = $this->_manObj->get(\Praxigento\Pv\Service\ITransfer::class);
         $this->_repoBasic = $this->_manObj->get(\Praxigento\Core\Repo\IGeneric::class);
         $this->_repoTypeAsset = $this->_manObj->get(\Praxigento\Accounting\Repo\Entity\Type\IAsset::class);
         $this->_repoTypeCalc = $this->_manObj->get(\Praxigento\BonusBase\Repo\Entity\Type\ICalc::class);

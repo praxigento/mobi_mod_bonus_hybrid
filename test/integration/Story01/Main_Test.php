@@ -22,7 +22,7 @@ use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\ValueTv as BonusCalcTvCompr
 use Praxigento\BonusHybrid\Config as Cfg;
 
 use Praxigento\Core\Test\BaseIntegrationTest;
-use Praxigento\Pv\Lib\Service\Transfer\Request\CreditToCustomer as PvTransferCreditToCustomerRequest;
+use Praxigento\Pv\Service\Transfer\Request\CreditToCustomer as PvTransferCreditToCustomerRequest;
 
 include_once(__DIR__ . '/../phpunit_bootstrap.php');
 
@@ -44,7 +44,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
     private $_callCalc;
     /** @var \Praxigento\Bonus\Hybrid\Lib\Service\IPeriod */
     private $_callPeriod;
-    /** @var  \Praxigento\Pv\Lib\Service\ITransfer */
+    /** @var  \Praxigento\Pv\Service\ITransfer */
     private $_callPvTransfer;
     /** @var \Praxigento\Core\Repo\IGeneric */
     private $_repoBasic;
@@ -60,7 +60,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
         $this->_callAccOperation = $this->_manObj->get(\Praxigento\Accounting\Service\IOperation::class);
         $this->_callCalc = $this->_manObj->get(\Praxigento\Bonus\Hybrid\Lib\Service\ICalc::class);
         $this->_callPeriod = $this->_manObj->get(\Praxigento\Bonus\Hybrid\Lib\Service\IPeriod::class);
-        $this->_callPvTransfer = $this->_manObj->get(\Praxigento\Pv\Lib\Service\ITransfer::class);
+        $this->_callPvTransfer = $this->_manObj->get(\Praxigento\Pv\Service\ITransfer::class);
         $this->_repoTypeAsset = $this->_manObj->get(\Praxigento\Accounting\Repo\Entity\Type\IAsset::class);
         $this->_repoTypeCalc = $this->_manObj->get(\Praxigento\BonusBase\Repo\Entity\Type\ICalc::class);
         $this->_repoBasic = $this->_manObj->get(\Praxigento\Core\Repo\IGeneric::class);
