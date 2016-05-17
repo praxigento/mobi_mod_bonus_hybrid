@@ -16,7 +16,7 @@ use Praxigento\BonusHybrid\Config as Cfg;
 
 use Praxigento\Core\Test\BaseIntegrationTest;
 use Praxigento\Downline\Data\Entity\Snap;
-use Praxigento\Downline\Lib\Service\Snap\Request\ExpandMinimal as SnapExtendMinimalRequest;
+use Praxigento\Downline\Service\Snap\Request\ExpandMinimal as SnapExtendMinimalRequest;
 
 include_once(__DIR__ . '/../phpunit_bootstrap.php');
 

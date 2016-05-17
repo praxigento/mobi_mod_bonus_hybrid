@@ -28,9 +28,9 @@ use Praxigento\BonusHybrid\Config as Cfg;
 
 use Praxigento\Core\Test\BaseIntegrationTest;
 use Praxigento\Downline\Data\Entity\Snap;
-use Praxigento\Downline\Lib\Service\Customer\Request\Add as CustomerAddRequest;
-use Praxigento\Downline\Lib\Service\Snap\Request\Calc as SnapCalcRequest;
-use Praxigento\Downline\Lib\Service\Snap\Request\ExpandMinimal as SnapExtendMinimalRequest;
+use Praxigento\Downline\Service\Customer\Request\Add as CustomerAddRequest;
+use Praxigento\Downline\Service\Snap\Request\Calc as SnapCalcRequest;
+use Praxigento\Downline\Service\Snap\Request\ExpandMinimal as SnapExtendMinimalRequest;
 use Praxigento\Pv\Data\Entity\Sale as PvSale;
 use Praxigento\Pv\Service\Transfer\Request\CreditToCustomer as PvTransferCreditToCustomerRequest;
 
@@ -121,7 +121,7 @@ class Main_OtherTest extends BaseIntegrationTest
         $this->_callAccount = $this->_manObj->get(\Praxigento\Accounting\Service\IAccount::class);
         $this->_callOperation = $this->_manObj->get(\Praxigento\Accounting\Service\IOperation::class);
         $this->_callCalc = $this->_manObj->get(\Praxigento\Bonus\Hybrid\Lib\Service\ICalc::class);
-        $this->_callDownlineSnap = $this->_manObj->get(\Praxigento\Downline\Lib\Service\ISnap::class);
+        $this->_callDownlineSnap = $this->_manObj->get(\Praxigento\Downline\Service\ISnap::class);
         $this->_callPeriod = $this->_manObj->get(\Praxigento\Bonus\Hybrid\Lib\Service\IPeriod::class);
         $this->_callPvTransfer = $this->_manObj->get(\Praxigento\Pv\Service\ITransfer::class);
         $this->_repoBasic = $this->_manObj->get(\Praxigento\Core\Repo\IGeneric::class);

@@ -22,7 +22,7 @@ use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Oi as OiCompress;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Ptc as PtcCompress;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\Downline\Data\Entity\Customer;
-use Praxigento\Downline\Lib\Service\Snap\Request\GetStateOnDate as DownlineSnapGetStateOnDateRequest;
+use Praxigento\Downline\Service\Snap\Request\GetStateOnDate as DownlineSnapGetStateOnDateRequest;
 use Praxigento\Pv\Data\Entity\Sale as PvSale;
 
 class Db
@@ -30,7 +30,7 @@ class Db
 
     /** @var  \Praxigento\Accounting\Service\IAccount */
     protected $_callAccount;
-    /** @var  \Praxigento\Downline\Lib\Service\ISnap */
+    /** @var  \Praxigento\Downline\Service\ISnap */
     protected $_callDownlineSnap;
     /** @var  \Praxigento\Accounting\Service\IOperation */
     protected $_callOper;
@@ -61,7 +61,7 @@ class Db
         \Praxigento\Accounting\Service\IAccount $callAccount,
         \Praxigento\Accounting\Service\IOperation $repoOper,
         \Praxigento\BonusBase\Repo\Entity\Type\ICalc $repoTypeCalc,
-        \Praxigento\Downline\Lib\Service\ISnap $callDownlineSnap,
+        \Praxigento\Downline\Service\ISnap $callDownlineSnap,
         \Praxigento\Core\Repo\IGeneric $repoBasic,
         \Praxigento\Accounting\Repo\Entity\Type\IAsset $repoTypeAsset,
         \Praxigento\Accounting\Repo\Entity\Type\IOperation $repoTypeOper

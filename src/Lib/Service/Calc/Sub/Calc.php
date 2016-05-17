@@ -14,7 +14,7 @@ use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Ptc as PtcCompress;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\Downline\Data\Entity\Customer;
 use Praxigento\Downline\Data\Entity\Snap;
-use Praxigento\Downline\Lib\Service\Snap\Request\ExpandMinimal as DownlineSnapExtendMinimalRequest;
+use Praxigento\Downline\Service\Snap\Request\ExpandMinimal as DownlineSnapExtendMinimalRequest;
 
 class Calc
 {
@@ -33,7 +33,7 @@ class Calc
     const COMPRESSED_PV = 'pvc';
     const DATA_PV = 'pv';
     const DATA_SNAP = 'snap';
-    /** @var    \Praxigento\Downline\Lib\Service\ISnap */
+    /** @var    \Praxigento\Downline\Service\ISnap */
     protected $_callDownlineSnap;
     /** @var \Psr\Log\LoggerInterface */
     protected $_logger;
@@ -49,7 +49,7 @@ class Calc
         \Praxigento\Core\Tool\IFormat $toolFormat,
         \Praxigento\Downline\Tool\ITree $toolTree,
         \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme $toolScheme,
-        \Praxigento\Downline\Lib\Service\ISnap $repoDownlineSnap
+        \Praxigento\Downline\Service\ISnap $repoDownlineSnap
     ) {
         $this->_logger = $logger;
         $this->_callDownlineSnap = $repoDownlineSnap;
