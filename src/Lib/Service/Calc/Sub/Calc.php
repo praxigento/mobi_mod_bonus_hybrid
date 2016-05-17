@@ -37,7 +37,7 @@ class Calc
     protected $_callDownlineSnap;
     /** @var \Psr\Log\LoggerInterface */
     protected $_logger;
-    /** @var \Praxigento\Downline\Lib\Tool\ITree */
+    /** @var \Praxigento\Downline\Tool\ITree */
     protected $_toolDownlineTree;
     /** @var \Praxigento\Core\Tool\IFormat */
     protected $_toolFormat;
@@ -47,7 +47,7 @@ class Calc
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
         \Praxigento\Core\Tool\IFormat $toolFormat,
-        \Praxigento\Downline\Lib\Tool\ITree $toolTree,
+        \Praxigento\Downline\Tool\ITree $toolTree,
         \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme $toolScheme,
         \Praxigento\Downline\Lib\Service\ISnap $repoDownlineSnap
     ) {

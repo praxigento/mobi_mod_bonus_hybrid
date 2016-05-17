@@ -23,7 +23,7 @@ class Box_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $mFormat = $this->_mockFor(\Praxigento\Core\Tool\IFormat::class);
         $mPeriod = $this->_mockFor(\Praxigento\Core\Tool\IPeriod::class);
         $mScheme = $this->_mockFor(\Praxigento\Bonus\Hybrid\Lib\Tool\IScheme::class);
-        $mDownlineTree = $this->_mockFor(\Praxigento\Downline\Lib\Tool\ITree::class);
+        $mDownlineTree = $this->_mockFor(\Praxigento\Downline\Tool\ITree::class);
         /** === Test itself === */
         $obj = new Box($mConvert, $mDate, $mFormat, $mPeriod, $mScheme, $mDownlineTree);
         $this->assertInstanceOf(\Praxigento\Core\Lib\Tool\Convert::class, $obj->getConvert());
@@ -31,6 +31,6 @@ class Box_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $this->assertInstanceOf(\Praxigento\Core\Tool\IFormat::class, $obj->getFormat());
         $this->assertInstanceOf(\Praxigento\Core\Tool\IPeriod::class, $obj->getPeriod());
         $this->assertInstanceOf(\Praxigento\Bonus\Hybrid\Lib\Tool\IScheme::class, $obj->getScheme());
-        $this->assertInstanceOf(\Praxigento\Downline\Lib\Tool\ITree::class, $obj->getDownlineTree());
+        $this->assertInstanceOf(\Praxigento\Downline\Tool\ITree::class, $obj->getDownlineTree());
     }
 }

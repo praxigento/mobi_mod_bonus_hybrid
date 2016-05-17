@@ -13,7 +13,7 @@ use Praxigento\Core\Lib\Tool\Convert;
 use Praxigento\Core\Tool\IDate;
 use Praxigento\Core\Tool\IFormat;
 use Praxigento\Core\Tool\IPeriod;
-use Praxigento\Downline\Lib\Tool\ITree;
+use Praxigento\Downline\Tool\ITree;
 
 class Box extends CoreToolBox implements IToolbox {
 
