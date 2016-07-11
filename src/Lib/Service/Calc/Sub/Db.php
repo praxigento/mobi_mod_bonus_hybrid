@@ -155,8 +155,8 @@ class Db
         /* aliases and tables */
         $asCompress = 'cmp';
         $asCust = 'cust';
-        $tblCompress = $this->_conn->getTableName(OiCompress::ENTITY_NAME);
-        $tblCust = $this->_conn->getTableName(Customer::ENTITY_NAME);
+        $tblCompress = $this->_resource->getTableName(OiCompress::ENTITY_NAME);
+        $tblCust = $this->_resource->getTableName(Customer::ENTITY_NAME);
         // FROM prxgt_bon_hyb_cmprs_ptc cmp
         $query = $this->_conn->select();
         $query->from([$asCompress => $tblCompress]);
@@ -194,8 +194,8 @@ class Db
         /* aliases and tables */
         $asCompress = 'cmp';
         $asCust = 'cust';
-        $tblCompress = $this->_conn->getTableName(PtcCompress::ENTITY_NAME);
-        $tblCust = $this->_conn->getTableName(Customer::ENTITY_NAME);
+        $tblCompress = $this->_resource->getTableName(PtcCompress::ENTITY_NAME);
+        $tblCust = $this->_resource->getTableName(Customer::ENTITY_NAME);
         // FROM prxgt_bon_hyb_cmprs_ptc cmp
         $query = $this->_conn->select();
         $query->from([$asCompress => $tblCompress]);
@@ -221,10 +221,10 @@ class Db
         $asOper = 'pao';
         $asTrans = 'pat';
         $asAcc = 'paa';
-        $tblLog = $this->_conn->getTableName(LogOpers::ENTITY_NAME);
-        $tblOper = $this->_conn->getTableName(Operation::ENTITY_NAME);
-        $tblTrans = $this->_conn->getTableName(Transaction::ENTITY_NAME);
-        $tblAcc = $this->_conn->getTableName(Account::ENTITY_NAME);
+        $tblLog = $this->_resource->getTableName(LogOpers::ENTITY_NAME);
+        $tblOper = $this->_resource->getTableName(Operation::ENTITY_NAME);
+        $tblTrans = $this->_resource->getTableName(Transaction::ENTITY_NAME);
+        $tblAcc = $this->_resource->getTableName(Account::ENTITY_NAME);
         /* IDs for codes */
         $operPvWriteOffId = $this->_repoTypeOper->getIdByCode(Cfg::CODE_TYPE_OPER_PV_WRITE_OFF);
         // SELECT FROM prxgt_bon_base_log_opers
@@ -265,10 +265,10 @@ class Db
         $asTrans = 'pat';
         $asAcc = 'paa';
         $asLog = 'pbblo';
-        $tblOper = $this->_conn->getTableName(Operation::ENTITY_NAME);
-        $tblTrans = $this->_conn->getTableName(Transaction::ENTITY_NAME);
-        $tblAcc = $this->_conn->getTableName(Account::ENTITY_NAME);
-        $tblLog = $this->_conn->getTableName(LogOpers::ENTITY_NAME);
+        $tblOper = $this->_resource->getTableName(Operation::ENTITY_NAME);
+        $tblTrans = $this->_resource->getTableName(Transaction::ENTITY_NAME);
+        $tblAcc = $this->_resource->getTableName(Account::ENTITY_NAME);
+        $tblLog = $this->_resource->getTableName(LogOpers::ENTITY_NAME);
         /* IDs for codes */
         $assetId = $this->_repoTypeAsset->getIdByCode(Cfg::CODE_TYPE_ASSET_PV);
         $operPvWriteOffId = $this->_repoTypeOper->getIdByCode(Cfg::CODE_TYPE_OPER_PV_WRITE_OFF);
@@ -337,8 +337,8 @@ class Db
         /* aliases and tables */
         $asPeriod = 'pbbp';
         $asCalc = 'pbbc';
-        $tblPeriod = $this->_conn->getTableName(Period::ENTITY_NAME);
-        $tblCalc = $this->_conn->getTableName(Calculation::ENTITY_NAME);
+        $tblPeriod = $this->_resource->getTableName(Period::ENTITY_NAME);
+        $tblCalc = $this->_resource->getTableName(Calculation::ENTITY_NAME);
         // FROM prxgt_bon_base_period
         $query = $this->_conn->select();
         $cols = [];
@@ -396,9 +396,9 @@ class Db
         $asPvSale = 'pps';
         $asMageSale = 'sfo';
         $asMageCust = 'ce';
-        $tblPvSale = $this->_conn->getTableName(PvSale::ENTITY_NAME);
-        $tblMageSale = $this->_conn->getTableName(Cfg::ENTITY_MAGE_SALES_ORDER);
-        $tblMageCust = $this->_conn->getTableName(Cfg::ENTITY_MAGE_CUSTOMER);
+        $tblPvSale = $this->_resource->getTableName(PvSale::ENTITY_NAME);
+        $tblMageSale = $this->_resource->getTableName(Cfg::ENTITY_MAGE_SALES_ORDER);
+        $tblMageCust = $this->_resource->getTableName(Cfg::ENTITY_MAGE_CUSTOMER);
         // FROM prxgt_pv_sale pps
         $query = $this->_conn->select();
         $cols = [

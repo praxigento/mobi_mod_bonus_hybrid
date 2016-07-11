@@ -15,7 +15,7 @@ class InstallData extends \Praxigento\Core\Setup\Data\Base
     private function _addAccountingOperationsTypes()
     {
         $this->_conn->insertArray(
-            $this->_conn->getTableName(TypeOperation::ENTITY_NAME),
+            $this->_resource->getTableName(TypeOperation::ENTITY_NAME),
             [TypeOperation::ATTR_CODE, TypeOperation::ATTR_NOTE],
             [
                 [Cfg::CODE_TYPE_OPER_BONUS_COURTESY, 'Courtesy bonus.'],
@@ -36,7 +36,7 @@ class InstallData extends \Praxigento\Core\Setup\Data\Base
     private function _addBonusCalculationsTypes()
     {
         $this->_conn->insertArray(
-            $this->_conn->getTableName(TypeCalc::ENTITY_NAME),
+            $this->_resource->getTableName(TypeCalc::ENTITY_NAME),
             [TypeCalc::ATTR_CODE, TypeCalc::ATTR_NOTE],
             [
                 [Cfg::CODE_TYPE_CALC_PV_WRITE_OFF, 'PV write off calculation.'],

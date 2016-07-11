@@ -105,9 +105,9 @@ class Db
         $asAcc = 'paa';
         $asTrans = 'pat';
         $asType = 'pata';
-        $tblAcc = $this->_conn->getTableName(Account::ENTITY_NAME);
-        $tblTrans = $this->_conn->getTableName(Transaction::ENTITY_NAME);
-        $tblType = $this->_conn->getTableName(TypeAsset::ENTITY_NAME);
+        $tblAcc = $this->_resource->getTableName(Account::ENTITY_NAME);
+        $tblTrans = $this->_resource->getTableName(Transaction::ENTITY_NAME);
+        $tblType = $this->_resource->getTableName(TypeAsset::ENTITY_NAME);
         // SELECT FROM prxgt_acc_transaction pat
         $query = $this->_conn->select();
         $query->from([$asTrans => $tblTrans], [Transaction::ATTR_DATE_APPLIED]);

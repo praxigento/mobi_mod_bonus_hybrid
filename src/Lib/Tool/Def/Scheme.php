@@ -73,8 +73,8 @@ class Scheme
         /* aliases and tables */
         $asParams = 'pbhcp';
         $asRank = 'pbhr';
-        $tblParams = $this->_conn->getTableName(CfgParam::ENTITY_NAME);
-        $tblRank = $this->_conn->getTableName(Rank::ENTITY_NAME);
+        $tblParams = $this->_resource->getTableName(CfgParam::ENTITY_NAME);
+        $tblRank = $this->_resource->getTableName(Rank::ENTITY_NAME);
         // FROM prxgt_bon_hyb_cfg_param pbhcp
         $query = $this->_conn->select();
         $query->from([$asParams => $tblParams]);
