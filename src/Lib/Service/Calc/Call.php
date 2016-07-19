@@ -29,14 +29,14 @@ class Call extends BaseCall implements ICalc
     protected $_toolScheme;
     /** @var  \Praxigento\Core\Tool\IPeriod */
     protected $_toolPeriod;
-    /** @var  \Praxigento\Core\Repo\Transaction\IManager */
+    /** @var  \Praxigento\Core\Transaction\Database\IManager */
     protected $_manTrans;
 
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
         \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme $toolScheme,
-        \Praxigento\Core\Repo\Transaction\IManager $manTrans,
+        \Praxigento\Core\Transaction\Database\IManager $manTrans,
         \Praxigento\Accounting\Service\IAccount $callAcc,
         \Praxigento\Bonus\Hybrid\Lib\Service\IPeriod $callBonusPeriod,
         Sub\Db $subDb,
@@ -77,7 +77,7 @@ class Call extends BaseCall implements ICalc
         $reqGetPeriod->setDependentCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_COURTESY);
         $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         if ($respGetPeriod->isSucceed()) {
-            $trans = $this->_manTrans->transactionBegin();
+            $def = $this->_manTrans->begin();
             try {
                 /* working vars */
                 $thisPeriodData = $respGetPeriod->getDependentPeriodData();
@@ -131,12 +131,12 @@ class Call extends BaseCall implements ICalc
                 $this->_subDb->saveLogOperations($operId, $thisCalcId);
                 $this->_subDb->markCalcComplete($thisCalcId);
                 /* finalize response as succeed */
-                $this->_manTrans->transactionCommit($trans);
+                $this->_manTrans->commit($def);
                 $result->markSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
             } finally {
-                $this->_manTrans->transactionClose($trans);
+                $this->_manTrans->end($def);
             }
         }
         $this->_logMemoryUsage();
@@ -163,7 +163,7 @@ class Call extends BaseCall implements ICalc
         $reqGetPeriod->setDependentCalcTypeCode($calcType);
         $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         if ($respGetPeriod->isSucceed()) {
-            $trans = $this->_manTrans->transactionBegin();
+            $def = $this->_manTrans->begin();
             try {
                 /* working vars */
                 $thisPeriodData = $respGetPeriod->getDependentPeriodData();
@@ -222,12 +222,12 @@ class Call extends BaseCall implements ICalc
                 $this->_subDb->saveLogOperations($operId, $thisCalcId);
                 $this->_subDb->markCalcComplete($thisCalcId);
                 /* finalize response as succeed */
-                $this->_manTrans->transactionCommit($trans);
+                $this->_manTrans->commit($def);
                 $result->markSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
             } finally {
-                $this->_manTrans->transactionClose($trans);
+                $this->_manTrans->end($def);
             }
         }
         $this->_logMemoryUsage();
@@ -259,7 +259,7 @@ class Call extends BaseCall implements ICalc
         $reqGetPeriod->setDependentCalcTypeCode($calcType);
         $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         if ($respGetPeriod->isSucceed()) {
-            $trans = $this->_manTrans->transactionBegin();
+            $def = $this->_manTrans->begin();
             try {
                 /* working vars */
                 $thisPeriodData = $respGetPeriod->getDependentPeriodData();
@@ -313,12 +313,12 @@ class Call extends BaseCall implements ICalc
                 $this->_subDb->saveLogOperations($operId, $thisCalcId);
                 $this->_subDb->markCalcComplete($thisCalcId);
                 /* finalize response as succeed */
-                $this->_manTrans->transactionCommit($trans);
+                $this->_manTrans->commit($def);
                 $result->markSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
             } finally {
-                $this->_manTrans->transactionClose($trans);
+                $this->_manTrans->end($def);
             }
         }
         $this->_logMemoryUsage();
@@ -344,7 +344,7 @@ class Call extends BaseCall implements ICalc
         $reqGetPeriod->setDependentCalcTypeCode($calcType);
         $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         if ($respGetPeriod->isSucceed()) {
-            $trans = $this->_manTrans->transactionBegin();
+            $def = $this->_manTrans->begin();
             try {
                 /* working vars */
                 $thisPeriodData = $respGetPeriod->getDependentPeriodData();
@@ -395,13 +395,13 @@ class Call extends BaseCall implements ICalc
                 $this->_subDb->saveLogOperations($operId, $thisCalcId);
                 $this->_subDb->markCalcComplete($thisCalcId);
                 /* finalize response as succeed */
-                $this->_manTrans->transactionCommit($trans);
+                $this->_manTrans->commit($def);
                 $result->markSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
             } finally {
                 // transaction will be rolled back if commit is not done (otherwise - do nothing)
-                $this->_manTrans->transactionClose($trans);
+                $this->_manTrans->end($def);
             }
         }
         $this->_logMemoryUsage();
@@ -429,7 +429,7 @@ class Call extends BaseCall implements ICalc
         $reqGetPeriod->setDependentCalcTypeCode($calcType);
         $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         if ($respGetPeriod->isSucceed()) {
-            $trans = $this->_manTrans->transactionBegin();
+            $def = $this->_manTrans->begin();
             try {
                 /* working vars */
                 $thisPeriodData = $respGetPeriod->getDependentPeriodData();
@@ -483,12 +483,12 @@ class Call extends BaseCall implements ICalc
                 $this->_subDb->saveLogOperations($operId, $thisCalcId);
                 $this->_subDb->markCalcComplete($thisCalcId);
                 /* finalize response as succeed */
-                $this->_manTrans->transactionCommit($trans);
+                $this->_manTrans->commit($def);
                 $result->markSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
             } finally {
-                $this->_manTrans->transactionClose($trans);
+                $this->_manTrans->end($def);
             }
         }
         $this->_logMemoryUsage();
@@ -511,7 +511,7 @@ class Call extends BaseCall implements ICalc
         $reqGetPeriod->setDependentCalcTypeCode($calcType);
         $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         if ($respGetPeriod->isSucceed()) {
-            $trans = $this->_manTrans->transactionBegin();
+            $def = $this->_manTrans->begin();
             try {
                 /* working vars */
                 $thisPeriodData = $respGetPeriod->getDependentPeriodData();
@@ -538,12 +538,12 @@ class Call extends BaseCall implements ICalc
                 /* save updates and mark calculation complete */
                 $this->_subDb->saveCompressedOi($updates, $thisCalcId);
                 $this->_subDb->markCalcComplete($thisCalcId);
-                $this->_manTrans->transactionCommit($trans);
+                $this->_manTrans->commit($def);
                 $result->markSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
             } finally {
-                $this->_manTrans->transactionClose($trans);
+                $this->_manTrans->end($def);
             }
         }
         $this->_logMemoryUsage();
@@ -565,7 +565,7 @@ class Call extends BaseCall implements ICalc
         $reqGetPeriod->setDependentCalcTypeCode(Cfg::CODE_TYPE_CALC_COMPRESS_FOR_PTC);
         $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         if ($respGetPeriod->isSucceed()) {
-            $trans = $this->_manTrans->transactionBegin();
+            $def = $this->_manTrans->begin();
             try {
                 /* working vars */
                 $thisPeriodData = $respGetPeriod->getDependentPeriodData();
@@ -584,12 +584,12 @@ class Call extends BaseCall implements ICalc
                 $updates = $this->_subCalc->compressPtc($downlineSnap, $customersData, $transData);
                 $this->_subDb->saveCompressedPtc($updates, $thisCalcId);
                 $this->_subDb->markCalcComplete($thisCalcId);
-                $this->_manTrans->transactionCommit($trans);
+                $this->_manTrans->commit($def);
                 $result->markSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
             } finally {
-                $this->_manTrans->transactionClose($trans);
+                $this->_manTrans->end($def);
             }
         }
         $this->_logMemoryUsage();
@@ -614,7 +614,7 @@ class Call extends BaseCall implements ICalc
                 $this->_logger->info("There is no PV transactions yet. Nothing to calculate.");
                 $result->markSucceed();
             } else {
-                $trans = $this->_manTrans->transactionBegin();
+                $def = $this->_manTrans->begin();
                 try {
                     /* working vars */
                     $periodData = $respGetPeriod->getPeriodData();
@@ -630,12 +630,12 @@ class Call extends BaseCall implements ICalc
                     $operId = $this->_subDb->saveOperationPvWriteOff($updates, $datePerformed, $dateApplied);
                     $this->_subDb->saveLogPvWriteOff($transData, $operId, $calcId);
                     $this->_subDb->markCalcComplete($calcId);
-                    $this->_manTrans->transactionCommit($trans);
+                    $this->_manTrans->commit($def);
                     $result->setPeriodId($periodId);
                     $result->setCalcId($calcId);
                     $result->markSucceed();
                 } finally {
-                    $this->_manTrans->transactionClose($trans);
+                    $this->_manTrans->end($def);
                 }
             }
         }
@@ -658,7 +658,7 @@ class Call extends BaseCall implements ICalc
         $reqGetPeriod->setDependentCalcTypeCode(Cfg::CODE_TYPE_CALC_VALUE_OV);
         $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         if ($respGetPeriod->isSucceed()) {
-            $trans = $this->_manTrans->transactionBegin();
+            $def = $this->_manTrans->begin();
             try {
                 /* working vars */
                 $thisPeriodData = $respGetPeriod->getDependentPeriodData();
@@ -677,12 +677,12 @@ class Call extends BaseCall implements ICalc
                 $updates = $this->_subCalc->valueOv($compressPtc);
                 $this->_subDb->saveValueOv($updates, $baseCalcId);
                 $this->_subDb->markCalcComplete($thisCalcId);
-                $this->_manTrans->transactionCommit($trans);
+                $this->_manTrans->commit($def);
                 $result->markSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
             } finally {
-                $this->_manTrans->transactionClose($trans);
+                $this->_manTrans->end($def);
             }
         }
         $this->_logMemoryUsage();
@@ -699,7 +699,7 @@ class Call extends BaseCall implements ICalc
         $reqGetPeriod->setDependentCalcTypeCode(Cfg::CODE_TYPE_CALC_VALUE_TV);
         $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         if ($respGetPeriod->isSucceed()) {
-            $trans = $this->_manTrans->transactionBegin();
+            $def = $this->_manTrans->begin();
             try {
                 /* working vars */
                 $thisPeriodData = $respGetPeriod->getDependentPeriodData();
@@ -718,12 +718,12 @@ class Call extends BaseCall implements ICalc
                 $updates = $this->_subCalc->valueTv($compressPtc);
                 $this->_subDb->saveValueTv($updates, $baseCalcId);
                 $this->_subDb->markCalcComplete($thisCalcId);
-                $this->_manTrans->transactionCommit($trans);
+                $this->_manTrans->commit($def);
                 $result->markSucceed();
                 $result->setPeriodId($thisPeriodId);
                 $result->setCalcId($thisCalcId);
             } finally {
-                $this->_manTrans->transactionClose($trans);
+                $this->_manTrans->end($def);
             }
         }
         $this->_logMemoryUsage();
