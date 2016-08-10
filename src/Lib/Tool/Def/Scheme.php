@@ -14,7 +14,7 @@ use Praxigento\Downline\Data\Entity\Customer;
  * TODO: move this tool to Repo section or extract DB related methods to standalone class.
  */
 class Scheme
-    extends \Praxigento\Core\Repo\Def\Base
+    extends \Praxigento\Core\Repo\Def\Db
     implements \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme
 {
     const A_RANK_ID = 'RankId';
