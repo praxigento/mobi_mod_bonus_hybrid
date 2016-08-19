@@ -49,17 +49,17 @@ class InstallSchema_UnitTest extends \Praxigento\Core\Test\BaseMockeryCase
         $mDemPackage = $this->_mock(DataObject::class);
         $this->mToolDem
             ->shouldReceive('readDemPackage')->once()
-            ->withArgs([anything(), '/dBEAR/package/Praxigento/package/Bonus/package/Hybrid'])
+            ->withArgs([\Mockery::any(), '/dBEAR/package/Praxigento/package/Bonus/package/Hybrid'])
             ->andReturn($mDemPackage);
         // $demEntity = $demPackage->getData('package/Type/entity/Asset');
         $mDemPackage->shouldReceive('getData');
         //
         // $this->_toolDem->createEntity($entityAlias, $demEntity);
         //
-        $this->mToolDem->shouldReceive('createEntity')->withArgs([CfgOverride::ENTITY_NAME, anything()]);
-        $this->mToolDem->shouldReceive('createEntity')->withArgs([CfgParam::ENTITY_NAME, anything()]);
-        $this->mToolDem->shouldReceive('createEntity')->withArgs([PtcCompress::ENTITY_NAME, anything()]);
-        $this->mToolDem->shouldReceive('createEntity')->withArgs([OiCompress::ENTITY_NAME, anything()]);
+        $this->mToolDem->shouldReceive('createEntity')->withArgs([CfgOverride::ENTITY_NAME, \Mockery::any()]);
+        $this->mToolDem->shouldReceive('createEntity')->withArgs([CfgParam::ENTITY_NAME, \Mockery::any()]);
+        $this->mToolDem->shouldReceive('createEntity')->withArgs([PtcCompress::ENTITY_NAME, \Mockery::any()]);
+        $this->mToolDem->shouldReceive('createEntity')->withArgs([OiCompress::ENTITY_NAME, \Mockery::any()]);
         // $setup->endSetup();
         $this->mSetup
             ->shouldReceive('endSetup')->once();
