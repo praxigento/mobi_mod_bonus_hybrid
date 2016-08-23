@@ -8,7 +8,7 @@ namespace Praxigento\Bonus\Hybrid\Lib\Test;
 
 
 
-abstract class BaseTestCase extends \Praxigento\Core\Test\BaseMockeryCase {
+abstract class BaseTestCase extends \Praxigento\Core\Test\BaseCase\Mockery {
 
 
     protected function _mockToolbox(

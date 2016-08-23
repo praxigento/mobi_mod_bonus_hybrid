@@ -9,7 +9,7 @@ use Praxigento\Bonus\Hybrid\Lib\Defaults as Def;
 
 include_once(__DIR__ . '/../../phpunit_bootstrap.php');
 
-class Call_ManualTest extends \Praxigento\Core\Test\BaseMockeryCase {
+class Call_ManualTest extends \Praxigento\Core\Test\BaseCase\Mockery {
 
     const COURTESY_BONUS_PERCENT = 0.05;
     const TEAM_BONUS_PERCENT_EU = 0.05;

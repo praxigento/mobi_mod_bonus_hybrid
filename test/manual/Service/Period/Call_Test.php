@@ -9,7 +9,7 @@ use Praxigento\BonusHybrid\Config as Cfg;
 
 include_once(__DIR__ . '/../../phpunit_bootstrap.php');
 
-class Call_ManualTest extends \Praxigento\Core\Test\BaseMockeryCase {
+class Call_ManualTest extends \Praxigento\Core\Test\BaseCase\Mockery {
 
     public function test_getForCompressedPersonalBonus() {
         $obm = \Magento\Framework\App\ObjectManager::getInstance();

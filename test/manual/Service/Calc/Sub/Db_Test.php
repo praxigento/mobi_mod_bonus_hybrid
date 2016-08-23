@@ -8,7 +8,7 @@ namespace Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub;
 
 include_once(__DIR__ . '/../../../phpunit_bootstrap.php');
 
-class Db_ManualTest extends \Praxigento\Core\Test\BaseMockeryCase {
+class Db_ManualTest extends \Praxigento\Core\Test\BaseCase\Mockery {
 
     public function test_getDownlineSnapshot() {
         $obm = \Magento\Framework\App\ObjectManager::getInstance();
