@@ -51,7 +51,7 @@ class Scheme_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
         $mConn = $this->_mockConnection();
         $mDba = $this->_mockDbAdapter(null, $mConn);
         $mCallRepo = $this->_mockFor('\Praxigento\Core\Lib\Service\IRepo');
-        $mCallRank = $this->_mockFor('\Praxigento\BonusBase\Lib\Service\IRank');
+        $mCallRank = $this->_mockFor('\Praxigento\BonusBase\Service\IRank');
 
         // private function _getForcedCustomersIds() {...}
         // $resp = $this->_callRepo->getEntities($req);
@@ -86,7 +86,7 @@ class Scheme_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
         $mConn = $this->_mockConnection();
         $mDba = $this->_mockDbAdapter(null, $mConn);
         $mCallRepo = $this->_mockFor('\Praxigento\Core\Lib\Service\IRepo');
-        $mCallRank = $this->_mockFor('\Praxigento\BonusBase\Lib\Service\IRank');
+        $mCallRank = $this->_mockFor('\Praxigento\BonusBase\Service\IRank');
 
         // private function _getForcedCustomersIds() {...}
         // $resp = $this->_callRepo->getEntities($req);
@@ -122,7 +122,7 @@ class Scheme_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
         $mConn = $this->_mockConnection();
         $mDba = $this->_mockDbAdapter(null, $mConn);
         $mCallRepo = $this->_mockFor('\Praxigento\Core\Lib\Service\IRepo');
-        $mCallRank = $this->_mockFor('\Praxigento\BonusBase\Lib\Service\IRank');
+        $mCallRank = $this->_mockFor('\Praxigento\BonusBase\Service\IRank');
 
         // private function _getForcedCustomersIds() {...}
         // $resp = $this->_callRepo->getEntities($req);
@@ -158,7 +158,7 @@ class Scheme_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
         $mConn = $this->_mockConnection();
         $mDba = $this->_mockDbAdapter(null, $mConn);
         $mCallRepo = $this->_mockFor('\Praxigento\Core\Lib\Service\IRepo');
-        $mCallRank = $this->_mockFor('\Praxigento\BonusBase\Lib\Service\IRank');
+        $mCallRank = $this->_mockFor('\Praxigento\BonusBase\Service\IRank');
 
         // private function _getForcedCustomersIds() {...}
         // $resp = $this->_callRepo->getEntities($req);
@@ -194,7 +194,7 @@ class Scheme_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
         $mConn = $this->_mockConnection();
         $mDba = $this->_mockDbAdapter(null, $mConn);
         $mCallRepo = $this->_mockFor('\Praxigento\Core\Lib\Service\IRepo');
-        $mCallRank = $this->_mockFor('\Praxigento\BonusBase\Lib\Service\IRank');
+        $mCallRank = $this->_mockFor('\Praxigento\BonusBase\Service\IRank');
 
         // private function _getForcedCustomersIds() {...}
         // $resp = $this->_callRepo->getEntities($req);
@@ -231,7 +231,7 @@ class Scheme_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
         $mConn = $this->_mockConnection();
         $mDba = $this->_mockDbAdapter(null, $mConn);
         $mCallRepo = $this->_mockFor('\Praxigento\Core\Lib\Service\IRepo');
-        $mCallRank = $this->_mockFor('\Praxigento\BonusBase\Lib\Service\IRank');
+        $mCallRank = $this->_mockFor('\Praxigento\BonusBase\Service\IRank');
 
         // private function _getForcedCustomersIds() {...}
         // $resp = $this->_callRepo->getEntities($req);
@@ -266,7 +266,7 @@ class Scheme_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
         $mConn = $this->_mockConnection();
         $mDba = $this->_mockDbAdapter(null, $mConn);
         $mCallRepo = $this->_mockFor('\Praxigento\Core\Lib\Service\IRepo');
-        $mCallRank = $this->_mockFor('\Praxigento\BonusBase\Lib\Service\IRank');
+        $mCallRank = $this->_mockFor('\Praxigento\BonusBase\Service\IRank');
 
         /** === Test itself === */
         $obj = new Scheme($mLogger, $mDba, $mCallRepo, $mCallRank);
@@ -283,7 +283,7 @@ class Scheme_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
         $mConn = $this->_mockConnection();
         $mDba = $this->_mockDbAdapter(null, $mConn);
         $mCallRepo = $this->_mockFor('\Praxigento\Core\Lib\Service\IRepo');
-        $mCallRank = $this->_mockFor('\Praxigento\BonusBase\Lib\Service\IRank');
+        $mCallRank = $this->_mockFor('\Praxigento\BonusBase\Service\IRank');
         /** === Test itself === */
         $obj = new Scheme($mLogger, $mDba, $mCallRepo, $mCallRank);
         $res = $obj->getSchemeByCustomer([Customer::ATTR_COUNTRY_CODE => 'LV']);

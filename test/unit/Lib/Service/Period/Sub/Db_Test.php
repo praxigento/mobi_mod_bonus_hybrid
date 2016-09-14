@@ -7,8 +7,8 @@ namespace Praxigento\Bonus\Hybrid\Lib\Service\Period\Sub;
 use Praxigento\Accounting\Data\Entity\Account;
 use Praxigento\Accounting\Data\Entity\Transaction;
 use Praxigento\Accounting\Data\Entity\Type\Asset as TypeAsset;
-use Praxigento\BonusBase\Lib\Service\Period\Response\GetLatest as BonusBasePeriodGetLatestResponse;
-use Praxigento\BonusBase\Lib\Service\Type\Calc\Response\GetByCode as BonusBaseTypeCalcResponse;
+use Praxigento\BonusBase\Service\Period\Response\GetLatest as BonusBasePeriodGetLatestResponse;
+use Praxigento\BonusBase\Service\Type\Calc\Response\GetByCode as BonusBaseTypeCalcResponse;
 use Praxigento\Core\Lib\Service\Repo\Response\AddEntity as RepoAddEntityResponse;
 
 include_once(__DIR__ . '/../../../../phpunit_bootstrap.php');
@@ -35,8 +35,8 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
         $mToolDate = $this->_mockFor('\Praxigento\Core\Tool\IDate');
         $mToolbox = $this->_mockToolbox(null, $mToolDate);
         $mCallRepo = $this->_mockCallRepo();
-        $mCallBonusBasePeriod = $this->_mockFor('\Praxigento\BonusBase\Lib\Service\IPeriod');
-        $mCallTypeCalc = $this->_mockFor('\Praxigento\BonusBase\Lib\Service\ITypeCalc');
+        $mCallBonusBasePeriod = $this->_mockFor('\Praxigento\BonusBase\Service\IPeriod');
+        $mCallTypeCalc = $this->_mockFor('\Praxigento\BonusBase\Service\ITypeCalc');
 
         // $respAdd = $this->_callRepo->addEntity($reqAdd);
         $mRespAdd = new RepoAddEntityResponse();
@@ -68,8 +68,8 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
         $mDba = $this->_mockDbAdapter(null, $mConn);
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
-        $mCallBonusBasePeriod = $this->_mockFor('\Praxigento\BonusBase\Lib\Service\IPeriod');
-        $mCallTypeCalc = $this->_mockFor('\Praxigento\BonusBase\Lib\Service\ITypeCalc');
+        $mCallBonusBasePeriod = $this->_mockFor('\Praxigento\BonusBase\Service\IPeriod');
+        $mCallTypeCalc = $this->_mockFor('\Praxigento\BonusBase\Service\ITypeCalc');
 
         // $respTypeCalc = $this->_callTypeCalc->getByCode($reqTypeCalc);
         $mRespTypeCalc = new BonusBaseTypeCalcResponse();
@@ -101,8 +101,8 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
         $mDba = $this->_mockDbAdapter(null, $mConn);
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
-        $mCallBonusBasePeriod = $this->_mockFor('\Praxigento\BonusBase\Lib\Service\IPeriod');
-        $mCallTypeCalc = $this->_mockFor('\Praxigento\BonusBase\Lib\Service\ITypeCalc');
+        $mCallBonusBasePeriod = $this->_mockFor('\Praxigento\BonusBase\Service\IPeriod');
+        $mCallTypeCalc = $this->_mockFor('\Praxigento\BonusBase\Service\ITypeCalc');
 
         // $tblAcc = $this->_resource->getTableName(Account::ENTITY_NAME);
         $mDba
@@ -152,8 +152,8 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
         $mDba = $this->_mockDbAdapter(null, $mConn);
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
-        $mCallBonusBasePeriod = $this->_mockFor('\Praxigento\BonusBase\Lib\Service\IPeriod');
-        $mCallTypeCalc = $this->_mockFor('\Praxigento\BonusBase\Lib\Service\ITypeCalc');
+        $mCallBonusBasePeriod = $this->_mockFor('\Praxigento\BonusBase\Service\IPeriod');
+        $mCallTypeCalc = $this->_mockFor('\Praxigento\BonusBase\Service\ITypeCalc');
 
         // $result = $this->_callBonusBasePeriod->getLatest($reqLastPeriod);
         $mResult = new BonusBasePeriodGetLatestResponse();
