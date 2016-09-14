@@ -7,9 +7,9 @@ namespace Praxigento\Bonus\Hybrid\Lib\Test\Compare;
 
 use Praxigento\Accounting\Data\Entity\Account;
 use Praxigento\Accounting\Data\Entity\Transaction;
-use Praxigento\Bonus\Base\Lib\Entity\Level;
-use Praxigento\Bonus\Base\Lib\Entity\Log\Opers as LogOpers;
-use Praxigento\Bonus\Base\Lib\Entity\Rank;
+use Praxigento\BonusBase\Data\Entity\Level;
+use Praxigento\BonusBase\Data\Entity\Log\Opers as LogOpers;
+use Praxigento\BonusBase\Data\Entity\Rank;
 use Praxigento\Bonus\Hybrid\Lib\Defaults as Def;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Override as CfgOverride;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Param as CfgParam;

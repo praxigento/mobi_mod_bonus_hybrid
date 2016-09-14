@@ -4,8 +4,8 @@
  */
 namespace Praxigento\Bonus\Hybrid\Lib\Service\Period;
 
-use Praxigento\Bonus\Base\Lib\Entity\Calculation;
-use Praxigento\Bonus\Base\Lib\Entity\Period;
+use Praxigento\BonusBase\Data\Entity\Calculation;
+use Praxigento\BonusBase\Data\Entity\Period;
 use Praxigento\Bonus\Hybrid\Lib\Service\IPeriod;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\Core\Service\Base\Call as BaseCall;

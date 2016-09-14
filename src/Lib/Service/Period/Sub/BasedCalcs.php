@@ -4,8 +4,8 @@
  */
 namespace Praxigento\Bonus\Hybrid\Lib\Service\Period\Sub;
 
-use Praxigento\Bonus\Base\Lib\Entity\Calculation;
-use Praxigento\Bonus\Base\Lib\Entity\Period;
+use Praxigento\BonusBase\Data\Entity\Calculation;
+use Praxigento\BonusBase\Data\Entity\Period;
 use Praxigento\Bonus\Hybrid\Lib\Service\Period\Response\BasedOnCompression as BasedOnCompressionResponse;
 use Praxigento\Bonus\Hybrid\Lib\Service\Period\Response\BasedOnPvWriteOff as BasedOnPvWriteOffResponse;
 use Praxigento\Bonus\Hybrid\Lib\Service\Period\Response\GetForDependentCalc as PeriodGetForDependentCalcResponse;

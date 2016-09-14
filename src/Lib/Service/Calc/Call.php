@@ -4,8 +4,8 @@
  */
 namespace Praxigento\Bonus\Hybrid\Lib\Service\Calc;
 
-use Praxigento\Bonus\Base\Lib\Entity\Calculation;
-use Praxigento\Bonus\Base\Lib\Entity\Period;
+use Praxigento\BonusBase\Data\Entity\Calculation;
+use Praxigento\BonusBase\Data\Entity\Period;
 use Praxigento\Bonus\Hybrid\Lib\Defaults as Def;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Oi as OiCompress;
 use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc;

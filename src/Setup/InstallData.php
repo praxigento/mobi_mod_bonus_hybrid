@@ -7,7 +7,7 @@
 namespace Praxigento\BonusHybrid\Setup;
 
 use Praxigento\Accounting\Data\Entity\Type\Operation as TypeOperation;
-use Praxigento\Bonus\Base\Lib\Entity\Type\Calc as TypeCalc;
+use Praxigento\BonusBase\Data\Entity\Type\Calc as TypeCalc;
 use Praxigento\BonusHybrid\Config as Cfg;
 
 class InstallData extends \Praxigento\Core\Setup\Data\Base

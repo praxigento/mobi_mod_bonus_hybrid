@@ -8,16 +8,16 @@ use Flancer32\Lib\DataObject;
 use Praxigento\Accounting\Data\Entity\Account;
 use Praxigento\Accounting\Data\Entity\Transaction;
 use Praxigento\Accounting\Data\Entity\Type\Asset as TypeAsset;
-use Praxigento\Bonus\Base\Lib\Entity\Calculation;
-use Praxigento\Bonus\Base\Lib\Entity\Period;
-use Praxigento\Bonus\Base\Lib\Service\Period\Request\GetLatest as BonusBasePeriodGetLatestRequest;
+use Praxigento\BonusBase\Data\Entity\Calculation;
+use Praxigento\BonusBase\Data\Entity\Period;
+use Praxigento\BonusBase\Lib\Service\Period\Request\GetLatest as BonusBasePeriodGetLatestRequest;
 use Praxigento\BonusHybrid\Config as Cfg;
 
 class Db
 {
     const DATA_CALC = 'calc';
     const DATA_PERIOD = 'period';
-    /** @var \Praxigento\Bonus\Base\Lib\Service\IPeriod */
+    /** @var \Praxigento\BonusBase\Lib\Service\IPeriod */
     protected $_callBonusBasePeriod;
     /** @var \Magento\Framework\DB\Adapter\AdapterInterface */
     protected $_conn;
@@ -37,7 +37,7 @@ class Db
         \Magento\Framework\App\ResourceConnection $resource,
         \Praxigento\Core\Tool\IDate $toolDate,
         \Praxigento\Core\Repo\IGeneric $repoBasic,
-        \Praxigento\Bonus\Base\Lib\Service\IPeriod $callBonusBasePeriod,
+        \Praxigento\BonusBase\Lib\Service\IPeriod $callBonusBasePeriod,
         \Praxigento\BonusBase\Repo\Entity\Type\ICalc $repoTypeCalc
     ) {
         $this->_logger = $logger;
@@ -131,7 +131,7 @@ class Db
     /**
      * @param $calcTypeId
      *
-     * @return \Praxigento\Bonus\Base\Lib\Service\Period\Response\GetLatest
+     * @return \Praxigento\BonusBase\Lib\Service\Period\Response\GetLatest
      */
     public function getLastPeriodData($calcTypeId)
     {

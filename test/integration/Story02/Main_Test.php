@@ -4,9 +4,9 @@
  */
 namespace Praxigento\Bonus\Hybrid\Lib\Test\Story02;
 
-use Praxigento\Bonus\Base\Lib\Entity\Calculation;
-use Praxigento\Bonus\Base\Lib\Entity\Period;
-use Praxigento\Bonus\Base\Lib\Entity\Rank;
+use Praxigento\BonusBase\Data\Entity\Calculation;
+use Praxigento\BonusBase\Data\Entity\Period;
+use Praxigento\BonusBase\Data\Entity\Rank;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Param as CfgParam;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Ptc as PtcCompression;
 use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\BonusInfinity as CalcBonusInfinityRequest;

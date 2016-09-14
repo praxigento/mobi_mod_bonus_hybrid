@@ -5,9 +5,9 @@
 namespace Praxigento\Bonus\Hybrid\Lib\Service\Period\Sub;
 
 use Flancer32\Lib\DataObject;
-use Praxigento\Bonus\Base\Lib\Entity\Calculation;
-use Praxigento\Bonus\Base\Lib\Entity\Period;
-use Praxigento\Bonus\Base\Lib\Service\Period\Response\GetLatest as BasePeriodGetLatestResponse;
+use Praxigento\BonusBase\Data\Entity\Calculation;
+use Praxigento\BonusBase\Data\Entity\Period;
+use Praxigento\BonusBase\Lib\Service\Period\Response\GetLatest as BasePeriodGetLatestResponse;
 use Praxigento\Bonus\Hybrid\Lib\Service\Period\Response\BasedOnCompression as BasedOnCompressionResponse;
 use Praxigento\Bonus\Hybrid\Lib\Service\Period\Response\BasedOnPvWriteOff as BasedOnPvWriteOffResponse;
 use Praxigento\BonusHybrid\Config as Cfg;

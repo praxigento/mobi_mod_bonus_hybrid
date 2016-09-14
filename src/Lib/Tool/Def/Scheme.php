@@ -5,7 +5,7 @@
 
 namespace Praxigento\Bonus\Hybrid\Lib\Tool\Def;
 
-use Praxigento\Bonus\Base\Lib\Entity\Rank;
+use Praxigento\BonusBase\Data\Entity\Rank;
 use Praxigento\Bonus\Hybrid\Lib\Defaults as Def;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Param as CfgParam;
 use Praxigento\Downline\Data\Entity\Customer;
