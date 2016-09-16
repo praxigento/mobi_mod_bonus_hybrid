@@ -521,7 +521,7 @@ class Db
             $saleId = $item[Calc::A_ORDR_ID];
             $bind = [
                 LogSales::ATTR_TRANS_ID => $transId,
-                LogSales::ATTR_SALES_ORDER_ID => $saleId
+                LogSales::ATTR_SALE_ORDER_ID => $saleId
 
             ];
             $this->_repoBasic->addEntity(LogSales::ENTITY_NAME, $bind);
