@@ -4,14 +4,14 @@
  */
 namespace Praxigento\Bonus\Hybrid\Lib\Service\Calc;
 
-use Praxigento\BonusBase\Data\Entity\Calculation;
-use Praxigento\BonusBase\Data\Entity\Period;
 use Praxigento\Bonus\Hybrid\Lib\Defaults as Def;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Oi as OiCompress;
 use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc;
 use Praxigento\Bonus\Hybrid\Lib\Service\ICalc;
 use Praxigento\Bonus\Hybrid\Lib\Service\Period\Request\GetForDependentCalc as PeriodGetForDependentCalcRequest;
 use Praxigento\Bonus\Hybrid\Lib\Service\Period\Request\GetForWriteOff as PeriodGetForWriteOffRequest;
+use Praxigento\BonusBase\Data\Entity\Calculation;
+use Praxigento\BonusBase\Data\Entity\Period;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\Core\Service\Base\Call as BaseCall;
 
@@ -85,8 +85,8 @@ class Call extends BaseCall implements ICalc
                 $thisCalcData = $respGetPeriod->getDependentCalcData();
                 $thisCalcId = $thisCalcData[Calculation::ATTR_ID];
                 $basePeriodData = $respGetPeriod->getBasePeriodData();
-                $baseDsBegin = $basePeriodData[Period::ATTR_DSTAMP_BEGIN];
-                $baseDsEnd = $basePeriodData[Period::ATTR_DSTAMP_END];
+                $baseDsBegin = $basePeriodData->getDstampBegin();
+                $baseDsEnd = $basePeriodData->getDstampEnd();
                 /* get PTC Compression calculation ID for this period */
                 $ptcCompressCalcId = $this->_subDb->getLastCalculationIdForPeriod(
                     Cfg::CODE_TYPE_CALC_COMPRESS_FOR_PTC,
@@ -171,10 +171,10 @@ class Call extends BaseCall implements ICalc
                 $thisCalcData = $respGetPeriod->getDependentCalcData();
                 $thisCalcId = $thisCalcData[Calculation::ATTR_ID];
                 $basePeriodData = $respGetPeriod->getBasePeriodData();
-                $baseDsBegin = $basePeriodData[Period::ATTR_DSTAMP_BEGIN];
-                $baseDsEnd = $basePeriodData[Period::ATTR_DSTAMP_END];
+                $baseDsBegin = $basePeriodData->getDstampBegin();
+                $baseDsEnd = $basePeriodData->getDstampEnd();
                 $baseCalcData = $respGetPeriod->getBaseCalcData();
-                $baseCalcId = $baseCalcData[Calculation::ATTR_ID];
+                $baseCalcId = $baseCalcData->getId();
                 /* calculation itself */
                 $this->_logger->info("Processing period #$thisPeriodId ($baseDsBegin-$baseDsEnd)");
                 /* get compressed data by calculation ID */
@@ -267,10 +267,10 @@ class Call extends BaseCall implements ICalc
                 $thisCalcData = $respGetPeriod->getDependentCalcData();
                 $thisCalcId = $thisCalcData[Calculation::ATTR_ID];
                 $basePeriodData = $respGetPeriod->getBasePeriodData();
-                $baseDsBegin = $basePeriodData[Period::ATTR_DSTAMP_BEGIN];
-                $baseDsEnd = $basePeriodData[Period::ATTR_DSTAMP_END];
+                $baseDsBegin = $basePeriodData->getDstampBegin();
+                $baseDsEnd = $basePeriodData->getDstampEnd();
                 $baseCalcData = $respGetPeriod->getBaseCalcData();
-                $baseCalcId = $baseCalcData[Calculation::ATTR_ID];
+                $baseCalcId = $baseCalcData->getId();
                 /* calculation itself */
                 $this->_logger->info("Processing period #$thisPeriodId ($baseDsBegin-$baseDsEnd)");
                 /* get compressed data by calculation ID */
@@ -352,10 +352,10 @@ class Call extends BaseCall implements ICalc
                 $thisCalcData = $respGetPeriod->getDependentCalcData();
                 $thisCalcId = $thisCalcData[Calculation::ATTR_ID];
                 $basePeriodData = $respGetPeriod->getBasePeriodData();
-                $baseDsBegin = $basePeriodData[Period::ATTR_DSTAMP_BEGIN];
-                $baseDsEnd = $basePeriodData[Period::ATTR_DSTAMP_END];
+                $baseDsBegin = $basePeriodData->getDstampBegin();
+                $baseDsEnd = $basePeriodData->getDstampEnd();
                 $baseCalcData = $respGetPeriod->getBaseCalcData();
-                $baseCalcId = $baseCalcData[Calculation::ATTR_ID];
+                $baseCalcId = $baseCalcData->getId();
                 /* calculation itself */
                 $this->_logger->info("Processing period #$thisPeriodId ($baseDsBegin-$baseDsEnd)");
                 /* get compressed data by calculation ID */
@@ -437,8 +437,8 @@ class Call extends BaseCall implements ICalc
                 $thisCalcData = $respGetPeriod->getDependentCalcData();
                 $thisCalcId = $thisCalcData[Calculation::ATTR_ID];
                 $basePeriodData = $respGetPeriod->getBasePeriodData();
-                $baseDsBegin = $basePeriodData[Period::ATTR_DSTAMP_BEGIN];
-                $baseDsEnd = $basePeriodData[Period::ATTR_DSTAMP_END];
+                $baseDsBegin = $basePeriodData->getDstampBegin();
+                $baseDsEnd = $basePeriodData->getDstampEnd();
                 /* get the last PTC compression calc id for this period */
                 $ptcCompressCalcId = $this->_subDb->getLastCalculationIdForPeriod(
                     Cfg::CODE_TYPE_CALC_COMPRESS_FOR_PTC,
@@ -519,8 +519,8 @@ class Call extends BaseCall implements ICalc
                 $thisCalcData = $respGetPeriod->getDependentCalcData();
                 $thisCalcId = $thisCalcData[Calculation::ATTR_ID];
                 $basePeriodData = $respGetPeriod->getBasePeriodData();
-                $baseDsBegin = $basePeriodData[Period::ATTR_DSTAMP_BEGIN];
-                $baseDsEnd = $basePeriodData[Period::ATTR_DSTAMP_END];
+                $baseDsBegin = $basePeriodData->getDstampBegin();
+                $baseDsEnd = $basePeriodData->getDstampEnd();
                 /* get the last PTC compression calc id for this period */
                 $ptcCompressCalcId = $this->_subDb->getLastCalculationIdForPeriod(
                     Cfg::CODE_TYPE_CALC_COMPRESS_FOR_PTC,
@@ -575,7 +575,7 @@ class Call extends BaseCall implements ICalc
                 $thisCalcData = $respGetPeriod->getDependentCalcData();
                 $thisCalcId = $thisCalcData[Calculation::ATTR_ID];
                 $baseCalcData = $respGetPeriod->getBaseCalcData();
-                $baseCalcIdId = $baseCalcData[Calculation::ATTR_ID];
+                $baseCalcIdId = $baseCalcData->getId();
                 /* calculation itself */
                 $this->_logger->info("Processing period #$thisPeriodId ($thisDsBegin-$thisDsEnd)");
                 $downlineSnap = $this->_subDb->getDownlineSnapshot($thisDsEnd);
@@ -666,10 +666,10 @@ class Call extends BaseCall implements ICalc
                 $thisCalcData = $respGetPeriod->getDependentCalcData();
                 $thisCalcId = $thisCalcData[Calculation::ATTR_ID];
                 $basePeriodData = $respGetPeriod->getBasePeriodData();
-                $baseDsBegin = $basePeriodData[Period::ATTR_DSTAMP_BEGIN];
-                $baseDsEnd = $basePeriodData[Period::ATTR_DSTAMP_END];
+                $baseDsBegin = $basePeriodData->getDstampBegin();
+                $baseDsEnd = $basePeriodData->getDstampEnd();
                 $baseCalcData = $respGetPeriod->getBaseCalcData();
-                $baseCalcId = $baseCalcData[Calculation::ATTR_ID];
+                $baseCalcId = $baseCalcData->getId();
                 /* calculation itself */
                 $this->_logger->info("Processing period #$thisPeriodId ($baseDsBegin-$baseDsEnd)");
                 /* get compressed data by calculation ID */
@@ -707,10 +707,10 @@ class Call extends BaseCall implements ICalc
                 $thisCalcData = $respGetPeriod->getDependentCalcData();
                 $thisCalcId = $thisCalcData[Calculation::ATTR_ID];
                 $basePeriodData = $respGetPeriod->getBasePeriodData();
-                $baseDsBegin = $basePeriodData[Period::ATTR_DSTAMP_BEGIN];
-                $baseDsEnd = $basePeriodData[Period::ATTR_DSTAMP_END];
+                $baseDsBegin = $basePeriodData->getDstampBegin();
+                $baseDsEnd = $basePeriodData->getDstampEnd();
                 $baseCalcData = $respGetPeriod->getBaseCalcData();
-                $baseCalcId = $baseCalcData[Calculation::ATTR_ID];
+                $baseCalcId = $baseCalcData->getId();
                 /* calculation itself */
                 $this->_logger->info("Processing period #$thisPeriodId ($baseDsBegin-$baseDsEnd)");
                 /* get compressed data by calculation ID */

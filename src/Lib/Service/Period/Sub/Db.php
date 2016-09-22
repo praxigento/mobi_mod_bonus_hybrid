@@ -137,7 +137,6 @@ class Db
     {
         $reqLastPeriod = new BonusBasePeriodGetLatestRequest();
         $reqLastPeriod->setCalcTypeId($calcTypeId);
-        $reqLastPeriod->setShouldGetLatestCalc(true);
         $result = $this->_callBonusBasePeriod->getLatest($reqLastPeriod);
         return $result;
     }

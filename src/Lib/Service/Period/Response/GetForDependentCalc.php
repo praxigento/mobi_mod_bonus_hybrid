@@ -7,15 +7,16 @@ namespace Praxigento\Bonus\Hybrid\Lib\Service\Period\Response;
 /**
  * Response contains arrays with period and calculation data for base and dependent calculations.
  *
- * @method array getBaseCalcData()
- * @method void setBaseCalcData(array $data)
- * @method array getBasePeriodData()
- * @method void setBasePeriodData(array $data)
- * @method array getDependentCalcData()
- * @method void setDependentCalcData(array $data)
- * @method array getDependentPeriodData()
- * @method void setDependentPeriodData(array $data)
+ * @method \Praxigento\BonusBase\Data\Entity\Calculation|null getBaseCalcData()
+ * @method void setBaseCalcData(\Praxigento\BonusBase\Data\Entity\Calculation|array $data)
+ * @method \Praxigento\BonusBase\Data\Entity\Period|null getBasePeriodData()
+ * @method void setBasePeriodData(\Praxigento\BonusBase\Data\Entity\Period|array $data)
+ * @method \Praxigento\BonusBase\Data\Entity\Calculation|null getDependentCalcData()
+ * @method void setDependentCalcData(\Praxigento\BonusBase\Data\Entity\Calculation|array $data)
+ * @method \Praxigento\BonusBase\Data\Entity\Period|null getDependentPeriodData()
+ * @method void setDependentPeriodData(\Praxigento\BonusBase\Data\Entity\Period|array $data)
  */
-class GetForDependentCalc extends \Praxigento\Core\Service\Base\Response {
+class GetForDependentCalc extends \Praxigento\Core\Service\Base\Response
+{
 
 }

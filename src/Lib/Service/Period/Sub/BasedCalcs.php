@@ -4,14 +4,12 @@
  */
 namespace Praxigento\Bonus\Hybrid\Lib\Service\Period\Sub;
 
-use Praxigento\BonusBase\Data\Entity\Calculation;
-use Praxigento\BonusBase\Data\Entity\Period;
 use Praxigento\Bonus\Hybrid\Lib\Service\Period\Response\BasedOnCompression as BasedOnCompressionResponse;
 use Praxigento\Bonus\Hybrid\Lib\Service\Period\Response\BasedOnPvWriteOff as BasedOnPvWriteOffResponse;
 use Praxigento\Bonus\Hybrid\Lib\Service\Period\Response\GetForDependentCalc as PeriodGetForDependentCalcResponse;
 use Praxigento\BonusHybrid\Config as Cfg;
 
-class BasedCalcs 
+class BasedCalcs
 {
     /** @var \Psr\Log\LoggerInterface */
     protected $_logger;
@@ -48,12 +46,11 @@ class BasedCalcs
             $result->setBasePeriodData($basePeriodData);
             $baseCalcData = $respBasePeriod->getCalcData();
             $result->setBaseCalcData($baseCalcData);
-            $baseDsBegin = $basePeriodData[Period::ATTR_DSTAMP_BEGIN];
-            $baseDsEnd = $basePeriodData[Period::ATTR_DSTAMP_END];
+            $baseDsBegin = $basePeriodData->getDstampBegin();
+            $baseDsEnd = $basePeriodData->getDstampEnd();
             if (
-                is_array($baseCalcData) &&
-                isset($baseCalcData[Calculation::ATTR_STATE]) &&
-                ($baseCalcData[Calculation::ATTR_STATE] == Cfg::CALC_STATE_COMPLETE)
+                $baseCalcData &&
+                ($baseCalcData->getState() == Cfg::CALC_STATE_COMPLETE)
             ) {
                 /* there is complete Base Calculation */
                 $respDependentPeriod = $this->_subDb->getLastPeriodData($dependentCalcTypeId);
@@ -69,8 +66,8 @@ class BasedCalcs
                     $result->markSucceed();
                 } else {
                     /* there is dependent period */
-                    $dependentDsBegin = $dependPeriodData[Period::ATTR_DSTAMP_BEGIN];
-                    $dependentDsEnd = $dependPeriodData[Period::ATTR_DSTAMP_END];
+                    $dependentDsBegin = $dependPeriodData->getDstampBegin();
+                    $dependentDsEnd = $dependPeriodData->getDstampEnd();
                     if (
                         ($dependentDsBegin == $baseDsBegin) &&
                         ($dependentDsEnd == $baseDsEnd)
@@ -78,9 +75,8 @@ class BasedCalcs
                         /* dependent period has the same begin/end as related base period */
                         $this->_logger->info("There is base '$baseCalcTypeCode' period for dependent '$dependentCalcTypeCode' period ($dependentDsBegin-$dependentDsEnd).");
                         if (
-                            is_array($dependentCalcData) &&
-                            isset($dependentCalcData[Calculation::ATTR_STATE]) &&
-                            ($dependentCalcData[Calculation::ATTR_STATE] == Cfg::CALC_STATE_COMPLETE)
+                            $dependentCalcData &&
+                            ($dependentCalcData->getState() == Cfg::CALC_STATE_COMPLETE)
                         ) {
                             /* complete dependent period for complete base period */
                             $this->_logger->warning("There is '$dependentCalcTypeCode' period with complete calculation. No more '$dependentCalcTypeCode' could be calculated.");

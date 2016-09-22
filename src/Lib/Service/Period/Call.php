@@ -4,9 +4,8 @@
  */
 namespace Praxigento\Bonus\Hybrid\Lib\Service\Period;
 
-use Praxigento\BonusBase\Data\Entity\Calculation;
-use Praxigento\BonusBase\Data\Entity\Period;
 use Praxigento\Bonus\Hybrid\Lib\Service\IPeriod;
+use Praxigento\BonusBase\Data\Entity\Period;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\Core\Service\Base\Call as BaseCall;
 use Praxigento\Core\Tool\IPeriod as ToolPeriod;
@@ -83,7 +82,7 @@ class Call extends BaseCall implements IPeriod
             }
         } else {
             $result->setPeriodData($periodWriteOffData);
-            $periodId = $periodWriteOffData[Period::ATTR_ID];
+            $periodId = $periodWriteOffData->getId();
             $this->_logger->info("There is registered period #$periodId for '$calcWriteOffCode' calculation.");
             $calcData = $respWriteOffLastPeriod->getCalcData();
             if ($calcData === false) {
@@ -91,12 +90,11 @@ class Call extends BaseCall implements IPeriod
                 $result->markSucceed();
             } else {
                 if (
-                    is_array($calcData) &&
-                    isset($calcData[Calculation::ATTR_STATE]) &&
-                    ($calcData[Calculation::ATTR_STATE] == Cfg::CALC_STATE_COMPLETE)
+                    $calcData &&
+                    ($calcData->getState() == Cfg::CALC_STATE_COMPLETE)
                 ) {
                     $this->_logger->info("There is complete calculation for existing period. Create new period.");
-                    $periodEnd = $periodWriteOffData[Period::ATTR_DSTAMP_END];
+                    $periodEnd = $periodWriteOffData->getDstampEnd();
                     /* calculate new period bounds */
                     $periodNext = $this->_toolPeriod->getPeriodNext($periodEnd, ToolPeriod::TYPE_MONTH);
                     $dsNextBegin = $this->_toolPeriod->getPeriodFirstDate($periodNext);
