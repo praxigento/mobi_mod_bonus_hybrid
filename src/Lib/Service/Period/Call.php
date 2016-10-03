@@ -4,29 +4,33 @@
  */
 namespace Praxigento\Bonus\Hybrid\Lib\Service\Period;
 
-use Praxigento\Bonus\Hybrid\Lib\Service\IPeriod;
-use Praxigento\BonusBase\Data\Entity\Period;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\Core\Service\Base\Call as BaseCall;
 use Praxigento\Core\Tool\IPeriod as ToolPeriod;
 
-class Call extends BaseCall implements IPeriod
+/**
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
+class Call
+    extends \Praxigento\Core\Service\Base\Call
+    implements \Praxigento\Bonus\Hybrid\Lib\Service\IPeriod
 {
 
-    /** @var  \Praxigento\Core\Tool\IPeriod */
-    protected $_toolPeriod;
-    /** @var  Sub\Db */
-    private $_subDb;
     /** @var  Sub\BasedCalcs */
     private $_subBasedCalcs;
+    /** @var  Sub\Db */
+    private $_subDb;
+    /** @var  \Praxigento\Core\Tool\IPeriod */
+    protected $_toolPeriod;
 
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
+        \Magento\Framework\ObjectManagerInterface $manObj,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
         Sub\Db $subDb,
         Sub\BasedCalcs $subBasedCalcs
     ) {
-        parent::__construct($logger);
+        parent::__construct($logger, $manObj);
         $this->_toolPeriod = $toolPeriod;
         $this->_subDb = $subDb;
         $this->_subBasedCalcs = $subBasedCalcs;
@@ -41,10 +45,11 @@ class Call extends BaseCall implements IPeriod
     public function getForDependentCalc(Request\GetForDependentCalc $request)
     {
         // $result = new Response\GetForDependentCalc();
-        $dependentCalcTypeCode = $request->getDependentCalcTypeCode();
+        $depCalcTypeCode = $request->getDependentCalcTypeCode();
         $baseCalcTypeCode = $request->getBaseCalcTypeCode();
-        $this->_logger->info("'Get latest period for Dependent Calculation' operation is started (dependent=$dependentCalcTypeCode, base=$baseCalcTypeCode).");
-        $result = $this->_subBasedCalcs->getDependentCalcData($dependentCalcTypeCode, $baseCalcTypeCode);
+        $this->_logger->info("'Get latest period for Dependent Calculation' operation is started "
+            . "(dependent=$depCalcTypeCode, base=$baseCalcTypeCode).");
+        $result = $this->_subBasedCalcs->getDependentCalcData($depCalcTypeCode, $baseCalcTypeCode);
         $this->_logger->info("'Get latest period for Dependent Calculation' operation is completed.");
         return $result;
     }
@@ -66,13 +71,13 @@ class Call extends BaseCall implements IPeriod
         if (is_null($periodWriteOffData)) {
             $this->_logger->info("There is no period for PV Write Off calculation  yet.");
             /* calc period for PV Write Off */
-            $ts = $this->_subDb->getFirstDateForPvTransactions();
-            if ($ts === false) {
+            $tsFirstPv = $this->_subDb->getFirstDateForPvTransactions();
+            if ($tsFirstPv === false) {
                 $this->_logger->info("There is no PV transactions yet. Nothing to do.");
                 $result->setHasNoPvTransactionsYet();
             } else {
-                $this->_logger->info("First PV transaction was performed at '$ts'.");
-                $periodMonth = $this->_toolPeriod->getPeriodCurrent($ts, ToolPeriod::TYPE_MONTH);
+                $this->_logger->info("First PV transaction was performed at '$tsFirstPv'.");
+                $periodMonth = $this->_toolPeriod->getPeriodCurrent($tsFirstPv, ToolPeriod::TYPE_MONTH);
                 $dsBegin = $this->_toolPeriod->getPeriodFirstDate($periodMonth);
                 $dsEnd = $this->_toolPeriod->getPeriodLastDate($periodMonth);
                 $periodWriteOffData = $this->_subDb->addNewPeriodAndCalc($calcWriteOffId, $dsBegin, $dsEnd);

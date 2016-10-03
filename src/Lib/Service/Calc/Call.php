@@ -7,33 +7,38 @@ namespace Praxigento\Bonus\Hybrid\Lib\Service\Calc;
 use Praxigento\Bonus\Hybrid\Lib\Defaults as Def;
 use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Oi as OiCompress;
 use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc;
-use Praxigento\Bonus\Hybrid\Lib\Service\ICalc;
 use Praxigento\Bonus\Hybrid\Lib\Service\Period\Request\GetForDependentCalc as PeriodGetForDependentCalcRequest;
 use Praxigento\Bonus\Hybrid\Lib\Service\Period\Request\GetForWriteOff as PeriodGetForWriteOffRequest;
 use Praxigento\BonusBase\Data\Entity\Calculation;
 use Praxigento\BonusBase\Data\Entity\Period;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\Core\Service\Base\Call as BaseCall;
 
-class Call extends BaseCall implements ICalc
+/**
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
+class Call
+    extends \Praxigento\Core\Service\Base\Call
+    implements \Praxigento\Bonus\Hybrid\Lib\Service\ICalc
 {
     /** @var  \Praxigento\Accounting\Service\IAccount */
     protected $_callAcc;
     /** @var \Praxigento\Bonus\Hybrid\Lib\Service\IPeriod */
     protected $_callPeriod;
+    /** @var  \Praxigento\Core\Transaction\Database\IManager */
+    protected $_manTrans;
     /** @var  Sub\Calc */
     protected $_subCalc;
     /** @var  Sub\Db */
     protected $_subDb;
-    /** @var  \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme */
-    protected $_toolScheme;
     /** @var  \Praxigento\Core\Tool\IPeriod */
     protected $_toolPeriod;
-    /** @var  \Praxigento\Core\Transaction\Database\IManager */
-    protected $_manTrans;
+    /** @var  \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme */
+    protected $_toolScheme;
 
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
+        \Magento\Framework\ObjectManagerInterface $manObj,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
         \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme $toolScheme,
         \Praxigento\Core\Transaction\Database\IManager $manTrans,
@@ -42,7 +47,7 @@ class Call extends BaseCall implements ICalc
         Sub\Db $subDb,
         Sub\Calc $subCalc
     ) {
-        parent::__construct($logger);
+        parent::__construct($logger, $manObj);
         $this->_toolPeriod = $toolPeriod;
         $this->_toolScheme = $toolScheme;
         $this->_manTrans = $manTrans;
