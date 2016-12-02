@@ -2,10 +2,6 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
-    <!-- Common -->
-    <preference for="Praxigento\Bonus\Hybrid\Lib\IToolbox"
-                type="\Praxigento\Bonus\Hybrid\Lib\Tool\Box"/>
-
     <!-- Services -->
     <preference for="Praxigento\Bonus\Hybrid\Lib\Service\ICalc"
                 type="Praxigento\Bonus\Hybrid\Lib\Service\Calc\Call"/>
