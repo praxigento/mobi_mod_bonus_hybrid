@@ -17,7 +17,7 @@ class BasedCalcs
     private $_subDb;
 
     public function __construct(
-        \Psr\Log\LoggerInterface $logger,
+        \Praxigento\Core\Fw\Logger\App $logger,
         Db $subDb
     ) {
         $this->_logger = $logger;

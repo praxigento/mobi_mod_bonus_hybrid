@@ -54,7 +54,7 @@ class Db
     protected $_toolPeriod;
 
     public function __construct(
-        \Psr\Log\LoggerInterface $logger,
+        \Praxigento\Core\Fw\Logger\App $logger,
         \Magento\Framework\App\ResourceConnection $resource,
         \Praxigento\Core\Tool\IDate $toolDate,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,

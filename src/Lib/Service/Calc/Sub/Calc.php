@@ -45,7 +45,7 @@ class Calc
     protected $_toolScheme;
 
     public function __construct(
-        \Psr\Log\LoggerInterface $logger,
+        \Praxigento\Core\Fw\Logger\App $logger,
         \Praxigento\Core\Tool\IFormat $toolFormat,
         \Praxigento\Downline\Tool\ITree $toolTree,
         \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme $toolScheme,

@@ -33,7 +33,7 @@ class Db
     protected $_toolDate;
 
     public function __construct(
-        \Psr\Log\LoggerInterface $logger,
+        \Praxigento\Core\Fw\Logger\App $logger,
         \Magento\Framework\App\ResourceConnection $resource,
         \Praxigento\Core\Tool\IDate $toolDate,
         \Praxigento\Core\Repo\IGeneric $repoBasic,

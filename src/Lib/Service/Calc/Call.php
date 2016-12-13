@@ -37,7 +37,7 @@ class Call
     protected $_toolScheme;
 
     public function __construct(
-        \Psr\Log\LoggerInterface $logger,
+        \Praxigento\Core\Fw\Logger\App $logger,
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
         \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme $toolScheme,
