@@ -326,7 +326,7 @@ class Db
         $req = new DownlineSnapGetStateOnDateRequest();
         $req->setDatestamp($datestamp);
         $resp = $this->_callDownlineSnap->getStateOnDate($req);
-        $result = $resp->getData();
+        $result = $resp->get();
         return $result;
     }
 
@@ -548,7 +548,7 @@ class Db
         $reqAccRepres = new AccountGetRepresentativeRequest();
         $reqAccRepres->setAssetTypeId($assetTypeId);
         $respAccRepres = $this->_callAccount->getRepresentative($reqAccRepres);
-        $represAccId = $respAccRepres->getData(Account::ATTR_ID);
+        $represAccId = $respAccRepres->get(Account::ATTR_ID);
         /* save operation */
         $req = new OperationAddRequest();
         $req->setOperationTypeCode(Cfg::CODE_TYPE_OPER_PV_WRITE_OFF);
@@ -603,7 +603,7 @@ class Db
         $reqAccRepres = new AccountGetRepresentativeRequest();
         $reqAccRepres->setAssetTypeId($assetTypeId);
         $respAccRepres = $this->_callAccount->getRepresentative($reqAccRepres);
-        $represAccId = $respAccRepres->getData(Account::ATTR_ID);;
+        $represAccId = $respAccRepres->get(Account::ATTR_ID);;
         /* save operation */
         $req = new OperationAddRequest();
         $req->setOperationTypeCode($operTypeCode);
@@ -619,7 +619,7 @@ class Db
                 /* get WALLET_ACTIVE account ID for customer */
                 $reqGetAccount->setCustomerId($customerId);
                 $respGetAccount = $this->_callAccount->get($reqGetAccount);
-                $accId = $respGetAccount->getData(Account::ATTR_ID);
+                $accId = $respGetAccount->get(Account::ATTR_ID);
                 /* skip representative account */
                 if ($accId == $represAccId) {
                     continue;

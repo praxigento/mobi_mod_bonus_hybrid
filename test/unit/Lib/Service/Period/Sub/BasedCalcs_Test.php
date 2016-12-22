@@ -94,8 +94,8 @@ class BasedCalcs_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
         $sub = new BasedCalcs($mLogger, $mToolbox, $mSubDb);
         $resp = $sub->getDependentCalcData($CALC_TYPE_CODE_DEPEND, $CALC_TYPE_CODE_BASE);
         $this->assertTrue($resp->isSucceed());
-        $this->assertEquals($PERIOD_DEPEND_ID, $resp->getData('DependentPeriodData/id'));
-        $this->assertEquals($CALC_DEPEND_ID, $resp->getData('DependentCalcData/id'));
+        $this->assertEquals($PERIOD_DEPEND_ID, $resp->get('DependentPeriodData/id'));
+        $this->assertEquals($CALC_DEPEND_ID, $resp->get('DependentCalcData/id'));
     }
 
     public function test_getDependentCalcData_isBasePeriod_isBaseCalc_isDependPeriod_sameDates_complete()
@@ -235,8 +235,8 @@ class BasedCalcs_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
         $sub = new BasedCalcs($mLogger, $mToolbox, $mSubDb);
         $resp = $sub->getDependentCalcData($CALC_TYPE_CODE_DEPEND, $CALC_TYPE_CODE_BASE);
         $this->assertTrue($resp->isSucceed());
-        $this->assertEquals($PERIOD_DEPEND_ID, $resp->getData('DependentPeriodData/id'));
-        $this->assertEquals($CALC_DEPEND_ID, $resp->getData('DependentCalcData/id'));
+        $this->assertEquals($PERIOD_DEPEND_ID, $resp->get('DependentPeriodData/id'));
+        $this->assertEquals($CALC_DEPEND_ID, $resp->get('DependentCalcData/id'));
     }
 
     public function test_getDependentCalcData_isBasePeriod_isBaseCalc_noDependPeriod()
@@ -305,8 +305,8 @@ class BasedCalcs_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
         $sub = new BasedCalcs($mLogger, $mToolbox, $mSubDb);
         $resp = $sub->getDependentCalcData($CALC_TYPE_CODE_DEPEND, $CALC_TYPE_CODE_BASE);
         $this->assertTrue($resp->isSucceed());
-        $this->assertEquals($PERIOD_DEPEND_ID, $resp->getData('DependentPeriodData/id'));
-        $this->assertEquals($CALC_DEPEND_ID, $resp->getData('DependentCalcData/id'));
+        $this->assertEquals($PERIOD_DEPEND_ID, $resp->get('DependentPeriodData/id'));
+        $this->assertEquals($CALC_DEPEND_ID, $resp->get('DependentCalcData/id'));
 
     }
 

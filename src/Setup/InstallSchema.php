@@ -22,22 +22,22 @@ class InstallSchema extends \Praxigento\Core\Setup\Schema\Base
 
         /* Config Override */
         $entityAlias = CfgOverride::ENTITY_NAME;
-        $demEntity = $demPackage->getData('package/Config/entity/Override');
+        $demEntity = $demPackage->get('package/Config/entity/Override');
         $this->_toolDem->createEntity($entityAlias, $demEntity);
 
         /* Config Param */
         $entityAlias = CfgParam::ENTITY_NAME;
-        $demEntity = $demPackage->getData('package/Config/entity/Parameter');
+        $demEntity = $demPackage->get('package/Config/entity/Parameter');
         $this->_toolDem->createEntity($entityAlias, $demEntity);
 
         /* Compression PTC */
         $entityAlias = PtcCompress::ENTITY_NAME;
-        $demEntity = $demPackage->getData('package/Compression/entity/PTC');
+        $demEntity = $demPackage->get('package/Compression/entity/PTC');
         $this->_toolDem->createEntity($entityAlias, $demEntity);
 
         /* Compression OI */
         $entityAlias = OiCompress::ENTITY_NAME;
-        $demEntity = $demPackage->getData('package/Compression/entity/OI');
+        $demEntity = $demPackage->get('package/Compression/entity/OI');
         $this->_toolDem->createEntity($entityAlias, $demEntity);
     }
 

@@ -81,8 +81,8 @@ class Call
                 $dsBegin = $this->_toolPeriod->getPeriodFirstDate($periodMonth);
                 $dsEnd = $this->_toolPeriod->getPeriodLastDate($periodMonth);
                 $periodWriteOffData = $this->_subDb->addNewPeriodAndCalc($calcWriteOffId, $dsBegin, $dsEnd);
-                $result->setPeriodData($periodWriteOffData->getData(Sub\Db::DATA_PERIOD));
-                $result->setCalcData($periodWriteOffData->getData(Sub\Db::DATA_CALC));
+                $result->setPeriodData($periodWriteOffData->get(Sub\Db::DATA_PERIOD));
+                $result->setCalcData($periodWriteOffData->get(Sub\Db::DATA_CALC));
                 $result->markSucceed();
             }
         } else {
@@ -105,8 +105,8 @@ class Call
                     $dsNextBegin = $this->_toolPeriod->getPeriodFirstDate($periodNext);
                     $dsNextEnd = $this->_toolPeriod->getPeriodLastDate($periodNext);
                     $periodWriteOffData = $this->_subDb->addNewPeriodAndCalc($calcWriteOffId, $dsNextBegin, $dsNextEnd);
-                    $result->setPeriodData($periodWriteOffData->getData(Sub\Db::DATA_PERIOD));
-                    $result->setCalcData($periodWriteOffData->getData(Sub\Db::DATA_CALC));
+                    $result->setPeriodData($periodWriteOffData->get(Sub\Db::DATA_PERIOD));
+                    $result->setCalcData($periodWriteOffData->get(Sub\Db::DATA_CALC));
                     $result->markSucceed();
                 } else {
                     $this->_logger->info("There is no complete calculation for existing period. Use existing period data.");

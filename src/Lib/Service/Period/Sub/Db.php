@@ -70,7 +70,7 @@ class Db
         $periodId = $this->_repoBasic->addEntity(Period::ENTITY_NAME, $periodData);
         $this->_logger->info("New period #$periodId for calculation type #$calcTypeId is registered ($dsBegin-$dsEnd).");
         $periodData[Period::ATTR_ID] = $periodId;
-        $result->setData(self::DATA_PERIOD, $periodData);
+        $result->set(self::DATA_PERIOD, $periodData);
         /* add related calculation */
         $dateStarted = $this->_toolDate->getUtcNowForDb();
         $calcData = [
@@ -82,7 +82,7 @@ class Db
         $calcId = $this->_repoBasic->addEntity(Calculation::ENTITY_NAME, $calcData);
         $this->_logger->info("New calculation #$calcId for period #$periodId is registered.");
         $calcData[Calculation::ATTR_ID] = $calcId;
-        $result->setData(self::DATA_CALC, $calcData);
+        $result->set(self::DATA_CALC, $calcData);
         return $result;
     }
 

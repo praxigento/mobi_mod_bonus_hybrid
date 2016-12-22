@@ -67,8 +67,8 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
             ->expects($this->once())
             ->method('getEntities')
             ->willReturn($mResp);
-        // $data = $resp->getData();
-        $mResp->setData([
+        // $data = $resp->get();
+        $mResp->set([
             [Level::ATTR_LEVEL => 100, Level::ATTR_PERCENT => 0.1]
         ]);
         /**
@@ -115,7 +115,7 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
 
         // $resp = $this->_callRepo->getEntities($req);
         $mResp = new DataObject();
-        $mResp->setData([
+        $mResp->set([
             [
                 CfgOverride::ATTR_SCHEME => $SCHEME,
                 CfgParam::ATTR_RANK_ID => $RANK_ID,
@@ -168,7 +168,7 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
 
         // $resp = $this->_callRepo->getEntities($req);
         $mResp = new DataObject();
-        $mResp->setData([
+        $mResp->set([
             [CfgParam::ATTR_SCHEME => $SCHEME, CfgParam::ATTR_RANK_ID => $RANK_ID]
         ]);
         $mCallRepo
@@ -316,8 +316,8 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
             ->expects($this->once())
             ->method('getEntities')
             ->willReturn($mResp);
-        // $result = $resp->getData();
-        $mResp->setData([]);
+        // $result = $resp->get();
+        $mResp->set([]);
 
         /**
          * Prepare request and perform call.
@@ -359,7 +359,7 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
 
         // $resp = $this->_callDownlineSnap->getStateOnDate($req);
         $mResp = new DownlineSnapGetStateOnDateResponse();
-        $mResp->setData([]);
+        $mResp->set([]);
         $mCallDownlineSnap
             ->expects($this->once())
             ->method('getStateOnDate')
@@ -1204,7 +1204,7 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
             ->method('getRepresentative')
             ->willReturn($mRespAccRepres);
         // $represAccId = $respAccRepres->getAccountId();
-        $mRespAccRepres->setData(Account::ATTR_ID, $ACC_REPRES);
+        $mRespAccRepres->set(Account::ATTR_ID, $ACC_REPRES);
         // $resp = $this->_callOper->add($req);
         $mRespAdd = new OperationAddResponse();
         $mRespAdd->setOperationId($NEW_OPER_ID);
@@ -1289,17 +1289,17 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
             ->method('getRepresentative')
             ->willReturn($mRespAccRepres);
         // $walletActiveRepresAccId = $respAccRepres->getAccountId();
-        $mRespAccRepres->setData(Account::ATTR_ID, $ACC_REPRES);
+        $mRespAccRepres->set(Account::ATTR_ID, $ACC_REPRES);
         // foreach($updates as $customerId => $value) {
         // $respGetAccount = $this->_callAccount->get($reqGetAccount);
         $mRespGetAccRepres = new AccountGetResponse();
-        $mRespGetAccRepres->setData(Account::ATTR_ID, $ACC_REPRES);
+        $mRespGetAccRepres->set(Account::ATTR_ID, $ACC_REPRES);
         $mCallAccount
             ->expects($this->at(1))// 0 - is for Representative account request
             ->method('get')
             ->willReturn($mRespGetAccRepres);
         $mRespGetAcc = new AccountGetResponse();
-        $mRespGetAcc->setData(Account::ATTR_ID, $ACC_CUST_01);
+        $mRespGetAcc->set(Account::ATTR_ID, $ACC_CUST_01);
         $mCallAccount
             ->expects($this->at(2))
             ->method('get')

@@ -80,9 +80,9 @@ class Main_IntegrationTest extends BaseIntegrationTest
         foreach ($this->_mapCustomerMageIdByIndex as $ref => $custId) {
             $pvToAdd = $PV_MAX - $ref * $PV_STEP;
             $ts = $this->_toolPeriod->getTimestampTo($dsToday);
-            $reqAddPv->setData(PvTransferCreditToCustomerRequest::TO_CUSTOMER_ID, $custId);
-            $reqAddPv->setData(PvTransferCreditToCustomerRequest::VALUE, $pvToAdd);
-            $reqAddPv->setData(PvTransferCreditToCustomerRequest::DATE_APPLIED, $ts);
+            $reqAddPv->set(PvTransferCreditToCustomerRequest::TO_CUSTOMER_ID, $custId);
+            $reqAddPv->set(PvTransferCreditToCustomerRequest::VALUE, $pvToAdd);
+            $reqAddPv->set(PvTransferCreditToCustomerRequest::DATE_APPLIED, $ts);
             $respAddPv = $this->_callPvTransfer->creditToCustomer($reqAddPv);
             if ($respAddPv->isSucceed()) {
                 $this->_logger->debug("'$pvToAdd' PV have been added to customer #$ref (mageID: $custId).");
@@ -286,7 +286,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
         $reqGetRepres = new AccGetRepresentativeRequest();
         $reqGetRepres->setAssetTypeCode(Cfg::CODE_TYPE_ASSET_WALLET_ACTIVE);
         $respGetRepres = $this->_callAccAccount->getRepresentative($reqGetRepres);
-        $accountIdRepres = $respGetRepres->getData(Account::ATTR_ID);;
+        $accountIdRepres = $respGetRepres->get(Account::ATTR_ID);;
         /* get all customer balances for WALLET_ACTIVE and create transactions */
         $whereByAsset = Account::ATTR_ASSET_TYPE_ID . '=' . $assetId;
         $whereByRepres = Account::ATTR_ID . '<>' . $accountIdRepres;
@@ -384,7 +384,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
         $reqRepresAcc = new AccGetRepresentativeRequest();
         $reqRepresAcc->setAssetTypeId($assetTypeId);
         $respRepresAcc = $this->_callAccAccount->getRepresentative($reqRepresAcc);
-        $represAccId = $respRepresAcc->getData(Account::ATTR_ID);;
+        $represAccId = $respRepresAcc->get(Account::ATTR_ID);;
         /* get data for WALLET_ACTIVE accounts */
         $where = Account::ATTR_ASSET_TYPE_ID . '=' . $assetTypeId;
         $balanceData = $this->_repoBasic->getEntities(Account::ENTITY_NAME, null, $where);
@@ -428,7 +428,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
         $reqRepresAcc = new AccGetRepresentativeRequest();
         $reqRepresAcc->setAssetTypeId($assetTypeId);
         $respRepresAcc = $this->_callAccAccount->getRepresentative($reqRepresAcc);
-        $represAccId = $respRepresAcc->getData(Account::ATTR_ID);;
+        $represAccId = $respRepresAcc->get(Account::ATTR_ID);;
         /* get data for WALLET_ACTIVE accounts */
         $where = Account::ATTR_ASSET_TYPE_ID . '=' . $assetTypeId;
         $balanceData = $this->_repoBasic->getEntities(Account::ENTITY_NAME, null, $where);
@@ -472,7 +472,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
         $reqRepresAcc = new AccGetRepresentativeRequest();
         $reqRepresAcc->setAssetTypeId($assetTypeId);
         $respRepresAcc = $this->_callAccAccount->getRepresentative($reqRepresAcc);
-        $represAccId = $respRepresAcc->getData(Account::ATTR_ID);
+        $represAccId = $respRepresAcc->get(Account::ATTR_ID);
         /* get data for WALLET_ACTIVE accounts */
         $where = Account::ATTR_ASSET_TYPE_ID . '=' . $assetTypeId;
         $balanceData = $this->_repoBasic->getEntities(Account::ENTITY_NAME, null, $where);

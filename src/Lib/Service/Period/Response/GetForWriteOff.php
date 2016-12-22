@@ -17,12 +17,12 @@ class GetForWriteOff extends \Praxigento\Core\Service\Base\Response {
      * @return bool
      */
     public function hasNoPvTransactionsYet() {
-        $result = (bool)$this->getData(self::HAS_NO_PV_TRANSACTIONS_YET);
+        $result = (bool)$this->get(self::HAS_NO_PV_TRANSACTIONS_YET);
         return $result;
     }
 
     public function setHasNoPvTransactionsYet() {
-        $this->setData(self::HAS_NO_PV_TRANSACTIONS_YET, true);
+        $this->set(self::HAS_NO_PV_TRANSACTIONS_YET, true);
         $this->markSucceed();
     }
 }

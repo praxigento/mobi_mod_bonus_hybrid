@@ -61,8 +61,8 @@ class BasedCalcs
                     $this->_logger->warning("There is no period data for calculation '$dependentCalcTypeCode'. New period and related calculation will be created.");
                     $dependPeriodData = $this->_subDb->addNewPeriodAndCalc($dependentCalcTypeId, $baseDsBegin,
                         $baseDsEnd);
-                    $result->setDependentPeriodData($dependPeriodData->getData(Db::DATA_PERIOD));
-                    $result->setDependentCalcData($dependPeriodData->getData(Db::DATA_CALC));
+                    $result->setDependentPeriodData($dependPeriodData->get(Db::DATA_PERIOD));
+                    $result->setDependentCalcData($dependPeriodData->get(Db::DATA_CALC));
                     $result->markSucceed();
                 } else {
                     /* there is dependent period */
@@ -92,8 +92,8 @@ class BasedCalcs
                         $this->_logger->warning("There is no period for '$dependentCalcTypeCode' calculation based on '$baseCalcTypeCode' ($baseDsBegin-$baseDsEnd). New period and related calculation will be created.");
                         $dependPeriodData = $this->_subDb->addNewPeriodAndCalc($dependentCalcTypeId, $baseDsBegin,
                             $baseDsEnd);
-                        $result->setDependentPeriodData($dependPeriodData->getData(Db::DATA_PERIOD));
-                        $result->setDependentCalcData($dependPeriodData->getData(Db::DATA_CALC));
+                        $result->setDependentPeriodData($dependPeriodData->get(Db::DATA_PERIOD));
+                        $result->setDependentCalcData($dependPeriodData->get(Db::DATA_CALC));
                         $result->markSucceed();
                     }
                 }

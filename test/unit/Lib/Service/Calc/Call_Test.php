@@ -1138,8 +1138,8 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
             ->method('beginTransaction');
         // $updates = $this->_subCalc->compressPtc($downlineSnap, $transData, $compressLevel);
         $mUpdates = new DataObject();
-        $mUpdates->setData(Sub\Calc::DATA_SNAP, []);
-        $mUpdates->setData(Sub\Calc::DATA_PV, []);
+        $mUpdates->set(Sub\Calc::DATA_SNAP, []);
+        $mUpdates->set(Sub\Calc::DATA_PV, []);
         $mSubCalc
             ->expects($this->once())
             ->method('compressPtc')

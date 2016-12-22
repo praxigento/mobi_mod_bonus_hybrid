@@ -383,7 +383,7 @@ class Main_OtherTest extends BaseIntegrationTest
         $csv = $this->_readCsvFile($path = __DIR__ . '/data/pv_balances.csv');
         $reqAddPv = new PvTransferCreditToCustomerRequest();
         $ts = $this->_toolPeriod->getTimestampTo(self::DS_CUSTOMER_ADDED);
-        $reqAddPv->setData(PvTransferCreditToCustomerRequest::DATE_APPLIED, $ts);
+        $reqAddPv->set(PvTransferCreditToCustomerRequest::DATE_APPLIED, $ts);
         foreach ($csv as $item) {
             $mlmId = $item[0];
             $pv = $this->_formatCsvNum($item[1]);
@@ -392,8 +392,8 @@ class Main_OtherTest extends BaseIntegrationTest
                 $this->_logger->error("Cannot find customer index for MLM ID $mlmId.");
             }
             $custId = $this->_mapCustomerMageIdByIndex[$custNdx];
-            $reqAddPv->setData(PvTransferCreditToCustomerRequest::TO_CUSTOMER_ID, $custId);
-            $reqAddPv->setData(PvTransferCreditToCustomerRequest::VALUE, $pv);
+            $reqAddPv->set(PvTransferCreditToCustomerRequest::TO_CUSTOMER_ID, $custId);
+            $reqAddPv->set(PvTransferCreditToCustomerRequest::VALUE, $pv);
             $respAddPv = $this->_callPvTransfer->creditToCustomer($reqAddPv);
             if ($respAddPv->isSucceed()) {
                 $this->_logger->debug("'$pv' PV have been added to customer #$mlmId (mageID: #$custId).");
