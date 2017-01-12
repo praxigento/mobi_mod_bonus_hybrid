@@ -73,17 +73,17 @@ class Scheme
         /* aliases and tables */
         $asParams = 'pbhcp';
         $asRank = 'pbhr';
-        $tblParams = $this->_resource->getTableName(CfgParam::ENTITY_NAME);
-        $tblRank = $this->_resource->getTableName(Rank::ENTITY_NAME);
+        $tblParams = $this->resource->getTableName(CfgParam::ENTITY_NAME);
+        $tblRank = $this->resource->getTableName(Rank::ENTITY_NAME);
         // FROM prxgt_bon_hyb_cfg_param pbhcp
-        $query = $this->_conn->select();
+        $query = $this->conn->select();
         $query->from([$asParams => $tblParams]);
         // LEFT JOIN prxgt_bon_hyb_rank pbhr ON pbhcp.rank_id = pbhr.id
         $on = "$asParams." . CfgParam::ATTR_RANK_ID . "=$asRank." . Rank::ATTR_ID;
         $cols = [Rank::ATTR_CODE];
         $query->joinLeft([$asRank => $tblRank], $on, $cols);
         // $sql = (string)$query;
-        $entries = $this->_conn->fetchAll($query);
+        $entries = $this->conn->fetchAll($query);
         $result = [];
         foreach ($entries as $entry) {
             $rankCode = $entry[Rank::ATTR_CODE];
@@ -107,7 +107,7 @@ class Scheme
             if (strlen($where) > 0) {
                 $where .= ' OR ';
             }
-            $quoted = $this->_conn->quote($one);
+            $quoted = $this->conn->quote($one);
             $where .= Customer::ATTR_HUMAN_REF . "=\"$quoted\"";
         }
         $cols = [Customer::ATTR_CUSTOMER_ID, Customer::ATTR_HUMAN_REF];
