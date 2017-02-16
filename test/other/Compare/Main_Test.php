@@ -2,7 +2,7 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-namespace Praxigento\Bonus\Hybrid\Lib\Test\Compare;
+namespace Praxigento\BonusHybrid\Test\Compare;
 
 
 use Praxigento\Accounting\Data\Entity\Account;
@@ -10,20 +10,20 @@ use Praxigento\Accounting\Data\Entity\Transaction;
 use Praxigento\BonusBase\Data\Entity\Level;
 use Praxigento\BonusBase\Data\Entity\Log\Opers as LogOpers;
 use Praxigento\BonusBase\Data\Entity\Rank;
-use Praxigento\Bonus\Hybrid\Lib\Defaults as Def;
-use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Override as CfgOverride;
-use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Param as CfgParam;
-use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Ptc as PtcCompression;
-use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\BonusCourtesy as BonusCalcBonusCourtesyRequest;
-use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\BonusInfinity as BonusCalcBonusInfinityRequest;
-use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\BonusOverride as BonusCalcBonusOverrideRequest;
-use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\BonusPersonal as BonusCalcBonusPersonalRequest;
-use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\BonusTeam as BonusCalcBonusTeamRequest;
-use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\CompressOi as BonusCalcCompressOiRequest;
-use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\CompressPtc as BonusCalcCompressPtcRequest;
-use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\PvWriteOff as BonusCalcPvWriteOffRequest;
-use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\ValueOv as BonusCalcValueOvRequest;
-use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\ValueTv as BonusCalcValueTvRequest;
+use Praxigento\BonusHybrid\Defaults as Def;
+use Praxigento\BonusHybrid\Entity\Cfg\Override as CfgOverride;
+use Praxigento\BonusHybrid\Entity\Cfg\Param as CfgParam;
+use Praxigento\BonusHybrid\Entity\Compression\Ptc as PtcCompression;
+use Praxigento\BonusHybrid\Service\Calc\Request\BonusCourtesy as BonusCalcBonusCourtesyRequest;
+use Praxigento\BonusHybrid\Service\Calc\Request\BonusInfinity as BonusCalcBonusInfinityRequest;
+use Praxigento\BonusHybrid\Service\Calc\Request\BonusOverride as BonusCalcBonusOverrideRequest;
+use Praxigento\BonusHybrid\Service\Calc\Request\BonusPersonal as BonusCalcBonusPersonalRequest;
+use Praxigento\BonusHybrid\Service\Calc\Request\BonusTeam as BonusCalcBonusTeamRequest;
+use Praxigento\BonusHybrid\Service\Calc\Request\CompressOi as BonusCalcCompressOiRequest;
+use Praxigento\BonusHybrid\Service\Calc\Request\CompressPtc as BonusCalcCompressPtcRequest;
+use Praxigento\BonusHybrid\Service\Calc\Request\PvWriteOff as BonusCalcPvWriteOffRequest;
+use Praxigento\BonusHybrid\Service\Calc\Request\ValueOv as BonusCalcValueOvRequest;
+use Praxigento\BonusHybrid\Service\Calc\Request\ValueTv as BonusCalcValueTvRequest;
 use Praxigento\BonusHybrid\Config as Cfg;
 
 use Praxigento\Core\Test\BaseIntegrationTest;
@@ -68,11 +68,11 @@ class Main_OtherTest extends BaseIntegrationTest
     private $_calcIdCompressPtc = null;
     /** @var \Praxigento\Accounting\Service\IAccount */
     private $_callAccount;
-    /** @var \Praxigento\Bonus\Hybrid\Lib\Service\ICalc */
+    /** @var \Praxigento\BonusHybrid\Service\ICalc */
     private $_callCalc;
     /** @var \Praxigento\Accounting\Service\IOperation */
     private $_callOperation;
-    /** @var \Praxigento\Bonus\Hybrid\Lib\Service\IPeriod */
+    /** @var \Praxigento\BonusHybrid\Service\IPeriod */
     private $_callPeriod;
     /** @var  \Praxigento\Pv\Service\ITransfer */
     private $_callPvTransfer;
@@ -112,7 +112,7 @@ class Main_OtherTest extends BaseIntegrationTest
     private $_repoTypeCalc;
     /** @var  \Praxigento\Core\Tool\IDate */
     private $_toolDate;
-    /** @var  \Praxigento\Bonus\Hybrid\Lib\Tool\IScheme */
+    /** @var  \Praxigento\BonusHybrid\Tool\IScheme */
     private $_toolScheme;
 
     public function __construct()
@@ -120,15 +120,15 @@ class Main_OtherTest extends BaseIntegrationTest
         parent::__construct();
         $this->_callAccount = $this->_manObj->get(\Praxigento\Accounting\Service\IAccount::class);
         $this->_callOperation = $this->_manObj->get(\Praxigento\Accounting\Service\IOperation::class);
-        $this->_callCalc = $this->_manObj->get(\Praxigento\Bonus\Hybrid\Lib\Service\ICalc::class);
+        $this->_callCalc = $this->_manObj->get(\Praxigento\BonusHybrid\Service\ICalc::class);
         $this->_callDownlineSnap = $this->_manObj->get(\Praxigento\Downline\Service\ISnap::class);
-        $this->_callPeriod = $this->_manObj->get(\Praxigento\Bonus\Hybrid\Lib\Service\IPeriod::class);
+        $this->_callPeriod = $this->_manObj->get(\Praxigento\BonusHybrid\Service\IPeriod::class);
         $this->_callPvTransfer = $this->_manObj->get(\Praxigento\Pv\Service\ITransfer::class);
         $this->_repoBasic = $this->_manObj->get(\Praxigento\Core\Repo\IGeneric::class);
         $this->_repoTypeAsset = $this->_manObj->get(\Praxigento\Accounting\Repo\Entity\Type\IAsset::class);
         $this->_repoTypeCalc = $this->_manObj->get(\Praxigento\BonusBase\Repo\Entity\Type\ICalc::class);
         $this->_repoRank = $this->_manObj->get(\Praxigento\BonusBase\Repo\Entity\IRank::class);
-        $this->_toolScheme = $this->_manObj->get(\Praxigento\Bonus\Hybrid\Lib\Tool\IScheme::class);
+        $this->_toolScheme = $this->_manObj->get(\Praxigento\BonusHybrid\Tool\IScheme::class);
         $this->_toolDate = $this->_manObj->get(\Praxigento\Core\Tool\IDate::class);
     }
 

@@ -2,7 +2,7 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-namespace Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub;
+namespace Praxigento\BonusHybrid\Service\Calc\Sub;
 
 
 
@@ -12,24 +12,24 @@ class Db_ManualTest extends \Praxigento\Core\Test\BaseCase\Mockery {
 
     public function test_getDownlineSnapshot() {
         $obm = \Magento\Framework\App\ObjectManager::getInstance();
-        /** @var  $db \Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db */
-        $db = $obm->get('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
+        /** @var  $db \Praxigento\BonusHybrid\Service\Calc\Sub\Db */
+        $db = $obm->get('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
         $data = $db->getDownlineSnapshot('20151231');
         $this->assertNotNull($data);
     }
 
     public function test_getOperationsForWriteOff() {
         $obm = \Magento\Framework\App\ObjectManager::getInstance();
-        /** @var  $db \Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db */
-        $db = $obm->get('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
+        /** @var  $db \Praxigento\BonusHybrid\Service\Calc\Sub\Db */
+        $db = $obm->get('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
         $data = $db->getDataForWriteOff(1, '2015-01-01', '2015-12-31');
         $this->assertNotNull($data);
     }
 
     public function test_getSaleOrdersForRebate() {
         $obm = \Magento\Framework\App\ObjectManager::getInstance();
-        /** @var  $db \Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db */
-        $db = $obm->get('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
+        /** @var  $db \Praxigento\BonusHybrid\Service\Calc\Sub\Db */
+        $db = $obm->get('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
         $data = $db->getSaleOrdersForRebate('2016-01-01 00:00:00', '2016-01-31 23:59:59');
         $this->assertNotNull($data);
     }

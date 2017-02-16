@@ -3,13 +3,13 @@
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
     <!-- Services -->
-    <preference for="Praxigento\Bonus\Hybrid\Lib\Service\ICalc"
-                type="Praxigento\Bonus\Hybrid\Lib\Service\Calc\Call"/>
-    <preference for="Praxigento\Bonus\Hybrid\Lib\Service\IPeriod"
-                type="Praxigento\Bonus\Hybrid\Lib\Service\Period\Call"/>
+    <preference for="Praxigento\BonusHybrid\Service\ICalc"
+                type="Praxigento\BonusHybrid\Service\Calc\Call"/>
+    <preference for="Praxigento\BonusHybrid\Service\IPeriod"
+                type="Praxigento\BonusHybrid\Service\Period\Call"/>
 
     <!-- Tools -->
-    <preference for="Praxigento\Bonus\Hybrid\Lib\Tool\IScheme"
-                type="Praxigento\Bonus\Hybrid\Lib\Tool\Def\Scheme"/>
+    <preference for="Praxigento\BonusHybrid\Tool\IScheme"
+                type="Praxigento\BonusHybrid\Tool\Def\Scheme"/>
 
 </config>

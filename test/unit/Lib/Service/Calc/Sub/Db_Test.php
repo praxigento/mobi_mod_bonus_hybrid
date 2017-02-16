@@ -2,7 +2,7 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-namespace Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub;
+namespace Praxigento\BonusHybrid\Service\Calc\Sub;
 
 use Flancer32\Lib\DataObject;
 use Praxigento\Accounting\Data\Entity\Account;
@@ -14,10 +14,10 @@ use Praxigento\Accounting\Service\Type\Asset\Response\GetByCode as TypeAssetGetB
 use Praxigento\Accounting\Service\Type\Operation\Response\GetByCode as TypeOperationGetByCodeResponse;
 use Praxigento\BonusBase\Data\Entity\Level;
 use Praxigento\BonusBase\Service\Type\Calc\Response\GetByCode as TypeCalcGetByCodeResponse;
-use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Override as CfgOverride;
-use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Param as CfgParam;
-use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Oi as OiCompress;
-use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Ptc as PtcCompress;
+use Praxigento\BonusHybrid\Entity\Cfg\Override as CfgOverride;
+use Praxigento\BonusHybrid\Entity\Cfg\Param as CfgParam;
+use Praxigento\BonusHybrid\Entity\Compression\Oi as OiCompress;
+use Praxigento\BonusHybrid\Entity\Compression\Ptc as PtcCompress;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\Core\Lib\Service\Repo\Response\AddEntity as RepoAddEntityResponse;
 use Praxigento\Core\Lib\Service\Repo\Response\GetEntities as RepoGetEntitiesResponse;

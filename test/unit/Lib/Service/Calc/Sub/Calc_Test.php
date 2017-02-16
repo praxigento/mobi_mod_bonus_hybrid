@@ -2,16 +2,16 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-namespace Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub;
+namespace Praxigento\BonusHybrid\Service\Calc\Sub;
 
 use Flancer32\Lib\DataObject;
 use Praxigento\Accounting\Data\Entity\Account;
 use Praxigento\Accounting\Data\Entity\Transaction;
-use Praxigento\Bonus\Hybrid\Lib\Defaults as Def;
-use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Override as CfgOverride;
-use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Param as CfgParam;
-use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Oi as OiCompress;
-use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Ptc as PtcCompress;
+use Praxigento\BonusHybrid\Defaults as Def;
+use Praxigento\BonusHybrid\Entity\Cfg\Override as CfgOverride;
+use Praxigento\BonusHybrid\Entity\Cfg\Param as CfgParam;
+use Praxigento\BonusHybrid\Entity\Compression\Oi as OiCompress;
+use Praxigento\BonusHybrid\Entity\Compression\Ptc as PtcCompress;
 use Praxigento\Core\Tool\IFormat as ToolFormat;
 use Praxigento\Downline\Data\Entity\Customer;
 use Praxigento\Downline\Data\Entity\Snap;
@@ -20,7 +20,7 @@ use Praxigento\Downline\Tool\Def\Tree as ToolDownlineTree;
 
 include_once(__DIR__ . '/../../../../phpunit_bootstrap.php');
 
-class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
+class Calc_UnitTest extends \Praxigento\BonusHybrid\Test\BaseTestCase
 {
     private $CFG_OVERRIDE = [
         Def::SCHEMA_DEFAULT => [
@@ -159,7 +159,7 @@ class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         ];
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
-        $mToolScheme = $this->_mockFor('\Praxigento\Bonus\Hybrid\Lib\Tool\IScheme');
+        $mToolScheme = $this->_mockFor('\Praxigento\BonusHybrid\Tool\IScheme');
         $mToolbox = $this->_mockToolbox(null, null, null, null, $mToolScheme);
         $mCallDownlineSnap = $this->_mockFor('\Praxigento\Downline\Service\ISnap');
 
@@ -265,7 +265,7 @@ class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
         $mToolFormat = new ToolFormat();
-        $mToolScheme = $this->_mockFor('\Praxigento\Bonus\Hybrid\Lib\Tool\IScheme');
+        $mToolScheme = $this->_mockFor('\Praxigento\BonusHybrid\Tool\IScheme');
         $mToolbox = $this->_mockToolbox(null, null, $mToolFormat, null, $mToolScheme);
         $mCallDownlineSnap = $this->_mockFor('\Praxigento\Downline\Service\ISnap');
 
@@ -363,7 +363,7 @@ class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
         $mToolFormat = new \Praxigento\Core\Tool\IFormat();
-        $mToolScheme = $this->_mockFor('\Praxigento\Bonus\Hybrid\Lib\Tool\IScheme');
+        $mToolScheme = $this->_mockFor('\Praxigento\BonusHybrid\Tool\IScheme');
         $mToolDownlineTree = new \Praxigento\Downline\Tool\Def\Tree();
         $mToolbox = $this->_mockToolbox(null, null, $mToolFormat, null, $mToolScheme, $mToolDownlineTree);
         $mCallDownlineSnap = $this->_mockFor('\Praxigento\Downline\Service\ISnap');
@@ -416,7 +416,7 @@ class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
         $mToolFormat = new \Praxigento\Core\Tool\IFormat();
-        $mToolScheme = $this->_mockFor('\Praxigento\Bonus\Hybrid\Lib\Tool\IScheme');
+        $mToolScheme = $this->_mockFor('\Praxigento\BonusHybrid\Tool\IScheme');
         $mToolDownlineTree = new \Praxigento\Downline\Tool\Def\Tree();
         $mToolbox = $this->_mockToolbox(null, null, $mToolFormat, null, $mToolScheme, $mToolDownlineTree);
         $mCallDownlineSnap = $this->_mockFor('\Praxigento\Downline\Service\ISnap');
@@ -463,7 +463,7 @@ class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
         $mToolFormat = new \Praxigento\Core\Tool\IFormat();
-        $mToolScheme = $this->_mockFor('\Praxigento\Bonus\Hybrid\Lib\Tool\IScheme');
+        $mToolScheme = $this->_mockFor('\Praxigento\BonusHybrid\Tool\IScheme');
         $mToolbox = $this->_mockToolbox(null, null, $mToolFormat, null, $mToolScheme);
         $mCallDownlineSnap = $this->_mockFor('\Praxigento\Downline\Service\ISnap');
 
@@ -501,7 +501,7 @@ class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
         $mToolFormat = new \Praxigento\Core\Tool\IFormat();
-        $mToolScheme = $this->_mockFor('\Praxigento\Bonus\Hybrid\Lib\Tool\IScheme');
+        $mToolScheme = $this->_mockFor('\Praxigento\BonusHybrid\Tool\IScheme');
         $mToolDownlineTree = new \Praxigento\Downline\Tool\Def\Tree();
         $mToolbox = $this->_mockToolbox(null, null, $mToolFormat, null, $mToolScheme, $mToolDownlineTree);
         $mCallDownlineSnap = $this->_mockFor('\Praxigento\Downline\Service\ISnap');
@@ -610,7 +610,7 @@ class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
         $mToolFormat = new ToolFormat();
-        $mToolScheme = $this->_mockFor('\Praxigento\Bonus\Hybrid\Lib\Tool\IScheme');
+        $mToolScheme = $this->_mockFor('\Praxigento\BonusHybrid\Tool\IScheme');
         $mToolDownlineTree = new ToolDownlineTree();
         $mToolbox = $this->_mockToolbox(null, null, $mToolFormat, null, $mToolScheme, $mToolDownlineTree);
         $mCallDownlineSnap = $this->_mockFor('\Praxigento\Downline\Service\ISnap');
@@ -693,7 +693,7 @@ class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
         $mToolFormat = new \Praxigento\Core\Tool\IFormat();
-        $mToolScheme = $this->_mockFor('\Praxigento\Bonus\Hybrid\Lib\Tool\IScheme');
+        $mToolScheme = $this->_mockFor('\Praxigento\BonusHybrid\Tool\IScheme');
         $mToolbox = $this->_mockToolbox(null, null, $mToolFormat, null, $mToolScheme);
         $mCallDownlineSnap = $this->_mockFor('\Praxigento\Downline\Service\ISnap');
 
@@ -828,7 +828,7 @@ class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
         $mToolFormat = new \Praxigento\Core\Tool\IFormat();
-        $mToolScheme = $this->_mockFor('\Praxigento\Bonus\Hybrid\Lib\Tool\IScheme');
+        $mToolScheme = $this->_mockFor('\Praxigento\BonusHybrid\Tool\IScheme');
         $mToolDownlineTree = new ToolDownlineTree();
         $mToolbox = $this->_mockToolbox(null, null, $mToolFormat, null, $mToolScheme, $mToolDownlineTree);
         $mCallDownlineSnap = $this->_mockFor('\Praxigento\Downline\Service\ISnap');
@@ -930,7 +930,7 @@ class Calc_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $FORCED_IDS = [1, 2];
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
-        $mToolScheme = $this->_mockFor('\Praxigento\Bonus\Hybrid\Lib\Tool\IScheme');
+        $mToolScheme = $this->_mockFor('\Praxigento\BonusHybrid\Tool\IScheme');
         $mToolDownlineTree = new \Praxigento\Downline\Tool\Def\Tree();
         $mToolbox = $this->_mockToolbox(null, null, null, null, $mToolScheme, $mToolDownlineTree);
         $mCallDownlineSnap = $this->_mockFor('\Praxigento\Downline\Service\ISnap');

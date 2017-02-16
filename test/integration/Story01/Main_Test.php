@@ -2,7 +2,7 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-namespace Praxigento\Bonus\Hybrid\Lib\Test\Story01;
+namespace Praxigento\BonusHybrid\Test\Story01;
 
 use Praxigento\Accounting\Data\Entity\Account;
 use Praxigento\Accounting\Data\Entity\Transaction;
@@ -11,14 +11,14 @@ use Praxigento\Accounting\Service\Operation\Request\Add as AccOperationAddReques
 use Praxigento\BonusBase\Data\Entity\Calculation;
 use Praxigento\BonusBase\Data\Entity\Level;
 use Praxigento\BonusBase\Data\Entity\Period;
-use Praxigento\Bonus\Hybrid\Lib\Defaults as Def;
-use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\BonusCourtesy as BonusCalcCourtesyBonusRequest;
-use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\BonusPersonal as BonusCalcPersonalBonusRequest;
-use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\BonusTeam as BonusCalcTeamBonusRequest;
-use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\CompressPtc as BonusCalcPvCompressionRequest;
-use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\PvWriteOff as BonusCalcPvWriteOffRequest;
-use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\ValueOv as BonusCalcOvCompressionRequest;
-use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\ValueTv as BonusCalcTvCompressionRequest;
+use Praxigento\BonusHybrid\Defaults as Def;
+use Praxigento\BonusHybrid\Service\Calc\Request\BonusCourtesy as BonusCalcCourtesyBonusRequest;
+use Praxigento\BonusHybrid\Service\Calc\Request\BonusPersonal as BonusCalcPersonalBonusRequest;
+use Praxigento\BonusHybrid\Service\Calc\Request\BonusTeam as BonusCalcTeamBonusRequest;
+use Praxigento\BonusHybrid\Service\Calc\Request\CompressPtc as BonusCalcPvCompressionRequest;
+use Praxigento\BonusHybrid\Service\Calc\Request\PvWriteOff as BonusCalcPvWriteOffRequest;
+use Praxigento\BonusHybrid\Service\Calc\Request\ValueOv as BonusCalcOvCompressionRequest;
+use Praxigento\BonusHybrid\Service\Calc\Request\ValueTv as BonusCalcTvCompressionRequest;
 use Praxigento\BonusHybrid\Config as Cfg;
 
 use Praxigento\Core\Test\BaseIntegrationTest;
@@ -40,9 +40,9 @@ class Main_IntegrationTest extends BaseIntegrationTest
     private $_callAccAccount;
     /** @var \Praxigento\Accounting\Service\IOperation */
     private $_callAccOperation;
-    /** @var \Praxigento\Bonus\Hybrid\Lib\Service\ICalc */
+    /** @var \Praxigento\BonusHybrid\Service\ICalc */
     private $_callCalc;
-    /** @var \Praxigento\Bonus\Hybrid\Lib\Service\IPeriod */
+    /** @var \Praxigento\BonusHybrid\Service\IPeriod */
     private $_callPeriod;
     /** @var  \Praxigento\Pv\Service\ITransfer */
     private $_callPvTransfer;
@@ -58,8 +58,8 @@ class Main_IntegrationTest extends BaseIntegrationTest
         parent::__construct();
         $this->_callAccAccount = $this->_manObj->get(\Praxigento\Accounting\Service\IAccount::class);
         $this->_callAccOperation = $this->_manObj->get(\Praxigento\Accounting\Service\IOperation::class);
-        $this->_callCalc = $this->_manObj->get(\Praxigento\Bonus\Hybrid\Lib\Service\ICalc::class);
-        $this->_callPeriod = $this->_manObj->get(\Praxigento\Bonus\Hybrid\Lib\Service\IPeriod::class);
+        $this->_callCalc = $this->_manObj->get(\Praxigento\BonusHybrid\Service\ICalc::class);
+        $this->_callPeriod = $this->_manObj->get(\Praxigento\BonusHybrid\Service\IPeriod::class);
         $this->_callPvTransfer = $this->_manObj->get(\Praxigento\Pv\Service\ITransfer::class);
         $this->_repoTypeAsset = $this->_manObj->get(\Praxigento\Accounting\Repo\Entity\Type\IAsset::class);
         $this->_repoTypeCalc = $this->_manObj->get(\Praxigento\BonusBase\Repo\Entity\Type\ICalc::class);

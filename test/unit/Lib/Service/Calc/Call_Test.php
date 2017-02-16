@@ -2,19 +2,19 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-namespace Praxigento\Bonus\Hybrid\Lib\Service\Calc;
+namespace Praxigento\BonusHybrid\Service\Calc;
 
 use Flancer32\Lib\DataObject;
 use Praxigento\BonusBase\Data\Entity\Calculation;
 use Praxigento\BonusBase\Data\Entity\Period;
-use Praxigento\Bonus\Hybrid\Lib\Defaults as Def;
-use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc;
-use Praxigento\Bonus\Hybrid\Lib\Service\Period\Response\GetForDependentCalc as BonusPersonalPeriodGetForDependentCalcResponse;
-use Praxigento\Bonus\Hybrid\Lib\Service\Period\Response\GetForWriteOff as BonusPersonalPeriodGetForWriteOffResponse;
+use Praxigento\BonusHybrid\Defaults as Def;
+use Praxigento\BonusHybrid\Service\Calc\Sub\Calc;
+use Praxigento\BonusHybrid\Service\Period\Response\GetForDependentCalc as BonusPersonalPeriodGetForDependentCalcResponse;
+use Praxigento\BonusHybrid\Service\Period\Response\GetForWriteOff as BonusPersonalPeriodGetForWriteOffResponse;
 
 include_once(__DIR__ . '/../../../phpunit_bootstrap.php');
 
-class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
+class Call_UnitTest extends \Praxigento\BonusHybrid\Test\BaseTestCase
 {
     const PV_COMPRESSION_LEVEL_DEF = 50;
     const PV_COMPRESSION_LEVEL_EU = 100;
@@ -36,9 +36,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForDependentCalcResponse();
@@ -99,9 +99,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForDependentCalcResponse();
@@ -155,9 +155,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForDependentCalcResponse();
@@ -196,9 +196,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForDependentCalcResponse();
@@ -264,9 +264,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForDependentCalcResponse();
@@ -315,9 +315,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForDependentCalcResponse();
@@ -356,9 +356,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForDependentCalcResponse();
@@ -423,9 +423,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForDependentCalcResponse();
@@ -474,9 +474,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForDependentCalcResponse();
@@ -520,9 +520,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox(null, $mToolDate, null, $mToolPeriod);
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForDependentCalcResponse();
@@ -599,9 +599,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox(null, $mToolDate, null, $mToolPeriod);
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForDependentCalcResponse();
@@ -676,9 +676,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox(null, $mToolDate, null, $mToolPeriod);
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForDependentCalcResponse();
@@ -726,9 +726,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForDependentCalcResponse();
@@ -767,9 +767,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForDependentCalcResponse();
@@ -821,9 +821,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForDependentCalcResponse();
@@ -876,9 +876,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForDependentCalcResponse();
@@ -930,9 +930,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForDependentCalcResponse();
@@ -970,9 +970,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForDependentCalcResponse();
@@ -1018,9 +1018,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox(null, $mToolDate, null, $mToolPeriod);
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForDependentCalcResponse();
@@ -1075,9 +1075,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForDependentCalcResponse();
@@ -1118,9 +1118,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox(null, $mToolDate, null, $mToolPeriod);
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForDependentCalcResponse();
@@ -1180,9 +1180,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox(null, $mToolDate, null, $mToolPeriod);
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForDependentCalcResponse();
@@ -1236,9 +1236,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForDependentCalcResponse();
@@ -1283,9 +1283,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox(null, $mToolDate, null, $mToolPeriod);
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callBonusPersonalPeriod->getForWriteOff($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForWriteOffResponse();
@@ -1338,9 +1338,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox(null, $mToolDate, null, $mToolPeriod);
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callBonusPersonalPeriod->getForWriteOff($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForWriteOffResponse();
@@ -1387,9 +1387,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callBonusPersonalPeriod->getForWriteOff($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForWriteOffResponse();
@@ -1429,9 +1429,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callBonusPersonalPeriod->get($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForWriteOffResponse();
@@ -1469,9 +1469,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForDependentCalcResponse();
@@ -1514,9 +1514,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForDependentCalcResponse();
@@ -1560,9 +1560,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForDependentCalcResponse();
@@ -1600,9 +1600,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForDependentCalcResponse();
@@ -1645,9 +1645,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForDependentCalcResponse();
@@ -1691,9 +1691,9 @@ class Call_UnitTest extends \Praxigento\Bonus\Hybrid\Lib\Test\BaseTestCase
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
         $mCallAccount = $this->_mockFor('Praxigento\Accounting\Service\IAccount');
-        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Db');
-        $mSubCalc = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Calc\Sub\Calc');
+        $mCallBonusPersonalPeriod = $this->_mockFor('Praxigento\BonusHybrid\Service\IPeriod');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Db');
+        $mSubCalc = $this->_mockFor('Praxigento\BonusHybrid\Service\Calc\Sub\Calc');
 
         // $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         $mRespGetPeriod = new BonusPersonalPeriodGetForDependentCalcResponse();

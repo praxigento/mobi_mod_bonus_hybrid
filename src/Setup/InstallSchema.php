@@ -5,11 +5,11 @@
  */
 namespace Praxigento\BonusHybrid\Setup;
 
-use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Override as CfgOverride;
-use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Param as CfgParam;
-use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Oi as OiCompress;
-use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Ptc as PtcCompress;
-use Praxigento\Bonus\Hybrid\Lib\Entity\Config as HybridCfg;
+use Praxigento\BonusHybrid\Entity\Cfg\Override as CfgOverride;
+use Praxigento\BonusHybrid\Entity\Cfg\Param as CfgParam;
+use Praxigento\BonusHybrid\Entity\Compression\Oi as OiCompress;
+use Praxigento\BonusHybrid\Entity\Compression\Ptc as PtcCompress;
+use Praxigento\BonusHybrid\Entity\Config as HybridCfg;
 
 class InstallSchema extends \Praxigento\Core\Setup\Schema\Base
 {

@@ -2,7 +2,7 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-namespace Praxigento\Bonus\Hybrid\Lib\Service\Period;
+namespace Praxigento\BonusHybrid\Service\Period;
 
 use Praxigento\BonusHybrid\Config as Cfg;
 
@@ -13,8 +13,8 @@ class Call_ManualTest extends \Praxigento\Core\Test\BaseCase\Mockery {
 
     public function test_getForCompressedPersonalBonus() {
         $obm = \Magento\Framework\App\ObjectManager::getInstance();
-        /** @var  $call \Praxigento\Bonus\Hybrid\Lib\Service\IPeriod */
-        $call = $obm->get('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
+        /** @var  $call \Praxigento\BonusHybrid\Service\IPeriod */
+        $call = $obm->get('Praxigento\BonusHybrid\Service\IPeriod');
         $request = new Request\GetForCompressedPersonalBonus();
         $response = $call->getForCompressedPersonalBonus($request);
         $this->assertTrue($response->isSucceed());
@@ -22,8 +22,8 @@ class Call_ManualTest extends \Praxigento\Core\Test\BaseCase\Mockery {
 
     public function test_getForPersonalBonus() {
         $obm = \Magento\Framework\App\ObjectManager::getInstance();
-        /** @var  $call \Praxigento\Bonus\Hybrid\Lib\Service\IPeriod */
-        $call = $obm->get('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
+        /** @var  $call \Praxigento\BonusHybrid\Service\IPeriod */
+        $call = $obm->get('Praxigento\BonusHybrid\Service\IPeriod');
         $request = new Request\GetForPersonalBonus();
         $response = $call->getForPersonalBonus($request);
         $this->assertTrue($response->isSucceed());
@@ -31,8 +31,8 @@ class Call_ManualTest extends \Praxigento\Core\Test\BaseCase\Mockery {
 
     public function test_getForCompression() {
         $obm = \Magento\Framework\App\ObjectManager::getInstance();
-        /** @var  $call \Praxigento\Bonus\Hybrid\Lib\Service\IPeriod */
-        $call = $obm->get('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
+        /** @var  $call \Praxigento\BonusHybrid\Service\IPeriod */
+        $call = $obm->get('Praxigento\BonusHybrid\Service\IPeriod');
         $request = new Request\GetForCompression();
         $response = $call->getForCompression($request);
         $this->assertTrue($response->isSucceed());
@@ -40,8 +40,8 @@ class Call_ManualTest extends \Praxigento\Core\Test\BaseCase\Mockery {
 
     public function test_getForWriteOff() {
         $obm = \Magento\Framework\App\ObjectManager::getInstance();
-        /** @var  $call \Praxigento\Bonus\Hybrid\Lib\Service\IPeriod */
-        $call = $obm->get('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
+        /** @var  $call \Praxigento\BonusHybrid\Service\IPeriod */
+        $call = $obm->get('Praxigento\BonusHybrid\Service\IPeriod');
         $request = new Request\GetForWriteOff();
         $response = $call->getForWriteOff($request);
         $this->assertTrue($response->isSucceed());
@@ -49,8 +49,8 @@ class Call_ManualTest extends \Praxigento\Core\Test\BaseCase\Mockery {
 
     public function test_getForDependentCalc() {
         $obm = \Magento\Framework\App\ObjectManager::getInstance();
-        /** @var  $call \Praxigento\Bonus\Hybrid\Lib\Service\IPeriod */
-        $call = $obm->get('Praxigento\Bonus\Hybrid\Lib\Service\IPeriod');
+        /** @var  $call \Praxigento\BonusHybrid\Service\IPeriod */
+        $call = $obm->get('Praxigento\BonusHybrid\Service\IPeriod');
         $request = new Request\GetForDependentCalc();
         $request->setDependentCalcTypeCode(Cfg::CODE_TYPE_CALC_VALUE_TV);
         $request->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);

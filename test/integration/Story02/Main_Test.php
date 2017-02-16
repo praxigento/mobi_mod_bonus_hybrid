@@ -2,16 +2,16 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-namespace Praxigento\Bonus\Hybrid\Lib\Test\Story02;
+namespace Praxigento\BonusHybrid\Test\Story02;
 
 use Praxigento\BonusBase\Data\Entity\Calculation;
 use Praxigento\BonusBase\Data\Entity\Period;
 use Praxigento\BonusBase\Data\Entity\Rank;
-use Praxigento\Bonus\Hybrid\Lib\Entity\Cfg\Param as CfgParam;
-use Praxigento\Bonus\Hybrid\Lib\Entity\Compression\Ptc as PtcCompression;
-use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\BonusInfinity as CalcBonusInfinityRequest;
-use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\BonusOverride as CalcBonusOverrideRequest;
-use Praxigento\Bonus\Hybrid\Lib\Service\Calc\Request\CompressOi as CalcCompressOiRequest;
+use Praxigento\BonusHybrid\Entity\Cfg\Param as CfgParam;
+use Praxigento\BonusHybrid\Entity\Compression\Ptc as PtcCompression;
+use Praxigento\BonusHybrid\Service\Calc\Request\BonusInfinity as CalcBonusInfinityRequest;
+use Praxigento\BonusHybrid\Service\Calc\Request\BonusOverride as CalcBonusOverrideRequest;
+use Praxigento\BonusHybrid\Service\Calc\Request\CompressOi as CalcCompressOiRequest;
 use Praxigento\BonusHybrid\Config as Cfg;
 
 use Praxigento\Core\Test\BaseIntegrationTest;
@@ -62,11 +62,11 @@ class Main_IntegrationTest extends BaseIntegrationTest
     ];
     /** @var \Praxigento\Accounting\Service\IAccount */
     private $_callAccount;
-    /** @var \Praxigento\Bonus\Hybrid\Lib\Service\ICalc */
+    /** @var \Praxigento\BonusHybrid\Service\ICalc */
     private $_callCalc;
     /** @var \Praxigento\Accounting\Service\IOperation */
     private $_callOperation;
-    /** @var \Praxigento\Bonus\Hybrid\Lib\Service\IPeriod */
+    /** @var \Praxigento\BonusHybrid\Service\IPeriod */
     private $_callPeriod;
     /** @var  \Praxigento\Pv\Service\ITransfer */
     private $_callPvTransfer;
@@ -85,8 +85,8 @@ class Main_IntegrationTest extends BaseIntegrationTest
         parent::__construct();
         $this->_callAccount = $this->_manObj->get(\Praxigento\Accounting\Service\IAccount::class);
         $this->_callOperation = $this->_manObj->get(\Praxigento\Accounting\Service\IOperation::class);
-        $this->_callCalc = $this->_manObj->get(\Praxigento\Bonus\Hybrid\Lib\Service\ICalc::class);
-        $this->_callPeriod = $this->_manObj->get(\Praxigento\Bonus\Hybrid\Lib\Service\IPeriod::class);
+        $this->_callCalc = $this->_manObj->get(\Praxigento\BonusHybrid\Service\ICalc::class);
+        $this->_callPeriod = $this->_manObj->get(\Praxigento\BonusHybrid\Service\IPeriod::class);
         $this->_callPvTransfer = $this->_manObj->get(\Praxigento\Pv\Service\ITransfer::class);
         $this->_repoTypeAsset = $this->_manObj->get(\Praxigento\Accounting\Repo\Entity\Type\IAsset::class);
         $this->_repoTypeCalc = $this->_manObj->get(\Praxigento\BonusBase\Repo\Entity\Type\ICalc::class);

@@ -2,14 +2,14 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-namespace Praxigento\Bonus\Hybrid\Lib\Service\Period;
+namespace Praxigento\BonusHybrid\Service\Period;
 
 use Flancer32\Lib\DataObject;
 use Praxigento\BonusBase\Data\Entity\Calculation;
 use Praxigento\BonusBase\Data\Entity\Period;
 use Praxigento\BonusBase\Service\Period\Response\GetLatest as BonusBasePeriodGetLatestResponse;
 use Praxigento\BonusBase\Service\Period\Response\GetLatest as PeriodGetLatestResponse;
-use Praxigento\Bonus\Hybrid\Lib\Service\Period\Response\GetForDependentCalc as PeriodGetForDependentCalcResponse;
+use Praxigento\BonusHybrid\Service\Period\Response\GetForDependentCalc as PeriodGetForDependentCalcResponse;
 use Praxigento\BonusHybrid\Config as Cfg;
 
 include_once(__DIR__ . '/../../../phpunit_bootstrap.php');
@@ -33,8 +33,8 @@ class Call_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
         $mDba = $this->_mockDbAdapter(null, $mConn);
         $mToolbox = $this->_mockToolbox();
         $mCallRepo = $this->_mockCallRepo();
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Period\Sub\Db');
-        $mSubWriteOff = $this->_mockFor('\Praxigento\Bonus\Hybrid\Lib\Service\Period\Sub\BasedCalcs');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Period\Sub\Db');
+        $mSubWriteOff = $this->_mockFor('\Praxigento\BonusHybrid\Service\Period\Sub\BasedCalcs');
 
         // $result = $this->_subBasedCalcs->getDependentCalcData($dependentCalcTypeCode, $baseCalcTypeCode);
         $mResult = new PeriodGetForDependentCalcResponse();
@@ -80,8 +80,8 @@ class Call_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
         $mToolPeriod = $this->_mockFor('Praxigento\Core\Tool\IPeriod');
         $mToolbox = $this->_mockToolbox(null, null, null, $mToolPeriod);
         $mCallRepo = $this->_mockCallRepo();
-        $mSubDb = $this->_mockFor('\Praxigento\Bonus\Hybrid\Lib\Service\Period\Sub\Db');
-        $mSubWriteOff = $this->_mockFor('\Praxigento\Bonus\Hybrid\Lib\Service\Period\Sub\BasedCalcs');
+        $mSubDb = $this->_mockFor('\Praxigento\BonusHybrid\Service\Period\Sub\Db');
+        $mSubWriteOff = $this->_mockFor('\Praxigento\BonusHybrid\Service\Period\Sub\BasedCalcs');
 
         // $calcWriteOffId = $this->_subDb->getCalcIdByCode($calcWriteOffCode);
         $mSubDb
@@ -156,8 +156,8 @@ class Call_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
         $mToolPeriod = $this->_mockFor('Praxigento\Core\Tool\IPeriod');
         $mToolbox = $this->_mockToolbox(null, null, null, $mToolPeriod);
         $mCallRepo = $this->_mockCallRepo();
-        $mSubDb = $this->_mockFor('\Praxigento\Bonus\Hybrid\Lib\Service\Period\Sub\Db');
-        $mSubWriteOff = $this->_mockFor('\Praxigento\Bonus\Hybrid\Lib\Service\Period\Sub\BasedCalcs');
+        $mSubDb = $this->_mockFor('\Praxigento\BonusHybrid\Service\Period\Sub\Db');
+        $mSubWriteOff = $this->_mockFor('\Praxigento\BonusHybrid\Service\Period\Sub\BasedCalcs');
 
         // $calcWriteOffId = $this->_subDb->getCalcIdByCode($calcWriteOffCode);
         $mSubDb
@@ -210,8 +210,8 @@ class Call_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
         $mToolPeriod = $this->_mockFor('Praxigento\Core\Tool\IPeriod');
         $mToolbox = $this->_mockToolbox(null, null, null, $mToolPeriod);
         $mCallRepo = $this->_mockCallRepo();
-        $mSubDb = $this->_mockFor('\Praxigento\Bonus\Hybrid\Lib\Service\Period\Sub\Db');
-        $mSubWriteOff = $this->_mockFor('\Praxigento\Bonus\Hybrid\Lib\Service\Period\Sub\BasedCalcs');
+        $mSubDb = $this->_mockFor('\Praxigento\BonusHybrid\Service\Period\Sub\Db');
+        $mSubWriteOff = $this->_mockFor('\Praxigento\BonusHybrid\Service\Period\Sub\BasedCalcs');
 
         // $calcWriteOffId = $this->_subDb->getCalcIdByCode($calcWriteOffCode);
         $mSubDb
@@ -261,8 +261,8 @@ class Call_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
         $mToolPeriod = $this->_mockFor('Praxigento\Core\Tool\IPeriod');
         $mToolbox = $this->_mockToolbox(null, null, null, $mToolPeriod);
         $mCallRepo = $this->_mockCallRepo();
-        $mSubDb = $this->_mockFor('\Praxigento\Bonus\Hybrid\Lib\Service\Period\Sub\Db');
-        $mSubWriteOff = $this->_mockFor('\Praxigento\Bonus\Hybrid\Lib\Service\Period\Sub\BasedCalcs');
+        $mSubDb = $this->_mockFor('\Praxigento\BonusHybrid\Service\Period\Sub\Db');
+        $mSubWriteOff = $this->_mockFor('\Praxigento\BonusHybrid\Service\Period\Sub\BasedCalcs');
 
         // $calcWriteOffId = $this->_subDb->getCalcIdByCode($calcWriteOffCode);
         $mSubDb
@@ -329,8 +329,8 @@ class Call_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
         $mToolPeriod = $this->_mockFor('Praxigento\Core\Tool\IPeriod');
         $mToolbox = $this->_mockToolbox(null, null, null, $mToolPeriod);
         $mCallRepo = $this->_mockCallRepo();
-        $mSubDb = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\Service\Period\Sub\Db');
-        $mSubWriteOff = $this->_mockFor('\Praxigento\Bonus\Hybrid\Lib\Service\Period\Sub\BasedCalcs');
+        $mSubDb = $this->_mockFor('Praxigento\BonusHybrid\Service\Period\Sub\Db');
+        $mSubWriteOff = $this->_mockFor('\Praxigento\BonusHybrid\Service\Period\Sub\BasedCalcs');
 
         // $calcWriteOffId = $this->_subDb->getCalcIdByCode($calcWriteOffCode);
         $mSubDb

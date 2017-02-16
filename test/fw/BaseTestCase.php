@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\Bonus\Hybrid\Lib\Test;
+namespace Praxigento\BonusHybrid\Test;
 
 
 
@@ -19,7 +19,7 @@ abstract class BaseTestCase extends \Praxigento\Core\Test\BaseCase\Mockery {
         $mScheme = null,
         $mDownlineTree = null
     ) {
-        $result = $this->_mockFor('Praxigento\Bonus\Hybrid\Lib\IToolbox');
+        $result = $this->_mockFor('Praxigento\BonusHybrid\IToolbox');
         if(!is_null($mConvert)) {
             $result
                 ->expects($this->any())
