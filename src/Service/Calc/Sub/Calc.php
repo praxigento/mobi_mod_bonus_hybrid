@@ -814,7 +814,8 @@ class Calc
             $scheme = $this->_toolScheme->getSchemeByCustomer($custData);
             if ($scheme == Def::SCHEMA_EU) {
                 $pv = $custData[PtcCompress::ATTR_PV];
-                if ($pv > Cfg::DEF_ZERO) {
+//                if ($pv > Cfg::DEF_ZERO) {
+                if ($pv > 99.99999) {
                     $parentId = $custData[PtcCompress::ATTR_PARENT_ID];
                     $parentData = $mapDataById[$parentId];
                     $parentRef = $parentData[Customer::ATTR_HUMAN_REF];
@@ -822,7 +823,7 @@ class Calc
                     $result[] = [self::A_CUST_ID => $parentId, self::A_VALUE => $bonus, self::A_OTHER_ID => $custId];
                     $this->_logger->debug("Customer #$parentId (ref. #$parentRef ) has '$bonus' as EU Team Bonus from downline customer #$custId (ref. #$custRef ).");
                 } else {
-                    $this->_logger->debug("Customer #$custId (ref. #$custRef ) has no PV ($pv PV) and could not participate in EU Team Bonus.");
+                    $this->_logger->debug("Customer #$custId (ref. #$custRef ) has too few PV ($pv PV) and could not participate in EU Team Bonus.");
                 }
             } else {
                 $this->_logger->debug("Customer #$custId (ref. #$custRef ) has incompatible scheme '$scheme' for EU Team Bonus.");

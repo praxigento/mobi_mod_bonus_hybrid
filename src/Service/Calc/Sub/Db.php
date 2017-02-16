@@ -16,11 +16,11 @@ use Praxigento\BonusBase\Data\Entity\Log\Customers as LogCustomers;
 use Praxigento\BonusBase\Data\Entity\Log\Opers as LogOpers;
 use Praxigento\BonusBase\Data\Entity\Log\Sales as LogSales;
 use Praxigento\BonusBase\Data\Entity\Period;
+use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Entity\Cfg\Override as CfgOverride;
 use Praxigento\BonusHybrid\Entity\Cfg\Param as CfgParam;
 use Praxigento\BonusHybrid\Entity\Compression\Oi as OiCompress;
 use Praxigento\BonusHybrid\Entity\Compression\Ptc as PtcCompress;
-use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\Downline\Data\Entity\Customer;
 use Praxigento\Downline\Service\Snap\Request\GetStateOnDate as DownlineSnapGetStateOnDateRequest;
 use Praxigento\Pv\Data\Entity\Sale as PvSale;
@@ -504,8 +504,14 @@ class Db
     public function saveLogPvWriteOff($data, $operIdWriteOff, $calcId)
     {
         /* log all PV related operations */
+        $uniqueOperIds = [];
         foreach ($data as $one) {
-            $this->saveLogOperations($one[Operation::ATTR_ID], $calcId);
+            /* MOBI-628 : some operations could consist of many transactions */
+            $operId = $one[Operation::ATTR_ID];
+            if (!isset($uniqueOperIds[$operId])) {
+                $this->saveLogOperations($one[Operation::ATTR_ID], $calcId);
+                $uniqueOperIds[$operId] = true;
+            }
         }
         /* log PvWriteOff operation */
         $this->saveLogOperations($operIdWriteOff, $calcId);

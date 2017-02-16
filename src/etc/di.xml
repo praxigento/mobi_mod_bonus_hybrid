@@ -1,15 +1,31 @@
 <?xml version="1.0"?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<config
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
-    <!-- Services -->
-    <preference for="Praxigento\BonusHybrid\Service\ICalc"
-                type="Praxigento\BonusHybrid\Service\Calc\Call"/>
-    <preference for="Praxigento\BonusHybrid\Service\IPeriod"
-                type="Praxigento\BonusHybrid\Service\Period\Call"/>
+    <!-- ********************** -->
+    <!-- Console (CLI Commands) -->
+    <!-- ********************** -->
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="prxgt_bonhyb_cmd_calc" xsi:type="object">\Praxigento\BonusHybrid\Cli\Cmd\Calc</item>
+            </argument>
+        </arguments>
+    </type>
 
+    <!-- ******** -->
+    <!-- Services -->
+    <!-- ******** -->
+    <preference for="Praxigento\BonusHybrid\Service\ICalc"
+            type="Praxigento\BonusHybrid\Service\Calc\Call"/>
+    <preference for="Praxigento\BonusHybrid\Service\IPeriod"
+            type="Praxigento\BonusHybrid\Service\Period\Call"/>
+
+    <!-- ***** -->
     <!-- Tools -->
+    <!-- ***** -->
     <preference for="Praxigento\BonusHybrid\Tool\IScheme"
-                type="Praxigento\BonusHybrid\Tool\Def\Scheme"/>
+            type="Praxigento\BonusHybrid\Tool\Def\Scheme"/>
 
 </config>

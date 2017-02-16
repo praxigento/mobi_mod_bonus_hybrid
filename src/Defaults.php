@@ -1,15 +1,16 @@
 <?php
 /**
- * This is default values for project specific parameters. This values are used in default implementations of the
- * services and tools.
+ * This is default values for Santegra specific parameters. This values are used in default implementations of the
+ * services and tools. This module is used in Santegra project only.
  *
  * User: Alex Gusev <alex@flancer64.com>
  */
-
 namespace Praxigento\BonusHybrid;
 
 
 class Defaults {
+
+    const COURTESY_BONUS_PERCENT = 0.05;
     /**
      * Default qualification levels to compress downline tree in Santegra project.
      */
@@ -27,15 +28,15 @@ class Defaults {
     const RANK_SEN_MANAGER = 'SENIOR MANAGER';
     const RANK_SEN_VICE = 'SENIOR VICE';
     const RANK_SUPERVISOR = 'SUPERVISOR';
-
     /**
      * Rebate bonus percent for qualified distributors (Personal bonus in EU).
      */
     const REBATE_PERCENT = 0.4;
-
     /**
      * Default schemas are used in the Santegra Projects.
      */
     const SCHEMA_DEFAULT = 'DEFAULT';
     const SCHEMA_EU = 'EU';
+
+    const TEAM_BONUS_EU_PERCENT = 0.05;
 }

@@ -10,6 +10,7 @@ use Praxigento\Accounting\Data\Entity\Transaction;
 use Praxigento\BonusBase\Data\Entity\Level;
 use Praxigento\BonusBase\Data\Entity\Log\Opers as LogOpers;
 use Praxigento\BonusBase\Data\Entity\Rank;
+use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Entity\Cfg\Override as CfgOverride;
 use Praxigento\BonusHybrid\Entity\Cfg\Param as CfgParam;
@@ -24,8 +25,6 @@ use Praxigento\BonusHybrid\Service\Calc\Request\CompressPtc as BonusCalcCompress
 use Praxigento\BonusHybrid\Service\Calc\Request\PvWriteOff as BonusCalcPvWriteOffRequest;
 use Praxigento\BonusHybrid\Service\Calc\Request\ValueOv as BonusCalcValueOvRequest;
 use Praxigento\BonusHybrid\Service\Calc\Request\ValueTv as BonusCalcValueTvRequest;
-use Praxigento\BonusHybrid\Config as Cfg;
-
 use Praxigento\Core\Test\BaseIntegrationTest;
 use Praxigento\Downline\Data\Entity\Snap;
 use Praxigento\Downline\Service\Customer\Request\Add as CustomerAddRequest;
@@ -236,14 +235,15 @@ class Main_OtherTest extends BaseIntegrationTest
 
     private function _calcBonusTeam()
     {
-        $request = new BonusCalcBonusTeamRequest();
         /* DEFAULT scheme */
+        $request = new BonusCalcBonusTeamRequest();
         $request->setScheme(Def::SCHEMA_DEFAULT);
         $request->setCourtesyBonusPercent(self::DEF_COURTESY_BONUS_PERCENT);
         $response = $this->_callCalc->bonusTeam($request);
         $this->_calcIdBonusTeamDef = $response->getCalcId();
         $this->assertTrue($response->isSucceed());
         /* EU scheme */
+        $request = new BonusCalcBonusTeamRequest();
         $request->setScheme(Def::SCHEMA_EU);
         $request->setTeamBonusPercent(self::DEF_TEAM_BONUS_EU_PERCENT);
         $response = $this->_callCalc->bonusTeam($request);
