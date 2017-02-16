@@ -722,12 +722,22 @@ class Main_OtherTest extends BaseIntegrationTest
 
     private function _setBonusLevelsTeam()
     {
+        /* DEFAULT */
         $calTypeId = $this->_repoTypeCalc->getIdByCode(Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF);
         $data = [
             [Level::ATTR_CALC_TYPE_ID => $calTypeId, Level::ATTR_LEVEL => 0, Level::ATTR_PERCENT => 0],
             [Level::ATTR_CALC_TYPE_ID => $calTypeId, Level::ATTR_LEVEL => 50, Level::ATTR_PERCENT => 0.10],
             [Level::ATTR_CALC_TYPE_ID => $calTypeId, Level::ATTR_LEVEL => 500, Level::ATTR_PERCENT => 0.15],
             [Level::ATTR_CALC_TYPE_ID => $calTypeId, Level::ATTR_LEVEL => 750, Level::ATTR_PERCENT => 0.20]
+        ];
+        foreach ($data as $item) {
+            $this->_repoBasic->addEntity(Level::ENTITY_NAME, $item);
+        }
+        /* EU */
+        $calTypeId = $this->_repoTypeCalc->getIdByCode(Cfg::CODE_TYPE_CALC_BONUS_TEAM_EU);
+        $data = [
+            [Level::ATTR_CALC_TYPE_ID => $calTypeId, Level::ATTR_LEVEL => 0, Level::ATTR_PERCENT => 0],
+            [Level::ATTR_CALC_TYPE_ID => $calTypeId, Level::ATTR_LEVEL => 100, Level::ATTR_PERCENT => 0.05]
         ];
         foreach ($data as $item) {
             $this->_repoBasic->addEntity(Level::ENTITY_NAME, $item);
