@@ -194,6 +194,7 @@ class Calc
         /* scan all levels starting from the bottom and collect PV by generations */
         $mapGenerations = $this->mapByGeneration($mapByDepthDesc,
             $mapTreeExp); // [ $custId=>[$genId => $totalPv, ...], ... ]
+        $defRankId = $this->getOiDefRankId();
         /* scan all customers and calculate bonus values */
         foreach ($compressOi as $custData) {
             $custId = $custData[OiCompress::ATTR_CUSTOMER_ID];
@@ -201,7 +202,7 @@ class Calc
             $rankId = $custData[OiCompress::ATTR_RANK_ID];
             $custScheme = $this->toolScheme->getSchemeByCustomer($custData);
             if (
-                !is_null($rankId) &&
+                ($rankId != $defRankId) &&
                 ($custScheme == $scheme)
             ) {
                 /* this is qualified manager */
@@ -635,6 +636,13 @@ class Calc
         unset($mapByDepth);
         unset($mapByTeam);
         unset($mapById);
+        /* MOBI-629: add init rank for un-ranked entries */
+        foreach ($result as $key => $item) {
+            if (!isset($item[OiCompress::ATTR_RANK_ID])) {
+                $item[OiCompress::ATTR_RANK_ID] = $this->getOiDefRankId();
+                $result[$key] = $item;
+            }
+        }
         return $result;
     }
 
@@ -821,7 +829,7 @@ class Calc
      */
     public function getMaxQualifiedRankId($compressOiEntry, $scheme, $cfgParam)
     {
-        $result = $this->getOiDefRankId();
+        $result = null;
         $custId = $compressOiEntry[OiCompress::ATTR_CUSTOMER_ID];
         $forcedRankId = $this->toolScheme->getForcedQualificationRank($custId, $scheme);
         if (is_null($forcedRankId)) {

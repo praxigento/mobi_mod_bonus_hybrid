@@ -833,6 +833,7 @@ class Main_OtherTest extends BaseIntegrationTest
     private function _setRanks()
     {
         $data = [
+            [Rank::ATTR_CODE => Def::RANK_DISTRIBUTOR, Rank::ATTR_NOTE => 'Manager (#00, lowest).'],
             [Rank::ATTR_CODE => Def::RANK_MANAGER, Rank::ATTR_NOTE => 'Manager (#01, lowest).'],
             [Rank::ATTR_CODE => Def::RANK_SEN_MANAGER, Rank::ATTR_NOTE => 'Senior Manager (#02).'],
             [Rank::ATTR_CODE => Def::RANK_SUPERVISOR, Rank::ATTR_NOTE => 'Supervisor (#3).'],
