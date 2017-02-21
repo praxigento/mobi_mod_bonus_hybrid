@@ -82,7 +82,7 @@ class Calc_UnitTest extends \Praxigento\BonusHybrid\Test\BaseTestCase
          */
         /** @var  $sub Calc */
         $sub = new Calc($mLogger, $mToolbox, $mCallDownlineSnap);
-        $data = $sub->_calcOverrideBonusByRank($CUST_ID, $CFG_OVR, $MAP_GEN, $MAP_ID);
+        $data = $sub->calcOverrideBonusByRank($CUST_ID, $CFG_OVR, $MAP_GEN, $MAP_ID);
         $this->assertTrue(is_array($data));
     }
 
@@ -174,13 +174,13 @@ class Calc_UnitTest extends \Praxigento\BonusHybrid\Test\BaseTestCase
          */
         /** @var  $sub Calc */
         $sub = new Calc($mLogger, $mToolbox, $mCallDownlineSnap);
-        $data = $sub->_getMaxQualifiedRankId($LEGS_3, Def::SCHEMA_DEFAULT, $CFG_PARAM);
+        $data = $sub->getMaxQualifiedRankId($LEGS_3, Def::SCHEMA_DEFAULT, $CFG_PARAM);
         $this->assertNotNull($data);
-        $data = $sub->_getMaxQualifiedRankId($LEGS_2, Def::SCHEMA_DEFAULT, $CFG_PARAM);
+        $data = $sub->getMaxQualifiedRankId($LEGS_2, Def::SCHEMA_DEFAULT, $CFG_PARAM);
         $this->assertNotNull($data);
-        $data = $sub->_getMaxQualifiedRankId($LEGS_1, Def::SCHEMA_DEFAULT, $CFG_PARAM);
+        $data = $sub->getMaxQualifiedRankId($LEGS_1, Def::SCHEMA_DEFAULT, $CFG_PARAM);
         $this->assertNotNull($data);
-        $data = $sub->_getMaxQualifiedRankId($LEGS_0, Def::SCHEMA_DEFAULT, $CFG_PARAM);
+        $data = $sub->getMaxQualifiedRankId($LEGS_0, Def::SCHEMA_DEFAULT, $CFG_PARAM);
         $this->assertNotNull($data);
     }
 
@@ -208,7 +208,7 @@ class Calc_UnitTest extends \Praxigento\BonusHybrid\Test\BaseTestCase
          */
         /** @var  $sub Calc */
         $sub = new Calc($mLogger, $mToolbox, $mCallDownlineSnap);
-        $data = $sub->_mapByGeneration($DATA, $TREE);
+        $data = $sub->mapByGeneration($DATA, $TREE);
         $this->assertTrue(is_array($data));
     }
 
@@ -229,7 +229,7 @@ class Calc_UnitTest extends \Praxigento\BonusHybrid\Test\BaseTestCase
          */
         /** @var  $sub Calc */
         $sub = new Calc($mLogger, $mToolbox, $mCallDownlineSnap);
-        $data = $sub->_mapByPv($DATA, 'CustId', 'PV');
+        $data = $sub->mapByPv($DATA, 'CustId', 'PV');
         $this->assertTrue(is_array($data));
     }
 
