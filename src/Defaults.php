@@ -20,6 +20,7 @@ class Defaults {
      * Default codes for the ranks in Santegra project.
      */
     const RANK_DIRECTOR = 'DIRECTOR';
+    const RANK_DISTRIBUTOR = 'DISTRIBUTOR';
     const RANK_EXEC_DIRECTOR = 'EXECUTIVE DIRECTOR';
     const RANK_EXEC_VICE = 'EXEC VICE';
     const RANK_MANAGER = 'MANAGER';
