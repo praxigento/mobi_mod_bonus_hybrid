@@ -22,13 +22,14 @@ class InstallData extends \Praxigento\Core\Setup\Data\Base
                 [Cfg::CODE_TYPE_OPER_BONUS_INFINITY, 'Infinity bonus.'],
                 [Cfg::CODE_TYPE_OPER_BONUS_OVERRIDE, 'Override bonus.'],
                 [Cfg::CODE_TYPE_OPER_BONUS_PERSONAL, 'Personal bonus.'],
-                [Cfg::CODE_TYPE_OPER_BONUS_REBATE, 'Orders rebates (personal bonus in EU scheme).'],
-                [Cfg::CODE_TYPE_OPER_BONUS_TEAM, 'Team bonus.'],
                 [
                     Cfg::CODE_TYPE_OPER_PV_FORWARD,
                     'PV transfer from one not closed period to other period in the future for the same customer.'
                 ],
-                [Cfg::CODE_TYPE_OPER_PV_WRITE_OFF, 'PV write off in the end of the bonus calculation period.']
+                [Cfg::CODE_TYPE_OPER_PV_WRITE_OFF, 'PV write off in the end of the bonus calculation period.'],
+                [Cfg::CODE_TYPE_OPER_BONUS_REBATE, 'Orders rebates (personal bonus in EU scheme).'],
+                [Cfg::CODE_TYPE_OPER_BONUS_SIGNUP_DEBIT, 'Sign Up Volume Debit bonus.'],
+                [Cfg::CODE_TYPE_OPER_BONUS_TEAM, 'Team bonus.']
             ]
         );
     }
@@ -39,6 +40,8 @@ class InstallData extends \Praxigento\Core\Setup\Data\Base
             $this->_resource->getTableName(TypeCalc::ENTITY_NAME),
             [TypeCalc::ATTR_CODE, TypeCalc::ATTR_NOTE],
             [
+                [Cfg::CODE_TYPE_CALC_BONUS_SIGNUP_DEBIT, 'Sign Up Volume Debit (EU only).'],
+                [Cfg::CODE_TYPE_CALC_BONUS_QUICK_START, 'Quick Start (EU only).'],
                 [Cfg::CODE_TYPE_CALC_PV_WRITE_OFF, 'PV write off calculation.'],
                 [
                     Cfg::CODE_TYPE_CALC_COMPRESS_FOR_PTC,
