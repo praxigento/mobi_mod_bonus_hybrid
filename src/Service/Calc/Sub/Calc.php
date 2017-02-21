@@ -45,6 +45,8 @@ class Calc
     protected $toolFormat;
     /** @var  \Praxigento\BonusHybrid\Tool\IScheme */
     protected $toolScheme;
+    /** @var  int MOBI-629 */
+    protected $cachedOiDefRankId;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
@@ -733,8 +735,12 @@ class Calc
     /**
      * MOBI-629: get ID for default rank for OI compression.
      */
-    protected function getDistributorRankId()
+    protected function getOiDefRankId()
     {
+        if (is_null($this->cachedOiDefRankId)) {
+            $this->cachedOiDefRankId = $this->repoRank->getIdByCode(Def::RANK_DISTRIBUTOR);
+        }
+        return $this->cachedOiDefRankId;
     }
 
     /**
@@ -815,7 +821,7 @@ class Calc
      */
     public function getMaxQualifiedRankId($compressOiEntry, $scheme, $cfgParam)
     {
-        $result = null;
+        $result = $this->getOiDefRankId();
         $custId = $compressOiEntry[OiCompress::ATTR_CUSTOMER_ID];
         $forcedRankId = $this->toolScheme->getForcedQualificationRank($custId, $scheme);
         if (is_null($forcedRankId)) {
