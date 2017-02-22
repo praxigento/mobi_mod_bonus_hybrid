@@ -27,7 +27,7 @@ class Call
     protected $_callPeriod;
     /** @var  \Praxigento\Core\Transaction\Database\IManager */
     protected $_manTrans;
-    /** @var  Sub\Calc */
+    /** @var  \Praxigento\BonusHybrid\Service\Calc\Sub\Calc */
     protected $_subCalc;
     /** @var  Sub\Db */
     protected $_subDb;
@@ -35,7 +35,8 @@ class Call
     protected $_toolPeriod;
     /** @var  \Praxigento\BonusHybrid\Tool\IScheme */
     protected $_toolScheme;
-
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Sub\SignupDebit */
+    protected $subSignupDebit;
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
         \Magento\Framework\ObjectManagerInterface $manObj,
@@ -44,8 +45,9 @@ class Call
         \Praxigento\Core\Transaction\Database\IManager $manTrans,
         \Praxigento\Accounting\Service\IAccount $callAcc,
         \Praxigento\BonusHybrid\Service\IPeriod $callBonusPeriod,
-        Sub\Db $subDb,
-        Sub\Calc $subCalc
+        \Praxigento\BonusHybrid\Service\Calc\Sub\Db $subDb,
+        \Praxigento\BonusHybrid\Service\Calc\Sub\Calc $subCalc,
+        \Praxigento\BonusHybrid\Service\Calc\Sub\SignupDebit $subSignupDebit
     ) {
         parent::__construct($logger, $manObj);
         $this->_toolPeriod = $toolPeriod;
@@ -55,6 +57,7 @@ class Call
         $this->_callPeriod = $callBonusPeriod;
         $this->_subDb = $subDb;
         $this->_subCalc = $subCalc;
+        $this->subSignupDebit = $subSignupDebit;
     }
 
     /**
@@ -438,6 +441,7 @@ class Call
                 $reqPeriodSignup->setDependentCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_SIGNUP_DEBIT);
                 $reqPeriodSignup->setAllowIncompleteBaseCalc(true);
                 $respPeriodSignup = $this->_callPeriod->getForDependentCalc($reqPeriodSignup);
+                $this->subSignupDebit->do(null);
 //                $transData = $this->_subDb->getDataForWriteOff($calcId, $periodBegin, $periodEnd);
 //                $updates = $this->_subCalc->pvWriteOff($transData);
 //                $dateApplied = $this->_toolPeriod->getTimestampTo($periodEnd);
