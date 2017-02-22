@@ -4,14 +4,14 @@
  */
 namespace Praxigento\BonusHybrid\Service\Calc;
 
+use Praxigento\BonusBase\Data\Entity\Calculation;
+use Praxigento\BonusBase\Data\Entity\Period;
+use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Entity\Compression\Oi as OiCompress;
 use Praxigento\BonusHybrid\Service\Calc\Sub\Calc;
 use Praxigento\BonusHybrid\Service\Period\Request\GetForDependentCalc as PeriodGetForDependentCalcRequest;
 use Praxigento\BonusHybrid\Service\Period\Request\GetForWriteOff as PeriodGetForWriteOffRequest;
-use Praxigento\BonusBase\Data\Entity\Calculation;
-use Praxigento\BonusBase\Data\Entity\Period;
-use Praxigento\BonusHybrid\Config as Cfg;
 
 /**
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
@@ -411,6 +411,46 @@ class Call
         }
         $this->_logMemoryUsage();
         $this->_logger->info("'Personal Bonus' calculation is completed.");
+        return $result;
+    }
+
+    public function bonusSignupDebit(\Praxigento\BonusHybrid\Service\Calc\Request\BonusSignupDebit $request)
+    {
+        $result = new \Praxigento\BonusHybrid\Service\Calc\Response\BonusSignupDebit();
+        $this->_logger->info("'Sign Up Volume Debit' bonus is started.");
+        $reqGetPeriod = new PeriodGetForWriteOffRequest();
+        $respGetPeriod = $this->_callPeriod->getForWriteOff($reqGetPeriod);
+        if ($respGetPeriod->isSucceed()) {
+            if ($respGetPeriod->hasNoPvTransactionsYet()) {
+                $this->_logger->info("There is no PV transactions yet. Nothing to calculate.");
+                $result->markSucceed();
+            } else {
+                /* working vars */
+                $periodData = $respGetPeriod->getPeriodData();
+                $periodId = $periodData->getId();
+                $calcPvWriteOfData = $respGetPeriod->getCalcData();
+                $calcPvWriteOffId = $calcPvWriteOfData->getId();
+                $periodBegin = $periodData->getDstampBegin();
+                $periodEnd = $periodData->getDstampEnd();
+                $this->_logger->info("Processing period #$periodId ($periodBegin-$periodEnd), PV Write Off calculation #$calcPvWriteOffId.");
+                $reqPeriodSignup = new PeriodGetForDependentCalcRequest();
+                $reqPeriodSignup->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
+                $reqPeriodSignup->setDependentCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_SIGNUP_DEBIT);
+                $reqPeriodSignup->setAllowIncompleteBaseCalc(true);
+                $respPeriodSignup = $this->_callPeriod->getForDependentCalc($reqPeriodSignup);
+//                $transData = $this->_subDb->getDataForWriteOff($calcId, $periodBegin, $periodEnd);
+//                $updates = $this->_subCalc->pvWriteOff($transData);
+//                $dateApplied = $this->_toolPeriod->getTimestampTo($periodEnd);
+//                $operId = $this->_subDb->saveOperationPvWriteOff($updates, $datePerformed, $dateApplied);
+//                $this->_subDb->saveLogPvWriteOff($transData, $operId, $calcId);
+//                $this->_subDb->markCalcComplete($calcId);
+//                $result->setPeriodId($periodId);
+//                $result->setCalcId($calcId);
+//                $result->markSucceed();
+            }
+        }
+        $this->_logMemoryUsage();
+        $this->_logger->info("'Sign Up Volume Debit' bonus is completed.");
         return $result;
     }
 

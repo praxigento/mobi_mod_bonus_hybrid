@@ -47,9 +47,10 @@ class Call
         // $result = new Response\GetForDependentCalc();
         $depCalcTypeCode = $request->getDependentCalcTypeCode();
         $baseCalcTypeCode = $request->getBaseCalcTypeCode();
+        $allowIncompleteBaseCalc = (bool) $request->getAllowIncompleteBaseCalc();
         $this->_logger->info("'Get latest period for Dependent Calculation' operation is started "
             . "(dependent=$depCalcTypeCode, base=$baseCalcTypeCode).");
-        $result = $this->_subBasedCalcs->getDependentCalcData($depCalcTypeCode, $baseCalcTypeCode);
+        $result = $this->_subBasedCalcs->getDependentCalcData($depCalcTypeCode, $baseCalcTypeCode, $allowIncompleteBaseCalc);
         $this->_logger->info("'Get latest period for Dependent Calculation' operation is completed.");
         return $result;
     }

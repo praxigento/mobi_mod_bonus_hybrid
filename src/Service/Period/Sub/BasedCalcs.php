@@ -4,10 +4,10 @@
  */
 namespace Praxigento\BonusHybrid\Service\Period\Sub;
 
+use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Service\Period\Response\BasedOnCompression as BasedOnCompressionResponse;
 use Praxigento\BonusHybrid\Service\Period\Response\BasedOnPvWriteOff as BasedOnPvWriteOffResponse;
 use Praxigento\BonusHybrid\Service\Period\Response\GetForDependentCalc as PeriodGetForDependentCalcResponse;
-use Praxigento\BonusHybrid\Config as Cfg;
 
 class BasedCalcs
 {
@@ -26,12 +26,13 @@ class BasedCalcs
 
     /**
      *
-     * @param $dependentCalcTypeCode
-     * @param $baseCalcTypeCode
+     * @param string $dependentCalcTypeCode
+     * @param string $baseCalcTypeCode
+     * @param bool $allowIncomplete should base calculation be complete.
      *
      * @return PeriodGetForDependentCalcResponse
      */
-    public function getDependentCalcData($dependentCalcTypeCode, $baseCalcTypeCode)
+    public function getDependentCalcData($dependentCalcTypeCode, $baseCalcTypeCode, $allowIncomplete = false)
     {
         $result = new PeriodGetForDependentCalcResponse();
         /* get IDs for calculations codes */
@@ -50,7 +51,10 @@ class BasedCalcs
             $baseDsEnd = $basePeriodData->getDstampEnd();
             if (
                 $baseCalcData &&
-                ($baseCalcData->getState() == Cfg::CALC_STATE_COMPLETE)
+                (
+                    ($baseCalcData->getState() == Cfg::CALC_STATE_COMPLETE) ||
+                    ($allowIncomplete)
+                )
             ) {
                 /* there is complete Base Calculation */
                 $respDependentPeriod = $this->_subDb->getLastPeriodData($dependentCalcTypeId);
