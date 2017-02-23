@@ -33,7 +33,7 @@ class SignupDebit
         /* leave first order for customer */
         $result = [];
         foreach ($rs as $one) {
-            $custId = $rs[\Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetOrders\Builder::A_CUST_ID];
+            $custId = $one[\Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetOrders\Builder::A_CUST_ID];
             if (!isset($result[$custId])) {
                 $result[$custId] = $one;
             }
