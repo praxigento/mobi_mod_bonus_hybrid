@@ -5,6 +5,7 @@
 namespace Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetOrders;
 
 use Praxigento\BonusHybrid\Config as Cfg;
+use Praxigento\Downline\Data\Entity\Customer as Dwnl;
 use Praxigento\Pv\Data\Entity\Sale as Pv;
 
 /**
@@ -17,6 +18,7 @@ class Builder
      * Tables aliases.
      */
     const AS_TBL_CUSTOMER = 'cust';
+    const AS_TBL_DOWNLINE = 'dwnl';
     const AS_TBL_ORDER = 'sale';
     const AS_TBL_PV = 'pv';
     /**
@@ -24,6 +26,8 @@ class Builder
      */
     const A_CUST_ID = 'cust_id';
     const A_ORDER_ID = 'order_id';
+    const A_PARENT_ID = 'parent_id';
+    const A_PV = 'pv';
     /**
      * Bound variables names
      */
@@ -33,6 +37,7 @@ class Builder
     public function getSelectQuery(\Praxigento\Core\Repo\Query\IBuilder $qbuild = null)
     {
         $asCust = self::AS_TBL_CUSTOMER;
+        $asDwnl = self::AS_TBL_DOWNLINE;
         $asOrder = self::AS_TBL_ORDER;
         $asPv = self::AS_TBL_PV;
         $result = $this->conn->select();
@@ -41,6 +46,11 @@ class Builder
         $cols = [self::A_CUST_ID => Cfg::E_CUSTOMER_A_ENTITY_ID];
         $result->from([$asCust => $tblCust], $cols);
         /* LEFT JOIN sales_order */
+        $tblDwnl = $this->resource->getTableName(Dwnl::ENTITY_NAME);
+        $on = $asDwnl . '.' . Dwnl::ATTR_CUSTOMER_ID . '=' . $asCust . '.' . Cfg::E_CUSTOMER_A_ENTITY_ID;
+        $cols = [self::A_PARENT_ID => Dwnl::ATTR_PARENT_ID];
+        $result->joinLeft([$asDwnl => $tblDwnl], $on, $cols);
+        /* LEFT JOIN sales_order */
         $tblOrder = $this->resource->getTableName(Cfg::ENTITY_MAGE_SALES_ORDER);
         $on = $asOrder . '.' . Cfg::E_SALE_ORDER_A_CUSTOMER_ID . '=' . $asCust . '.' . Cfg::E_CUSTOMER_A_ENTITY_ID;
         $cols = [self::A_ORDER_ID => Cfg::E_SALE_ORDER_A_ENTITY_ID];
@@ -48,7 +58,7 @@ class Builder
         /* LEFT JOIN prxgt_pv_sale  */
         $tblPv = $this->resource->getTableName(Pv::ENTITY_NAME);
         $on = $asPv . '.' . Pv::ATTR_SALE_ID . '=' . $asOrder . '.' . Cfg::E_SALE_ORDER_A_ENTITY_ID;
-        $cols = [self::AS_TBL_PV => Pv::ATTR_TOTAL];
+        $cols = [self::A_PV => Pv::ATTR_TOTAL];
         $result->joinLeft([$asPv => $tblPv], $on, $cols);
         /* WHERE */
         $where = $asCust . '.' . Cfg::E_CUSTOMER_A_CREATED_AT . '>=:' . self::BIND_DATE_FROM;

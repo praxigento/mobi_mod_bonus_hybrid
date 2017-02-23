@@ -25,6 +25,8 @@
     <!-- ******** -->
     <preference for="Praxigento\BonusHybrid\Service\ICalc"
             type="Praxigento\BonusHybrid\Service\Calc\Call"/>
+    <preference for="\Praxigento\BonusHybrid\Service\Calc\ISignupDebit"
+            type="\Praxigento\BonusHybrid\Service\Calc\SignupDebit"/>
     <preference for="Praxigento\BonusHybrid\Service\IPeriod"
             type="Praxigento\BonusHybrid\Service\Period\Call"/>
 
