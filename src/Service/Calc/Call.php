@@ -441,7 +441,10 @@ class Call
                 $reqPeriodSignup->setDependentCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_SIGNUP_DEBIT);
                 $reqPeriodSignup->setAllowIncompleteBaseCalc(true);
                 $respPeriodSignup = $this->_callPeriod->getForDependentCalc($reqPeriodSignup);
-                $this->subSignupDebit->do(null);
+                $reqCalc = new \Praxigento\BonusHybrid\Service\Calc\Sub\SignupDebit\Request();
+                $reqCalc->dateFrom = $this->_toolPeriod->getTimestampFrom($periodBegin);
+                $reqCalc->dateTo = $this->_toolPeriod->getTimestampTo($periodEnd);
+                $this->subSignupDebit->do($reqCalc);
 //                $transData = $this->_subDb->getDataForWriteOff($calcId, $periodBegin, $periodEnd);
 //                $updates = $this->_subCalc->pvWriteOff($transData);
 //                $dateApplied = $this->_toolPeriod->getTimestampTo($periodEnd);

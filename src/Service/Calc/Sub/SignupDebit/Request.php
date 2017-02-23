@@ -2,10 +2,9 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-namespace Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetOrders;
+namespace Praxigento\BonusHybrid\Service\Calc\Sub\SignupDebit;
 
 /**
- *
  * @property string $dateTo
  * @property string $dateFrom
  */
