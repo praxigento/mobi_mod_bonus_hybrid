@@ -36,16 +36,20 @@ class ProcessOrders
     protected $repoLogOper;
     /** @var \Praxigento\BonusBase\Repo\Entity\Log\ISales */
     protected $repoLogSale;
+    /** @var \Praxigento\BonusHybrid\Repo\Entity\Registry\ISignupDebit */
+    protected $repoRegSignupDebit;
 
     public function __construct(
         \Praxigento\BonusBase\Repo\Entity\Log\ICustomers $repoLogCust,
         \Praxigento\BonusBase\Repo\Entity\Log\IOpers $repoLogOper,
         \Praxigento\BonusBase\Repo\Entity\Log\ISales $repoLogSale,
+        \Praxigento\BonusHybrid\Repo\Entity\Registry\ISignupDebit $repoRegSignupDebit,
         \Praxigento\Accounting\Service\IAccount $callAccount,
         \Praxigento\Accounting\Service\IOperation $callOper
     ) {
         $this->repoLogCust = $repoLogCust;
         $this->repoLogOper = $repoLogOper;
+        $this->repoRegSignupDebit = $repoRegSignupDebit;
         $this->repoLogSale = $repoLogSale;
         $this->callAccount = $callAccount;
         $this->callOper = $callOper;
@@ -107,6 +111,15 @@ class ProcessOrders
             \Praxigento\BonusBase\Data\Entity\Log\Opers::ATTR_CALC_ID => $calcId,
             \Praxigento\BonusBase\Data\Entity\Log\Opers::ATTR_OPER_ID => $operId
         ]);
+        /* save customers into Sign Up Registry */
+        foreach ($orders as $one) {
+            $custId = $one[self::A_CUST_ID];
+            $this->repoRegSignupDebit->create([
+                \Praxigento\BonusHybrid\Entity\Registry\SignupDebit::ATTR_CALC_REF => $calcId,
+                \Praxigento\BonusHybrid\Entity\Registry\SignupDebit::ATTR_CUSTOMER_REF => $custId
+            ]);
+
+        }
     }
 
     /**

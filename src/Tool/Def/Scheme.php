@@ -19,6 +19,8 @@ class Scheme
 {
     const A_RANK_ID = 'RankId';
     const A_SCHEME = 'Scheme';
+
+
     /**
      * There are 3 customer with forced qualifications and ranks in Santegra project.
      *
@@ -27,14 +29,16 @@ class Scheme
     private $QUALIFIED_CUSTOMERS = [
         '770000001' => [Def::SCHEMA_DEFAULT, Def::RANK_PRESIDENT],
         '777163048' => [Def::SCHEMA_DEFAULT, Def::RANK_EXEC_DIRECTOR],
-        '777017725' => [Def::SCHEMA_DEFAULT, Def::RANK_PRESIDENT],
-        '790003045' => [Def::SCHEMA_EU, Def::RANK_MANAGER],
-        '790003049' => [Def::SCHEMA_EU, Def::RANK_MANAGER]
+        '777017725' => [Def::SCHEMA_DEFAULT, Def::RANK_PRESIDENT]
     ];
     /**
      * @var array of the customers with forced qualification.
      */
     private $_cachedForcedCustomerIds = null;
+    /**
+     * @var array of customers with forced qualification from 'Sign Up Volume Debit' (MOBI-635)
+     */
+    private $cachedSignupDebitCustIds = null;
     /**
      * Cached values for customers with forced ranks. Each customer can be ranked in all schemes.
      *
@@ -43,16 +47,24 @@ class Scheme
     private $_cachedForcedRanks = null;
     /** @var \Praxigento\Core\Repo\IGeneric */
     protected $_repoBasic;
+    /** @var \Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetLastCalcIdForPeriod */
+    protected $queryGetLastSignupCalcId;
+    /** @var \Praxigento\BonusHybrid\Repo\Entity\Registry\ISignupDebit */
+    protected $repoRegSignupDebit;
 
     /**
      * Scheme constructor.
      */
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resource,
-        \Praxigento\Core\Repo\IGeneric $repoGeneric
+        \Praxigento\Core\Repo\IGeneric $repoGeneric,
+        \Praxigento\BonusHybrid\Repo\Entity\Registry\ISignupDebit $repoRegSignupDebit,
+        \Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetLastCalcIdForPeriod $queryGetLastSignupCalcId
     ) {
         parent::__construct($resource);
         $this->_repoBasic = $repoGeneric;
+        $this->repoRegSignupDebit = $repoRegSignupDebit;
+        $this->queryGetLastSignupCalcId = $queryGetLastSignupCalcId;
     }
 
 
@@ -127,6 +139,13 @@ class Scheme
                 $result = $qpv;
             }
         }
+        /* MOBI-635: Sign Up Volume Debit */
+        if ($scheme == Def::SCHEMA_EU) {
+            $forced = $this->getForcedSignupDebitCustomers();
+            if (in_array($custId, $forced)) {
+                $result = $pv + Def::SIGNUP_DEBIT_PV;
+            }
+        }
         return $result;
     }
 
@@ -170,6 +189,25 @@ class Scheme
             $result = $forced[$custId][$scheme][CfgParam::ATTR_RANK_ID];
         }
         return $result;
+    }
+
+    /**
+     * MOBI-635: get customers w/o 100 PV from Sign Up Volume Debit
+     */
+    protected function getForcedSignupDebitCustomers()
+    {
+        if (is_null($this->cachedSignupDebitCustIds)) {
+            $ids = [];
+            $calcId = $this->queryGetLastSignupCalcId->exec();
+            $where = \Praxigento\BonusHybrid\Entity\Registry\SignupDebit::ATTR_CALC_REF . '=' . (int)$calcId;
+            $rs = $this->repoRegSignupDebit->get($where);
+            foreach ($rs as $one) {
+                $ids[] = $one[\Praxigento\BonusHybrid\Entity\Registry\SignupDebit::ATTR_CUSTOMER_REF];
+            }
+            $this->cachedSignupDebitCustIds = $ids;
+        }
+        return $this->cachedSignupDebitCustIds;
+
     }
 
     public function getForcedTv($custId, $scheme, $tv)
