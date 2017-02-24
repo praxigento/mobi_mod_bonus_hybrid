@@ -13,24 +13,28 @@ class SignupDebit
 
     /** @var \Praxigento\BonusHybrid\Service\IPeriod */
     protected $callPeriod;
+    /** @var \Praxigento\BonusHybrid\Repo\Query\MarkCalcComplete */
+    protected $queryMarkComplete;
     /** @var  \Praxigento\BonusHybrid\Service\Calc\SignupDebit\GetOrders */
     protected $subGetOrders;
-    /** @var  \Praxigento\Core\Tool\IPeriod */
-    protected $toolPeriod;
     /** @var  \Praxigento\BonusHybrid\Service\Calc\SignupDebit\ProcessOrders */
     protected $subProcessOrders;
+    /** @var  \Praxigento\Core\Tool\IPeriod */
+    protected $toolPeriod;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Praxigento\BonusHybrid\Service\IPeriod $callPeriod,
+        \Praxigento\BonusHybrid\Repo\Query\MarkCalcComplete $queryMarkComplete,
         \Praxigento\BonusHybrid\Service\Calc\SignupDebit\GetOrders $subGetOrders,
         \Praxigento\BonusHybrid\Service\Calc\SignupDebit\ProcessOrders $subProcessOrders
     ) {
         parent::__construct($logger, $manObj);
         $this->toolPeriod = $toolPeriod;
         $this->callPeriod = $callPeriod;
+        $this->queryMarkComplete = $queryMarkComplete;
         $this->subGetOrders = $subGetOrders;
         $this->subProcessOrders = $subProcessOrders;
     }
@@ -55,31 +59,34 @@ class SignupDebit
                 $respPeriodSignup = $this->callPeriod->getForDependentCalc($reqPeriodSignup);
                 /* extract data for this period/calc */
                 $periodData = $respPeriodSignup->getDependentPeriodData();
-                $periodId = $periodData->getId();
-                $calcData = $respPeriodSignup->getDependentCalcData();
-                $calcId = $calcData->getId();
-                $periodBegin = $periodData->getDstampBegin();
-                $periodEnd = $periodData->getDstampEnd();
-                $calcState = $calcData->getState();
-                $this->_logger->info("Processing period #$periodId ($periodBegin-$periodEnd), Sign Up Volume Debit calculation #$calcId ($calcState).");
-                if ($calcState != Cfg::CALC_STATE_COMPLETE) {
-                    /* get first orders for just signed up customers */
-                    $reqGetOrders = new \Praxigento\BonusHybrid\Service\Calc\SignupDebit\GetOrders\Request();
-                    $reqGetOrders->dateFrom = $this->toolPeriod->getTimestampFrom($periodBegin);
-                    $reqGetOrders->dateTo = $this->toolPeriod->getTimestampTo($periodEnd);
-                    $orders = $this->subGetOrders->do($reqGetOrders);
-                    $this->subProcessOrders->do($orders);
+                if ($periodData) {
+                    $periodId = $periodData->getId();
+                    $calcData = $respPeriodSignup->getDependentCalcData();
+                    $calcId = $calcData->getId();
+                    $periodBegin = $periodData->getDstampBegin();
+                    $periodEnd = $periodData->getDstampEnd();
+                    $calcState = $calcData->getState();
+                    $this->_logger->info("Processing period #$periodId ($periodBegin-$periodEnd), Sign Up Volume Debit calculation #$calcId ($calcState).");
+                    if ($calcState != Cfg::CALC_STATE_COMPLETE) {
+                        $dateApplied = $this->toolPeriod->getTimestampTo($periodEnd);
+                        /* get first orders for just signed up customers */
+                        $reqGetOrders = new \Praxigento\BonusHybrid\Service\Calc\SignupDebit\GetOrders\Request();
+                        $reqGetOrders->dateFrom = $this->toolPeriod->getTimestampFrom($periodBegin);
+                        $reqGetOrders->dateTo = $this->toolPeriod->getTimestampTo($periodEnd);
+                        $orders = $this->subGetOrders->do($reqGetOrders);
+                        $this->subProcessOrders->do([
+                            \Praxigento\BonusHybrid\Service\Calc\SignupDebit\ProcessOrders::OPT_CALC_ID => $calcId,
+                            \Praxigento\BonusHybrid\Service\Calc\SignupDebit\ProcessOrders::OPT_ORDERS => $orders,
+                            \Praxigento\BonusHybrid\Service\Calc\SignupDebit\ProcessOrders::OPT_DATE_APPLIED => $dateApplied
+                        ]);
+                        $this->queryMarkComplete->exec($calcId);
+                        $result->setPeriodId($periodId);
+                        $result->setCalcId($calcId);
+                        $result->markSucceed();
+                    }
+                } else {
+                    $this->_logger->warning("There is no period to calculate 'Sign Up Volume Debit' bonus.");
                 }
-
-//                $transData = $this->_subDb->getDataForWriteOff($calcId, $periodBegin, $periodEnd);
-//                $updates = $this->_subCalc->pvWriteOff($transData);
-//                $dateApplied = $this->_toolPeriod->getTimestampTo($periodEnd);
-//                $operId = $this->_subDb->saveOperationPvWriteOff($updates, $datePerformed, $dateApplied);
-//                $this->_subDb->saveLogPvWriteOff($transData, $operId, $calcId);
-//                $this->_subDb->markCalcComplete($calcId);
-//                $result->setPeriodId($periodId);
-//                $result->setCalcId($calcId);
-//                $result->markSucceed();
             }
         }
         $this->_logMemoryUsage();

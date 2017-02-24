@@ -38,6 +38,11 @@ class Defaults {
      */
     const SCHEMA_DEFAULT = 'DEFAULT';
     const SCHEMA_EU = 'EU';
+    /**
+     * Sign Up Volume Debit parameters: PV Off & Wallet On values.
+     */
+    const SIGNUP_DEBIT_PV = 100;
+    const SIGNUP_DEBIT_WALLET = 34;
 
     const TEAM_BONUS_EU_PERCENT = 0.05;
 }

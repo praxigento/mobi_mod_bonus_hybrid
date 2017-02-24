@@ -9,6 +9,7 @@ class GetOrders
 
     const A_CUST_ID = \Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetOrders\Builder::A_CUST_ID;
     const A_ORDER_ID = \Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetOrders\Builder::A_ORDER_ID;
+    const A_PARENT_ID = \Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetOrders\Builder::A_PARENT_ID;
     const A_PV = \Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetOrders\Builder::A_PV;
     /** @var \Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetOrders\Builder */
     protected $qbuildGetOrders;
@@ -37,9 +38,9 @@ class GetOrders
         /* leave first order for customer */
         $result = [];
         foreach ($rs as $one) {
-            $custId = $one[\Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetOrders\Builder::A_CUST_ID];
-            if (!isset($result[$custId])) {
-                $result[$custId] = $one;
+            $orderId = $one[\Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetOrders\Builder::A_ORDER_ID];
+            if (!isset($result[$orderId])) {
+                $result[$orderId] = $one;
             }
         }
         return $result;
