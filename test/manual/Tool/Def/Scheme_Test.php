@@ -14,9 +14,9 @@ class SchemeToTest extends Scheme
         return parent::getForcedPv($custId, $scheme, $pv);
     }
 
-    public function getForcedSignupDebitCustomers()
+    public function getForcedSignupDebitCustIds()
     {
-        $result = parent::getForcedSignupDebitCustomers();
+        $result = parent::getForcedSignupDebitCustIds();
         return $result;
     }
 
@@ -37,12 +37,12 @@ class Scheme_ManualTest
         $this->assertEquals(123, $res);
     }
 
-    public function test_getForcedSignupDebitCustomers()
+    public function test_getForcedSignupDebitCustIds()
     {
         $obm = \Magento\Framework\App\ObjectManager::getInstance();
         /** @var  $call \Praxigento\BonusHybrid\Tool\Def\SchemeToTest */
         $call = $obm->get(\Praxigento\BonusHybrid\Tool\Def\SchemeToTest::class);
-        $res = $call->getForcedSignupDebitCustomers();
+        $res = $call->getForcedSignupDebitCustIds();
         $this->assertTrue(is_array($res));
     }
 

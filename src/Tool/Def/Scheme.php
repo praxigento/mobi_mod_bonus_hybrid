@@ -140,12 +140,12 @@ class Scheme
             }
         }
         /* MOBI-635: Sign Up Volume Debit */
-        if ($scheme == Def::SCHEMA_EU) {
-            $forced = $this->getForcedSignupDebitCustomers();
-            if (in_array($custId, $forced)) {
-                $result = $pv + Def::SIGNUP_DEBIT_PV;
-            }
-        }
+//        if ($scheme == Def::SCHEMA_EU) {
+//            $forced = $this->getForcedSignupDebitCustomers();
+//            if (in_array($custId, $forced)) {
+//                $result = $pv + Def::SIGNUP_DEBIT_PV;
+//            }
+//        }
         return $result;
     }
 
@@ -171,6 +171,16 @@ class Scheme
             }
             /* compose map from customer IDs for quick search */
             $this->_cachedForcedCustomerIds = array_keys($this->_cachedForcedRanks);
+            /* MOBI-635  Sign Up Volume Debit */
+            $ids = $this->getForcedSignupDebitCustIds();
+            foreach ($ids as $custId) {
+                $rankCode = Def::RANK_MANAGER;
+                $cfgParamsWithSchemes = $ranks[$rankCode];
+                $this->_cachedForcedRanks[$custId] = $cfgParamsWithSchemes;
+            }
+            //
+            $this->_cachedForcedCustomerIds = array_merge($this->_cachedForcedCustomerIds, $ids);
+
         }
         return $this->_cachedForcedRanks;
     }
@@ -194,7 +204,7 @@ class Scheme
     /**
      * MOBI-635: get customers w/o 100 PV from Sign Up Volume Debit
      */
-    protected function getForcedSignupDebitCustomers()
+    protected function getForcedSignupDebitCustIds()
     {
         if (is_null($this->cachedSignupDebitCustIds)) {
             $ids = [];
