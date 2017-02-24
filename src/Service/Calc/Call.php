@@ -4,8 +4,6 @@
  */
 namespace Praxigento\BonusHybrid\Service\Calc;
 
-use Praxigento\BonusBase\Data\Entity\Calculation;
-use Praxigento\BonusBase\Data\Entity\Period;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Entity\Compression\Oi as OiCompress;
@@ -89,9 +87,9 @@ class Call
             try {
                 /* working vars */
                 $thisPeriodData = $respGetPeriod->getDependentPeriodData();
-                $thisPeriodId = $thisPeriodData[Period::ATTR_ID];
+                $thisPeriodId = $thisPeriodData->getId();
                 $thisCalcData = $respGetPeriod->getDependentCalcData();
-                $thisCalcId = $thisCalcData[Calculation::ATTR_ID];
+                $thisCalcId = $thisCalcData->getId();
                 $basePeriodData = $respGetPeriod->getBasePeriodData();
                 $baseDsBegin = $basePeriodData->getDstampBegin();
                 $baseDsEnd = $basePeriodData->getDstampEnd();
@@ -175,9 +173,9 @@ class Call
             try {
                 /* working vars */
                 $thisPeriodData = $respGetPeriod->getDependentPeriodData();
-                $thisPeriodId = $thisPeriodData[Period::ATTR_ID];
+                $thisPeriodId = $thisPeriodData->getId();
                 $thisCalcData = $respGetPeriod->getDependentCalcData();
-                $thisCalcId = $thisCalcData[Calculation::ATTR_ID];
+                $thisCalcId = $thisCalcData->getId();
                 $basePeriodData = $respGetPeriod->getBasePeriodData();
                 $baseDsBegin = $basePeriodData->getDstampBegin();
                 $baseDsEnd = $basePeriodData->getDstampEnd();
@@ -271,9 +269,9 @@ class Call
             try {
                 /* working vars */
                 $thisPeriodData = $respGetPeriod->getDependentPeriodData();
-                $thisPeriodId = $thisPeriodData[Period::ATTR_ID];
+                $thisPeriodId = $thisPeriodData->getId();
                 $thisCalcData = $respGetPeriod->getDependentCalcData();
-                $thisCalcId = $thisCalcData[Calculation::ATTR_ID];
+                $thisCalcId = $thisCalcData->getId();
                 $basePeriodData = $respGetPeriod->getBasePeriodData();
                 $baseDsBegin = $basePeriodData->getDstampBegin();
                 $baseDsEnd = $basePeriodData->getDstampEnd();
@@ -356,9 +354,9 @@ class Call
             try {
                 /* working vars */
                 $thisPeriodData = $respGetPeriod->getDependentPeriodData();
-                $thisPeriodId = $thisPeriodData[Period::ATTR_ID];
+                $thisPeriodId = $thisPeriodData->getId();
                 $thisCalcData = $respGetPeriod->getDependentCalcData();
-                $thisCalcId = $thisCalcData[Calculation::ATTR_ID];
+                $thisCalcId = $thisCalcData->getId();
                 $basePeriodData = $respGetPeriod->getBasePeriodData();
                 $baseDsBegin = $basePeriodData->getDstampBegin();
                 $baseDsEnd = $basePeriodData->getDstampEnd();
@@ -441,9 +439,9 @@ class Call
             try {
                 /* working vars */
                 $thisPeriodData = $respGetPeriod->getDependentPeriodData();
-                $thisPeriodId = $thisPeriodData[Period::ATTR_ID];
+                $thisPeriodId = $thisPeriodData->getId();
                 $thisCalcData = $respGetPeriod->getDependentCalcData();
-                $thisCalcId = $thisCalcData[Calculation::ATTR_ID];
+                $thisCalcId = $thisCalcData->getId();
                 $basePeriodData = $respGetPeriod->getBasePeriodData();
                 $baseDsBegin = $basePeriodData->getDstampBegin();
                 $baseDsEnd = $basePeriodData->getDstampEnd();
@@ -523,9 +521,9 @@ class Call
             try {
                 /* working vars */
                 $thisPeriodData = $respGetPeriod->getDependentPeriodData();
-                $thisPeriodId = $thisPeriodData[Period::ATTR_ID];
+                $thisPeriodId = $thisPeriodData->getId();
                 $thisCalcData = $respGetPeriod->getDependentCalcData();
-                $thisCalcId = $thisCalcData[Calculation::ATTR_ID];
+                $thisCalcId = $thisCalcData->getId();
                 $basePeriodData = $respGetPeriod->getBasePeriodData();
                 $baseDsBegin = $basePeriodData->getDstampBegin();
                 $baseDsEnd = $basePeriodData->getDstampEnd();
@@ -577,11 +575,11 @@ class Call
             try {
                 /* working vars */
                 $thisPeriodData = $respGetPeriod->getDependentPeriodData();
-                $thisPeriodId = $thisPeriodData[Period::ATTR_ID];
-                $thisDsBegin = $thisPeriodData[Period::ATTR_DSTAMP_BEGIN];
-                $thisDsEnd = $thisPeriodData[Period::ATTR_DSTAMP_END];
+                $thisPeriodId = $thisPeriodData->getId();
+                $thisDsBegin = $thisPeriodData->getDstampBegin();
+                $thisDsEnd = $thisPeriodData->getDstampEnd();
                 $thisCalcData = $respGetPeriod->getDependentCalcData();
-                $thisCalcId = $thisCalcData[Calculation::ATTR_ID];
+                $thisCalcId = $thisCalcData->getId();
                 $baseCalcData = $respGetPeriod->getBaseCalcData();
                 $baseCalcIdId = $baseCalcData->getId();
                 /* calculation itself */
@@ -626,11 +624,11 @@ class Call
                 try {
                     /* working vars */
                     $periodData = $respGetPeriod->getPeriodData();
-                    $periodId = $periodData[Period::ATTR_ID];
+                    $periodId = $periodData->getId();
                     $calcData = $respGetPeriod->getCalcData();
-                    $calcId = $calcData[Calculation::ATTR_ID];
-                    $periodBegin = $periodData[Period::ATTR_DSTAMP_BEGIN];
-                    $periodEnd = $periodData[Period::ATTR_DSTAMP_END];
+                    $calcId = $calcData->getId();
+                    $periodBegin = $periodData->getDstampBegin();
+                    $periodEnd = $periodData->getDstampEnd();
                     $this->_logger->info("Processing period #$periodId ($periodBegin-$periodEnd), calculation #$calcId.");
                     $transData = $this->_subDb->getDataForWriteOff($calcId, $periodBegin, $periodEnd);
                     $updates = $this->_subCalc->pvWriteOff($transData);
@@ -670,9 +668,9 @@ class Call
             try {
                 /* working vars */
                 $thisPeriodData = $respGetPeriod->getDependentPeriodData();
-                $thisPeriodId = $thisPeriodData[Period::ATTR_ID];
+                $thisPeriodId = $thisPeriodData->getId();
                 $thisCalcData = $respGetPeriod->getDependentCalcData();
-                $thisCalcId = $thisCalcData[Calculation::ATTR_ID];
+                $thisCalcId = $thisCalcData->getId();
                 $basePeriodData = $respGetPeriod->getBasePeriodData();
                 $baseDsBegin = $basePeriodData->getDstampBegin();
                 $baseDsEnd = $basePeriodData->getDstampEnd();
@@ -711,9 +709,9 @@ class Call
             try {
                 /* working vars */
                 $thisPeriodData = $respGetPeriod->getDependentPeriodData();
-                $thisPeriodId = $thisPeriodData[Period::ATTR_ID];
+                $thisPeriodId = $thisPeriodData->getId();
                 $thisCalcData = $respGetPeriod->getDependentCalcData();
-                $thisCalcId = $thisCalcData[Calculation::ATTR_ID];
+                $thisCalcId = $thisCalcData->getId();
                 $basePeriodData = $respGetPeriod->getBasePeriodData();
                 $baseDsBegin = $basePeriodData->getDstampBegin();
                 $baseDsEnd = $basePeriodData->getDstampEnd();
