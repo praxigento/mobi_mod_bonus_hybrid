@@ -37,12 +37,6 @@ interface ICalc {
     public function bonusPersonal(Request\BonusPersonal $request);
 
     /**
-     * @param Request\BonusSignupDebit $request
-     * @return \Praxigento\BonusHybrid\Service\Calc\Response\BonusSignupDebit
-     */
-    public function bonusSignupDebit(\Praxigento\BonusHybrid\Service\Calc\Request\BonusSignupDebit $request);
-
-    /**
      * @param Request\BonusTeam $request
      *
      * @return Response\BonusTeam

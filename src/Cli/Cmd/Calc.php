@@ -12,6 +12,8 @@ class Calc
 {
     /** @var \Praxigento\BonusHybrid\Service\ICalc */
     protected $callCalc;
+    /** @var  \Praxigento\BonusHybrid\Service\Calc\ISignupDebit */
+    protected $callBonusSignup;
     /** @var \Magento\Framework\DB\Adapter\AdapterInterface */
     protected $conn;
     /** @var \Magento\Framework\App\ResourceConnection */
@@ -20,7 +22,8 @@ class Calc
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Magento\Framework\App\ResourceConnection $resource,
-        \Praxigento\BonusHybrid\Service\ICalc $callCalc
+        \Praxigento\BonusHybrid\Service\ICalc $callCalc,
+        \Praxigento\BonusHybrid\Service\Calc\ISignupDebit $callBonusSignup
     ) {
         parent::__construct(
             $manObj,
@@ -30,6 +33,7 @@ class Calc
         $this->resource = $resource;
         $this->conn = $this->resource->getConnection();
         $this->callCalc = $callCalc;
+        $this->callBonusSignup = $callBonusSignup;
     }
 
     protected function calcBonusCourtesy()
@@ -141,6 +145,14 @@ class Calc
         return $result;
     }
 
+    protected function calcSignupDebit()
+    {
+        $req = new \Praxigento\BonusHybrid\Service\Calc\SignupDebit\Request();
+        $resp = $this->callBonusSignup->exec($req);
+        $result = $resp->isSucceed();
+        return $result;
+    }
+
     protected function calcPvWriteOff()
     {
         $req = new \Praxigento\BonusHybrid\Service\Calc\Request\PvWriteOff();
@@ -172,7 +184,11 @@ class Calc
         $output->writeln("<info>Start bonus calculation.<info>");
         $this->conn->beginTransaction();
         try {
-            $canContinue = $this->calcPvWriteOff();
+            $canContinue = $this->calcSignupDebit();
+            if ($canContinue) {
+                $output->writeln("<info>'Sign Up Volume Debit' calculation is completed.<info>");
+                $canContinue = $this->calcPvWriteOff();
+            }
             if ($canContinue) {
                 $output->writeln("<info>'PV Write Off' calculation is completed.<info>");
                 $canContinue = $this->calcCompressPtc();
