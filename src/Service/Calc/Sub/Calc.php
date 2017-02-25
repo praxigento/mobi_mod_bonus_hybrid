@@ -47,20 +47,21 @@ class Calc
     protected $toolScheme;
     /** @var  int MOBI-629 */
     protected $cachedOiDefRankId;
-
+    /** @var \Praxigento\BonusBase\Helper\IRank */
+    protected $hlpRank;
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
         \Praxigento\Core\Tool\IFormat $toolFormat,
         \Praxigento\Downline\Tool\ITree $toolTree,
         \Praxigento\BonusHybrid\Tool\IScheme $toolScheme,
-        \Praxigento\BonusBase\Repo\Entity\IRank $repoRank,
+        \Praxigento\BonusBase\Helper\IRank $hlpRank,
         \Praxigento\Downline\Service\ISnap $callDownlineSnap
     ) {
         $this->logger = $logger;
         $this->toolFormat = $toolFormat;
         $this->toolScheme = $toolScheme;
         $this->toolDownlineTree = $toolTree;
-        $this->repoRank = $repoRank;
+        $this->hlpRank = $hlpRank;
         $this->callDownlineSnap = $callDownlineSnap;
     }
 
@@ -194,7 +195,7 @@ class Calc
         /* scan all levels starting from the bottom and collect PV by generations */
         $mapGenerations = $this->mapByGeneration($mapByDepthDesc,
             $mapTreeExp); // [ $custId=>[$genId => $totalPv, ...], ... ]
-        $defRankId = $this->getOiDefRankId();
+        $defRankId = $this->hlpRank->getIdByCode(Def::RANK_DISTRIBUTOR);
         /* scan all customers and calculate bonus values */
         foreach ($compressOi as $custData) {
             $custId = $custData[OiCompress::ATTR_CUSTOMER_ID];
@@ -552,6 +553,7 @@ class Calc
         $mapByDepth = $this->mapByTreeDepthDesc($compressedPtc, PtcCompress::ATTR_CUSTOMER_ID,
             PtcCompress::ATTR_DEPTH);
         $mapByTeam = $this->mapByTeams($compressedPtc, PtcCompress::ATTR_CUSTOMER_ID, PtcCompress::ATTR_PARENT_ID);
+        $rankIdMgr = $this->hlpRank->getIdByCode(Def::RANK_MANAGER);
         foreach ($mapByDepth as $level) {
             foreach ($level as $custId) {
                 /* compose data for one customer */
@@ -598,6 +600,9 @@ class Calc
                         $resultEntry[OiCompress::ATTR_OV_LEG_SUMMARY] = $legSummary;
                         $rankId = $this->getMaxQualifiedRankId($resultEntry, $scheme, $cfgParams);
                         $resultEntry[OiCompress::ATTR_RANK_ID] = $rankId;
+                    } else {
+                        /* qualified customer w/o downline is a Manager */
+                        $resultEntry[OiCompress::ATTR_RANK_ID] = $rankIdMgr;
                     }
                 }
                 /* re-link parent */
@@ -637,9 +642,10 @@ class Calc
         unset($mapByTeam);
         unset($mapById);
         /* MOBI-629: add init rank for un-ranked entries */
+        $defRankId = $this->hlpRank->getIdByCode(Def::RANK_DISTRIBUTOR);;
         foreach ($result as $key => $item) {
             if (!isset($item[OiCompress::ATTR_RANK_ID])) {
-                $item[OiCompress::ATTR_RANK_ID] = $this->getOiDefRankId();
+                $item[OiCompress::ATTR_RANK_ID] = $defRankId;
                 $result[$key] = $item;
             }
         }
@@ -738,17 +744,6 @@ class Calc
         /* add compressed PV data */
         $result = $this->populateCompressedSnapWithPv($data, $compressedTree);
         return $result;
-    }
-
-    /**
-     * MOBI-629: get ID for default rank for OI compression.
-     */
-    protected function getOiDefRankId()
-    {
-        if (is_null($this->cachedOiDefRankId)) {
-            $this->cachedOiDefRankId = $this->repoRank->getIdByCode(Def::RANK_DISTRIBUTOR);
-        }
-        return $this->cachedOiDefRankId;
     }
 
     /**
