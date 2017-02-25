@@ -139,13 +139,6 @@ class Scheme
                 $result = $qpv;
             }
         }
-        /* MOBI-635: Sign Up Volume Debit */
-//        if ($scheme == Def::SCHEMA_EU) {
-//            $forced = $this->getForcedSignupDebitCustomers();
-//            if (in_array($custId, $forced)) {
-//                $result = $pv + Def::SIGNUP_DEBIT_PV;
-//            }
-//        }
         return $result;
     }
 

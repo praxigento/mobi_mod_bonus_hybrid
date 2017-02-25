@@ -38,8 +38,10 @@ class ProcessOrders
     protected $repoLogSale;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Registry\ISignupDebit */
     protected $repoRegSignupDebit;
-
+    /** @var  \Praxigento\BonusHybrid\Tool\IScheme */
+    protected $toolScheme;
     public function __construct(
+        \Praxigento\BonusHybrid\Tool\IScheme $toolScheme,
         \Praxigento\BonusBase\Repo\Entity\Log\ICustomers $repoLogCust,
         \Praxigento\BonusBase\Repo\Entity\Log\IOpers $repoLogOper,
         \Praxigento\BonusBase\Repo\Entity\Log\ISales $repoLogSale,
@@ -47,6 +49,7 @@ class ProcessOrders
         \Praxigento\Accounting\Service\IAccount $callAccount,
         \Praxigento\Accounting\Service\IOperation $callOper
     ) {
+        $this->toolScheme = $toolScheme;
         $this->repoLogCust = $repoLogCust;
         $this->repoLogOper = $repoLogOper;
         $this->repoRegSignupDebit = $repoRegSignupDebit;
@@ -78,27 +81,30 @@ class ProcessOrders
             $custId = $one[self::A_CUST_ID];
             $parentId = $one[self::A_PARENT_ID];
             $orderId = $one[self::A_ORDER_ID];
-            /* prepare data for transactions */
-            $accPvCust = $this->getAccCust(Cfg::CODE_TYPE_ASSET_PV, $custId);
-            $accWalletParent = $this->getAccCust(Cfg::CODE_TYPE_ASSET_WALLET_ACTIVE, $parentId);
-            /* add PV transaction */
-            $tranPvOff = [
-                Trans::ATTR_DEBIT_ACC_ID => $accPvCust,
-                Trans::ATTR_CREDIT_ACC_ID => $accPvRepres,
-                Trans::ATTR_DATE_APPLIED => $dateApplied,
-                Trans::ATTR_VALUE => \Praxigento\BonusHybrid\Defaults::SIGNUP_DEBIT_PV,
-                $transRef => self::PREFIX_PV . $orderId
-            ];
-            $trans[] = $tranPvOff;
-            /* add Wallet transaction */
-            $tranWalletOn = [
-                Trans::ATTR_DEBIT_ACC_ID => $accWalletRepres,
-                Trans::ATTR_CREDIT_ACC_ID => $accWalletParent,
-                Trans::ATTR_DATE_APPLIED => $dateApplied,
-                Trans::ATTR_VALUE => \Praxigento\BonusHybrid\Defaults::SIGNUP_DEBIT_WALLET,
-                $transRef => self::PREFIX_WALLET . $orderId
-            ];
-            $trans[] = $tranWalletOn;
+            $scheme = $this->toolScheme->getSchemeByCustomer($one);
+            if ($scheme == \Praxigento\BonusHybrid\Defaults::SCHEMA_EU) {
+                /* prepare data for transactions */
+                $accPvCust = $this->getAccCust(Cfg::CODE_TYPE_ASSET_PV, $custId);
+                $accWalletParent = $this->getAccCust(Cfg::CODE_TYPE_ASSET_WALLET_ACTIVE, $parentId);
+                /* add PV transaction */
+                $tranPvOff = [
+                    Trans::ATTR_DEBIT_ACC_ID => $accPvCust,
+                    Trans::ATTR_CREDIT_ACC_ID => $accPvRepres,
+                    Trans::ATTR_DATE_APPLIED => $dateApplied,
+                    Trans::ATTR_VALUE => \Praxigento\BonusHybrid\Defaults::SIGNUP_DEBIT_PV,
+                    $transRef => self::PREFIX_PV . $orderId
+                ];
+                $trans[] = $tranPvOff;
+                /* add Wallet transaction */
+                $tranWalletOn = [
+                    Trans::ATTR_DEBIT_ACC_ID => $accWalletRepres,
+                    Trans::ATTR_CREDIT_ACC_ID => $accWalletParent,
+                    Trans::ATTR_DATE_APPLIED => $dateApplied,
+                    Trans::ATTR_VALUE => \Praxigento\BonusHybrid\Defaults::SIGNUP_DEBIT_WALLET,
+                    $transRef => self::PREFIX_WALLET . $orderId
+                ];
+                $trans[] = $tranWalletOn;
+            }
         }
         $req->setTransactions($trans);
         $resp = $this->callOper->add($req);

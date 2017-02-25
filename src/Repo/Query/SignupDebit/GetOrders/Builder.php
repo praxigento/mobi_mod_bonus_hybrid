@@ -25,6 +25,7 @@ class Builder
      * Attributes aliases.
      */
     const A_CUST_ID = 'cust_id';
+    const A_COUNTRY = Dwnl::ATTR_COUNTRY_CODE;
     const A_ORDER_ID = 'order_id';
     const A_PARENT_ID = 'parent_id';
     const A_PV = 'pv';
@@ -48,7 +49,10 @@ class Builder
         /* LEFT JOIN sales_order */
         $tblDwnl = $this->resource->getTableName(Dwnl::ENTITY_NAME);
         $on = $asDwnl . '.' . Dwnl::ATTR_CUSTOMER_ID . '=' . $asCust . '.' . Cfg::E_CUSTOMER_A_ENTITY_ID;
-        $cols = [self::A_PARENT_ID => Dwnl::ATTR_PARENT_ID];
+        $cols = [
+            self::A_COUNTRY => Dwnl::ATTR_COUNTRY_CODE,
+            self::A_PARENT_ID => Dwnl::ATTR_PARENT_ID
+        ];
         $result->joinLeft([$asDwnl => $tblDwnl], $on, $cols);
         /* LEFT JOIN sales_order */
         $tblOrder = $this->resource->getTableName(Cfg::ENTITY_MAGE_SALES_ORDER);
