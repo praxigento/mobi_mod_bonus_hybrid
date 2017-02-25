@@ -33,8 +33,14 @@ class Calc
     const COMPRESSED_PV = 'pvc';
     const DATA_PV = 'pv';
     const DATA_SNAP = 'snap';
+    /** @var  int MOBI-629 */
+    protected $cachedOiDefRankId;
     /** @var    \Praxigento\Downline\Service\ISnap */
     protected $callDownlineSnap;
+    /** @var \Praxigento\BonusBase\Helper\IRank */
+    protected $hlpRank;
+    /** @var \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds */
+    protected $hlpSignupDebitCust;
     /** @var \Psr\Log\LoggerInterface */
     protected $logger;
     /** @var  \Praxigento\BonusBase\Repo\Entity\IRank */
@@ -45,16 +51,14 @@ class Calc
     protected $toolFormat;
     /** @var  \Praxigento\BonusHybrid\Tool\IScheme */
     protected $toolScheme;
-    /** @var  int MOBI-629 */
-    protected $cachedOiDefRankId;
-    /** @var \Praxigento\BonusBase\Helper\IRank */
-    protected $hlpRank;
+
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
         \Praxigento\Core\Tool\IFormat $toolFormat,
         \Praxigento\Downline\Tool\ITree $toolTree,
         \Praxigento\BonusHybrid\Tool\IScheme $toolScheme,
         \Praxigento\BonusBase\Helper\IRank $hlpRank,
+        \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust,
         \Praxigento\Downline\Service\ISnap $callDownlineSnap
     ) {
         $this->logger = $logger;
@@ -62,6 +66,7 @@ class Calc
         $this->toolScheme = $toolScheme;
         $this->toolDownlineTree = $toolTree;
         $this->hlpRank = $hlpRank;
+        $this->hlpSignupDebitCust = $hlpSignupDebitCust;
         $this->callDownlineSnap = $callDownlineSnap;
     }
 
@@ -664,10 +669,11 @@ class Calc
     public function compressPtc($treeSnap, $customers, $trans)
     {
         $qLevels = $this->toolScheme->getQualificationLevels();
-        $forcedIds = $this->toolScheme->getForcedQualificationCustomersIds();
+        $forcedCustomers = $this->toolScheme->getForcedQualificationCustomersIds();
+        $signupDebitCustomers = $this->hlpSignupDebitCust->exec();
         $this->logger->info("PTC Compression parameters:" .
             " qualification levels=" . var_export($qLevels, true)
-            . ", forced customers: " . var_export($forcedIds, true));
+            . ", forced customers: " . var_export($forcedCustomers, true));
         /* array with results: [$customerId => [$pvCompressed, $parentCompressed], ... ]*/
         $compressedTree = [];
         $mapCustomer = $this->mapById($customers, Customer::ATTR_CUSTOMER_ID);
@@ -681,10 +687,9 @@ class Calc
                 $custData = $mapCustomer[$custId];
                 $scheme = $this->toolScheme->getSchemeByCustomer($custData);
                 $level = $qLevels[$scheme]; // qualification level for current customer
-                if (
-                    ($pv >= $level) ||
-                    (in_array($custId, $forcedIds))
-                ) {
+                $isForced = in_array($custId, $forcedCustomers);
+                $isSignupDebit = in_array($custId, $signupDebitCustomers);
+                if (($pv >= $level) || $isForced || $isSignupDebit) {
                     if (isset($compressedTree[$custId])) {
                         $pvExist = $compressedTree[$custId][0];
                         $pvNew = $pv + $pvExist;
@@ -701,7 +706,7 @@ class Calc
                         $pvParent = isset($mapPv[$newParentId]) ? $mapPv[$newParentId] : 0;
                         if (
                             ($pvParent >= $level) ||
-                            (in_array($newParentId, $forcedIds))
+                            (in_array($newParentId, $forcedCustomers))
                         ) {
                             $foundParentId = $newParentId;
                             break;

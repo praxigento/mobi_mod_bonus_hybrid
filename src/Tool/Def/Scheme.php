@@ -164,15 +164,15 @@ class Scheme
             }
             /* compose map from customer IDs for quick search */
             $this->_cachedForcedCustomerIds = array_keys($this->_cachedForcedRanks);
-            /* MOBI-635  Sign Up Volume Debit */
-            $ids = $this->getForcedSignupDebitCustIds();
-            foreach ($ids as $custId) {
-                $rankCode = Def::RANK_MANAGER;
-                $cfgParamsWithSchemes = $ranks[$rankCode];
-                $this->_cachedForcedRanks[$custId] = $cfgParamsWithSchemes;
-            }
-            //
-            $this->_cachedForcedCustomerIds = array_merge($this->_cachedForcedCustomerIds, $ids);
+//            /* MOBI-635  Sign Up Volume Debit */
+//            $ids = $this->getForcedSignupDebitCustIds();
+//            foreach ($ids as $custId) {
+//                $rankCode = Def::RANK_MANAGER;
+//                $cfgParamsWithSchemes = $ranks[$rankCode];
+//                $this->_cachedForcedRanks[$custId] = $cfgParamsWithSchemes;
+//            }
+//            //
+//            $this->_cachedForcedCustomerIds = array_merge($this->_cachedForcedCustomerIds, $ids);
 
         }
         return $this->_cachedForcedRanks;
