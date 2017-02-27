@@ -19,6 +19,8 @@
     <!-- **** -->
     <preference for="\Praxigento\BonusHybrid\Repo\Entity\Registry\ISignupDebit"
             type="\Praxigento\BonusHybrid\Repo\Entity\Registry\Def\SignupDebit"/>
+    <preference for="\Praxigento\BonusHybrid\Repo\Entity\Registry\IPto"
+            type="\Praxigento\BonusHybrid\Repo\Entity\Registry\Def\Pto"/>
 
     <!-- ******** -->
     <!-- Services -->

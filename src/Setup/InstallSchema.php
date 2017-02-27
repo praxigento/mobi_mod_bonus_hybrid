@@ -10,6 +10,7 @@ use Praxigento\BonusHybrid\Entity\Cfg\Param as CfgParam;
 use Praxigento\BonusHybrid\Entity\Compression\Oi as OiCompress;
 use Praxigento\BonusHybrid\Entity\Compression\Ptc as PtcCompress;
 use Praxigento\BonusHybrid\Entity\Config as HybridCfg;
+use Praxigento\BonusHybrid\Entity\Registry\Pto as RegPto;
 use Praxigento\BonusHybrid\Entity\Registry\SignupDebit as SignupDebit;
 
 class InstallSchema extends \Praxigento\Core\Setup\Schema\Base
@@ -44,6 +45,11 @@ class InstallSchema extends \Praxigento\Core\Setup\Schema\Base
         /* Registry Sign Up Volume Debit */
         $entityAlias = SignupDebit::ENTITY_NAME;
         $demEntity = $demPackage->get('package/Registry/entity/SignUpVolumeDebit');
+        $this->_toolDem->createEntity($entityAlias, $demEntity);
+
+        /* Registry Sign Up Volume Debit */
+        $entityAlias = RegPto::ENTITY_NAME;
+        $demEntity = $demPackage->get('package/Registry/entity/PTO');
         $this->_toolDem->createEntity($entityAlias, $demEntity);
     }
 
