@@ -10,6 +10,7 @@ use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Entity\Compression\Oi as OiCompress;
 use Praxigento\BonusHybrid\Service\Calc\Sub\Calc;
+use Praxigento\BonusHybrid\Service\Calc\Sub\Pto as SubPto;
 use Praxigento\BonusHybrid\Service\Period\Request\GetForDependentCalc as PeriodGetForDependentCalcRequest;
 use Praxigento\BonusHybrid\Service\Period\Request\GetForWriteOff as PeriodGetForWriteOffRequest;
 
@@ -37,6 +38,8 @@ class Call
     protected $_toolScheme;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Sub\SignupDebit */
     protected $subSignupDebit;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Sub\Pto */
+    protected $subPto;
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
         \Magento\Framework\ObjectManagerInterface $manObj,
@@ -47,7 +50,8 @@ class Call
         \Praxigento\BonusHybrid\Service\IPeriod $callBonusPeriod,
         \Praxigento\BonusHybrid\Service\Calc\Sub\Db $subDb,
         \Praxigento\BonusHybrid\Service\Calc\Sub\Calc $subCalc,
-        \Praxigento\BonusHybrid\Service\Calc\Sub\SignupDebit $subSignupDebit
+        \Praxigento\BonusHybrid\Service\Calc\Sub\SignupDebit $subSignupDebit,
+        \Praxigento\BonusHybrid\Service\Calc\Sub\Pto $subPto
     ) {
         parent::__construct($logger, $manObj);
         $this->_toolPeriod = $toolPeriod;
@@ -58,6 +62,7 @@ class Call
         $this->_subDb = $subDb;
         $this->_subCalc = $subCalc;
         $this->subSignupDebit = $subSignupDebit;
+        $this->subPto = $subPto;
     }
 
     /**
@@ -644,6 +649,11 @@ class Call
                     $updates = $this->_subCalc->pvWriteOff($transData);
                     $dateApplied = $this->_toolPeriod->getTimestampTo($periodEnd);
                     $operId = $this->_subDb->saveOperationPvWriteOff($updates, $datePerformed, $dateApplied);
+                    $this->subPto->do([
+                        SubPto::OPT_CALC_ID => $calcId,
+                        SubPto::OPT_PERIOD_END => $periodEnd,
+                        SubPto::OPT_UPDATES => $updates
+                    ]);
                     $this->_subDb->saveLogPvWriteOff($transData, $operId, $calcId);
                     $this->_subDb->markCalcComplete($calcId);
                     $this->_manTrans->commit($def);

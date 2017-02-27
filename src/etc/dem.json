@@ -356,6 +356,12 @@
                             "nullable": false,
                             "type": {"integer": {"unsigned": true}}
                           },
+                          "ParentRef": {
+                            "alias": "parent_ref",
+                            "comment": "Reference to the customer's parent.",
+                            "nullable": false,
+                            "type": {"integer": {"unsigned": true}}
+                          },
                           "PersonalVolumes": {
                             "alias": "pv",
                             "comment": "PV value for the customer.",
@@ -392,6 +398,14 @@
                             "reference": {
                               "entity": {"completeAlias": "prxgt_dwnl_customer"},
                               "aliases": ["customer_id"]
+                            },
+                            "action": {"delete": "cascade", "update": "restrict"}
+                          },
+                          "toParent": {
+                            "own": {"aliases": ["parent_ref"]},
+                            "reference": {
+                              "entity": {"completeAlias": "prxgt_dwnl_customer"},
+                              "aliases": ["parent_id"]
                             },
                             "action": {"delete": "cascade", "update": "restrict"}
                           }

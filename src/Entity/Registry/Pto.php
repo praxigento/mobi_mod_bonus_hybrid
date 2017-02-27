@@ -12,6 +12,7 @@ class Pto
     const ATTR_CALC_REF = 'calc_ref';
     const ATTR_CUSTOMER_REF = 'cust_ref';
     const ATTR_OV = 'ov';
+    const ATTR_PARENT_REF = 'parent_ref';
     const ATTR_PV = 'pv';
     const ATTR_TV = 'tv';
     const ENTITY_NAME = 'prxgt_bon_hyb_reg_pto';

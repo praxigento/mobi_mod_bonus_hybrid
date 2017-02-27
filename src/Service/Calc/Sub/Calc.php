@@ -18,6 +18,11 @@ use Praxigento\Downline\Service\Snap\Request\ExpandMinimal as DownlineSnapExtend
 
 class Calc
 {
+    /** Add traits */
+    use \Praxigento\BonusHybrid\Service\Calc\Traits\TMap {
+        mapByTreeDepthDesc as protected;
+    }
+
     /**
      * A_... - labels to access data in associative arrays.
      */
@@ -1027,31 +1032,6 @@ class Calc
             }
             $result[$parentId][] = $custId;
         }
-        return $result;
-    }
-
-    /**
-     * Get depth index for Downline Tree ordered by depth desc.
-     *
-     * @param $tree
-     * @param $labelCustId
-     * @param $labelDepth
-     *
-     * @return array  [$depth => [$custId, ...]]
-     */
-    private function mapByTreeDepthDesc($tree, $labelCustId, $labelDepth)
-    {
-        $result = [];
-        foreach ($tree as $one) {
-            $customerId = $one[$labelCustId];
-            $depth = $one[$labelDepth];
-            if (!isset($result[$depth])) {
-                $result[$depth] = [];
-            }
-            $result[$depth][] = $customerId;
-        }
-        /* sort by depth desc */
-        krsort($result);
         return $result;
     }
 
