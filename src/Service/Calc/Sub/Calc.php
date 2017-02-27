@@ -545,13 +545,14 @@ class Calc
     }
 
     /**
+     * @param $mapPv
      * @param $compressedPtc
      * @param $cfgParams
      * @param $scheme
      *
      * @return array [$custId=>[$custId, $parentId, $pv, $ovLegMax, $ovLegSecond, $ovLegSummary], ...]
      */
-    public function compressOi($compressedPtc, $cfgParams, $scheme)
+    public function compressOi($mapPv, $compressedPtc, $cfgParams, $scheme)
     {
         $result = [];
         $mapById = $this->mapById($compressedPtc, PtcCompress::ATTR_CUSTOMER_ID);
@@ -564,6 +565,7 @@ class Calc
                 /* compose data for one customer */
                 $custData = $mapById[$custId];
                 $parentId = $custData[PtcCompress::ATTR_PARENT_ID];
+                $pvOwn = isset($mapPv[$custId]) ? $mapPv[$custId] : 0;
                 $pv = $custData[PtcCompress::ATTR_PV];
                 $tv = $custData[PtcCompress::ATTR_TV];
                 $resultEntry = [
@@ -577,7 +579,7 @@ class Calc
                     OiCompress::ATTR_OV_LEG_SUMMARY => 0
                 ];
                 /* calculate legs */
-                $isQualifiedCust = $this->isQualifiedManager($custId, $pv, $tv, $scheme, $cfgParams);
+                $isQualifiedCust = $this->isQualifiedManager($custId, $pvOwn, $tv, $scheme, $cfgParams);
                 if ($isQualifiedCust) {
                     /* this is qualified manager, calculate MAX leg, second leg and summary leg */
                     if (isset($mapByTeam[$custId])) {
@@ -612,9 +614,9 @@ class Calc
                 }
                 /* re-link parent */
                 $parentData = $mapById[$parentId];
-                $parentPv = $parentData[PtcCompress::ATTR_PV];
+                $parentPvOwn = isset($mapPv[$parentId])? $mapPv[$parentId] : 0;
                 $parentTv = $parentData[PtcCompress::ATTR_TV];
-                $isQualifiedParent = $this->isQualifiedManager($parentId, $parentPv, $parentTv, $scheme, $cfgParams);
+                $isQualifiedParent = $this->isQualifiedManager($parentId, $parentPvOwn, $parentTv, $scheme, $cfgParams);
                 if (!$isQualifiedParent) {
                     /* parent is not qualified, move this customer up to the closest qualified parent */
                     $path = $custData[PtcCompress::ATTR_PATH];
@@ -622,9 +624,10 @@ class Calc
                     $foundParentId = null;
                     foreach ($parents as $newParentId) {
                         $newParentData = $mapById[$newParentId];
-                        $newParentPv = $newParentData[PtcCompress::ATTR_PV];
+                        $newParentPvOwn = isset($mapPv[$newParentId])? $mapPv[$newParentId] : 0;
                         $newParentTv = $newParentData[PtcCompress::ATTR_TV];
-                        $isQualifiedNewParent = $this->isQualifiedManager($newParentId, $newParentPv, $newParentTv,
+
+                        $isQualifiedNewParent = $this->isQualifiedManager($newParentId, $newParentPvOwn, $newParentTv,
                             $scheme, $cfgParams);
                         if ($isQualifiedNewParent) {
                             $foundParentId = $newParentId;

@@ -4,6 +4,8 @@
  */
 namespace Praxigento\BonusHybrid\Service\Calc;
 
+use Praxigento\Accounting\Data\Entity\Account;
+use Praxigento\Accounting\Data\Entity\Transaction;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Entity\Compression\Oi as OiCompress;
@@ -528,6 +530,11 @@ class Call
                 $baseDsBegin = $basePeriodData->getDstampBegin();
                 $baseDsEnd = $basePeriodData->getDstampEnd();
                 /* get the last PTC compression calc id for this period */
+                $pvWriteOffCalcId = $this->_subDb->getLastCalculationIdForPeriod(
+                    Cfg::CODE_TYPE_CALC_PV_WRITE_OFF,
+                    $baseDsBegin,
+                    $baseDsEnd
+                );
                 $ptcCompressCalcId = $this->_subDb->getLastCalculationIdForPeriod(
                     Cfg::CODE_TYPE_CALC_COMPRESS_FOR_PTC,
                     $baseDsBegin,
@@ -535,12 +542,15 @@ class Call
                 );
                 /* calculation itself */
                 $this->_logger->info("Processing period #$thisPeriodId ($baseDsBegin-$baseDsEnd)");
+                /* get PV write off data MOBI-629 */
+                $transData = $this->_subDb->getDataForPvCompression($pvWriteOffCalcId);
+                $mapPv = $this->_subCalc->mapByPv($transData, Account::ATTR_CUST_ID, Transaction::ATTR_VALUE);
                 /* get compressed data by calculation ID */
                 $compressPtc = $this->_subDb->getCompressedPtcData($ptcCompressCalcId);
                 /* ranks configuration (ranks, schemes, qualification levels, etc.)*/
                 $cfgParams = $this->_subDb->getCfgParams();
                 /* calculate updates */
-                $updates = $this->_subCalc->compressOi($compressPtc, $cfgParams, $scheme);
+                $updates = $this->_subCalc->compressOi($mapPv, $compressPtc, $cfgParams, $scheme);
                 /* save updates and mark calculation complete */
                 $this->_subDb->saveCompressedOi($updates, $thisCalcId);
                 $this->_subDb->markCalcComplete($thisCalcId);
