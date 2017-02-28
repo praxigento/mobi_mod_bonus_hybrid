@@ -39,6 +39,9 @@ class Pto
         $this->callDwnlSnap = $callDwnlSnap;
     }
 
+    /**
+     * @return \Praxigento\Accounting\Data\Entity\Account[]
+     */
     protected function getCustomersAccounts()
     {
         $mapAccs = $this->repoAcc->getAllByAssetTypeCode(Cfg::CODE_TYPE_ASSET_PV);
@@ -71,45 +74,48 @@ class Pto
         foreach ($mapByDepth as $level => $customers) {
             foreach ($customers as $custId) {
                 /* get account ID */
-                $accId = $mapAccs[$custId];
-                if (isset($updates[$accId])) {
-                    $parentId = $tree[$custId][\Praxigento\Downline\Data\Entity\Snap::ATTR_PARENT_ID];
-                    $pv = $updates[$accId];
-                    if (!isset($mapRegistry[$custId])) {
-                        $mapRegistry[$custId] = [
-                            \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_CUSTOMER_REF => $custId,
-                            \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_PARENT_REF => $parentId,
-                            \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_PV => $pv,
-                            \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_TV => $pv,
-                            \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_OV => $pv
-                        ];
-                    } else {
-                        $mapRegistry[$custId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_PV] += $pv;
-                        $mapRegistry[$custId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_TV] += $pv;
-                        $mapRegistry[$custId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_OV] += $pv;
-                    }
-                    /* process upline */
-                    $path = $tree[$custId][\Praxigento\Downline\Data\Entity\Snap::ATTR_PATH];
-                    $parents = $this->toolDownlineTree->getParentsFromPathReversed($path);
-                    $isFather = true;
-                    foreach ($parents as $pCustId) {
-                        if (!isset($mapRegistry[$pCustId])) {
-                            $parentId = $tree[$pCustId][\Praxigento\Downline\Data\Entity\Snap::ATTR_PARENT_ID];
-                            $mapRegistry[$pCustId] = [
-                                \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_CUSTOMER_REF => $pCustId,
+                if (isset($mapAccs[$custId])) {
+                    $account = $mapAccs[$custId];
+                    $accId = $account->getId();
+                    if (isset($updates[$accId])) {
+                        $parentId = $tree[$custId][\Praxigento\Downline\Data\Entity\Snap::ATTR_PARENT_ID];
+                        $pv = $updates[$accId];
+                        if (!isset($mapRegistry[$custId])) {
+                            $mapRegistry[$custId] = [
+                                \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_CUSTOMER_REF => $custId,
                                 \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_PARENT_REF => $parentId,
-                                \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_PV => 0,
-                                \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_TV => 0,
+                                \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_PV => $pv,
+                                \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_TV => $pv,
                                 \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_OV => $pv
                             ];
                         } else {
-                            $mapRegistry[$pCustId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_OV] += $pv;
+                            $mapRegistry[$custId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_PV] += $pv;
+                            $mapRegistry[$custId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_TV] += $pv;
+                            $mapRegistry[$custId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_OV] += $pv;
                         }
-                        /* collect TV */
-                        if ($isFather) {
-                            $mapRegistry[$pCustId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_TV] += $pv;
+                        /* process upline */
+                        $path = $tree[$custId][\Praxigento\Downline\Data\Entity\Snap::ATTR_PATH];
+                        $parents = $this->toolDownlineTree->getParentsFromPathReversed($path);
+                        $isFather = true;
+                        foreach ($parents as $pCustId) {
+                            if (!isset($mapRegistry[$pCustId])) {
+                                $parentId = $tree[$pCustId][\Praxigento\Downline\Data\Entity\Snap::ATTR_PARENT_ID];
+                                $mapRegistry[$pCustId] = [
+                                    \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_CUSTOMER_REF => $pCustId,
+                                    \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_PARENT_REF => $parentId,
+                                    \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_PV => 0,
+                                    \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_TV => 0,
+                                    \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_OV => $pv
+                                ];
+                            } else {
+                                $mapRegistry[$pCustId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_OV] += $pv;
+                            }
+                            /* collect TV */
+                            if ($isFather) {
+                                $mapRegistry[$pCustId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_TV] += $pv;
+                            }
+                            $isFather = false;
                         }
-                        $isFather = false;
                     }
                 }
             }
