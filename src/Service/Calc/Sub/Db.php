@@ -52,6 +52,8 @@ class Db
     protected $_toolDate;
     /** @var  \Praxigento\Core\Tool\IPeriod */
     protected $_toolPeriod;
+    /** @var \Praxigento\BonusHybrid\Repo\Entity\Registry\IPto */
+    protected $repoRegPto;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
@@ -61,6 +63,7 @@ class Db
         \Praxigento\Accounting\Service\IAccount $callAccount,
         \Praxigento\Accounting\Service\IOperation $repoOper,
         \Praxigento\BonusBase\Repo\Entity\Type\ICalc $repoTypeCalc,
+        \Praxigento\BonusHybrid\Repo\Entity\Registry\IPto $repoRegPto,
         \Praxigento\Downline\Service\ISnap $callDownlineSnap,
         \Praxigento\Core\Repo\IGeneric $repoBasic,
         \Praxigento\Accounting\Repo\Entity\Type\IAsset $repoTypeAsset,
@@ -76,6 +79,7 @@ class Db
         $this->_callOper = $repoOper;
         $this->_repoBasic = $repoBasic;
         $this->_repoTypeCalc = $repoTypeCalc;
+        $this->repoRegPto = $repoRegPto;
         $this->_repoTypeAsset = $repoTypeAsset;
         $this->_repoTypeOper = $repoTypeOper;
     }
@@ -133,6 +137,19 @@ class Db
             $rankId = $one[CfgParam::ATTR_RANK_ID];
             $result[$scheme][$rankId] = $one;
         }
+        return $result;
+    }
+
+    /**
+     * Get not-compressed treee with Pv/Tv/Ov values for given calculation id.
+     *
+     * @param int $calcId
+     * @return  array
+     */
+    public function getPlainPtoData($calcId)
+    {
+        $where = \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_CALC_REF . '=' . (int)$calcId;
+        $result = $this->repoRegPto->get($where);
         return $result;
     }
 

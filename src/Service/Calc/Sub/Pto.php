@@ -86,11 +86,13 @@ class Pto
                     if (isset($updates[$accId])) {
                         $parentId = $tree[$custId][\Praxigento\Downline\Data\Entity\Snap::ATTR_PARENT_ID];
                         $pv = $updates[$accId];
+                        /* correct PV for 'Sign Up Debit' customers */
                         $isSignupDebit = in_array($custId, $signupDebitCustomers);
                         if ($isSignupDebit) {
                             $pv += \Praxigento\BonusHybrid\Defaults::SIGNUP_DEBIT_PV;
                         }
                         if (!isset($mapRegistry[$custId])) {
+                            /* create entry in the registry */
                             $mapRegistry[$custId] = [
                                 \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_CUSTOMER_REF => $custId,
                                 \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_PARENT_REF => $parentId,
@@ -99,6 +101,7 @@ class Pto
                                 \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_OV => $pv
                             ];
                         } else {
+                            /* update entry in the registry */
                             $mapRegistry[$custId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_PV] += $pv;
                             $mapRegistry[$custId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_TV] += $pv;
                             $mapRegistry[$custId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_OV] += $pv;
@@ -108,6 +111,12 @@ class Pto
                         $parents = $this->toolDownlineTree->getParentsFromPathReversed($path);
                         $isFather = true;
                         foreach ($parents as $pCustId) {
+                            /* don't process PV for customers w/o personal qualification */
+//                            if (isset($mapAccs[$pCustId])) {
+//                                $accountParent = $mapAccs[$pCustId];
+//                                $accIdParent = $accountParent->getId();
+//                                $pvParent = isset($updates[$accIdParent]) ? $updates[$accIdParent] : 0;
+//                                if ($pvParent > 49.99) {
                             if (!isset($mapRegistry[$pCustId])) {
                                 $parentId = $tree[$pCustId][\Praxigento\Downline\Data\Entity\Snap::ATTR_PARENT_ID];
                                 $mapRegistry[$pCustId] = [
@@ -124,6 +133,10 @@ class Pto
                             if ($isFather) {
                                 $mapRegistry[$pCustId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_TV] += $pv;
                             }
+//                            } else {
+//                                break;
+//                                }
+//                            }
                             $isFather = false;
                         }
                     }

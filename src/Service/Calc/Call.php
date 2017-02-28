@@ -36,10 +36,13 @@ class Call
     protected $_toolPeriod;
     /** @var  \Praxigento\BonusHybrid\Tool\IScheme */
     protected $_toolScheme;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Sub\SignupDebit */
-    protected $subSignupDebit;
+    /** @var  \Praxigento\BonusHybrid\Service\Calc\Sub\CompressOi */
+    protected $subCompressOi;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Sub\Pto */
     protected $subPto;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Sub\SignupDebit */
+    protected $subSignupDebit;
+
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
         \Magento\Framework\ObjectManagerInterface $manObj,
@@ -50,6 +53,7 @@ class Call
         \Praxigento\BonusHybrid\Service\IPeriod $callBonusPeriod,
         \Praxigento\BonusHybrid\Service\Calc\Sub\Db $subDb,
         \Praxigento\BonusHybrid\Service\Calc\Sub\Calc $subCalc,
+        \Praxigento\BonusHybrid\Service\Calc\Sub\CompressOi $subCompressOi,
         \Praxigento\BonusHybrid\Service\Calc\Sub\SignupDebit $subSignupDebit,
         \Praxigento\BonusHybrid\Service\Calc\Sub\Pto $subPto
     ) {
@@ -61,6 +65,7 @@ class Call
         $this->_callPeriod = $callBonusPeriod;
         $this->_subDb = $subDb;
         $this->_subCalc = $subCalc;
+        $this->subCompressOi = $subCompressOi;
         $this->subSignupDebit = $subSignupDebit;
         $this->subPto = $subPto;
     }
@@ -534,7 +539,7 @@ class Call
                 $basePeriodData = $respGetPeriod->getBasePeriodData();
                 $baseDsBegin = $basePeriodData->getDstampBegin();
                 $baseDsEnd = $basePeriodData->getDstampEnd();
-                /* get the last PTC compression calc id for this period */
+                /* get the last calc ids for this period */
                 $pvWriteOffCalcId = $this->_subDb->getLastCalculationIdForPeriod(
                     Cfg::CODE_TYPE_CALC_PV_WRITE_OFF,
                     $baseDsBegin,
@@ -552,10 +557,18 @@ class Call
                 $mapPv = $this->_subCalc->mapByPv($transData, Account::ATTR_CUST_ID, Transaction::ATTR_VALUE);
                 /* get compressed data by calculation ID */
                 $compressPtc = $this->_subDb->getCompressedPtcData($ptcCompressCalcId);
+                /* get plain tree data with OV */
+                $plainPto = $this->_subDb->getPlainPtoData($pvWriteOffCalcId);
                 /* ranks configuration (ranks, schemes, qualification levels, etc.)*/
                 $cfgParams = $this->_subDb->getCfgParams();
                 /* calculate updates */
-                $updates = $this->_subCalc->compressOi($mapPv, $compressPtc, $cfgParams, $scheme);
+                $updates = $this->subCompressOi->do([
+                    \Praxigento\BonusHybrid\Service\Calc\Sub\CompressOi::OPT_MAP_PV => $mapPv,
+                    \Praxigento\BonusHybrid\Service\Calc\Sub\CompressOi::OPT_TREE_PLAIN_PTO => $plainPto,
+                    \Praxigento\BonusHybrid\Service\Calc\Sub\CompressOi::OPT_TREE_COMPRESSED_PTC => $compressPtc,
+                    \Praxigento\BonusHybrid\Service\Calc\Sub\CompressOi::OPT_CONFIG_PARAMS => $cfgParams,
+                    \Praxigento\BonusHybrid\Service\Calc\Sub\CompressOi::OPT_SCHEME => $scheme
+                ]);
                 /* save updates and mark calculation complete */
                 $this->_subDb->saveCompressedOi($updates, $thisCalcId);
                 $this->_subDb->markCalcComplete($thisCalcId);

@@ -20,6 +20,8 @@ class Calc
 {
     /** Add traits */
     use \Praxigento\BonusHybrid\Service\Calc\Traits\TMap {
+        mapById as protected;
+        mapByTeams as protected;
         mapByTreeDepthDesc as protected;
     }
 
@@ -549,122 +551,7 @@ class Calc
         return $result;
     }
 
-    /**
-     * @param $mapPv
-     * @param $compressedPtc
-     * @param $cfgParams
-     * @param $scheme
-     *
-     * @return array [$custId=>[$custId, $parentId, $pv, $ovLegMax, $ovLegSecond, $ovLegSummary], ...]
-     */
-    public function compressOi($mapPv, $compressedPtc, $cfgParams, $scheme)
-    {
-        $result = [];
-        $mapById = $this->mapById($compressedPtc, PtcCompress::ATTR_CUSTOMER_ID);
-        $mapByDepth = $this->mapByTreeDepthDesc($compressedPtc, PtcCompress::ATTR_CUSTOMER_ID,
-            PtcCompress::ATTR_DEPTH);
-        $mapByTeam = $this->mapByTeams($compressedPtc, PtcCompress::ATTR_CUSTOMER_ID, PtcCompress::ATTR_PARENT_ID);
-        $rankIdMgr = $this->hlpRank->getIdByCode(Def::RANK_MANAGER);
-        foreach ($mapByDepth as $level) {
-            foreach ($level as $custId) {
-                /* compose data for one customer */
-                $custData = $mapById[$custId];
-                $parentId = $custData[PtcCompress::ATTR_PARENT_ID];
-                $pvOwn = isset($mapPv[$custId]) ? $mapPv[$custId] : 0;
-                $pv = $custData[PtcCompress::ATTR_PV];
-                $tv = $custData[PtcCompress::ATTR_TV];
-                $resultEntry = [
-                    OiCompress::ATTR_SCHEME => $scheme,
-                    OiCompress::ATTR_CUSTOMER_ID => $custId,
-                    OiCompress::ATTR_PARENT_ID => $parentId,
-                    OiCompress::ATTR_PV => $pv,
-                    OiCompress::ATTR_TV => $tv,
-                    OiCompress::ATTR_OV_LEG_MAX => 0,
-                    OiCompress::ATTR_OV_LEG_SECOND => 0,
-                    OiCompress::ATTR_OV_LEG_SUMMARY => 0
-                ];
-                /* calculate legs */
-                $isQualifiedCust = $this->isQualifiedManager($custId, $pvOwn, $tv, $scheme, $cfgParams);
-                if ($isQualifiedCust) {
-                    /* this is qualified manager, calculate MAX leg, second leg and summary leg */
-                    if (isset($mapByTeam[$custId])) {
-                        /* this customer has downline subtrees */
-                        $team = $mapByTeam[$custId];
-                        $legMax = $legSecond = $legSummary = 0;
-                        foreach ($team as $memberId) {
-                            $ovMember = $mapById[$memberId][PtcCompress::ATTR_OV];
-                            if ($ovMember > $legMax) {
-                                /* update MAX leg */
-                                $legSummary += $legSecond;
-                                $legSecond = $legMax;
-                                $legMax = $ovMember;
-                            } elseif ($ovMember > $legSecond) {
-                                /* update second leg */
-                                $legSummary += $legSecond;
-                                $legSecond = $ovMember;
-                            } else {
-                                $legSummary += $ovMember;
-                            }
-                        }
-                        /* update legs */
-                        $resultEntry[OiCompress::ATTR_OV_LEG_MAX] = $legMax;
-                        $resultEntry[OiCompress::ATTR_OV_LEG_SECOND] = $legSecond;
-                        $resultEntry[OiCompress::ATTR_OV_LEG_SUMMARY] = $legSummary;
-                        $rankId = $this->getMaxQualifiedRankId($resultEntry, $scheme, $cfgParams);
-                        $resultEntry[OiCompress::ATTR_RANK_ID] = $rankId;
-                    } else {
-                        /* qualified customer w/o downline is a Manager */
-                        $resultEntry[OiCompress::ATTR_RANK_ID] = $rankIdMgr;
-                    }
-                }
-                /* re-link parent */
-                $parentData = $mapById[$parentId];
-                $parentPvOwn = isset($mapPv[$parentId])? $mapPv[$parentId] : 0;
-                $parentTv = $parentData[PtcCompress::ATTR_TV];
-                $isQualifiedParent = $this->isQualifiedManager($parentId, $parentPvOwn, $parentTv, $scheme, $cfgParams);
-                if (!$isQualifiedParent) {
-                    /* parent is not qualified, move this customer up to the closest qualified parent */
-                    $path = $custData[PtcCompress::ATTR_PATH];
-                    $parents = $this->toolDownlineTree->getParentsFromPathReversed($path);
-                    $foundParentId = null;
-                    foreach ($parents as $newParentId) {
-                        $newParentData = $mapById[$newParentId];
-                        $newParentPvOwn = isset($mapPv[$newParentId])? $mapPv[$newParentId] : 0;
-                        $newParentTv = $newParentData[PtcCompress::ATTR_TV];
-
-                        $isQualifiedNewParent = $this->isQualifiedManager($newParentId, $newParentPvOwn, $newParentTv,
-                            $scheme, $cfgParams);
-                        if ($isQualifiedNewParent) {
-                            $foundParentId = $newParentId;
-                            break;
-                        }
-                    }
-                    unset($parents);
-                    if (is_null($foundParentId)) {
-                        /* no qualified parent up to the root, make this customer as root customer  */
-                        $resultEntry[OiCompress::ATTR_PARENT_ID] = $custId;
-                    } else {
-                        $resultEntry[OiCompress::ATTR_PARENT_ID] = $foundParentId;
-                    }
-                }
-                /* add entry to results */
-                $result[$custId] = $resultEntry;
-            }
-        }
-        unset($mapByDepth);
-        unset($mapByTeam);
-        unset($mapById);
-        /* MOBI-629: add init rank for un-ranked entries */
-        $defRankId = $this->hlpRank->getIdByCode(Def::RANK_DISTRIBUTOR);;
-        foreach ($result as $key => $item) {
-            if (!isset($item[OiCompress::ATTR_RANK_ID])) {
-                $item[OiCompress::ATTR_RANK_ID] = $defRankId;
-                $result[$key] = $item;
-            }
-        }
-        return $result;
-    }
-
+    
     /**
      * Process Downline Tree snapshot, customer data and PV related transactions and compose data for compressed tree.
      *
@@ -903,6 +790,16 @@ class Calc
         return $result;
     }
 
+    /**
+     * @param $custId
+     * @param $pv
+     * @param $tv
+     * @param $scheme
+     * @param $cfgParams
+     * @return bool
+     *
+     * @deprecated see \Praxigento\BonusHybrid\Helper\Calc\IsQualified
+     */
     private function isQualifiedManager($custId, $pv, $tv, $scheme, $cfgParams)
     {
         $result = false;
@@ -967,23 +864,6 @@ class Calc
     }
 
     /**
-     * Convert array of data ([ 0 => [ 'id' => 321, ... ], ...]) to mapped array ([ 321 => [ 'id'=>321, ... ], ... ]).
-     *
-     * @param $data
-     * @param $labelId
-     *
-     * @return array
-     */
-    private function mapById($data, $labelId)
-    {
-        $result = [];
-        foreach ($data as $one) {
-            $result[$one[$labelId]] = $one;
-        }
-        return $result;
-    }
-
-    /**
      * Process all items in$data and map total PV sums by customer IDs.
      *
      * ATTENTION: this method is public just for PHPUnit testing.
@@ -1009,31 +889,6 @@ class Calc
         return $result;
     }
 
-    /**
-     * Create map of the front team members (siblings) [$custId => [$memberId, ...], ...] from compressed or snapshot
-     * data.
-     *
-     * @param $data
-     *
-     * @return array [$custId => [$memberId, ...], ...]
-     */
-    private function mapByTeams($data, $labelCustId, $labelParentId)
-    {
-        $result = [];
-        foreach ($data as $one) {
-            $custId = $one[$labelCustId];
-            $parentId = $one[$labelParentId];
-            if ($custId == $parentId) {
-                /* skip root nodes, root node is not a member of a team. */
-                continue;
-            }
-            if (!isset($result[$parentId])) {
-                $result[$parentId] = [];
-            }
-            $result[$parentId][] = $custId;
-        }
-        return $result;
-    }
 
     private function populateCompressedSnapWithPv($snap, $calculatedData)
     {
@@ -1097,10 +952,16 @@ class Calc
         $mapById = $this->mapById($compressPtc, PtcCompress::ATTR_CUSTOMER_ID);
         $mapDepth = $this->mapByTreeDepthDesc($compressPtc, PtcCompress::ATTR_CUSTOMER_ID, PtcCompress::ATTR_DEPTH);
         $mapTeams = $this->mapByTeams($compressPtc, PtcCompress::ATTR_CUSTOMER_ID, PtcCompress::ATTR_PARENT_ID);
+        /* get Sign Up Volume Debit customers */
+        $signupDebitCustomers = $this->hlpSignupDebitCust->exec();
         foreach ($mapDepth as $depth => $levelCustomers) {
             $this->logger->debug("Process level #$depth of the downline tree.");
             foreach ($levelCustomers as $custId) {
                 $ov = $mapById[$custId][PtcCompress::ATTR_PV];
+                $isSignupDebit = in_array($custId, $signupDebitCustomers);
+                if ($isSignupDebit) {
+                    $ov += Def::SIGNUP_DEBIT_PV;
+                }
                 if (isset($mapTeams[$custId])) {
                     /* add OV from front team members */
                     $team = $mapTeams[$custId];
