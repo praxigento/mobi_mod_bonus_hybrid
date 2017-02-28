@@ -26,14 +26,18 @@ class Pto
     protected $repoRegPto;
     /** @var \Praxigento\Downline\Tool\ITree */
     protected $toolDownlineTree;
+    /** @var \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds */
+    protected $hlpSignupDebitCust;
 
     public function __construct(
         \Praxigento\Downline\Tool\ITree $toolTree,
+        \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust,
         \Praxigento\Accounting\Repo\Entity\IAccount $repoAcc,
         \Praxigento\BonusHybrid\Repo\Entity\Registry\IPto $repoRegPto,
         \Praxigento\Downline\Service\ISnap $callDwnlSnap
     ) {
         $this->toolDownlineTree = $toolTree;
+        $this->hlpSignupDebitCust = $hlpSignupDebitCust;
         $this->repoAcc = $repoAcc;
         $this->repoRegPto = $repoRegPto;
         $this->callDwnlSnap = $callDwnlSnap;
@@ -60,6 +64,8 @@ class Pto
         $updates = $opts[self::OPT_UPDATES];
         /* get accounts map */
         $mapAccs = $this->getCustomersAccounts();
+        /* get Sign Up Volume Debit customers */
+        $signupDebitCustomers = $this->hlpSignupDebitCust->exec();
         /* get customers downline tree */
         $reqTree = new \Praxigento\Downline\Service\Snap\Request\GetStateOnDate();
         $reqTree->setDatestamp($periodEnd);
@@ -80,6 +86,10 @@ class Pto
                     if (isset($updates[$accId])) {
                         $parentId = $tree[$custId][\Praxigento\Downline\Data\Entity\Snap::ATTR_PARENT_ID];
                         $pv = $updates[$accId];
+                        $isSignupDebit = in_array($custId, $signupDebitCustomers);
+                        if ($isSignupDebit) {
+                            $pv += \Praxigento\BonusHybrid\Defaults::SIGNUP_DEBIT_PV;
+                        }
                         if (!isset($mapRegistry[$custId])) {
                             $mapRegistry[$custId] = [
                                 \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_CUSTOMER_REF => $custId,

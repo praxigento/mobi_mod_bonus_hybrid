@@ -25,7 +25,7 @@ class GetCustomersIds
      * Get IDs of the customers who was processed in Sign Up Volumes Debit calculation.
      *
      * @param int|null $calcId ID of the calculation or null for the last one
-     * @return array
+     * @return array of customers ids who was processed in Sign Up Volume Debit.
      */
     public function exec($calcId = null)
     {
