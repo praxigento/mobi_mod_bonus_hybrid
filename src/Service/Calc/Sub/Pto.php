@@ -4,6 +4,8 @@
  */
 namespace Praxigento\BonusHybrid\Service\Calc\Sub;
 
+use Praxigento\BonusHybrid\Config as Cfg;
+
 class Pto
 {
 
@@ -37,10 +39,15 @@ class Pto
         $this->callDwnlSnap = $callDwnlSnap;
     }
 
-    protected function getAccounts()
+    protected function getCustomersAccounts()
     {
-        $where = '';
-        $rs = $this->repoAcc->get($where);
+        $mapAccs = $this->repoAcc->getAllByAssetTypeCode(Cfg::CODE_TYPE_ASSET_PV);
+        $result = [];
+        foreach ($mapAccs as $one) {
+            $custId = $one->getCustomerId();
+            $result[$custId] = $one;
+        }
+        return $result;
     }
 
     public function do($opts)
@@ -48,6 +55,8 @@ class Pto
         $calcId = $opts[self::OPT_CALC_ID];
         $periodEnd = $opts[self::OPT_PERIOD_END];
         $updates = $opts[self::OPT_UPDATES];
+        /* get accounts map */
+        $mapAccs = $this->getCustomersAccounts();
         /* get customers downline tree */
         $reqTree = new \Praxigento\Downline\Service\Snap\Request\GetStateOnDate();
         $reqTree->setDatestamp($periodEnd);
@@ -62,9 +71,10 @@ class Pto
         foreach ($mapByDepth as $level => $customers) {
             foreach ($customers as $custId) {
                 /* get account ID */
-                if (isset($updates[$custId])) {
+                $accId = $mapAccs[$custId];
+                if (isset($updates[$accId])) {
                     $parentId = $tree[$custId][\Praxigento\Downline\Data\Entity\Snap::ATTR_PARENT_ID];
-                    $pv = $updates[$custId];
+                    $pv = $updates[$accId];
                     if (!isset($mapRegistry[$custId])) {
                         $mapRegistry[$custId] = [
                             \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_CUSTOMER_REF => $custId,
