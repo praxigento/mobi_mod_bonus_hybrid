@@ -7,6 +7,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Sub;
 use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Entity\Compression\Oi as Oi;
 use Praxigento\BonusHybrid\Entity\Compression\Ptc as Ptc;
+use Praxigento\BonusHybrid\Entity\Registry\Pto as Pto;
 
 class CompressOi
 {
@@ -62,6 +63,8 @@ class CompressOi
         $mapById = $this->mapById($compressedPtc, Ptc::ATTR_CUSTOMER_ID);
         $mapByDepth = $this->mapByTreeDepthDesc($compressedPtc, Ptc::ATTR_CUSTOMER_ID, Ptc::ATTR_DEPTH);
         $mapByTeam = $this->mapByTeams($compressedPtc, Ptc::ATTR_CUSTOMER_ID, Ptc::ATTR_PARENT_ID);
+        $mapByIdPto = $this->mapById($plainPto, Pto::ATTR_CUSTOMER_REF);
+        $mapByTeam = $this->mapByTeams($plainPto, Pto::ATTR_CUSTOMER_REF, Pto::ATTR_PARENT_REF);
         $rankIdMgr = $this->hlpRank->getIdByCode(Def::RANK_MANAGER);
         foreach ($mapByDepth as $level) {
             foreach ($level as $custId) {
@@ -96,7 +99,7 @@ class CompressOi
                         $team = $mapByTeam[$custId];
                         $legMax = $legSecond = $legSummary = 0;
                         foreach ($team as $memberId) {
-                            $ovMember = $mapById[$memberId][Ptc::ATTR_OV];
+                            $ovMember = $mapByIdPto[$memberId][Pto::ATTR_OV];
                             if ($ovMember > $legMax) {
                                 /* update MAX leg */
                                 $legSummary += $legSecond;
@@ -173,6 +176,7 @@ class CompressOi
         unset($mapByDepth);
         unset($mapByTeam);
         unset($mapById);
+        unset($mapByIdPto);
         /* MOBI-629: add init rank for un-ranked entries */
         $defRankId = $this->hlpRank->getIdByCode(Def::RANK_DISTRIBUTOR);;
         foreach ($result as $key => $item) {
