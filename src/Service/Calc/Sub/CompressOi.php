@@ -92,15 +92,16 @@ class CompressOi
                     Oi::ATTR_OV_LEG_SUMMARY => 0
                 ];
 
-                /* calculate phase2 legs for qualified customers */
-                $isQualifiedCust = $this->hlpIsQualified->exec([
+                /* calculate phase2 legs for qualified managers */
+                $isCustQualifiedAsMgr = $this->hlpIsQualified->exec([
                     \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_CUST_ID => $custId,
                     \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_PV => $pvOwn,
                     \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_TV => $tvCompress,
                     \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_SCHEME => $scheme,
                     \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_CFG_PARAMS => $cfgParams
                 ]);
-                if ($isQualifiedCust) {
+
+                if ($isCustQualifiedAsMgr) {
                     /* this is qualified manager, calculate MAX leg, second leg and summary leg */
                     if (isset($mapByTeamCompress[$custId])) {
                         /* this customer has downline subtrees in compressed and plain trees */
@@ -138,11 +139,11 @@ class CompressOi
                     }
                 }
 
-                /* re-link parent */
+                /* check qualification for current parent */
                 $parentData = $mapByIdCompress[$parentId];
                 $parentPvOwn = isset($mapPv[$parentId]) ? $mapPv[$parentId] : 0;
                 $parentTv = $parentData[Ptc::ATTR_TV];
-                $isQualifiedParent = $this->hlpIsQualified->exec([
+                $isParentQualifiedAsMgr = $this->hlpIsQualified->exec([
                     \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_CUST_ID => $parentId,
                     \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_PV => $parentPvOwn,
                     \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_TV => $parentTv,
@@ -150,8 +151,9 @@ class CompressOi
                     \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_CFG_PARAMS => $cfgParams
                 ]);
 
-                if (!$isQualifiedParent) {
-                    /* parent is not qualified, move this customer up to the closest qualified parent */
+                /* re-link parent for all customers (qualified & distributors) */
+                if (!$isParentQualifiedAsMgr) {
+                    /* parent is not qualified, move customer up to the closest parent qualified as manager or higher */
                     $path = $custData[Ptc::ATTR_PATH];
                     $parents = $this->toolDwnlTree->getParentsFromPathReversed($path);
                     $foundParentId = null;
@@ -160,14 +162,14 @@ class CompressOi
                         $newParentPvOwn = isset($mapPv[$newParentId]) ? $mapPv[$newParentId] : 0;
                         $newParentTv = $newParentData[Ptc::ATTR_TV];
 
-                        $isQualifiedNewParent = $this->hlpIsQualified->exec([
+                        $isNewParentQualifiedAsMgr = $this->hlpIsQualified->exec([
                             \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_CUST_ID => $newParentId,
                             \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_PV => $newParentPvOwn,
                             \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_TV => $newParentTv,
                             \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_SCHEME => $scheme,
                             \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_CFG_PARAMS => $cfgParams
                         ]);
-                        if ($isQualifiedNewParent) {
+                        if ($isNewParentQualifiedAsMgr) {
                             $foundParentId = $newParentId;
                             break;
                         }
@@ -180,6 +182,7 @@ class CompressOi
                         $resultEntry[Oi::ATTR_PARENT_ID] = $foundParentId;
                     }
                 }
+
                 /* add entry to results */
                 $result[$custId] = $resultEntry;
             }
