@@ -47,89 +47,99 @@ class CompressOi
     /**
      * @param $opts
      *
-     * @return array [$custId=>[$custId, $parentId, $pv, $ovLegMax, $ovLegSecond, $ovLegSummary], ...]
+     * @return array [$custId=>[\Praxigento\BonusHybrid\Entity\Compression\Oi::...], ...]
      */
     public function do($opts)
     {
         /* parse options */
         $mapPv = $opts[self::OPT_MAP_PV];
-        $compressedPtc = $opts[self::OPT_TREE_COMPRESSED_PTC];
+        $treeCompress = $opts[self::OPT_TREE_COMPRESSED_PTC];
+        $treePlain = $opts[self::OPT_TREE_PLAIN_PTO];
         $cfgParams = $opts[self::OPT_CONFIG_PARAMS];
         $scheme = $opts[self::OPT_SCHEME];
-        $plainPto = $opts[self::OPT_TREE_PLAIN_PTO];
 
         /* perform action */
         $result = [];
-        $mapById = $this->mapById($compressedPtc, Ptc::ATTR_CUSTOMER_ID);
-        $mapByDepth = $this->mapByTreeDepthDesc($compressedPtc, Ptc::ATTR_CUSTOMER_ID, Ptc::ATTR_DEPTH);
-        $mapByTeam = $this->mapByTeams($compressedPtc, Ptc::ATTR_CUSTOMER_ID, Ptc::ATTR_PARENT_ID);
-        $mapByIdPto = $this->mapById($plainPto, Pto::ATTR_CUSTOMER_REF);
-        $mapByTeam = $this->mapByTeams($plainPto, Pto::ATTR_CUSTOMER_REF, Pto::ATTR_PARENT_REF);
+
+        /* prepare source data for calculation */
+        $mapByIdCompress = $this->mapById($treeCompress, Ptc::ATTR_CUSTOMER_ID);
+        $mapByTeamCompress = $this->mapByTeams($treeCompress, Ptc::ATTR_CUSTOMER_ID, Ptc::ATTR_PARENT_ID);
+        $mapByDepthCompress = $this->mapByTreeDepthDesc($treeCompress, Ptc::ATTR_CUSTOMER_ID, Ptc::ATTR_DEPTH);
+        $mapByIdPlain = $this->mapById($treePlain, Pto::ATTR_CUSTOMER_REF);
+        $mapByTeamPlain = $this->mapByTeams($treePlain, Pto::ATTR_CUSTOMER_REF, Pto::ATTR_PARENT_REF);
         $rankIdMgr = $this->hlpRank->getIdByCode(Def::RANK_MANAGER);
-        foreach ($mapByDepth as $level) {
+        /* MOBI-629: add init rank for un-ranked entries */
+        $rankIdDistr = $this->hlpRank->getIdByCode(Def::RANK_DISTRIBUTOR);;
+        /* run though the compressed tree from bottom to top and collect OV */
+        foreach ($mapByDepthCompress as $level) {
             foreach ($level as $custId) {
-                /* compose data for one customer */
-                $custData = $mapById[$custId];
+
+                /* get compressed data and compose phase2 item */
+                $custData = $mapByIdCompress[$custId];
                 $parentId = $custData[Ptc::ATTR_PARENT_ID];
                 $pvOwn = isset($mapPv[$custId]) ? $mapPv[$custId] : 0;
-                $pv = $custData[Ptc::ATTR_PV];
-                $tv = $custData[Ptc::ATTR_TV];
+                $pvCompress = $custData[Ptc::ATTR_PV];
+                $tvCompress = $custData[Ptc::ATTR_TV];
                 $resultEntry = [
                     Oi::ATTR_SCHEME => $scheme,
                     Oi::ATTR_CUSTOMER_ID => $custId,
                     Oi::ATTR_PARENT_ID => $parentId,
-                    Oi::ATTR_PV => $pv,
-                    Oi::ATTR_TV => $tv,
+                    Oi::ATTR_RANK_ID => $rankIdDistr,
+                    Oi::ATTR_PV => $pvCompress,
+                    Oi::ATTR_TV => $tvCompress,
                     Oi::ATTR_OV_LEG_MAX => 0,
                     Oi::ATTR_OV_LEG_SECOND => 0,
                     Oi::ATTR_OV_LEG_SUMMARY => 0
                 ];
-                /* calculate legs */
+
+                /* calculate phase2 legs for qualified customers */
                 $isQualifiedCust = $this->hlpIsQualified->exec([
                     \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_CUST_ID => $custId,
                     \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_PV => $pvOwn,
-                    \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_TV => $tv,
+                    \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_TV => $tvCompress,
                     \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_SCHEME => $scheme,
                     \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_CFG_PARAMS => $cfgParams
                 ]);
                 if ($isQualifiedCust) {
                     /* this is qualified manager, calculate MAX leg, second leg and summary leg */
-                    if (isset($mapByTeam[$custId])) {
-                        /* this customer has downline subtrees */
-                        $team = $mapByTeam[$custId];
-                        $legMax = $legSecond = $legSummary = 0;
-                        foreach ($team as $memberId) {
-                            $ovMember = $mapByIdPto[$memberId][Pto::ATTR_OV];
-                            if ($ovMember > $legMax) {
-                                /* update MAX leg */
-                                $legSummary += $legSecond;
-                                $legSecond = $legMax;
-                                $legMax = $ovMember;
-                            } elseif ($ovMember > $legSecond) {
-                                /* update second leg */
-                                $legSummary += $legSecond;
-                                $legSecond = $ovMember;
-                            } else {
-                                $legSummary += $ovMember;
-                            }
-                        }
+                    if (isset($mapByTeamCompress[$custId])) {
+                        /* this customer has downline subtrees in compressed and plain trees */
+
+                        /* define legs based on plain OV */
+                        $teamPlain = $mapByTeamPlain[$custId];
+                        $legs = $this->legsCalc($teamPlain, $mapByIdPlain, Pto::ATTR_OV);
+                        list($legMaxP, $legSecondP, $legOthersP) = $legs;
+
+                        /* define legs based on compressed OV */
+                        $teamCompress = $mapByTeamCompress[$custId];
+                        $legs = $this->legsCalc($teamCompress, $mapByIdCompress, Ptc::ATTR_OV);
+                        list($legMaxC, $legSecondC, $legOthersC) = $legs;
+
+                        /* get first 2 legs from plain and 'others' from compressed */
+                        $legs = $this->legsCompose(
+                            $legMaxP, $legSecondP, $legOthersP, $legMaxC, $legSecondC, $legOthersC
+                        );
+                        list($legMax, $legSecond, $legOthers) = $legs;
+
                         /* update legs */
                         $resultEntry[Oi::ATTR_OV_LEG_MAX] = $legMax;
                         $resultEntry[Oi::ATTR_OV_LEG_SECOND] = $legSecond;
-                        $resultEntry[Oi::ATTR_OV_LEG_SUMMARY] = $legSummary;
+                        $resultEntry[Oi::ATTR_OV_LEG_SUMMARY] = $legOthers;
                         $rankId = $this->hlpGetMaxRankId->exec([
                             \Praxigento\BonusHybrid\Helper\Calc\GetMaxQualifiedRankId::OPT_COMPRESS_OI_ENTRY => $resultEntry,
                             \Praxigento\BonusHybrid\Helper\Calc\GetMaxQualifiedRankId::OPT_SCHEME => $scheme,
                             \Praxigento\BonusHybrid\Helper\Calc\GetMaxQualifiedRankId::OPT_CFG_PARAMS => $cfgParams
                         ]);
                         $resultEntry[Oi::ATTR_RANK_ID] = $rankId;
+
                     } else {
                         /* qualified customer w/o downline is a Manager */
                         $resultEntry[Oi::ATTR_RANK_ID] = $rankIdMgr;
                     }
                 }
+
                 /* re-link parent */
-                $parentData = $mapById[$parentId];
+                $parentData = $mapByIdCompress[$parentId];
                 $parentPvOwn = isset($mapPv[$parentId]) ? $mapPv[$parentId] : 0;
                 $parentTv = $parentData[Ptc::ATTR_TV];
                 $isQualifiedParent = $this->hlpIsQualified->exec([
@@ -139,13 +149,14 @@ class CompressOi
                     \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_SCHEME => $scheme,
                     \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_CFG_PARAMS => $cfgParams
                 ]);
+
                 if (!$isQualifiedParent) {
                     /* parent is not qualified, move this customer up to the closest qualified parent */
                     $path = $custData[Ptc::ATTR_PATH];
                     $parents = $this->toolDwnlTree->getParentsFromPathReversed($path);
                     $foundParentId = null;
                     foreach ($parents as $newParentId) {
-                        $newParentData = $mapById[$newParentId];
+                        $newParentData = $mapByIdCompress[$newParentId];
                         $newParentPvOwn = isset($mapPv[$newParentId]) ? $mapPv[$newParentId] : 0;
                         $newParentTv = $newParentData[Ptc::ATTR_TV];
 
@@ -173,18 +184,79 @@ class CompressOi
                 $result[$custId] = $resultEntry;
             }
         }
-        unset($mapByDepth);
-        unset($mapByTeam);
-        unset($mapById);
-        unset($mapByIdPto);
-        /* MOBI-629: add init rank for un-ranked entries */
-        $defRankId = $this->hlpRank->getIdByCode(Def::RANK_DISTRIBUTOR);;
-        foreach ($result as $key => $item) {
-            if (!isset($item[Oi::ATTR_RANK_ID])) {
-                $item[Oi::ATTR_RANK_ID] = $defRankId;
-                $result[$key] = $item;
+        /* clean up memory */
+        unset($mapByTeamPlain);
+        unset($mapByIdPlain);
+        unset($mapByDepthCompress);
+        unset($mapByTeamCompress);
+        unset($mapByIdCompress);
+
+        /* and return result */
+        return $result;
+    }
+
+    /**
+     * Run though first-line team members and collect OVs (plain or compressed).
+     *
+     * @param array $team Customers IDs for first-line team.
+     * @param array $mapById OV data for members mapped by customer ID.
+     * @param string $labelOv label of the OV entry in OV data.
+     * @return array [$legMax, $legSecond, $legOthers]
+     */
+    protected function legsCalc($team, $mapById, $labelOv)
+    {
+        $legMax = $legSecond = $legOthers = 0;
+        foreach ($team as $memberId) {
+            $ovMember = $mapById[$memberId][$labelOv];
+            if ($ovMember > $legMax) {
+                /* update MAX leg */
+                $legOthers += $legSecond;
+                $legSecond = $legMax;
+                $legMax = $ovMember;
+            } elseif ($ovMember > $legSecond) {
+                /* update second leg */
+                $legOthers += $legSecond;
+                $legSecond = $ovMember;
+            } else {
+                $legOthers += $ovMember;
             }
         }
+        $result = [$legMax, $legSecond, $legOthers];
+        return $result;
+    }
+
+    /**
+     * Compare plain legs with compressed legs and combine data in results.
+     *
+     * This bull-shit is from here:
+     * https://jira.prxgt.com/browse/MOBI-629?focusedCommentId=87614&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-87614
+     *
+     *
+     * @param $maxP
+     * @param $secondP
+     * @param $othersP
+     * @param $maxC
+     * @param $secondC
+     * @param $othersC
+     * @return array [$max, $second, $others]
+     */
+    protected function legsCompose($maxP, $secondP, $othersP, $maxC, $secondC, $othersC)
+    {
+        $second = $others = 0;
+        if ($maxP && !$secondP && !$othersP) {
+            /* there is one only leg: use compressed data */
+            $max = $maxC;
+        } elseif ($maxP && $secondP && !$othersP) {
+            /* there are 2 legs */
+            $max = $maxC;
+            $second = $secondC;
+        } else {
+            /* there are 2 legs & others */
+            $max = ($maxP > $maxC) ? $maxP : $maxC;
+            $second = ($secondP > $secondC) ? $secondP : $secondC;
+            $others = $maxC + $secondC + $othersC - ($max + $second);
+        }
+        $result = [$max, $second, $others];
         return $result;
     }
 }
