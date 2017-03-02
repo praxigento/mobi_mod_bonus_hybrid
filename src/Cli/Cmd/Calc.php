@@ -199,10 +199,10 @@ class Calc
             }
             if ($canContinue) {
                 $output->writeln("<info>Personal bonus (DEFAULT) is calculated.<info>");
-                $canContinue = $this->calcBonusPersonalEu();
+//                $canContinue = $this->calcBonusPersonalEu();
             }
             if ($canContinue) {
-                $output->writeln("<info>Personal bonus (EU) is calculated.<info>");
+                $output->writeln("<info>Personal bonus (EU) is skipped.<info>");
                 $canContinue = $this->calcValueTv();
             }
             if ($canContinue) {
@@ -211,10 +211,10 @@ class Calc
             }
             if ($canContinue) {
                 $output->writeln("<info>Team bonus (DEFAULT) is calculated.<info>");
-                $canContinue = $this->calcBonusTeamEu();
+//                $canContinue = $this->calcBonusTeamEu();
             }
             if ($canContinue) {
-                $output->writeln("<info>Team bonus (EU) is calculated.<info>");
+                $output->writeln("<info>Team bonus (EU) is skipped.<info>");
                 $canContinue = $this->calcBonusCourtesy();
             }
             if ($canContinue) {

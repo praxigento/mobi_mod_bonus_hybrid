@@ -52,6 +52,8 @@ class Db
     protected $_toolDate;
     /** @var  \Praxigento\Core\Tool\IPeriod */
     protected $_toolPeriod;
+    /** @var \Praxigento\BonusBase\Repo\Entity\Log\ICustomers */
+    protected $repoLogCust;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Registry\IPto */
     protected $repoRegPto;
 
@@ -63,6 +65,7 @@ class Db
         \Praxigento\Accounting\Service\IAccount $callAccount,
         \Praxigento\Accounting\Service\IOperation $repoOper,
         \Praxigento\BonusBase\Repo\Entity\Type\ICalc $repoTypeCalc,
+        \Praxigento\BonusBase\Repo\Entity\Log\ICustomers $repoLogCust,
         \Praxigento\BonusHybrid\Repo\Entity\Registry\IPto $repoRegPto,
         \Praxigento\Downline\Service\ISnap $callDownlineSnap,
         \Praxigento\Core\Repo\IGeneric $repoBasic,
@@ -79,6 +82,7 @@ class Db
         $this->_callOper = $repoOper;
         $this->_repoBasic = $repoBasic;
         $this->_repoTypeCalc = $repoTypeCalc;
+        $this->repoLogCust = $repoLogCust;
         $this->repoRegPto = $repoRegPto;
         $this->_repoTypeAsset = $repoTypeAsset;
         $this->_repoTypeOper = $repoTypeOper;
@@ -137,19 +141,6 @@ class Db
             $rankId = $one[CfgParam::ATTR_RANK_ID];
             $result[$scheme][$rankId] = $one;
         }
-        return $result;
-    }
-
-    /**
-     * Get not-compressed treee with Pv/Tv/Ov values for given calculation id.
-     *
-     * @param int $calcId
-     * @return  array
-     */
-    public function getPlainPtoData($calcId)
-    {
-        $where = \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_CALC_REF . '=' . (int)$calcId;
-        $result = $this->repoRegPto->get($where);
         return $result;
     }
 
@@ -388,6 +379,19 @@ class Db
     }
 
     /**
+     * Get not-compressed treee with Pv/Tv/Ov values for given calculation id.
+     *
+     * @param int $calcId
+     * @return  array
+     */
+    public function getPlainPtoData($calcId)
+    {
+        $where = \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_CALC_REF . '=' . (int)$calcId;
+        $result = $this->repoRegPto->get($where);
+        return $result;
+    }
+
+    /**
      * SELECT
      * pps.sale_id,
      * pps.date_paid,
@@ -496,14 +500,27 @@ class Db
         foreach ($updates as $i => $item) {
             $transId = $transIds[$i];
             $custId = $item[Calc::A_OTHER_ID];
-            $this->_repoBasic->addEntity(
-                LogCustomers::ENTITY_NAME,
-                [
-                    LogCustomers::ATTR_TRANS_ID => $transId,
-                    LogCustomers::ATTR_CUSTOMER_ID => $custId
+            $this->repoLogCust->create([
+                LogCustomers::ATTR_TRANS_ID => $transId,
+                LogCustomers::ATTR_CUSTOMER_ID => $custId
 
-                ]
-            );
+            ]);
+        }
+    }
+
+    /**
+     * Save customers log for Team bonus transactions (DEFAULT scheme).
+     *
+     * @param array $transIds [$transId => $custId]
+     */
+    public function saveLogCustomersTeam($transIds)
+    {
+        foreach ($transIds as $transId => $custId) {
+            $this->repoLogCust->create([
+                LogCustomers::ATTR_TRANS_ID => $transId,
+                LogCustomers::ATTR_CUSTOMER_ID => $custId
+
+            ]);
         }
     }
 
@@ -608,15 +625,21 @@ class Db
     }
 
     /**
-     * @param      $updates array [[Calc::A_CUST_ID, Calc::A_VALUE], ...]
-     * @param      $operTypeCode
-     * @param null $datePerformed
-     * @param null $dateApplied
+     * @param array $updates array [[Calc::A_CUST_ID, Calc::A_VALUE], ...]
+     * @param string $operTypeCode
+     * @param string|null $datePerformed
+     * @param string|null $dateApplied
+     * @param string|null $transRef if set, this value will be used to bind transactions with $updates
      *
      * @return \Praxigento\Accounting\Service\Operation\Response\Add
      */
-    public function saveOperationWalletActive($updates, $operTypeCode, $datePerformed = null, $dateApplied = null)
-    {
+    public function saveOperationWalletActive(
+        $updates,
+        $operTypeCode,
+        $datePerformed = null,
+        $dateApplied = null,
+        $transRef = null
+    ) {
         /* prepare additional data */
         $datePerformed = is_null($datePerformed) ? $this->_toolDate->getUtcNowForDb() : $datePerformed;
         $dateApplied = is_null($dateApplied) ? $datePerformed : $dateApplied;
@@ -644,15 +667,17 @@ class Db
                 $respGetAccount = $this->_callAccount->get($reqGetAccount);
                 $accId = $respGetAccount->get(Account::ATTR_ID);
                 /* skip representative account */
-                if ($accId == $represAccId) {
-                    continue;
-                }
-                $trans[] = [
+                if ($accId == $represAccId) continue;
+
+                $one = [
                     Transaction::ATTR_DEBIT_ACC_ID => $represAccId,
                     Transaction::ATTR_CREDIT_ACC_ID => $accId,
                     Transaction::ATTR_DATE_APPLIED => $dateApplied,
                     Transaction::ATTR_VALUE => $value
                 ];
+
+                if (!is_null($transRef)) $one[$transRef] = $item[$transRef];
+                $trans[] = $one;
 
                 $this->_logger->debug("Transaction ($value) for customer #$customerId (acc #$accId) is added to operation '$operTypeCode'.");
             } else {
@@ -660,6 +685,7 @@ class Db
             }
         }
         $req->setTransactions($trans);
+        if (!is_null($transRef)) $req->setAsTransRef($transRef);
         $result = $this->_callOper->add($req);
         $operId = $result->getOperationId();
         $this->_logger->debug("New '$operTypeCode' operation is added with id=$operId.");

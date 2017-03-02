@@ -492,9 +492,13 @@ class Call
                         $updates,
                         Cfg::CODE_TYPE_OPER_BONUS_TEAM,
                         $datePerformed,
-                        $dateApplied
+                        $dateApplied,
+                        \Praxigento\BonusHybrid\Service\Calc\Sub\Calc::A_OTHER_ID
                     );
                     $operId = $respAdd->getOperationId();
+                    $transIds = $respAdd->getTransactionsIds();
+                    /* save customers and correspondent transactions into the log */
+                    $this->_subDb->saveLogCustomersTeam($transIds);
                 }
 
                 /* save processed operation to calculations log and mark calculation as complete */
