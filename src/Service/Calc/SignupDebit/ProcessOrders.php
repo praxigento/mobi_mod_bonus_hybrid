@@ -120,9 +120,11 @@ class ProcessOrders
         /* save customers into Sign Up Registry */
         foreach ($orders as $one) {
             $custId = $one[self::A_CUST_ID];
+            $orderId = $one[self::A_ORDER_ID];
             $this->repoRegSignupDebit->create([
                 \Praxigento\BonusHybrid\Entity\Registry\SignupDebit::ATTR_CALC_REF => $calcId,
-                \Praxigento\BonusHybrid\Entity\Registry\SignupDebit::ATTR_CUSTOMER_REF => $custId
+                \Praxigento\BonusHybrid\Entity\Registry\SignupDebit::ATTR_CUSTOMER_REF => $custId,
+                \Praxigento\BonusHybrid\Entity\Registry\SignupDebit::ATTR_SALE_ORDER_REF => $orderId
             ]);
 
         }

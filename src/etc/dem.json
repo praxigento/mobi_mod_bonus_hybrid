@@ -426,6 +426,12 @@
                             "comment": "Reference to the customer for whom debit was applied.",
                             "nullable": false,
                             "type": {"integer": {"unsigned": true}}
+                          },
+                          "SaleRef": {
+                            "alias": "sale_ref",
+                            "comment": "Reference to the sale order for which bonus was applied.",
+                            "nullable": false,
+                            "type": {"integer": {"unsigned": true}}
                           }
                         },
                         "index": {
@@ -445,6 +451,14 @@
                             "reference": {
                               "entity": {"completeAlias": "prxgt_dwnl_customer"},
                               "aliases": ["customer_id"]
+                            },
+                            "action": {"delete": "cascade", "update": "restrict"}
+                          },
+                          "toSaleOrder": {
+                            "own": {"aliases": ["sale_ref"]},
+                            "reference": {
+                              "entity": {"completeAlias": "sales_order"},
+                              "aliases": ["entity_id"]
                             },
                             "action": {"delete": "cascade", "update": "restrict"}
                           }
