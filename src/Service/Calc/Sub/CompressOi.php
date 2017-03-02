@@ -157,6 +157,9 @@ class CompressOi
                     $path = $custData[Ptc::ATTR_PATH];
                     $parents = $this->toolDwnlTree->getParentsFromPathReversed($path);
                     $foundParentId = null;
+                    $prevParentId = null;
+                    $fatherIsUnqual = false; // we should not compress nodes for EU scheme where grand is qualified
+                    $isFirstGen = true; // (first gen only)
                     foreach ($parents as $newParentId) {
                         $newParentData = $mapByIdCompress[$newParentId];
                         $newParentPvOwn = isset($mapPv[$newParentId]) ? $mapPv[$newParentId] : 0;
@@ -172,12 +175,22 @@ class CompressOi
                         if ($isNewParentQualifiedAsMgr) {
                             $foundParentId = $newParentId;
                             break;
+//                        } elseif ($isFirstGen) {
+//                            $fatherIsUnqual = true; // customer's father is distributor
+//                            $isFirstGen = false; // all next generations are not first
+//                        } elseif ($fatherIsUnqual) {
+//                            $fatherIsUnqual = false; // this is second generation or higher
                         }
+                        $fatherIsUnqual = true; // customer's father or higher is distributor
+                        $prevParentId = $newParentId; // save the last distributor before manager
                     }
                     unset($parents);
                     if (is_null($foundParentId)) {
                         /* no qualified parent up to the root, make this customer as root customer  */
                         $resultEntry[Oi::ATTR_PARENT_ID] = $custId;
+                    } elseif ($fatherIsUnqual && ($scheme == Def::SCHEMA_EU)) {
+                        /* EU: there is qualified grand for unqualified father, should not compress */
+                        $resultEntry[Oi::ATTR_PARENT_ID] = $prevParentId;
                     } else {
                         $resultEntry[Oi::ATTR_PARENT_ID] = $foundParentId;
                     }
