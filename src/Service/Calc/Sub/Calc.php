@@ -341,11 +341,6 @@ class Calc
             if ($scheme == Def::SCHEMA_DEFAULT) {
                 /* only DEFAULT-schema customers may apply to Team Bonus */
                 $pv = $custData[PtcCompress::ATTR_PV];
-                $pvForced = $this->toolScheme->getForcedPv($custId, $scheme, $pv);
-                if ($pvForced > $pv) {
-                    $pv = $pvForced;
-                    $this->logger->debug("Customer #$custId (ref. #$custRef ) has forced qualification with PV=$pvForced.");
-                }
                 /* customer has PV to calculate bonus */
                 if ($pv > Cfg::DEF_ZERO) {
                     /* personal % for this customer */
@@ -362,6 +357,10 @@ class Calc
                     $pctPbLeft = $pctPbMax - $pctPb;
                     /* ... and distributed amount: 5% */
                     $pctPbDone = $pctPb;
+                    $this->logger->debug("TB: Customer #$custId(ref. #$custRef) has $pv PV and %PB=$pctPb, "
+                        . "%left=$pctPbLeft, %done=$pctPbDone");
+                    /* set "isFather" flag for courtesy bonus */
+                    $isFather = true;
                     foreach ($parents as $parentId) {
                         /* current customer has not MAX PB% or there is undistributed delta yet */
                         if ($pctPbLeft > Cfg::DEF_ZERO) {
@@ -372,7 +371,7 @@ class Calc
                             $tv = $parentData[PtcCompress::ATTR_TV];
                             $tvForced = $this->toolScheme->getForcedTv($parentId, $scheme, $tv);
                             if ($tvForced > $tv) {
-                                $this->logger->debug("Customer #$parentId (ref. #$parentRef ) has forced qualification with TV=$tvForced.");
+                                $this->logger->debug("TB: Customer #$parentId (ref. #$parentRef ) has forced qualification with TV=$tvForced.");
                                 $tv = $tvForced;
                             }
                             /* get TB% for current parent and calc available % for current parent */
@@ -401,13 +400,13 @@ class Calc
                                         self::A_VALUE => $bonus,
                                         self::A_OTHER_ID => $custId
                                     ];
-                                    $this->logger->debug("Customer #$parentId ($parentRef) has TV=$tv, %TB=$pctTb,"
+                                    $this->logger->debug("TB: Customer #$parentId ($parentRef) has TV=$tv, %TB=$pctTb,"
                                         . " and get '$bonus' ($pctPbLeft%) as DEFAULT Team Bonus from "
                                         . "downline customer #$custId ($custRef) with PV=$pv and "
                                         . "%PB=$pctPb");
                                     $pctPbLeft = number_format($pctPbLeft - $pctTbAvlbDelta, 2);
                                     $pctPbDone = number_format($pctPbDone + $pctTbAvlbDelta, 2);
-                                    $this->logger->debug("All bonus is distributed (%left=$pctPbLeft, %distributed=$pctPbDone).");
+                                    $this->logger->debug("TB: All bonus is distributed (%left=$pctPbLeft, %done=$pctPbDone).");
                                     break;
                                 } else {
                                     /* parent's TV allows him to get only part of the team bonus from this customer */
@@ -419,28 +418,38 @@ class Calc
                                     ];
                                     $pctPbLeft = number_format($pctPbLeft - $pctTbAvlbDelta, 2);
                                     $pctPbDone = number_format($pctPbDone + $pctTbAvlbDelta, 2);
-                                    $this->logger->debug("Customer #$parentId ($parentRef) has TV=$tv, %TB=$pctTb,"
+                                    $this->logger->debug("TB: Customer #$parentId ($parentRef) has TV=$tv, %TB=$pctTb,"
                                         . " and get '$bonus' ($pctTbAvlbDelta%) as DEFAULT Team Bonus from "
                                         . "downline customer #$custId ($custRef) with PV=$pv and "
-                                        . "%PB=$pctPb, %left=$pctPbLeft%, %distributed=$pctPbDone.");
+                                        . "%PB=$pctPb, %left=$pctPbLeft%, %done=$pctPbDone.");
                                 }
                             } else {
                                 /* this parent has %TB less then distributed %PB and should not be granted  */
-                                $this->logger->debug("Customer #$parentId (ref. #$parentRef) has TV=$tv, "
-                                    . "%TB=$pctTb is less then %distributed=$pctPbDone and should not "
-                                    . "get Team Bonus.");
+                                $this->logger->debug("TB: Customer #$parentId (ref. #$parentRef) has TV=$tv, "
+                                    . "%TB=$pctTb is not more then %done=$pctPbDone and should not "
+                                    . "get Team Bonus from #$custId ($custRef).");
+                                if ($isFather) {
+                                    /* reduce delta to courtesy bonus percent if parent is not "father" */
+                                    $pctPbLeft = number_format($pctPbLeft - $courtesyPct, 2);
+                                    $pctPbDone = number_format($pctPbDone + $courtesyPct, 2);
+                                    $this->logger->debug("Customer #$parentId ($parentRef) is 'father' for the "
+                                        . "customer #$custId ($custRef) %left is decreased on "
+                                        . "Courtesy Bonus percent (new value: $pctPbLeft, %done=$pctPbDone).");
+                                }
                             }
                         } else {
                             /* this customer has max Personal Bonus percent, no Team Bonus is possible */
-                            $this->logger->debug("Customer #$custId (ref. #$custRef ) has maximal Personal Bonus %.");
+                            $this->logger->debug("TB: Customer #$custId (ref. #$custRef ) has maximal Personal Bonus %.");
                             break;
                         }
+                        /* next parent is not father */
+                        $isFather = false;
                     }
                 } else {
-                    $this->logger->debug("Customer #$custId (ref. #$custRef ) has no PV ($pv PV) and could not participate in DEFAULT Team Bonus.");
+                    $this->logger->debug("TB: Customer #$custId (ref. #$custRef ) has no PV ($pv PV) and could not participate in DEFAULT Team Bonus.");
                 }
             } else {
-                $this->logger->debug("Customer #$custId (ref. #$custRef ) has incompatible scheme '$scheme' for DEFAULT Team Bonus.");
+                $this->logger->debug("TB: Customer #$custId (ref. #$custRef ) has incompatible scheme '$scheme' for DEFAULT Team Bonus.");
             }
         }
         unset($mapDataById);
