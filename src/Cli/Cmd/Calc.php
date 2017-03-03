@@ -211,10 +211,10 @@ class Calc
             }
             if ($canContinue) {
                 $output->writeln("<info>Team bonus (DEFAULT) is calculated.<info>");
-//                $canContinue = $this->calcBonusTeamEu();
+                $canContinue = $this->calcBonusTeamEu();
             }
             if ($canContinue) {
-                $output->writeln("<info>Team bonus (EU) is skipped.<info>");
+                $output->writeln("<info>Team bonus (EU) is calculated.<info>");
                 $canContinue = $this->calcBonusCourtesy();
             }
             if ($canContinue) {

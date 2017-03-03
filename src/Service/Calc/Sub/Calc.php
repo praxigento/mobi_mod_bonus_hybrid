@@ -339,138 +339,138 @@ class Calc
             $custRef = $custData[Customer::ATTR_HUMAN_REF];
             $scheme = $this->toolScheme->getSchemeByCustomer($custData);
 //            if ($scheme == Def::SCHEMA_DEFAULT) {
-                /* only DEFAULT-schema customers may apply to Team Bonus */
-                $pv = $custData[PtcCompress::ATTR_PV];
-                /* customer has PV to calculate bonus */
-                if ($pv > Cfg::DEF_ZERO) {
-                    /* personal % for this customer */
-                    $pctPb = $this->getLevelPercent($pv, $levelsPersonal);
-                    /* check courtesy bonus (if %PB=MAX, 5% to the first parent) */
-                    if (abs($pctPbMax - $pctPb) < Cfg::DEF_ZERO) {
-                        /* there is no team bonus */
-                        continue;
-                    }
-                    /* traverse up to tree root to calculate team bonus values */
-                    $path = $custData[PtcCompress::ATTR_PATH];
-                    $parents = $this->toolDownlineTree->getParentsFromPathReversed($path);
-                    /* init undistributed delta: 20% - 5% */
-                    $pctPbLeft = $pctPbMax - $pctPb;
-                    /* ... and distributed amount: 5% */
-                    $pctPbDone = $pctPb;
-                    $this->logger->debug("TB: Customer #$custId(ref. #$custRef) has $pv PV and %PB=$pctPb, "
-                        . "%left=$pctPbLeft, %done=$pctPbDone");
-                    /* set "isFather" flag for courtesy bonus */
-                    $isFather = true;
-                    foreach ($parents as $parentId) {
-                        /* current customer has not MAX PB% or there is undistributed delta yet */
-                        if ($pctPbLeft > Cfg::DEF_ZERO) {
-                            /* get team qualification percent for  parent */
-                            $parentData = $mapDataById[$parentId];
-                            $parentRef = $parentData[Customer::ATTR_HUMAN_REF];
-                            $parentScheme = $this->toolScheme->getSchemeByCustomer($parentData);
-                            $tv = $parentData[PtcCompress::ATTR_TV];
-                            $tvForced = $this->toolScheme->getForcedTv($parentId, $scheme, $tv);
-                            if ($tvForced > $tv) {
-                                $this->logger->debug("TB: Customer #$parentId (ref. #$parentRef ) has forced qualification with TV=$tvForced.");
-                                $tv = $tvForced;
-                            }
-                            /* get TB% for current parent and calc available % for current parent */
-                            $pctTb = $this->getLevelPercent($tv, $levelsTeam);
-                            $pctTbAvlbDelta = $pctTb - $pctPbDone;
-                            if ($pctTbAvlbDelta > Cfg::DEF_ZERO) {
-                                /* parent's TV % should be more then customer's PV % */
+            /* only DEFAULT-schema customers may apply to Team Bonus */
+            $pv = $custData[PtcCompress::ATTR_PV];
+            /* customer has PV to calculate bonus */
+            if ($pv > Cfg::DEF_ZERO) {
+                /* personal % for this customer */
+                $pctPb = $this->getLevelPercent($pv, $levelsPersonal);
+                /* check courtesy bonus (if %PB=MAX, 5% to the first parent) */
+                if (abs($pctPbMax - $pctPb) < Cfg::DEF_ZERO) {
+                    /* there is no team bonus */
+                    continue;
+                }
+                /* traverse up to tree root to calculate team bonus values */
+                $path = $custData[PtcCompress::ATTR_PATH];
+                $parents = $this->toolDownlineTree->getParentsFromPathReversed($path);
+                /* init undistributed delta: 20% - 5% */
+                $pctPbLeft = $pctPbMax - $pctPb;
+                /* ... and distributed amount: 5% */
+                $pctPbDone = $pctPb;
+                $this->logger->debug("TB: Customer #$custId(ref. #$custRef) has $pv PV and %PB=$pctPb, "
+                    . "%left=$pctPbLeft, %done=$pctPbDone");
+                /* set "isFather" flag for courtesy bonus */
+                $isFather = true;
+                foreach ($parents as $parentId) {
+                    /* current customer has not MAX PB% or there is undistributed delta yet */
+                    if ($pctPbLeft > Cfg::DEF_ZERO) {
+                        /* get team qualification percent for  parent */
+                        $parentData = $mapDataById[$parentId];
+                        $parentRef = $parentData[Customer::ATTR_HUMAN_REF];
+                        $parentScheme = $this->toolScheme->getSchemeByCustomer($parentData);
+                        $tv = $parentData[PtcCompress::ATTR_TV];
+                        $tvForced = $this->toolScheme->getForcedTv($parentId, $scheme, $tv);
+                        if ($tvForced > $tv) {
+                            $this->logger->debug("TB: Customer #$parentId (ref. #$parentRef ) has forced qualification with TV=$tvForced.");
+                            $tv = $tvForced;
+                        }
+                        /* get TB% for current parent and calc available % for current parent */
+                        $pctTb = $this->getLevelPercent($tv, $levelsTeam);
+                        $pctTbAvlbDelta = $pctTb - $pctPbDone;
+                        if ($pctTbAvlbDelta > Cfg::DEF_ZERO) {
+                            /* parent's TV % should be more then customer's PV % */
 
-                                /* EU parent should not get more then courtesy % */
-                                if ($parentScheme != Def::SCHEMA_DEFAULT) {
-                                    if ($isFather) {
-                                        /* Courtesy bonus will calculate in other process, just decrease % left */
-                                        $pctPbLeft = number_format($pctPbLeft - $courtesyPct, 2);
-                                        $pctPbDone = number_format($pctPbDone + $courtesyPct, 2);
-                                        $this->logger->debug("TB: Customer #$parentId (ref. #$parentRef) has "
-                                            . "scheme=$parentScheme and is 'father' for #$custId ($custRef). "
-                                            . "Decrease %TB on %courtesy=$courtesyPct to %left=$pctPbLeft, %done=$pctPbDone.");
-                                    }
-                                }
-
-                                if (
-                                    ($pctTbAvlbDelta > $pctPbLeft) ||
-                                    abs($pctTbAvlbDelta - $pctPbLeft) < Cfg::DEF_ZERO // this is ">="
-                                ) {
-                                    /* there is undistributed PB% */
-                                    /* parent's TV allows him to get all team bonus from this customer */
-                                    if ($parentScheme == Def::SCHEMA_DEFAULT) {
-                                        $bonus = $this->toolFormat->roundBonus($pv * $pctPbLeft);
-                                        $result[] = [
-                                            self::A_CUST_ID => $parentId,
-                                            self::A_VALUE => $bonus,
-                                            self::A_OTHER_ID => $custId
-                                        ];
-                                        $this->logger->debug("TB: Customer #$parentId ($parentRef) has TV=$tv, %TB=$pctTb,"
-                                            . " and get '$bonus' ($pctPbLeft%) as DEFAULT Team Bonus from "
-                                            . "downline customer #$custId ($custRef) with PV=$pv and "
-                                            . "%PB=$pctPb");
-                                    } else {
-                                        $this->logger->debug("TB: Customer #$parentId ($parentRef) has TV=$tv, %TB=$pctTb,"
-                                            . " but cannot get DEFAULT Team Bonus from "
-                                            . "downline customer #$custId ($custRef) with PV=$pv and "
-                                            . "%PB=$pctPb because he is not from DEFAULT scheme.");
-                                    }
-                                    $pctPbLeft = number_format($pctPbLeft - $pctTbAvlbDelta, 2);
-                                    $pctPbDone = number_format($pctPbDone + $pctTbAvlbDelta, 2);
-                                    $this->logger->debug("TB: All bonus is distributed (%left=$pctPbLeft, %done=$pctPbDone).");
-                                    break;
-                                } else {
-                                    /* parent's TV allows him to get only part of the team bonus from this customer */
-                                    if ($parentScheme == Def::SCHEMA_DEFAULT) {
-                                        $bonus = $this->toolFormat->roundBonus($pv * $pctTbAvlbDelta);
-                                        $result[] = [
-                                            self::A_CUST_ID => $parentId,
-                                            self::A_VALUE => $bonus,
-                                            self::A_OTHER_ID => $custId
-                                        ];
-                                        $pctPbLeft = number_format($pctPbLeft - $pctTbAvlbDelta, 2);
-                                        $pctPbDone = number_format($pctPbDone + $pctTbAvlbDelta, 2);
-                                        $this->logger->debug("TB: Customer #$parentId ($parentRef) has TV=$tv, %TB=$pctTb,"
-                                            . " and get '$bonus' ($pctTbAvlbDelta%) as DEFAULT Team Bonus from "
-                                            . "downline customer #$custId ($custRef) with PV=$pv and "
-                                            . "%PB=$pctPb, %left=$pctPbLeft%, %done=$pctPbDone.");
-                                    } else {
-                                        $pctPbLeft = number_format($pctPbLeft - $pctTbAvlbDelta, 2);
-                                        $pctPbDone = number_format($pctPbDone + $pctTbAvlbDelta, 2);
-                                        $this->logger->debug("TB: Customer #$parentId ($parentRef) has TV=$tv, %TB=$pctTb,"
-                                            . " but cannot get DEFAULT Team Bonus from "
-                                            . "downline customer #$custId ($custRef) with PV=$pv and "
-                                            . "%PB=$pctPb because he is not from DEFAULT scheme."
-                                            . " Available: %left=$pctPbLeft%, %done=$pctPbDone.");
-                                    }
-
-                                }
-//                                }
-                            } else {
-                                /* this parent has %TB less then distributed %PB and should not be granted  */
-                                $this->logger->debug("TB: Customer #$parentId (ref. #$parentRef) has TV=$tv, "
-                                    . "%TB=$pctTb is not more then %done=$pctPbDone and should not "
-                                    . "get Team Bonus from #$custId ($custRef).");
+                            /* EU parent should not get more then courtesy % */
+                            if ($parentScheme != Def::SCHEMA_DEFAULT) {
                                 if ($isFather) {
-                                    /* reduce delta to courtesy bonus percent if parent is not "father" */
+                                    /* Courtesy bonus will calculate in other process, just decrease % left */
                                     $pctPbLeft = number_format($pctPbLeft - $courtesyPct, 2);
                                     $pctPbDone = number_format($pctPbDone + $courtesyPct, 2);
-                                    $this->logger->debug("Customer #$parentId ($parentRef) is 'father' for the "
-                                        . "customer #$custId ($custRef) %left is decreased on "
-                                        . "Courtesy Bonus percent (new value: $pctPbLeft, %done=$pctPbDone).");
+                                    $this->logger->debug("TB: Customer #$parentId (ref. #$parentRef) has "
+                                        . "scheme=$parentScheme and is 'father' for #$custId ($custRef). "
+                                        . "Decrease %TB on %courtesy=$courtesyPct to %left=$pctPbLeft, %done=$pctPbDone.");
                                 }
                             }
+
+                            if (
+                                ($pctTbAvlbDelta > $pctPbLeft) ||
+                                abs($pctTbAvlbDelta - $pctPbLeft) < Cfg::DEF_ZERO // this is ">="
+                            ) {
+                                /* there is undistributed PB% */
+                                /* parent's TV allows him to get all team bonus from this customer */
+                                if ($parentScheme == Def::SCHEMA_DEFAULT) {
+                                    $bonus = $this->toolFormat->roundBonus($pv * $pctPbLeft);
+                                    $result[] = [
+                                        self::A_CUST_ID => $parentId,
+                                        self::A_VALUE => $bonus,
+                                        self::A_OTHER_ID => $custId
+                                    ];
+                                    $this->logger->debug("TB: Customer #$parentId ($parentRef) has TV=$tv, %TB=$pctTb,"
+                                        . " and get '$bonus' ($pctPbLeft%) as DEFAULT Team Bonus from "
+                                        . "downline customer #$custId ($custRef) with PV=$pv and "
+                                        . "%PB=$pctPb");
+                                } else {
+                                    $this->logger->debug("TB: Customer #$parentId ($parentRef) has TV=$tv, %TB=$pctTb,"
+                                        . " but cannot get DEFAULT Team Bonus from "
+                                        . "downline customer #$custId ($custRef) with PV=$pv and "
+                                        . "%PB=$pctPb because he is not from DEFAULT scheme.");
+                                }
+                                $pctPbLeft = number_format($pctPbLeft - $pctTbAvlbDelta, 2);
+                                $pctPbDone = number_format($pctPbDone + $pctTbAvlbDelta, 2);
+                                $this->logger->debug("TB: All bonus is distributed (%left=$pctPbLeft, %done=$pctPbDone).");
+                                break;
+                            } else {
+                                /* parent's TV allows him to get only part of the team bonus from this customer */
+                                if ($parentScheme == Def::SCHEMA_DEFAULT) {
+                                    $bonus = $this->toolFormat->roundBonus($pv * $pctTbAvlbDelta);
+                                    $result[] = [
+                                        self::A_CUST_ID => $parentId,
+                                        self::A_VALUE => $bonus,
+                                        self::A_OTHER_ID => $custId
+                                    ];
+                                    $pctPbLeft = number_format($pctPbLeft - $pctTbAvlbDelta, 2);
+                                    $pctPbDone = number_format($pctPbDone + $pctTbAvlbDelta, 2);
+                                    $this->logger->debug("TB: Customer #$parentId ($parentRef) has TV=$tv, %TB=$pctTb,"
+                                        . " and get '$bonus' ($pctTbAvlbDelta%) as DEFAULT Team Bonus from "
+                                        . "downline customer #$custId ($custRef) with PV=$pv and "
+                                        . "%PB=$pctPb, %left=$pctPbLeft%, %done=$pctPbDone.");
+                                } else {
+                                    $pctPbLeft = number_format($pctPbLeft - $pctTbAvlbDelta, 2);
+                                    $pctPbDone = number_format($pctPbDone + $pctTbAvlbDelta, 2);
+                                    $this->logger->debug("TB: Customer #$parentId ($parentRef) has TV=$tv, %TB=$pctTb,"
+                                        . " but cannot get DEFAULT Team Bonus from "
+                                        . "downline customer #$custId ($custRef) with PV=$pv and "
+                                        . "%PB=$pctPb because he is not from DEFAULT scheme."
+                                        . " Available: %left=$pctPbLeft%, %done=$pctPbDone.");
+                                }
+
+                            }
+//                                }
                         } else {
-                            /* this customer has max Personal Bonus percent, no Team Bonus is possible */
-                            $this->logger->debug("TB: Customer #$custId (ref. #$custRef ) has maximal Personal Bonus %.");
-                            break;
+                            /* this parent has %TB less then distributed %PB and should not be granted  */
+                            $this->logger->debug("TB: Customer #$parentId (ref. #$parentRef) has TV=$tv, "
+                                . "%TB=$pctTb is not more then %done=$pctPbDone and should not "
+                                . "get Team Bonus from #$custId ($custRef).");
+                            if ($isFather) {
+                                /* reduce delta to courtesy bonus percent if parent is not "father" */
+                                $pctPbLeft = number_format($pctPbLeft - $courtesyPct, 2);
+                                $pctPbDone = number_format($pctPbDone + $courtesyPct, 2);
+                                $this->logger->debug("Customer #$parentId ($parentRef) is 'father' for the "
+                                    . "customer #$custId ($custRef) %left is decreased on "
+                                    . "Courtesy Bonus percent (new value: $pctPbLeft, %done=$pctPbDone).");
+                            }
                         }
-                        /* next parent is not father */
-                        $isFather = false;
+                    } else {
+                        /* this customer has max Personal Bonus percent, no Team Bonus is possible */
+                        $this->logger->debug("TB: Customer #$custId (ref. #$custRef ) has maximal Personal Bonus %.");
+                        break;
                     }
-                } else {
-                    $this->logger->debug("TB: Customer #$custId (ref. #$custRef ) has no PV ($pv PV) and could not participate in DEFAULT Team Bonus.");
+                    /* next parent is not father */
+                    $isFather = false;
                 }
+            } else {
+                $this->logger->debug("TB: Customer #$custId (ref. #$custRef ) has no PV ($pv PV) and could not participate in DEFAULT Team Bonus.");
+            }
 //            } else {
 //                $this->logger->debug("TB: Customer #$custId (ref. #$custRef ) has incompatible scheme '$scheme' for DEFAULT Team Bonus.");
 //            }
@@ -487,23 +487,32 @@ class Calc
         foreach ($mapDataById as $custId => $custData) {
             $custData = $mapDataById[$custId];
             $custRef = $custData[Customer::ATTR_HUMAN_REF];
-            $scheme = $this->toolScheme->getSchemeByCustomer($custData);
+            $pv = $custData[PtcCompress::ATTR_PV];
+            /* PV >= Qualification level */
+//            if ($pv > (Def::PV_QUALIFICATION_LEVEL_EU - Cfg::DEF_ZERO)) {
+            $parentId = $custData[PtcCompress::ATTR_PARENT_ID];
+            $parentData = $mapDataById[$parentId];
+            $parentRef = $parentData[Customer::ATTR_HUMAN_REF];
+            $scheme = $this->toolScheme->getSchemeByCustomer($parentData);
             if ($scheme == Def::SCHEMA_EU) {
-                $pv = $custData[PtcCompress::ATTR_PV];
-//                if ($pv > Cfg::DEF_ZERO) {
-                if ($pv > 99.99999) {
-                    $parentId = $custData[PtcCompress::ATTR_PARENT_ID];
-                    $parentData = $mapDataById[$parentId];
-                    $parentRef = $parentData[Customer::ATTR_HUMAN_REF];
+                $pvParent = $parentData[PtcCompress::ATTR_PV];
+                if ($pvParent > (Def::PV_QUALIFICATION_LEVEL_EU - Cfg::DEF_ZERO)) {
                     $bonus = $this->toolFormat->roundBonus($pv * $teamBonusPercent);
-                    $result[] = [self::A_CUST_ID => $parentId, self::A_VALUE => $bonus, self::A_OTHER_ID => $custId];
-                    $this->logger->debug("Customer #$parentId (ref. #$parentRef ) has '$bonus' as EU Team Bonus from downline customer #$custId (ref. #$custRef ).");
+                    $result[] = [
+                        self::A_CUST_ID => $parentId,
+                        self::A_VALUE => $bonus,
+                        self::A_OTHER_ID => $custId
+                    ];
+                    $this->logger->debug("parent #$parentId (ref. #$parentRef) has '$bonus' as EU Team Bonus from downline customer #$custId (ref. #$custRef ).");
                 } else {
-                    $this->logger->debug("Customer #$custId (ref. #$custRef ) has too few PV ($pv PV) and could not participate in EU Team Bonus.");
+                    $this->logger->debug("parent #$parentId (ref. #$parentRef) does not qualified t oget EU Team Bonus from downline customer #$custId (ref. #$custRef ).");
                 }
-            } else {
-                $this->logger->debug("Customer #$custId (ref. #$custRef ) has incompatible scheme '$scheme' for EU Team Bonus.");
-            }
+                } else {
+                $this->logger->debug("Parent #$parentId (ref. #$parentRef) has incompatible scheme '$scheme' for EU Team Bonus.");
+                }
+//            } else {
+//                $this->logger->debug("Customer #$custId (ref. #$custRef) has too few PV ($pv PV) and could not participate in EU Team Bonus.");
+//            }
         }
         unset($mapDataById);
         return $result;
@@ -594,7 +603,7 @@ class Calc
         return $result;
     }
 
-    
+
     /**
      * Process Downline Tree snapshot, customer data and PV related transactions and compose data for compressed tree.
      *
