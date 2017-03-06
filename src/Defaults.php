@@ -8,7 +8,8 @@
 namespace Praxigento\BonusHybrid;
 
 
-class Defaults {
+class Defaults
+{
 
     const COURTESY_BONUS_PERCENT = 0.05;
     /**
@@ -42,7 +43,8 @@ class Defaults {
      * Sign Up Volume Debit parameters: PV Off & Wallet On values.
      */
     const SIGNUP_DEBIT_PV = 100;
-    const SIGNUP_DEBIT_WALLET = 34;
+    const SIGNUP_DEBIT_WALLET_FATHER = 34;
+    const SIGNUP_DEBIT_WALLET_GRAND = 18;
 
     const TEAM_BONUS_EU_PERCENT = 0.05;
 }
