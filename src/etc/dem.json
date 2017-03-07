@@ -399,13 +399,13 @@
                               "entity": {"completeAlias": "prxgt_dwnl_customer"},
                               "aliases": ["customer_id"]
                             },
-                            "action": {"delete": "cascade", "update": "restrict"}
+                            "action": {"delete": "no action", "update": "no action"}
                           },
                           "toParent": {
                             "own": {"aliases": ["parent_ref"]},
                             "reference": {
                               "entity": {"completeAlias": "prxgt_dwnl_customer"},
-                              "aliases": ["parent_id"]
+                              "aliases": ["customer_id"]
                             },
                             "action": {"delete": "cascade", "update": "restrict"}
                           }
