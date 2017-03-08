@@ -338,7 +338,6 @@ class Calc
             $custData = $mapDataById[$custId];
             $custRef = $custData[Customer::ATTR_HUMAN_REF];
             $scheme = $this->toolScheme->getSchemeByCustomer($custData);
-//            if ($scheme == Def::SCHEMA_DEFAULT) {
             /* only DEFAULT-schema customers may apply to Team Bonus */
             $pv = $custData[PtcCompress::ATTR_PV];
             /* customer has PV to calculate bonus */
@@ -445,7 +444,6 @@ class Calc
                                 }
 
                             }
-//                                }
                         } else {
                             /* this parent has %TB less then distributed %PB and should not be granted  */
                             $this->logger->debug("TB: Customer #$parentId (ref. #$parentRef) has TV=$tv, "
@@ -471,9 +469,6 @@ class Calc
             } else {
                 $this->logger->debug("TB: Customer #$custId (ref. #$custRef ) has no PV ($pv PV) and could not participate in DEFAULT Team Bonus.");
             }
-//            } else {
-//                $this->logger->debug("TB: Customer #$custId (ref. #$custRef ) has incompatible scheme '$scheme' for DEFAULT Team Bonus.");
-//            }
         }
         unset($mapDataById);
         unset($mapTeams);
@@ -488,8 +483,7 @@ class Calc
             $custData = $mapDataById[$custId];
             $custRef = $custData[Customer::ATTR_HUMAN_REF];
             $pv = $custData[PtcCompress::ATTR_PV];
-            /* PV >= Qualification level */
-//            if ($pv > (Def::PV_QUALIFICATION_LEVEL_EU - Cfg::DEF_ZERO)) {
+
             $parentId = $custData[PtcCompress::ATTR_PARENT_ID];
             $parentData = $mapDataById[$parentId];
             $parentRef = $parentData[Customer::ATTR_HUMAN_REF];
@@ -498,21 +492,20 @@ class Calc
                 $pvParent = $parentData[PtcCompress::ATTR_PV];
                 if ($pvParent > (Def::PV_QUALIFICATION_LEVEL_EU - Cfg::DEF_ZERO)) {
                     $bonus = $this->toolFormat->roundBonus($pv * $teamBonusPercent);
-                    $result[] = [
-                        self::A_CUST_ID => $parentId,
-                        self::A_VALUE => $bonus,
-                        self::A_OTHER_ID => $custId
-                    ];
+                    if ($bonus > Cfg::DEF_ZERO) {
+                        $result[] = [
+                            self::A_CUST_ID => $parentId,
+                            self::A_VALUE => $bonus,
+                            self::A_OTHER_ID => $custId
+                        ];
+                    }
                     $this->logger->debug("parent #$parentId (ref. #$parentRef) has '$bonus' as EU Team Bonus from downline customer #$custId (ref. #$custRef ).");
                 } else {
                     $this->logger->debug("parent #$parentId (ref. #$parentRef) does not qualified t oget EU Team Bonus from downline customer #$custId (ref. #$custRef ).");
                 }
-                } else {
+            } else {
                 $this->logger->debug("Parent #$parentId (ref. #$parentRef) has incompatible scheme '$scheme' for EU Team Bonus.");
-                }
-//            } else {
-//                $this->logger->debug("Customer #$custId (ref. #$custRef) has too few PV ($pv PV) and could not participate in EU Team Bonus.");
-//            }
+            }
         }
         unset($mapDataById);
         return $result;

@@ -268,6 +268,9 @@ class Db
 
     public function getDataForWriteOff($calcId, $tsFrom, $tsTo)
     {
+        /* convert YYMMDD to YYYY-MM-DD HH:MM::SS */
+        if(strlen($tsFrom)<10) $tsFrom = $this->_toolPeriod->getTimestampFrom($tsFrom);
+        if(strlen($tsTo)<10) $tsTo = $this->_toolPeriod->getTimestampTo($tsTo);
         /* aliases and tables */
         $asOper = 'pao';
         $asTrans = 'pat';
