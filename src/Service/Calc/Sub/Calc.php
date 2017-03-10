@@ -50,6 +50,8 @@ class Calc
     protected $hlpSignupDebitCust;
     /** @var \Psr\Log\LoggerInterface */
     protected $logger;
+    /** @var \Praxigento\Downline\Repo\Entity\ICustomer */
+    protected $repoDwnlCust;
     /** @var  \Praxigento\BonusBase\Repo\Entity\IRank */
     protected $repoRank;
     /** @var \Praxigento\Downline\Tool\ITree */
@@ -66,6 +68,7 @@ class Calc
         \Praxigento\BonusHybrid\Tool\IScheme $toolScheme,
         \Praxigento\BonusBase\Helper\IRank $hlpRank,
         \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust,
+        \Praxigento\Downline\Repo\Entity\ICustomer $repoDwnlCust,
         \Praxigento\Downline\Service\ISnap $callDownlineSnap
     ) {
         $this->logger = $logger;
@@ -74,6 +77,7 @@ class Calc
         $this->toolDownlineTree = $toolTree;
         $this->hlpRank = $hlpRank;
         $this->hlpSignupDebitCust = $hlpSignupDebitCust;
+        $this->repoDwnlCust = $repoDwnlCust;
         $this->callDownlineSnap = $callDownlineSnap;
     }
 
@@ -129,9 +133,13 @@ class Calc
             OiCompress::ATTR_PARENT_ID
         );
         $ibPercentMax = $this->getMaxPercentForInfinityBonus($cfgParams);
+        /* get MLM ID map for logging */
+        $dwnl = $this->repoDwnlCust->get();
+        $mapDwnlById = $this->mapById($dwnl, Customer::ATTR_CUSTOMER_ID);
         /* process downline tree */
         foreach ($mapTreeExp as $custId => $treeData) {
             $customerData = $mapById[$custId];
+            $custMlmId = $mapDwnlById[$custId][Customer::ATTR_HUMAN_REF];
             $pv = $customerData[OiCompress::ATTR_PV];
             if ($pv > Cfg::DEF_ZERO) {
                 $path = $treeData[Snap::ATTR_PATH];
@@ -141,16 +149,16 @@ class Calc
                 $isFirstGen = true; // first generation customers should not have an infinity bonus
                 foreach ($parents as $parentId) {
                     $parentData = $mapById[$parentId];
+                    $parentMlmId = $mapDwnlById[$parentId][Customer::ATTR_HUMAN_REF];
                     $parentRankId = $parentData[OiCompress::ATTR_RANK_ID];
                     $parentScheme = $this->toolScheme->getSchemeByCustomer($parentData);
                     /* should parent get an Infinity bonus? */
-                    if (
+                    $hasInfPercent =
                         isset($cfgParams[$scheme][$parentRankId]) &&
                         isset($cfgParams[$scheme][$parentRankId][CfgParam::ATTR_INFINITY]) &&
-                        ($cfgParams[$scheme][$parentRankId][CfgParam::ATTR_INFINITY] > 0) &&
-                        ($parentScheme == $scheme) &&
-                        !$isFirstGen
-                    ) {
+                        ($cfgParams[$scheme][$parentRankId][CfgParam::ATTR_INFINITY] > 0);
+                    $hasParentRightScheme = ($parentScheme == $scheme);
+                    if ($hasInfPercent && $hasParentRightScheme && !$isFirstGen) {
                         $ibPercent = $cfgParams[$scheme][$parentRankId][CfgParam::ATTR_INFINITY];
                         /* compare ranks and interrupt if next parent has the same rank or lower */
                         $shouldInterrupt = $this->shouldInterruptInfinityBonus(
@@ -158,29 +166,28 @@ class Calc
                             $ibPercent,
                             $cfgParams
                         );
-                        if (
-                            $shouldInterrupt ||
-                            ($ibPercentDelta <= 0)
-                        ) {
-                            break;
-                        } else {
-                            /* calculate bonus value */
-                            if (!isset($result[$parentId])) {
-                                $result[$parentId] = [self::A_PV => 0, self::A_ENTRIES => []];
-                            }
-                            $result[$parentId][self::A_PV] += $pv;
-                            $ibPercent = $cfgParams[$scheme][$parentRankId][CfgParam::ATTR_INFINITY];
-                            $percent = ($ibPercent <= $ibPercentDelta) ? $ibPercent : $ibPercentDelta;
-                            $bonus = $this->toolFormat->roundBonus($pv * $percent);
-                            $result[$parentId][self::A_ENTRIES][] = [
-                                self::A_VALUE => $bonus,
-                                self::A_OTHER_ID => $custId
-                            ];
-                            /* re-save Infinity percent and decrease delta */
-                            $prevParentIbPercent = $ibPercent;
-                            $ibPercentDelta -= $ibPercent;
+                        /* this parent should not get infinity bonus (has the same rank or lower)*/
+                        if ($shouldInterrupt) continue;
+                        /* all infinity bonus is distributed, break the loop */
+                        if ($ibPercentDelta <= Cfg::DEF_ZERO) break;
 
+                        /* calculate bonus value and add to current parent */
+                        if (!isset($result[$parentId])) {
+                            $result[$parentId] = [self::A_PV => 0, self::A_ENTRIES => []];
                         }
+                        $result[$parentId][self::A_PV] += $pv;
+                        $ibPercent = $cfgParams[$scheme][$parentRankId][CfgParam::ATTR_INFINITY];
+                        $percent = ($ibPercent <= $ibPercentDelta) ? $ibPercent : $ibPercentDelta;
+                        $bonus = $this->toolFormat->roundBonus($pv * $percent);
+                        $result[$parentId][self::A_ENTRIES][] = [
+                            self::A_VALUE => $bonus,
+                            self::A_OTHER_ID => $custId
+                        ];
+                        $this->logger->debug("BON/INF/$scheme: Upline #$parentId ($parentMlmId) gets '$bonus' ($pv * $percent) from customer #$custId ($custMlmId).'");
+                        /* re-save Infinity percent and decrease delta */
+                        $prevParentIbPercent = $ibPercent;
+                        $ibPercentDelta -= $ibPercent;
+
                     }
                     $isFirstGen = false;
                 }
