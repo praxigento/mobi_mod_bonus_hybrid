@@ -3,6 +3,12 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
+    <!-- *** -->
+    <!-- API -->
+    <!-- *** -->
+    <preference for="\Praxigento\BonusHybrid\Api\Stats\PlainInterface"
+            type="\Praxigento\BonusHybrid\Api\Stats\Plain"/>
+
     <!-- ********************** -->
     <!-- Console (CLI Commands) -->
     <!-- ********************** -->
