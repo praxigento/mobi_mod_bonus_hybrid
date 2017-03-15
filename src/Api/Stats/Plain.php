@@ -56,6 +56,11 @@ class Plain
         }
         /* parse request, prepare query and fetch data */
         $bind = $this->prepareQueryParameters($data);
+
+        /** @var \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder $qbuild */
+        $qbuild = $this->manObj->get(\Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::class);
+        $query = $qbuild->getSelectQuery();
+
 //        $query = $this->getSelectQuery($bind);
 //        $query = $this->populateQuery($query, $bind);
 //        $rs = $this->performQuery($query, $bind);

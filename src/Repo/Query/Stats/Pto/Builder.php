@@ -4,84 +4,61 @@
  */
 namespace Praxigento\BonusHybrid\Repo\Query\Stats\Pto;
 
-use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\Downline\Data\Entity\Customer as Dwnl;
+use Praxigento\BonusHybrid\Entity\Registry\Pto as RegPto;
+use Praxigento\Downline\Data\Entity\Snap as Snap;
 use Praxigento\Pv\Data\Entity\Sale as Pv;
 
 /**
- * Build query to get data to process 'Sign Up Volume Debit' bonus (signed customers with first order more then 100 PV).
+ * Build query to get PV/TV/OV statistics for the given calculation.
  */
 class Builder
     extends \Praxigento\Core\Repo\Query\Def\Builder
 {
-    /**
-     * Tables aliases.
-     */
-    const AS_TBL_CUSTOMER = 'cust';
-    const AS_TBL_DOWNLINE = 'dwnl';
-    const AS_TBL_DWNL_PARENT = 'dwnp';
-    const AS_TBL_ORDER = 'sale';
-    const AS_TBL_PV = 'pv';
-    const A_COUNTRY = Dwnl::ATTR_COUNTRY_CODE;
-    /**
-     * Attributes aliases.
-     */
-    const A_CUST_ID = 'cust_id';
-    const A_ORDER_ID = 'order_id';
-    const A_PARENT_GRAND_ID = 'parent_grand_id';
-    const A_PARENT_ID = 'parent_id';
-    const A_PV = 'pv';
-    /**
-     * Bound variables names
-     */
-    const BIND_DATE_FROM = 'date_from';
-    const BIND_DATE_TO = 'date_to';
+    /** Tables aliases */
+    const AS_REG_PTO = 'regPto';
+
+    /** Columns aliases */
+    const A_CUST_ID = \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::A_CUST_ID;
+    const A_DEPTH = \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::A_DEPTH;
+    const A_OV = RegPto::ATTR_OV;
+    const A_PARENT_ID = \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::A_PARENT_ID;
+    const A_PATH = \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::A_PATH;
+    const A_PV = RegPto::ATTR_PV;
+    const A_TV = RegPto::ATTR_TV;
+
+    /** Bound variables names */
+    const BIND_CALC_REF = 'calcRef';
+    const BIND_ON_DATE = \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::BIND_ON_DATE;
+
+    /** @var \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder */
+    protected $qbldDwnlSnap;
+
+    public function __construct(
+        \Magento\Framework\App\ResourceConnection $resource,
+        \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder $qbldDwnlSnap
+    ) {
+        parent::__construct($resource);
+        $this->qbldDwnlSnap = $qbldDwnlSnap;
+    }
 
     public function getSelectQuery(\Praxigento\Core\Repo\Query\IBuilder $qbuild = null)
     {
-        $asCust = self::AS_TBL_CUSTOMER;
-        $asDwnl = self::AS_TBL_DOWNLINE;
-        $asOrder = self::AS_TBL_ORDER;
-        $asPv = self::AS_TBL_PV;
-        $asParent = self::AS_TBL_DWNL_PARENT;
-        $result = $this->conn->select();
-        /* SELECT FROM customer_entity */
-        $tbl = $this->resource->getTableName(Cfg::ENTITY_MAGE_CUSTOMER);
-        $cols = [self::A_CUST_ID => Cfg::E_CUSTOMER_A_ENTITY_ID];
-        $result->from([$asCust => $tbl], $cols);
-        /* LEFT JOIN prxgt_dwnl_customer */
-        $tbl = $this->resource->getTableName(Dwnl::ENTITY_NAME);
-        $on = $asDwnl . '.' . Dwnl::ATTR_CUSTOMER_ID . '=' . $asCust . '.' . Cfg::E_CUSTOMER_A_ENTITY_ID;
+        $result = is_null($qbuild) ? $this->qbldDwnlSnap->getSelectQuery() : $qbuild->getSelectQuery();
+        /* define tables aliases */
+        $asReg = self::AS_REG_PTO;
+        $asSnap = \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::AS_DWNL_SNAP;
+
+        /* LEFT OUTER JOIN prxgt_bon_hyb_reg_pto */
+        $tbl = $this->resource->getTableName(RegPto::ENTITY_NAME);
         $cols = [
-            self::A_COUNTRY => Dwnl::ATTR_COUNTRY_CODE,
-            self::A_PARENT_ID => Dwnl::ATTR_PARENT_ID
+            self::A_PV => RegPto::ATTR_PV,
+            self::A_TV => RegPto::ATTR_TV,
+            self::A_OV => RegPto::ATTR_OV
         ];
-        $result->joinLeft([$asDwnl => $tbl], $on, $cols);
-        /* LEFT JOIN sales_order */
-        $tbl = $this->resource->getTableName(Cfg::ENTITY_MAGE_SALES_ORDER);
-        $on = $asOrder . '.' . Cfg::E_SALE_ORDER_A_CUSTOMER_ID . '=' . $asCust . '.' . Cfg::E_CUSTOMER_A_ENTITY_ID;
-        $cols = [self::A_ORDER_ID => Cfg::E_SALE_ORDER_A_ENTITY_ID];
-        $result->joinLeft([$asOrder => $tbl], $on, $cols);
-        /* LEFT JOIN prxgt_pv_sale  */
-        $tbl = $this->resource->getTableName(Pv::ENTITY_NAME);
-        $on = $asPv . '.' . Pv::ATTR_SALE_ID . '=' . $asOrder . '.' . Cfg::E_SALE_ORDER_A_ENTITY_ID;
-        $cols = [self::A_PV => Pv::ATTR_TOTAL];
-        $result->joinLeft([$asPv => $tbl], $on, $cols);
-        /* LEFT JOIN prxgt_dwnl_customer (as parent) */
-        $tbl = $this->resource->getTableName(Dwnl::ENTITY_NAME);
-        $on = $asParent . '.' . Dwnl::ATTR_CUSTOMER_ID . '=' . $asDwnl . '.' . Dwnl::ATTR_PARENT_ID;
-        $cols = [
-            self::A_PARENT_GRAND_ID => Dwnl::ATTR_PARENT_ID
-        ];
-        $result->joinLeft([$asParent => $tbl], $on, $cols);
-        /* WHERE */
-        $where = $asCust . '.' . Cfg::E_CUSTOMER_A_CREATED_AT . '>=:' . self::BIND_DATE_FROM;
-        $where .= ' AND ' . $asCust . '.' . Cfg::E_CUSTOMER_A_CREATED_AT . '<=:' . self::BIND_DATE_TO;
-        $where .= ' AND ' . $asPv . '.' . Pv::ATTR_TOTAL . ' IS NOT NULL';
-        $result->where($where);
-        /* ORDER */
-        $order = $asOrder . '.' . Cfg::E_SALE_ORDER_A_ENTITY_ID . ' ASC';
-        $result->order($order);
+        $onCustId = $asReg . '.' . RegPto::ATTR_CUSTOMER_REF . '=' . $asSnap . '.' . Snap::ATTR_CUSTOMER_ID;
+        $onCalcRef = $asReg . '.' . RegPto::ATTR_CALC_REF . '=:' . self::BIND_CALC_REF;
+        $on = "($onCustId) AND ($onCalcRef)";
+        $result->joinLeft([$asReg => $tbl], $on, $cols);
         return $result;
     }
 
