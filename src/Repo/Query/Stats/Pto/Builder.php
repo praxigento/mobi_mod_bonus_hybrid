@@ -48,7 +48,7 @@ class Builder
         $asReg = self::AS_REG_PTO;
         $asSnap = \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::AS_DWNL_SNAP;
 
-        /* LEFT OUTER JOIN prxgt_bon_hyb_reg_pto */
+        /* LEFT JOIN prxgt_bon_hyb_reg_pto */
         $tbl = $this->resource->getTableName(RegPto::ENTITY_NAME);
         $cols = [
             self::A_PV => RegPto::ATTR_PV,

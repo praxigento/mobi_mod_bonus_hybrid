@@ -17,7 +17,7 @@ class Request
     /**
      * End of the calculation period.
      *
-     * @return string 'YYYY', 'YYYYMM', 'YYYYMMDD'
+     * @return string|null 'YYYY', 'YYYYMM', 'YYYYMMDD'
      */
     public function getPeriod()
     {
@@ -28,7 +28,7 @@ class Request
     /**
      * Root Customer ID for development purposes.
      *
-     * @return int
+     * @return int|null
      */
     public function getRootCustId()
     {
