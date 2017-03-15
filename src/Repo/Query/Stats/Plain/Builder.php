@@ -2,14 +2,14 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-namespace Praxigento\BonusHybrid\Repo\Query\Stats\Pto;
+namespace Praxigento\BonusHybrid\Repo\Query\Stats\Plain;
 
 use Praxigento\BonusHybrid\Entity\Registry\Pto as RegPto;
 use Praxigento\Downline\Data\Entity\Snap as Snap;
 use Praxigento\Pv\Data\Entity\Sale as Pv;
 
 /**
- * Build query to get PV/TV/OV statistics for the given calculation.
+ * Build query to get plain PV/TV/OV statistics for the given calculation.
  */
 class Builder
     extends \Praxigento\Core\Repo\Query\Def\Builder

@@ -1,6 +1,14 @@
 <?xml version="1.0"?>
 <routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
 
+    <route url="/V1/prxgt/bonhyb/stats/phase1" method="POST">
+        <!-- Get phase1 compressed statistics (PV/TV/OV). -->
+        <service class="Praxigento\BonusHybrid\Api\Stats\Phase1Interface" method="exec"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+
     <route url="/V1/prxgt/bonhyb/stats/plain" method="POST">
         <!-- Get plain (not compressed) statistics (PV/TV/OV). -->
         <service class="Praxigento\BonusHybrid\Api\Stats\PlainInterface" method="exec"/>

@@ -10,6 +10,9 @@ use Praxigento\BonusBase\Data\Entity\Type\Calc as TypeCalc;
 use Praxigento\BonusBase\Repo\Query\Period\Calcs\Builder as BldPeriod;
 use Praxigento\BonusHybrid\Config as Cfg;
 
+/**
+ * Base query to select period and calculation data by filter (period last date and calculation type).
+ */
 class GetLastCalc
 {
     const A_CALC_REF = 'calc_ref';
@@ -19,7 +22,6 @@ class GetLastCalc
     const BND_DATE = 'lastDate';
     const BND_STATE = 'state';
 
-    const OPT_CALC_TYPE_CODE = 'calc_type_code';
     const OPT_DATE_END = 'ds_end';
 
     /** @var \Praxigento\BonusBase\Repo\Query\Period\Calcs\Builder */
@@ -37,7 +39,6 @@ class GetLastCalc
         $bind = [];
         /* parse input options */
         $dsEnd = $opts->get(self::OPT_DATE_END);
-        $calcTypeCode = $opts->get(self::OPT_CALC_TYPE_CODE);
 
         /* get the last complete calculation */
         $query = $this->qbldPeriod->getSelectQuery();
@@ -53,7 +54,7 @@ class GetLastCalc
         /* sort desc and limit results */
         $query->order(BldPeriod::AS_PERIOD . '.' . Period::ATTR_DSTAMP_END . ' DESC');
         $query->limit(1);
-        $bind[self::BND_CODE] = $calcTypeCode;
+        $bind[self::BND_CODE] = Cfg::CODE_TYPE_CALC_PV_WRITE_OFF;
         $bind[self::BND_STATE] = Cfg::CALC_STATE_COMPLETE;
         /* get data and compose results */
         $row = $query->getConnection()->fetchRow($query, $bind);

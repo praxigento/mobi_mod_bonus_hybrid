@@ -6,6 +6,8 @@
     <!-- *** -->
     <!-- API -->
     <!-- *** -->
+    <preference for="\Praxigento\BonusHybrid\Api\Stats\Phase1Interface"
+            type="\Praxigento\BonusHybrid\Api\Stats\Phase1"/>
     <preference for="\Praxigento\BonusHybrid\Api\Stats\PlainInterface"
             type="\Praxigento\BonusHybrid\Api\Stats\Plain"/>
 

@@ -7,8 +7,8 @@ namespace Praxigento\BonusHybrid\Api\Stats;
 use Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc as QGetLastCalc;
 use Praxigento\BonusHybrid\Config as Cfg;
 
-class Plain
-    implements \Praxigento\BonusHybrid\Api\Stats\PlainInterface
+class Phase1
+    implements \Praxigento\BonusHybrid\Api\Stats\Phase1Interface
 {
 
     const BIND_CALC_REF = \Praxigento\BonusHybrid\Repo\Query\Stats\Plain\Builder::BIND_CALC_REF;
@@ -42,9 +42,9 @@ class Plain
         $this->qPeriodCalc = $qPeriodCalc;
     }
 
-    public function exec(\Praxigento\BonusHybrid\Api\Stats\Plain\Request $data)
+    public function exec(\Praxigento\BonusHybrid\Api\Stats\Phase1\Request $data)
     {
-        $result = new \Praxigento\BonusHybrid\Api\Stats\Plain\Response();
+        $result = new \Praxigento\BonusHybrid\Api\Stats\Phase1\Response();
         if ($data->getRequestReturn()) {
             $result->setRequest($data);
         }
@@ -89,8 +89,8 @@ class Plain
         /** @var \Praxigento\BonusHybrid\Api\Stats\Plain\Request $data */
         /* collect important parameters (request & query) */
         $rootCustId = $data->getRootCustId();
-        $maxDepth = $data->getMaxDepth();
         $onDate = $bind->get(self::BIND_ON_DATE);
+        $maxDepth = $bind->get(self::BIND_MAX_DEPTH);
 
         /* filter data by root customer's path  */
         if (is_null($rootCustId)) {
@@ -139,7 +139,7 @@ class Plain
         }
         $opts = new \Flancer32\Lib\Data([
             QGetLastCalc::OPT_DATE_END => $period,
-            QGetLastCalc::OPT_CALC_TYPE_CODE => Cfg::CODE_TYPE_CALC_PV_WRITE_OFF
+            QGetLastCalc::OPT_CALC_TYPE_CODE => Cfg::CODE_TYPE_CALC_COMPRESS_FOR_PTC
         ]);
         $qres = $this->qPeriodCalc->exec($opts);
         $result->set(self::BIND_CALC_REF, $qres->get(QGetLastCalc::A_CALC_REF));
