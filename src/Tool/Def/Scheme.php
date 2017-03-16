@@ -240,7 +240,11 @@ class Scheme
     public function getSchemeByCustomer($data)
     {
         $result = Def::SCHEMA_DEFAULT;
-        $countryCode = $data[Customer::ATTR_COUNTRY_CODE];
+        if (is_array($data)) {
+            $countryCode = $data[Customer::ATTR_COUNTRY_CODE];
+        } elseif ($data instanceof \Flancer32\Lib\Data) {
+            $countryCode = $data->get(Customer::ATTR_COUNTRY_CODE);
+        }
         $code = strtoupper($countryCode);
         if (
             ($code == 'AT') ||

@@ -6,6 +6,7 @@ namespace Praxigento\BonusHybrid\Api\Stats;
 
 use Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc as QGetLastCalc;
 use Praxigento\BonusHybrid\Config as Cfg;
+use Praxigento\BonusHybrid\Defaults as Def;
 
 class Phase2
     implements \Praxigento\BonusHybrid\Api\Stats\Phase2Interface
@@ -30,22 +31,30 @@ class Phase2
     protected $qPeriodCalc;
     /** @var \Praxigento\BonusHybrid\Repo\Query\Stats\Phase2\Builder */
     protected $qbldStatsPhase2;
+    /** @var \Praxigento\Downline\Repo\Entity\ICustomer */
+    protected $repoCust;
     /** @var \Praxigento\Downline\Repo\Entity\ISnap */
     protected $repoSnap;
     /** @var \Praxigento\Core\Tool\IPeriod */
     protected $toolPeriod;
+    /** @var \Praxigento\BonusHybrid\Tool\IScheme */
+    protected $toolScheme;
 
     public function __construct(
         \Praxigento\Core\Api\IAuthenticator $authenticator,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
+        \Praxigento\BonusHybrid\Tool\IScheme $toolScheme,
         \Praxigento\BonusHybrid\Repo\Query\Stats\Phase2\Builder $qbldStatsPhase2,
+        \Praxigento\Downline\Repo\Entity\ICustomer $repoCust,
         \Praxigento\Downline\Repo\Entity\ISnap $repoSnap,
         \Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc $qPeriodCalc
 
     ) {
         $this->authenticator = $authenticator;
         $this->toolPeriod = $toolPeriod;
+        $this->toolScheme = $toolScheme;
         $this->qbldStatsPhase2 = $qbldStatsPhase2;
+        $this->repoCust = $repoCust;
         $this->repoSnap = $repoSnap;
         $this->qPeriodCalc = $qPeriodCalc;
     }
@@ -124,7 +133,7 @@ class Phase2
         $customerRoot = $this->repoSnap->getByCustomerIdOnDate($rootCustId, $onDate);
         $idRoot = $customerRoot->getCustomerId();
         $pathRoot = $customerRoot->getPath();
-        $where = \Praxigento\BonusHybrid\Repo\Query\Stats\Phase2\Builder::AS_Phase2 . '.' .
+        $where = \Praxigento\BonusHybrid\Repo\Query\Stats\Phase2\Builder::AS_TREE . '.' .
             \Praxigento\BonusHybrid\Entity\Compression\Ptc::ATTR_PATH . ' LIKE :' . self::BIND_PATH;
         $bind->set(self::BIND_PATH, $pathRoot . $idRoot . Cfg::DTPS . '%');
         $query->where($where);
@@ -133,14 +142,14 @@ class Phase2
         if (!is_null($maxDepth)) {
             /* depth started from 0, add +1 to start from root */
             $filterDepth = $customerRoot->getDepth() + 1 + $maxDepth;
-            $where = \Praxigento\BonusHybrid\Repo\Query\Stats\Phase2\Builder::AS_Phase2 . '.' .
+            $where = \Praxigento\BonusHybrid\Repo\Query\Stats\Phase2\Builder::AS_TREE . '.' .
                 \Praxigento\BonusHybrid\Entity\Compression\Ptc::ATTR_DEPTH . ' < :' . self::BIND_MAX_DEPTH;
             $bind->set(self::BIND_MAX_DEPTH, $filterDepth);
             $query->where($where);
         }
 
         /* filter data by calcId */
-        $where = \Praxigento\BonusHybrid\Repo\Query\Stats\Phase2\Builder::AS_Phase2 . '.' .
+        $where = \Praxigento\BonusHybrid\Repo\Query\Stats\Phase2\Builder::AS_TREE . '.' .
             \Praxigento\BonusHybrid\Entity\Compression\Ptc::ATTR_CALC_ID . ' = :' . self::BIND_CALC_REF;
         $query->where($where);
     }
@@ -158,23 +167,31 @@ class Phase2
         /** @var \Praxigento\BonusHybrid\Api\Stats\Plain\Request $req */
         $req = $ctx->get(self::CTX_REQ);
 
-        /* root customer id */
+        /* root customer id and SCHEME */
         $rootCustId = $req->getRootCustId();
         if (is_null($rootCustId)) {
             $user = $this->authenticator->getCurrentUserData();
             $rootCustId = $user->get(Cfg::E_CUSTOMER_A_ENTITY_ID);
+            $dwnl = $user->get(\Praxigento\Downline\Infra\Api\Authenticator::A_DWNL_DATA);
+        } else {
+            $dwnl = $this->repoCust->getById($rootCustId);
         }
+        $scheme = $this->toolScheme->getSchemeByCustomer($dwnl);
         $vars->set(self::VAR_ROOT_CUSTOMER_ID, $rootCustId);
 
         /* analyze period and compose sub-query params to get last calculation data ($calcId & $lastDate) */
         $period = $req->getPeriod();
         if (!$period) {
-            $period = '2999'; // CAUTION: this code will be failed after 2999 year.
+            /* CAUTION: this code will be failed after 2999 year. Please, call to the author in this case. */
+            $period = '2999';
         }
         $period = $this->toolPeriod->getPeriodLastDate($period);
+        $calcCode = ($scheme == Def::SCHEMA_EU)
+            ? Cfg::CODE_TYPE_CALC_COMPRESS_FOR_OI_EU
+            : Cfg::CODE_TYPE_CALC_COMPRESS_FOR_OI_DEF;
         $opts = new \Flancer32\Lib\Data([
             QGetLastCalc::OPT_DATE_END => $period,
-            QGetLastCalc::OPT_CALC_TYPE_CODE => Cfg::CODE_TYPE_CALC_COMPRESS_FOR_PTC
+            QGetLastCalc::OPT_CALC_TYPE_CODE => $calcCode
         ]);
         $qres = $this->qPeriodCalc->exec($opts);
         $calcId = $qres->get(QGetLastCalc::A_CALC_REF);

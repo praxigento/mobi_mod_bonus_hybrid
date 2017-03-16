@@ -169,7 +169,8 @@ class Phase1
         /* analyze period and compose sub-query params to get last calculation data ($calcId & $lastDate) */
         $period = $req->getPeriod();
         if (!$period) {
-            $period = '2999'; // CAUTION: this code will be failed after 2999 year.
+            /* CAUTION: this code will be failed after 2999 year. Please, call to the author in this case. */
+            $period = '2999';
         }
         $period = $this->toolPeriod->getPeriodLastDate($period);
         $opts = new \Flancer32\Lib\Data([
