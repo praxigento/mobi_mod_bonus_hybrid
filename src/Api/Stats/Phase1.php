@@ -11,17 +11,25 @@ class Phase1
     implements \Praxigento\BonusHybrid\Api\Stats\Phase1Interface
 {
 
-    const BIND_CALC_REF = \Praxigento\BonusHybrid\Repo\Query\Stats\Plain\Builder::BIND_CALC_REF;
+    const BIND_CALC_REF = 'calcRef';
     const BIND_MAX_DEPTH = 'maxDepth';
-    const BIND_ON_DATE = \Praxigento\BonusHybrid\Repo\Query\Stats\Plain\Builder::BIND_ON_DATE;
     const BIND_PATH = 'path';
-    const BIND_ROOT_CUSTOMER_ID = 'rootCustId';
+
+    const CTX_BIND = 'bind';
+    const CTX_QUERY = 'query';
+    const CTX_REQ = 'request';
+    const CTX_RESULT = 'result';
+    const CTX_VARS = 'vars';
+
+    const VAR_ON_DATE = 'on_date';
+    const VAR_ROOT_CUSTOMER_ID = 'root_cust_id';
+
     /** @var \Praxigento\Core\Api\IAuthenticator */
     protected $authenticator;
     /** @var  \Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc */
     protected $qPeriodCalc;
-    /** @var \Praxigento\BonusHybrid\Repo\Query\Stats\Plain\Builder */
-    protected $qbldStatsPto;
+    /** @var \Praxigento\BonusHybrid\Repo\Query\Stats\Phase1\Builder */
+    protected $qbldStatsPhase1;
     /** @var \Praxigento\Downline\Repo\Entity\ISnap */
     protected $repoSnap;
     /** @var \Praxigento\Core\Tool\IPeriod */
@@ -30,14 +38,14 @@ class Phase1
     public function __construct(
         \Praxigento\Core\Api\IAuthenticator $authenticator,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
-        \Praxigento\BonusHybrid\Repo\Query\Stats\Plain\Builder $qbldStatsPto,
+        \Praxigento\BonusHybrid\Repo\Query\Stats\Phase1\Builder $qbldStatsPhase1,
         \Praxigento\Downline\Repo\Entity\ISnap $repoSnap,
         \Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc $qPeriodCalc
 
     ) {
         $this->authenticator = $authenticator;
         $this->toolPeriod = $toolPeriod;
-        $this->qbldStatsPto = $qbldStatsPto;
+        $this->qbldStatsPhase1 = $qbldStatsPhase1;
         $this->repoSnap = $repoSnap;
         $this->qPeriodCalc = $qPeriodCalc;
     }
@@ -48,103 +56,134 @@ class Phase1
         if ($data->getRequestReturn()) {
             $result->setRequest($data);
         }
+
+        /* create context for request processing */
+        $ctx = new \Flancer32\Lib\Data();
+        $ctx->set(self::CTX_REQ, $data);
+        $ctx->set(self::CTX_QUERY, null);
+        $ctx->set(self::CTX_BIND, new \Flancer32\Lib\Data());
+        $ctx->set(self::CTX_VARS, new \Flancer32\Lib\Data());
+        $ctx->set(self::CTX_RESULT, null);
+
         /* parse request, prepare query and fetch data */
-        $bind = $this->prepareQueryParameters($data);
-        $query = $this->getSelectQuery($data, $bind);
-        $query = $this->populateQuery($query, $data, $bind);
-        $rs = $this->performQuery($query, $bind);
-        $rsData = new \Flancer32\Lib\Data($rs);
-        $result->setData($rsData->get());
+        $this->prepareQueryParameters($ctx);
+        $this->getSelectQuery($ctx);
+        $this->populateQuery($ctx);
+        $this->performQuery($ctx);
+
+        /* get query results from context and add to API response */
+        $rs = $ctx->get(self::CTX_RESULT);
+        $result->setData($rs);
         return $result;
     }
 
-    protected function getSelectQuery(
-        \Flancer32\Lib\Data $data = null,
-        \Flancer32\Lib\Data $bind = null
-    ) {
-        $query = $this->qbldStatsPto->getSelectQuery();
-        return $query;
+    /**
+     * @param \Flancer32\Lib\Data $ctx
+     */
+    protected function getSelectQuery(\Flancer32\Lib\Data $ctx)
+    {
+        $query = $this->qbldStatsPhase1->getSelectQuery();
+        $ctx->set(self::CTX_QUERY, $query);
     }
 
-    protected function performQuery(\Magento\Framework\DB\Select $query, \Flancer32\Lib\Data $bind = null)
+    protected function performQuery(\Flancer32\Lib\Data $ctx)
     {
+        /* get working vars from context */
+        $bind = $ctx->get(self::CTX_BIND);
+        $query = $ctx->get(self::CTX_QUERY);
+
         $conn = $query->getConnection();
         $rs = $conn->fetchAll($query, (array)$bind->get());
-        return $rs;
+
+        $ctx->set(self::CTX_RESULT, $rs);
     }
 
     /**
      * Populate query and bound parameters according to request data (from $bind).
      *
-     * @param \Magento\Framework\DB\Select $query SQL query
-     * @param \Flancer32\Lib\Data|null $data API request data
-     * @param \Flancer32\Lib\Data|null $bind query parameters
-     * @return \Magento\Framework\DB\Select
+     * @param \Flancer32\Lib\Data $ctx
      */
-    protected function populateQuery(
-        \Magento\Framework\DB\Select $query,
-        \Flancer32\Lib\Data $data = null,
-        \Flancer32\Lib\Data $bind = null
-    ) {
-        /** @var \Praxigento\BonusHybrid\Api\Stats\Plain\Request $data */
-        /* collect important parameters (request & query) */
-        $rootCustId = $data->getRootCustId();
-        $onDate = $bind->get(self::BIND_ON_DATE);
-        $maxDepth = $bind->get(self::BIND_MAX_DEPTH);
+    protected function populateQuery(\Flancer32\Lib\Data $ctx)
+    {
+        /* get working vars from context */
+        /** @var \Flancer32\Lib\Data $bind */
+        $bind = $ctx->get(self::CTX_BIND);
+        /** @var \Flancer32\Lib\Data $vars */
+        $vars = $ctx->get(self::CTX_VARS);
+        /** @var \Magento\Framework\DB\Select $query */
+        $query = $ctx->get(self::CTX_QUERY);
+        /** @var \Praxigento\BonusHybrid\Api\Stats\Plain\Request $req */
+        $req = $ctx->get(self::CTX_REQ);
 
-        /* filter data by root customer's path  */
-        if (is_null($rootCustId)) {
-            $user = $this->authenticator->getCurrentUserData();
-            $rootCustId = $user->get(Cfg::E_CUSTOMER_A_ENTITY_ID);
-        }
-        // get root customer from snaps
+        /* collect important parameters (request, vars & query) */
+        $onDate = $vars->get(self::VAR_ON_DATE);
+        $rootCustId = $vars->get(self::VAR_ROOT_CUSTOMER_ID);
+        $maxDepth = $req->getMaxDepth();
+
+        /* filter data by root customer's path (on the given date) */
         $customerRoot = $this->repoSnap->getByCustomerIdOnDate($rootCustId, $onDate);
         $idRoot = $customerRoot->getCustomerId();
         $pathRoot = $customerRoot->getPath();
-        $where = \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::AS_DWNL_SNAP . '.' .
-            \Praxigento\Downline\Data\Entity\Snap::ATTR_PATH . ' LIKE :' . self::BIND_PATH;
+        $where = \Praxigento\BonusHybrid\Repo\Query\Stats\Phase1\Builder::AS_PHASE1 . '.' .
+            \Praxigento\BonusHybrid\Entity\Compression\Ptc::ATTR_PATH . ' LIKE :' . self::BIND_PATH;
         $bind->set(self::BIND_PATH, $pathRoot . $idRoot . Cfg::DTPS . '%');
         $query->where($where);
-
 
         /* filter data by max depth in downline tree */
         if (!is_null($maxDepth)) {
             /* depth started from 0, add +1 to start from root */
             $filterDepth = $customerRoot->getDepth() + 1 + $maxDepth;
-            $where = \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::AS_DWNL_SNAP . '.' .
-                \Praxigento\Downline\Data\Entity\Snap::ATTR_DEPTH . ' < :' . self::BIND_MAX_DEPTH;
+            $where = \Praxigento\BonusHybrid\Repo\Query\Stats\Phase1\Builder::AS_PHASE1 . '.' .
+                \Praxigento\BonusHybrid\Entity\Compression\Ptc::ATTR_DEPTH . ' < :' . self::BIND_MAX_DEPTH;
             $bind->set(self::BIND_MAX_DEPTH, $filterDepth);
             $query->where($where);
         }
-        return $query;
+
+        /* filter data by calcId */
+        $where = \Praxigento\BonusHybrid\Repo\Query\Stats\Phase1\Builder::AS_PHASE1 . '.' .
+            \Praxigento\BonusHybrid\Entity\Compression\Ptc::ATTR_CALC_ID . ' = :' . self::BIND_CALC_REF;
+        $query->where($where);
     }
 
     /**
-     * Analyze request data and collect expected parameters.
+     * Analyze request data, collect expected parameters and place its to execution context.
      *
-     * @param \Flancer32\Lib\Data $data
-     * @return \Flancer32\Lib\Data
+     * @param \Flancer32\Lib\Data $ctx
      */
-    protected function prepareQueryParameters(\Flancer32\Lib\Data $data)
+    protected function prepareQueryParameters(\Flancer32\Lib\Data $ctx)
     {
-        $result = new \Flancer32\Lib\Data();
-        /* extract request parameters */
-        /** @var \Praxigento\BonusHybrid\Api\Stats\Plain\Request $data */
-        $period = $data->getPeriod();
+        /* get working vars from context */
+        $bind = $ctx->get(self::CTX_BIND);
+        $vars = $ctx->get(self::CTX_VARS);
+        /** @var \Praxigento\BonusHybrid\Api\Stats\Plain\Request $req */
+        $req = $ctx->get(self::CTX_REQ);
 
-        /* analyze request parameters and compose query parameters */
-        // get last calculation data ($calcId & $lastDate)
-        if ($period) {
-            $period = $this->toolPeriod->getPeriodLastDate($period);
+        /* root customer id */
+        $rootCustId = $req->getRootCustId();
+        if (is_null($rootCustId)) {
+            $user = $this->authenticator->getCurrentUserData();
+            $rootCustId = $user->get(Cfg::E_CUSTOMER_A_ENTITY_ID);
         }
+        $vars->set(self::VAR_ROOT_CUSTOMER_ID, $rootCustId);
+
+        /* analyze period and compose sub-query params to get last calculation data ($calcId & $lastDate) */
+        $period = $req->getPeriod();
+        if (!$period) {
+            $period = '2999'; // CAUTION: this code will be failed after 2999 year.
+        }
+        $period = $this->toolPeriod->getPeriodLastDate($period);
         $opts = new \Flancer32\Lib\Data([
             QGetLastCalc::OPT_DATE_END => $period,
             QGetLastCalc::OPT_CALC_TYPE_CODE => Cfg::CODE_TYPE_CALC_COMPRESS_FOR_PTC
         ]);
         $qres = $this->qPeriodCalc->exec($opts);
-        $result->set(self::BIND_CALC_REF, $qres->get(QGetLastCalc::A_CALC_REF));
-        $result->set(self::BIND_ON_DATE, $qres->get(QGetLastCalc::A_DS_END));
+        $calcId = $qres->get(QGetLastCalc::A_CALC_REF);
+        $onDate = $qres->get(QGetLastCalc::A_DS_END);
 
-        return $result;
+        /* save to context */
+        $bind->set(self::BIND_CALC_REF, $calcId);
+        $vars->set(self::VAR_ON_DATE, $onDate);
+        $ctx->set(self::CTX_BIND, $bind);
+        $ctx->set(self::CTX_VARS, $vars);
     }
 }

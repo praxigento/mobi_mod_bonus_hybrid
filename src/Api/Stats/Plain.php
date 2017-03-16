@@ -21,7 +21,7 @@ class Plain
     /** @var  \Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc */
     protected $qPeriodCalc;
     /** @var \Praxigento\BonusHybrid\Repo\Query\Stats\Plain\Builder */
-    protected $qbldStatsPto;
+    protected $qbldStatsPlain;
     /** @var \Praxigento\Downline\Repo\Entity\ISnap */
     protected $repoSnap;
     /** @var \Praxigento\Core\Tool\IPeriod */
@@ -30,14 +30,14 @@ class Plain
     public function __construct(
         \Praxigento\Core\Api\IAuthenticator $authenticator,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
-        \Praxigento\BonusHybrid\Repo\Query\Stats\Plain\Builder $qbldStatsPto,
+        \Praxigento\BonusHybrid\Repo\Query\Stats\Plain\Builder $qbldStatsPlain,
         \Praxigento\Downline\Repo\Entity\ISnap $repoSnap,
         \Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc $qPeriodCalc
 
     ) {
         $this->authenticator = $authenticator;
         $this->toolPeriod = $toolPeriod;
-        $this->qbldStatsPto = $qbldStatsPto;
+        $this->qbldStatsPlain = $qbldStatsPlain;
         $this->repoSnap = $repoSnap;
         $this->qPeriodCalc = $qPeriodCalc;
     }
@@ -62,7 +62,7 @@ class Plain
         \Flancer32\Lib\Data $data = null,
         \Flancer32\Lib\Data $bind = null
     ) {
-        $query = $this->qbldStatsPto->getSelectQuery();
+        $query = $this->qbldStatsPlain->getSelectQuery();
         return $query;
     }
 
