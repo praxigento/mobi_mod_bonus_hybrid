@@ -89,7 +89,7 @@ class CompressOi
                     Oi::ATTR_TV => $tvCompress,
                     Oi::ATTR_OV_LEG_MAX => 0,
                     Oi::ATTR_OV_LEG_SECOND => 0,
-                    Oi::ATTR_OV_LEG_SUMMARY => 0
+                    Oi::ATTR_OV_LEG_OTHERS => 0
                 ];
 
                 /* calculate phase2 legs for qualified managers */
@@ -125,7 +125,7 @@ class CompressOi
                         /* update legs */
                         $resultEntry[Oi::ATTR_OV_LEG_MAX] = $legMax;
                         $resultEntry[Oi::ATTR_OV_LEG_SECOND] = $legSecond;
-                        $resultEntry[Oi::ATTR_OV_LEG_SUMMARY] = $legOthers;
+                        $resultEntry[Oi::ATTR_OV_LEG_OTHERS] = $legOthers;
                         $rankId = $this->hlpGetMaxRankId->exec([
                             \Praxigento\BonusHybrid\Helper\Calc\GetMaxQualifiedRankId::OPT_COMPRESS_OI_ENTRY => $resultEntry,
                             \Praxigento\BonusHybrid\Helper\Calc\GetMaxQualifiedRankId::OPT_SCHEME => $scheme,

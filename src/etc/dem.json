@@ -129,6 +129,19 @@
                             "nullable": false,
                             "type": {"integer": {"unsigned": true}}
                           },
+                          "Depth": {
+                            "alias": "depth",
+                            "comment": "Depth of the node in the tree.",
+                            "nullable": false,
+                            "default": 0,
+                            "type": {"integer": {"unsigned": true}}
+                          },
+                          "Path": {
+                            "alias": "path",
+                            "comment": "Path to the node - /1/2/3/.../",
+                            "nullable": false,
+                            "type": {"text": {"length": 255}}
+                          },
                           "RankId": {
                             "alias": "rank_id",
                             "comment": "Reference to the customer's qualification rank.",

@@ -786,7 +786,7 @@ class Calc
             /* qualification params:  legs */
             $legMax = $compressOiEntry[OiCompress::ATTR_OV_LEG_MAX];
             $legSecond = $compressOiEntry[OiCompress::ATTR_OV_LEG_SECOND];
-            $legSummary = $compressOiEntry[OiCompress::ATTR_OV_LEG_SUMMARY];
+            $legSummary = $compressOiEntry[OiCompress::ATTR_OV_LEG_OTHERS];
             /* sort legs values to use in 3-legs qualification */
             $sorted = [$legMax, $legSecond, $legSummary];
             sort($sorted);

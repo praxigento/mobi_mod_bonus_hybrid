@@ -95,7 +95,7 @@ class Calc_UnitTest extends \Praxigento\BonusHybrid\Test\BaseTestCase
             OiCompress::ATTR_TV => 1000,
             OiCompress::ATTR_OV_LEG_MAX => 310,
             OiCompress::ATTR_OV_LEG_SECOND => 210,
-            OiCompress::ATTR_OV_LEG_SUMMARY => 110
+            OiCompress::ATTR_OV_LEG_OTHERS => 110
         ];
         $LEGS_2 = [
             OiCompress::ATTR_CUSTOMER_ID => 2,
@@ -103,7 +103,7 @@ class Calc_UnitTest extends \Praxigento\BonusHybrid\Test\BaseTestCase
             OiCompress::ATTR_TV => 1000,
             OiCompress::ATTR_OV_LEG_MAX => 310,
             OiCompress::ATTR_OV_LEG_SECOND => 210,
-            OiCompress::ATTR_OV_LEG_SUMMARY => 0
+            OiCompress::ATTR_OV_LEG_OTHERS => 0
         ];
         $LEGS_1 = [
             OiCompress::ATTR_CUSTOMER_ID => 3,
@@ -111,7 +111,7 @@ class Calc_UnitTest extends \Praxigento\BonusHybrid\Test\BaseTestCase
             OiCompress::ATTR_TV => 1000,
             OiCompress::ATTR_OV_LEG_MAX => 310,
             OiCompress::ATTR_OV_LEG_SECOND => 0,
-            OiCompress::ATTR_OV_LEG_SUMMARY => 0
+            OiCompress::ATTR_OV_LEG_OTHERS => 0
         ];
         $LEGS_0 = [
             OiCompress::ATTR_CUSTOMER_ID => 3,
@@ -119,7 +119,7 @@ class Calc_UnitTest extends \Praxigento\BonusHybrid\Test\BaseTestCase
             OiCompress::ATTR_TV => 1000,
             OiCompress::ATTR_OV_LEG_MAX => 0,
             OiCompress::ATTR_OV_LEG_SECOND => 0,
-            OiCompress::ATTR_OV_LEG_SUMMARY => 0
+            OiCompress::ATTR_OV_LEG_OTHERS => 0
         ];
         $CFG_PARAM = [
             Def::SCHEMA_DEFAULT => [
