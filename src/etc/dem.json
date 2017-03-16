@@ -178,9 +178,9 @@
                             "nullable": false,
                             "type": {"numeric": {"precision": 12, "scale": 4}}
                           },
-                          "OvLegSummary": {
-                            "alias": "ov_leg_summary",
-                            "comment": "OV value for the lest leg (summary for all other legs).",
+                          "OvLegOthers": {
+                            "alias": "ov_leg_others",
+                            "comment": "OV value for the lest legs (summary for all other legs).",
                             "nullable": false,
                             "type": {"numeric": {"precision": 12, "scale": 4}}
                           }

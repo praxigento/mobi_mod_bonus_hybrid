@@ -31,17 +31,20 @@ class CompressOi
     protected $hlpRank;
     /** @var \Praxigento\Downline\Tool\ITree */
     protected $toolDwnlTree;
-
+    /** @var \Praxigento\Downline\Service\ISnap */
+    protected $callDwnlSnap;
     public function __construct(
         \Praxigento\BonusBase\Helper\IRank $hlpRank,
         \Praxigento\BonusHybrid\Helper\Calc\IsQualified $hlpIsQualified,
         \Praxigento\BonusHybrid\Helper\Calc\GetMaxQualifiedRankId $hlpGetMaxRankId,
-        \Praxigento\Downline\Tool\ITree $toolTree
+        \Praxigento\Downline\Tool\ITree $toolTree,
+        \Praxigento\Downline\Service\ISnap $callDwnSnap
     ) {
         $this->hlpRank = $hlpRank;
         $this->hlpIsQualified = $hlpIsQualified;
         $this->hlpGetMaxRankId = $hlpGetMaxRankId;
         $this->toolDwnlTree = $toolTree;
+        $this->callDwnlSnap = $callDwnSnap;
     }
 
     /**
@@ -199,6 +202,19 @@ class CompressOi
                 /* add entry to results */
                 $result[$custId] = $resultEntry;
             }
+        }
+
+        $req = new \Praxigento\Downline\Service\Snap\Request\ExpandMinimal();
+        $req->setTree($result);
+        $req->setKeyCustomerId(Oi::ATTR_CUSTOMER_ID);
+        $req->setKeyParentId(Oi::ATTR_PARENT_ID);
+        $resp = $this->callDwnlSnap->expandMinimal($req);
+        $snap = $resp->getSnapData();
+        foreach ($result as $id => $one) {
+            $depth = $snap[$id][\Praxigento\Downline\Data\Entity\Snap::ATTR_DEPTH];
+            $path = $snap[$id][\Praxigento\Downline\Data\Entity\Snap::ATTR_PATH];
+            $result[$id][Oi::ATTR_DEPTH] = $depth;
+            $result[$id][Oi::ATTR_PATH] = $path;
         }
         /* clean up memory */
         unset($mapByTeamPlain);
