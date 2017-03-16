@@ -124,7 +124,7 @@ class Phase1
         $customerRoot = $this->repoSnap->getByCustomerIdOnDate($rootCustId, $onDate);
         $idRoot = $customerRoot->getCustomerId();
         $pathRoot = $customerRoot->getPath();
-        $where = \Praxigento\BonusHybrid\Repo\Query\Stats\Phase1\Builder::AS_PHASE1 . '.' .
+        $where = \Praxigento\BonusHybrid\Repo\Query\Stats\Phase1\Builder::AS_TREE . '.' .
             \Praxigento\BonusHybrid\Entity\Compression\Ptc::ATTR_PATH . ' LIKE :' . self::BIND_PATH;
         $bind->set(self::BIND_PATH, $pathRoot . $idRoot . Cfg::DTPS . '%');
         $query->where($where);
@@ -133,14 +133,14 @@ class Phase1
         if (!is_null($maxDepth)) {
             /* depth started from 0, add +1 to start from root */
             $filterDepth = $customerRoot->getDepth() + 1 + $maxDepth;
-            $where = \Praxigento\BonusHybrid\Repo\Query\Stats\Phase1\Builder::AS_PHASE1 . '.' .
+            $where = \Praxigento\BonusHybrid\Repo\Query\Stats\Phase1\Builder::AS_TREE . '.' .
                 \Praxigento\BonusHybrid\Entity\Compression\Ptc::ATTR_DEPTH . ' < :' . self::BIND_MAX_DEPTH;
             $bind->set(self::BIND_MAX_DEPTH, $filterDepth);
             $query->where($where);
         }
 
         /* filter data by calcId */
-        $where = \Praxigento\BonusHybrid\Repo\Query\Stats\Phase1\Builder::AS_PHASE1 . '.' .
+        $where = \Praxigento\BonusHybrid\Repo\Query\Stats\Phase1\Builder::AS_TREE . '.' .
             \Praxigento\BonusHybrid\Entity\Compression\Ptc::ATTR_CALC_ID . ' = :' . self::BIND_CALC_REF;
         $query->where($where);
     }

@@ -17,7 +17,7 @@ class Builder
     /** Tables aliases */
     const AS_CUST = 'cst';
     const AS_PARENT = 'prn';
-    const AS_PHASE1 = 'ph1';
+    const AS_TREE = 'tree';
 
     /** Columns aliases */
     const A_CUST_ID = Ptc::ATTR_CUSTOMER_ID;
@@ -35,16 +35,16 @@ class Builder
 
     /**
      * SELECT
-     * `ph1`.`customer_id`,
-     * `ph1`.`parent_id`,
-     * `ph1`.`depth`,
-     * `ph1`.`path`,
-     * `ph1`.`pv`,
-     * `ph1`.`tv`,
-     * `ph1`.`ov`,
+     * `tree`.`customer_id`,
+     * `tree`.`parent_id`,
+     * `tree`.`depth`,
+     * `tree`.`path`,
+     * `tree`.`pv`,
+     * `tree`.`tv`,
+     * `tree`.`ov`,
      * `cst`.`human_ref` AS `customer_mlm_id`,
      * `prn`.`human_ref` AS `parent_mlm_id`
-     * FROM `prxgt_bon_hyb_cmprs_ptc` AS `ph1`
+     * FROM `prxgt_bon_hyb_cmprs_ptc` AS `tree`
      * LEFT JOIN `prxgt_dwnl_customer` AS `cst`
      * ON cst.customer_id = ph1.customer_id
      * LEFT JOIN `prxgt_dwnl_customer` AS `prn`
@@ -56,7 +56,7 @@ class Builder
     {
         $result = $this->conn->select(); // this is root query
         /* define tables aliases */
-        $asPtc = self::AS_PHASE1;
+        $asTree = self::AS_TREE;
         $asCust = self::AS_CUST;
         $asPrnt = self::AS_PARENT;
 
@@ -71,14 +71,14 @@ class Builder
             self::A_TV => Ptc::ATTR_TV,
             self::A_OV => Ptc::ATTR_OV
         ];
-        $result->from([$asPtc => $tbl], $cols);
+        $result->from([$asTree => $tbl], $cols);
 
         /* LEFT JOIN prxgt_dwnl_customer (for customer MLM ID) */
         $tbl = $this->resource->getTableName(Cust::ENTITY_NAME);
         $cols = [
             self::A_CUST_MLM_ID => Cust::ATTR_HUMAN_REF
         ];
-        $on = $asCust . '.' . Cust::ATTR_CUSTOMER_ID . '=' . $asPtc . '.' . Ptc::ATTR_CUSTOMER_ID;
+        $on = $asCust . '.' . Cust::ATTR_CUSTOMER_ID . '=' . $asTree . '.' . Ptc::ATTR_CUSTOMER_ID;
         $result->joinLeft([$asCust => $tbl], $on, $cols);
 
         /* LEFT JOIN prxgt_dwnl_customer (for parent MLM ID) */
@@ -86,7 +86,7 @@ class Builder
         $cols = [
             self::A_PARENT_MLM_ID => Cust::ATTR_HUMAN_REF
         ];
-        $on = $asPrnt . '.' . Cust::ATTR_CUSTOMER_ID . '=' . $asPtc . '.' . Ptc::ATTR_PARENT_ID;
+        $on = $asPrnt . '.' . Cust::ATTR_CUSTOMER_ID . '=' . $asTree . '.' . Ptc::ATTR_PARENT_ID;
         $result->joinLeft([$asPrnt => $tbl], $on, $cols);
 
         return $result;
