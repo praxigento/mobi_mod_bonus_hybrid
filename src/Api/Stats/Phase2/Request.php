@@ -12,7 +12,7 @@ namespace Praxigento\BonusHybrid\Api\Stats\Phase2;
  *
  */
 class Request
-    extends \Flancer32\Lib\Data
+    extends \Praxigento\Core\Api\Request
 {
     /**
      * Limit tree depth starting from root customer level.
