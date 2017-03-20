@@ -8,6 +8,7 @@ use Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc as QGetLastCalc;
 use Praxigento\BonusHybrid\Config as Cfg;
 
 class Plain
+    extends \Praxigento\Core\Api\Processor\WithQuery
     implements \Praxigento\BonusHybrid\Api\Stats\PlainInterface
 {
 
@@ -16,6 +17,14 @@ class Plain
     const BIND_ON_DATE = \Praxigento\BonusHybrid\Repo\Query\Stats\Plain\Builder::BIND_ON_DATE;
     const BIND_PATH = 'path';
     const BIND_ROOT_CUSTOMER_ID = 'rootCustId';
+
+    const VAR_CALC_REF = 'calc_ref';
+    const VAR_CUST_DEPTH = 'depth';
+    const VAR_CUST_ID = 'cust_id';
+    const VAR_CUST_PATH = 'path';
+    const VAR_MAX_DEPTH = 'max_depth';
+    const VAR_ON_DATE = 'on_date';
+
     /** @var \Praxigento\Core\Api\IAuthenticator */
     protected $authenticator;
     /** @var  \Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc */
@@ -44,107 +53,106 @@ class Plain
 
     public function exec(\Praxigento\BonusHybrid\Api\Stats\Plain\Request $data)
     {
-        $result = new \Praxigento\BonusHybrid\Api\Stats\Plain\Response();
-        if ($data->getRequestReturn()) {
-            $result->setRequest($data);
-        }
-        /* parse request, prepare query and fetch data */
-        $bind = $this->prepareQueryParameters($data);
-        $query = $this->getSelectQuery($data, $bind);
-        $query = $this->populateQuery($query, $data, $bind);
-        $rs = $this->performQuery($query, $bind);
-        $rsData = new \Flancer32\Lib\Data($rs);
-        $result->setData($rsData->get());
+        $result = parent::process($data);
         return $result;
     }
 
-    protected function getSelectQuery(
-        \Flancer32\Lib\Data $data = null,
-        \Flancer32\Lib\Data $bind = null
-    ) {
-        $query = $this->qbldStatsPlain->getSelectQuery();
-        return $query;
-    }
-
-    protected function performQuery(\Magento\Framework\DB\Select $query, \Flancer32\Lib\Data $bind = null)
+    protected function getSelectQuery(\Flancer32\Lib\Data $ctx)
     {
-        $conn = $query->getConnection();
-        $rs = $conn->fetchAll($query, (array)$bind->get());
-        return $rs;
+        $query = $this->qbldStatsPlain->getSelectQuery();
+        $ctx->set(self::CTX_QUERY, $query);
     }
 
-    /**
-     * Populate query and bound parameters according to request data (from $bind).
-     *
-     * @param \Magento\Framework\DB\Select $query SQL query
-     * @param \Flancer32\Lib\Data|null $data API request data
-     * @param \Flancer32\Lib\Data|null $bind query parameters
-     * @return \Magento\Framework\DB\Select
-     */
-    protected function populateQuery(
-        \Magento\Framework\DB\Select $query,
-        \Flancer32\Lib\Data $data = null,
-        \Flancer32\Lib\Data $bind = null
-    ) {
-        /** @var \Praxigento\BonusHybrid\Api\Stats\Plain\Request $data */
+    protected function populateQuery(\Flancer32\Lib\Data $ctx)
+    {
+        /* get working vars from context */
+        /** @var \Flancer32\Lib\Data $bind */
+        $bind = $ctx->get(self::CTX_BIND);
+        /** @var \Flancer32\Lib\Data $vars */
+        $vars = $ctx->get(self::CTX_VARS);
+        /** @var \Magento\Framework\DB\Select $query */
+        $query = $ctx->get(self::CTX_QUERY);
+        
         /* collect important parameters (request & query) */
-        $rootCustId = $data->getRootCustId();
-        $maxDepth = $data->getMaxDepth();
-        $onDate = $bind->get(self::BIND_ON_DATE);
+        $onDate = $vars->get(self::VAR_ON_DATE);
+        $calcRef = $vars->get(self::VAR_CALC_REF);
+        $rootCustId = $vars->get(self::VAR_CUST_ID);
+        $rootCustDepth = $vars->get(self::VAR_CUST_DEPTH);
+        $rootCustPath = $vars->get(self::VAR_CUST_PATH);
+        $maxDepth = $vars->get(self::VAR_MAX_DEPTH);
 
-        /* filter data by root customer's path  */
-        if (is_null($rootCustId)) {
-            $user = $this->authenticator->getCurrentUserData();
-            $rootCustId = $user->get(Cfg::E_CUSTOMER_A_ENTITY_ID);
-        }
-        // get root customer from snaps
-        $customerRoot = $this->repoSnap->getByCustomerIdOnDate($rootCustId, $onDate);
-        $idRoot = $customerRoot->getCustomerId();
-        $pathRoot = $customerRoot->getPath();
+        /* filter snap data by date */
+        $bind->set(self::BIND_ON_DATE, $onDate);
+
+        /* filter stats data by calculation ref */
+        $bind->set(self::BIND_CALC_REF, $calcRef);
+
+        /* filter snap data by root customer path */
         $where = \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::AS_DWNL_SNAP . '.' .
             \Praxigento\Downline\Data\Entity\Snap::ATTR_PATH . ' LIKE :' . self::BIND_PATH;
-        $bind->set(self::BIND_PATH, $pathRoot . $idRoot . Cfg::DTPS . '%');
+        $path = $rootCustPath . $rootCustId . Cfg::DTPS . '%';
+        $bind->set(self::BIND_PATH, $path);
         $query->where($where);
 
-
-        /* filter data by max depth in downline tree */
+        /* filter sanp data by max depth in downline tree */
         if (!is_null($maxDepth)) {
             /* depth started from 0, add +1 to start from root */
-            $filterDepth = $customerRoot->getDepth() + 1 + $maxDepth;
+            $depth = $rootCustDepth + 1 + $maxDepth;
             $where = \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::AS_DWNL_SNAP . '.' .
                 \Praxigento\Downline\Data\Entity\Snap::ATTR_DEPTH . ' < :' . self::BIND_MAX_DEPTH;
-            $bind->set(self::BIND_MAX_DEPTH, $filterDepth);
+            $bind->set(self::BIND_MAX_DEPTH, $depth);
             $query->where($where);
         }
         return $query;
     }
 
-    /**
-     * Analyze request data and collect expected parameters.
-     *
-     * @param \Flancer32\Lib\Data $data
-     * @return \Flancer32\Lib\Data
-     */
-    protected function prepareQueryParameters(\Flancer32\Lib\Data $data)
+    protected function prepareQueryParameters(\Flancer32\Lib\Data $ctx)
     {
-        $result = new \Flancer32\Lib\Data();
-        /* extract request parameters */
-        /** @var \Praxigento\BonusHybrid\Api\Stats\Plain\Request $data */
-        $period = $data->getPeriod();
+        /* get working vars from context */
+        /** @var \Flancer32\Lib\Data $vars */
+        $vars = $ctx->get(self::CTX_VARS);
+        /** @var \Praxigento\BonusHybrid\Api\Stats\Plain\Request $req */
+        $req = $ctx->get(self::CTX_REQ);
 
-        /* analyze request parameters and compose query parameters */
-        // get last calculation data ($calcId & $lastDate)
+        /* extract request parameters */
+        $rootCustId = $req->getRootCustId();
+        $period = $req->getPeriod();
+        $maxDepth = $req->getMaxDepth();
+
+        /* define requested root customer */
+        if (is_null($rootCustId)) {
+            $user = $this->authenticator->getCurrentUserData();
+            $rootCustId = $user->get(Cfg::E_CUSTOMER_A_ENTITY_ID);
+        }
+
+        /* define requested period */
         if ($period) {
             $period = $this->toolPeriod->getPeriodLastDate($period);
+        } else {
+            /* CAUTION: this code will be failed after 2999 year. Please, call to the author in this case. */
+            $period = '29991231';
         }
+
+        // get root customer data on requested date from snaps
+        $customerRoot = $this->repoSnap->getByCustomerIdOnDate($rootCustId, $period);
+        $depth = $customerRoot->getDepth();
+        $path = $customerRoot->getPath();
+
+        // get last calculation data ($calcId & $lastDate)
         $opts = new \Flancer32\Lib\Data([
             QGetLastCalc::OPT_DATE_END => $period,
             QGetLastCalc::OPT_CALC_TYPE_CODE => Cfg::CODE_TYPE_CALC_PV_WRITE_OFF
         ]);
         $qres = $this->qPeriodCalc->exec($opts);
-        $result->set(self::BIND_CALC_REF, $qres->get(QGetLastCalc::A_CALC_REF));
-        $result->set(self::BIND_ON_DATE, $qres->get(QGetLastCalc::A_DS_END));
+        $calcRef = $qres->get(QGetLastCalc::A_CALC_REF);
+        $onDate = $qres->get(QGetLastCalc::A_DS_END);
 
-        return $result;
+        /* save working variables into execution context */
+        $vars->set(self::VAR_CUST_ID, $rootCustId);
+        $vars->set(self::VAR_CUST_DEPTH, $depth);
+        $vars->set(self::VAR_CUST_PATH, $path);
+        $vars->set(self::VAR_MAX_DEPTH, $maxDepth);
+        $vars->set(self::VAR_CALC_REF, $calcRef);
+        $vars->set(self::VAR_ON_DATE, $onDate);
     }
 }
