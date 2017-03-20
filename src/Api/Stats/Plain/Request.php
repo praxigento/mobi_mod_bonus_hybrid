@@ -12,69 +12,7 @@ namespace Praxigento\BonusHybrid\Api\Stats\Plain;
  *
  */
 class Request
-    extends \Praxigento\Core\Api\Request\WithCond
+    extends \Praxigento\BonusHybrid\Api\Stats\Base\Request
 {
-    /**
-     * Limit tree depth starting from root customer level.
-     *
-     * @return int|null
-     */
-    public function getMaxDepth()
-    {
-        $result = parent::getMaxDepth();
-        return $result;
-    }
-
-    /**
-     * End of the calculation period.
-     *
-     * @return string|null 'YYYY', 'YYYYMM', 'YYYYMMDD'
-     */
-    public function getPeriod()
-    {
-        $result = parent::getPeriod();
-        return $result;
-    }
-
-    /**
-     * Root Customer ID for development purposes.
-     *
-     * @return int|null
-     */
-    public function getRootCustId()
-    {
-        $result = parent::getRootCustId();
-        return $result;
-    }
-
-    /**
-     * Limit tree depth starting from root customer level.
-     *
-     * @param int $data
-     */
-    public function setMaxDepth($data)
-    {
-        parent::setMaxDepth($data);
-    }
-
-    /**
-     * End of the calculation period.
-     *
-     * @param string $data 'YYYY', 'YYYYMM', 'YYYYMMDD'
-     */
-    public function setPeriod($data)
-    {
-        parent::setPeriod($data);
-    }
-
-    /**
-     * Root Customer ID for development purposes.
-     *
-     * @param int $data
-     */
-    public function setRootCustId($data)
-    {
-        parent::setRootCustId($data);
-    }
 
 }

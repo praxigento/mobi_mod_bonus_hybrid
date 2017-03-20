@@ -30,9 +30,6 @@ class Builder
     const A_PV = Ptc::ATTR_PV;
     const A_TV = Ptc::ATTR_TV;
 
-    /** Bound variables names */
-    const BIND_CALC_REF = 'calcRef';
-
     /**
      * SELECT
      * `tree`.`customer_id`,
