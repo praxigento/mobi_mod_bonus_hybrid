@@ -18,20 +18,21 @@ class Phase1
 
 
     public function __construct(
+        \Praxigento\BonusHybrid\Repo\Query\Stats\Phase1\Builder $qbldPhase1,
         \Praxigento\Core\Api\IAuthenticator $authenticator,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
         \Praxigento\Downline\Repo\Entity\ISnap $repoSnap,
-        \Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc $qPeriodCalc,
-        \Praxigento\BonusHybrid\Repo\Query\Stats\Phase1\Builder $qbldStatsPhase1
+        \Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc $qPeriodCalc
+
 
     ) {
         /* define query builder type */
         parent::__construct(
+            $qbldPhase1,
             $authenticator,
             $toolPeriod,
             $repoSnap,
-            $qPeriodCalc,
-            $qbldStatsPhase1
+            $qPeriodCalc
         );
     }
 

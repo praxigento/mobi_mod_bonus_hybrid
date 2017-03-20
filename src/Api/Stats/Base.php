@@ -25,30 +25,25 @@ abstract class Base
     /** @var  \Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc */
     protected $qPeriodCalc;
     /** @var \Praxigento\BonusHybrid\Repo\Query\Stats\Phase1\Builder */
-    protected $qbldStats;
+    protected $qbld;
     /** @var \Praxigento\Downline\Repo\Entity\ISnap */
     protected $repoSnap;
     /** @var \Praxigento\Core\Tool\IPeriod */
     protected $toolPeriod;
 
     public function __construct(
+        \Praxigento\Core\Repo\Query\Def\Builder $qbld,
         \Praxigento\Core\Api\IAuthenticator $authenticator,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
         \Praxigento\Downline\Repo\Entity\ISnap $repoSnap,
-        \Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc $qPeriodCalc,
-        \Praxigento\Core\Repo\Query\Def\Builder $qbldStats
+        \Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc $qPeriodCalc
+
     ) {
+        parent::__construct($qbld);
         $this->authenticator = $authenticator;
         $this->toolPeriod = $toolPeriod;
         $this->repoSnap = $repoSnap;
         $this->qPeriodCalc = $qPeriodCalc;
-        $this->qbldStats = $qbldStats;
-    }
-
-    protected function createQuerySelect(\Flancer32\Lib\Data $ctx)
-    {
-        $query = $this->qbldStats->getSelectQuery();
-        $ctx->set(self::CTX_QUERY, $query);
     }
 
     /**

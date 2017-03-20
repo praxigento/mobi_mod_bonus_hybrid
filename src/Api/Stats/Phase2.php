@@ -21,21 +21,21 @@ class Phase2
     protected $toolScheme;
 
     public function __construct(
+        \Praxigento\BonusHybrid\Repo\Query\Stats\Phase2\Builder $qbldPhase2,
         \Praxigento\Core\Api\IAuthenticator $authenticator,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
         \Praxigento\Downline\Repo\Entity\ISnap $repoSnap,
         \Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc $qPeriodCalc,
-        \Praxigento\BonusHybrid\Repo\Query\Stats\Phase2\Builder $qbldStatsPhase2,
         \Praxigento\BonusHybrid\Tool\IScheme $toolScheme,
         \Praxigento\Downline\Repo\Entity\ICustomer $repoCust
 
     ) {
         parent::__construct(
+            $qbldPhase2,
             $authenticator,
             $toolPeriod,
             $repoSnap,
-            $qPeriodCalc,
-            $qbldStatsPhase2
+            $qPeriodCalc
         );
         $this->toolScheme = $toolScheme;
         $this->repoCust = $repoCust;

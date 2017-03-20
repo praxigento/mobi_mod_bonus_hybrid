@@ -20,20 +20,20 @@ class Plain
 
 
     public function __construct(
+        \Praxigento\BonusHybrid\Repo\Query\Stats\Plain\Builder $qbldPlain,
         \Praxigento\Core\Api\IAuthenticator $authenticator,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
         \Praxigento\Downline\Repo\Entity\ISnap $repoSnap,
-        \Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc $qPeriodCalc,
-        \Praxigento\BonusHybrid\Repo\Query\Stats\Plain\Builder $qbldStatsPlain
+        \Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc $qPeriodCalc
 
     ) {
         /* define query builder type */
         parent::__construct(
+            $qbldPlain,
             $authenticator,
             $toolPeriod,
             $repoSnap,
-            $qPeriodCalc,
-            $qbldStatsPlain
+            $qPeriodCalc
         );
     }
 
