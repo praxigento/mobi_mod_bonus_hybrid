@@ -8,7 +8,7 @@ namespace Praxigento\BonusHybrid\Cli\Cmd;
  * Calculate hybrid bonus.
  */
 class Calc
-    extends \Praxigento\Core\Console\Command\Base
+    extends \Praxigento\Core\Cli\Cmd\Base
 {
     /** @var \Praxigento\BonusHybrid\Service\ICalc */
     protected $callCalc;
