@@ -4,7 +4,7 @@
  */
 namespace Praxigento\BonusHybrid\Service\Calc\Sub;
 
-use Flancer32\Lib\DataObject;
+use Flancer32\Lib\Data as DataObject;
 use Praxigento\Accounting\Data\Entity\Account;
 use Praxigento\Accounting\Data\Entity\Transaction;
 use Praxigento\BonusHybrid\Defaults as Def;
@@ -12,7 +12,7 @@ use Praxigento\BonusHybrid\Entity\Cfg\Override as CfgOverride;
 use Praxigento\BonusHybrid\Entity\Cfg\Param as CfgParam;
 use Praxigento\BonusHybrid\Entity\Compression\Oi as OiCompress;
 use Praxigento\BonusHybrid\Entity\Compression\Ptc as PtcCompress;
-use Praxigento\Core\Tool\IFormat as ToolFormat;
+use Praxigento\Core\Tool\Def\Format as ToolFormat;
 use Praxigento\Downline\Data\Entity\Customer;
 use Praxigento\Downline\Data\Entity\Snap;
 use Praxigento\Downline\Service\Snap\Response\ExpandMinimal as DownlineSnapExtendMinimalResponse;
@@ -362,7 +362,7 @@ class Calc_UnitTest extends \Praxigento\BonusHybrid\Test\BaseTestCase
         ];
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
-        $mToolFormat = new \Praxigento\Core\Tool\IFormat();
+        $mToolFormat = new \Praxigento\Core\Tool\Format();
         $mToolScheme = $this->_mockFor('\Praxigento\BonusHybrid\Tool\IScheme');
         $mToolDownlineTree = new \Praxigento\Downline\Tool\Def\Tree();
         $mToolbox = $this->_mockToolbox(null, null, $mToolFormat, null, $mToolScheme, $mToolDownlineTree);
@@ -415,7 +415,7 @@ class Calc_UnitTest extends \Praxigento\BonusHybrid\Test\BaseTestCase
         ];
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
-        $mToolFormat = new \Praxigento\Core\Tool\IFormat();
+        $mToolFormat = new \Praxigento\Core\Tool\Format();
         $mToolScheme = $this->_mockFor('\Praxigento\BonusHybrid\Tool\IScheme');
         $mToolDownlineTree = new \Praxigento\Downline\Tool\Def\Tree();
         $mToolbox = $this->_mockToolbox(null, null, $mToolFormat, null, $mToolScheme, $mToolDownlineTree);
@@ -462,7 +462,7 @@ class Calc_UnitTest extends \Praxigento\BonusHybrid\Test\BaseTestCase
         ];
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
-        $mToolFormat = new \Praxigento\Core\Tool\IFormat();
+        $mToolFormat = new \Praxigento\Core\Tool\Format();
         $mToolScheme = $this->_mockFor('\Praxigento\BonusHybrid\Tool\IScheme');
         $mToolbox = $this->_mockToolbox(null, null, $mToolFormat, null, $mToolScheme);
         $mCallDownlineSnap = $this->_mockFor('\Praxigento\Downline\Service\ISnap');
@@ -500,7 +500,7 @@ class Calc_UnitTest extends \Praxigento\BonusHybrid\Test\BaseTestCase
         ];
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
-        $mToolFormat = new \Praxigento\Core\Tool\IFormat();
+        $mToolFormat = new \Praxigento\Core\Tool\Format();
         $mToolScheme = $this->_mockFor('\Praxigento\BonusHybrid\Tool\IScheme');
         $mToolDownlineTree = new \Praxigento\Downline\Tool\Def\Tree();
         $mToolbox = $this->_mockToolbox(null, null, $mToolFormat, null, $mToolScheme, $mToolDownlineTree);
@@ -692,7 +692,7 @@ class Calc_UnitTest extends \Praxigento\BonusHybrid\Test\BaseTestCase
         ];
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
-        $mToolFormat = new \Praxigento\Core\Tool\IFormat();
+        $mToolFormat = new \Praxigento\Core\Tool\Format();
         $mToolScheme = $this->_mockFor('\Praxigento\BonusHybrid\Tool\IScheme');
         $mToolbox = $this->_mockToolbox(null, null, $mToolFormat, null, $mToolScheme);
         $mCallDownlineSnap = $this->_mockFor('\Praxigento\Downline\Service\ISnap');
@@ -827,7 +827,7 @@ class Calc_UnitTest extends \Praxigento\BonusHybrid\Test\BaseTestCase
         ];
         /** === Mocks === */
         $mLogger = $this->_mockLogger();
-        $mToolFormat = new \Praxigento\Core\Tool\IFormat();
+        $mToolFormat = new \Praxigento\Core\Tool\Format();
         $mToolScheme = $this->_mockFor('\Praxigento\BonusHybrid\Tool\IScheme');
         $mToolDownlineTree = new ToolDownlineTree();
         $mToolbox = $this->_mockToolbox(null, null, $mToolFormat, null, $mToolScheme, $mToolDownlineTree);

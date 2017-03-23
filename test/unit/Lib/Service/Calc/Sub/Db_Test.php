@@ -4,7 +4,7 @@
  */
 namespace Praxigento\BonusHybrid\Service\Calc\Sub;
 
-use Flancer32\Lib\DataObject;
+use Flancer32\Lib\Data as DataObject;
 use Praxigento\Accounting\Data\Entity\Account;
 use Praxigento\Accounting\Data\Entity\Operation;
 use Praxigento\Accounting\Service\Account\Response\Get as AccountGetResponse;

@@ -4,7 +4,7 @@
  */
 namespace Praxigento\BonusHybrid\Tool\Def;
 
-use Flancer32\Lib\DataObject;
+use Flancer32\Lib\Data as DataObject;
 use Praxigento\BonusBase\Data\Entity\Rank;
 use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Entity\Cfg\Param as CfgParam;

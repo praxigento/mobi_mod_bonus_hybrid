@@ -4,7 +4,7 @@
  */
 namespace Praxigento\BonusHybrid\Service\Period;
 
-use Flancer32\Lib\DataObject;
+use Flancer32\Lib\Data as DataObject;
 use Praxigento\BonusBase\Data\Entity\Calculation;
 use Praxigento\BonusBase\Data\Entity\Period;
 use Praxigento\BonusBase\Service\Period\Response\GetLatest as BonusBasePeriodGetLatestResponse;

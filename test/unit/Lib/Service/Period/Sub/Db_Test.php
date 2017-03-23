@@ -54,7 +54,7 @@ class Db_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
         /** @var  $sub Db */
         $sub = new Db($mLogger, $mDba, $mToolbox, $mCallRepo, $mCallBonusBasePeriod, $mCallTypeCalc);
         $data = $sub->addNewPeriodAndCalc($CALC_TYPE_ID, $DS_BEGIN, $DS_END);
-        $this->assertInstanceOf(\Flancer32\Lib\DataObject::class, $data);
+        $this->assertInstanceOf(\Flancer32\Lib\Data::class, $data);
     }
 
     public function test_getCalcIdByCode()
