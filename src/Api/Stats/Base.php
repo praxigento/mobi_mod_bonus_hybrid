@@ -68,7 +68,7 @@ abstract class Base
 
         /* define requested root customer */
         if (is_null($rootCustId)) {
-            $user = $this->authenticator->getCurrentUserData();
+            $user = $this->authenticator->getCurrentCustomerData();
             $rootCustId = $user->get(Cfg::E_CUSTOMER_A_ENTITY_ID);
         }
 
