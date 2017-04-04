@@ -2,24 +2,22 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
+
 namespace Praxigento\BonusHybrid\Api\Stats;
 
-use Praxigento\BonusHybrid\Config as Cfg;
+use Praxigento\Downline\Config as Cfg;
 
 abstract class Base
     extends \Praxigento\Core\Api\Processor\WithQuery
 {
-
     const BIND_MAX_DEPTH = 'maxDepth';
     const BIND_PATH = 'path';
-
     const VAR_CALC_REF = 'calc_ref';
     const VAR_CUST_DEPTH = 'depth';
     const VAR_CUST_ID = 'cust_id';
     const VAR_CUST_PATH = 'path';
     const VAR_MAX_DEPTH = 'max_depth';
     const VAR_ON_DATE = 'on_date';
-
     /** @var \Praxigento\Core\Api\IAuthenticator */
     protected $authenticator;
     /** @var  \Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc */
@@ -46,6 +44,32 @@ abstract class Base
         $this->qPeriodCalc = $qPeriodCalc;
     }
 
+    protected function authorize(\Flancer32\Lib\Data $ctx)
+    {
+        /* get working vars from context */
+        $vars = $ctx->get(self::CTX_VARS);
+        $rootCustId = $vars->get(self::VAR_CUST_ID);
+        $rootCustPath = $vars->get(self::VAR_CUST_PATH);
+
+        /* only currently logged in  customer can get account statement */
+        $currCustData = $this->authenticator->getCurrentCustomerData();
+        $currCustId = $currCustData->get(Cfg::E_CUSTOMER_A_ENTITY_ID);
+        /** @var \Praxigento\Downline\Data\Entity\Customer $currDwnlData */
+        $currDwnlData = $currCustData->get(\Praxigento\Downline\Infra\Api\Authenticator::A_DWNL_DATA);
+        $currCustPath = $currDwnlData->getPath() . $currDwnlData->getCustomerId() . Cfg::DTPS;
+
+        /* perform action */
+        $isTheSameCusts = ($rootCustId == $currCustId);
+        $isTheParent = !is_null($currCustId) && (substr($rootCustPath, 0, strlen($currCustPath)) == $currCustPath);
+        $isInDevMode = $this->authenticator->isEnabledDevMode();
+        if (($isTheSameCusts) || ($isTheParent) || $isInDevMode) {
+            // do nothing
+        } else {
+            $msg = __('You are not authorized to perform this operation.');
+            throw new \Magento\Framework\Exception\AuthorizationException($msg);
+        }
+    }
+
     /**
      * Select ID of the last complete calculation for given calculation type.
      *
@@ -68,8 +92,7 @@ abstract class Base
 
         /* define requested root customer */
         if (is_null($rootCustId)) {
-            $user = $this->authenticator->getCurrentCustomerData();
-            $rootCustId = $user->get(Cfg::E_CUSTOMER_A_ENTITY_ID);
+            $rootCustId = $this->authenticator->getCurrentCustomerId();
         }
 
         /* define requested period */
