@@ -20,6 +20,7 @@ class Plain
 
 
     public function __construct(
+        \Magento\Framework\ObjectManagerInterface $manObj,
         \Praxigento\BonusHybrid\Repo\Query\Stats\Plain\Builder $qbldPlain,
         \Praxigento\Core\Api\IAuthenticator $authenticator,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
@@ -29,6 +30,7 @@ class Plain
     ) {
         /* define query builder type */
         parent::__construct(
+            $manObj,
             $qbldPlain,
             $authenticator,
             $toolPeriod,

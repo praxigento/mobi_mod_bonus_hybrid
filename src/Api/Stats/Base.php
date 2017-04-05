@@ -30,6 +30,7 @@ abstract class Base
     protected $toolPeriod;
 
     public function __construct(
+        \Magento\Framework\ObjectManagerInterface $manObj,
         \Praxigento\Core\Repo\Query\Def\Builder $qbld,
         \Praxigento\Core\Api\IAuthenticator $authenticator,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
@@ -37,7 +38,7 @@ abstract class Base
         \Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc $qPeriodCalc
 
     ) {
-        parent::__construct($qbld);
+        parent::__construct($manObj, $qbld);
         $this->authenticator = $authenticator;
         $this->toolPeriod = $toolPeriod;
         $this->repoSnap = $repoSnap;

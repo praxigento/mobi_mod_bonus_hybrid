@@ -2,6 +2,7 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
+
 namespace Praxigento\BonusHybrid\Api\Stats;
 
 use Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc as QGetLastCalc;
@@ -21,6 +22,7 @@ class Phase2
     protected $toolScheme;
 
     public function __construct(
+        \Magento\Framework\ObjectManagerInterface $manObj,
         \Praxigento\BonusHybrid\Repo\Query\Stats\Phase2\Builder $qbldPhase2,
         \Praxigento\Core\Api\IAuthenticator $authenticator,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
@@ -31,6 +33,7 @@ class Phase2
 
     ) {
         parent::__construct(
+            $manObj,
             $qbldPhase2,
             $authenticator,
             $toolPeriod,
