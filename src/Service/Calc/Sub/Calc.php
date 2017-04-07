@@ -650,9 +650,12 @@ class Calc
                     $parents = $this->toolDownlineTree->getParentsFromPathReversed($path);
                     $foundParentId = null;
                     foreach ($parents as $newParentId) {
+                        $parentData = $mapCustomer[$newParentId];
+                        $parentScheme = $this->toolScheme->getSchemeByCustomer($parentData);
+                        $parentLevel = $qLevels[$parentScheme]; // qualification level for current parent
                         $pvParent = isset($mapPv[$newParentId]) ? $mapPv[$newParentId] : 0;
                         if (
-                            ($pvParent >= $level) ||
+                            ($pvParent >= $parentLevel) ||
                             (in_array($newParentId, $forcedCustomers))
                         ) {
                             $foundParentId = $newParentId;
