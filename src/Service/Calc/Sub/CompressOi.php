@@ -52,7 +52,7 @@ class CompressOi
      *
      * @return array [$custId=>[\Praxigento\BonusHybrid\Entity\Compression\Oi::...], ...]
      */
-    public function do($opts)
+    public function exec($opts)
     {
         /* parse options */
         $mapPv = $opts[self::OPT_MAP_PV];

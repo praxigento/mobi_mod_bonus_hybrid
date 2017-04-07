@@ -19,7 +19,7 @@ class SignupDebit
      * @param \Praxigento\BonusHybrid\Service\Calc\Sub\SignupDebit\Request $opts
      * @return array
      */
-    public function do($opts)
+    public function exec($opts)
     {
         $dateFrom = $opts->dateFrom;
         $dateTo = $opts->dateTo;

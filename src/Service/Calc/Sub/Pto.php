@@ -57,7 +57,7 @@ class Pto
         return $result;
     }
 
-    public function do($opts)
+    public function exec($opts)
     {
         $calcId = $opts[self::OPT_CALC_ID];
         $periodEnd = $opts[self::OPT_PERIOD_END];

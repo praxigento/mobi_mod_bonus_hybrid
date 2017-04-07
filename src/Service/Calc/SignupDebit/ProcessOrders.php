@@ -67,7 +67,7 @@ class ProcessOrders
      * @param array $opts
      * @return array
      */
-    public function do($opts)
+    public function exec($opts)
     {
         $orders = $opts[self::OPT_ORDERS];
         $dateApplied = $opts[self::OPT_DATE_APPLIED];

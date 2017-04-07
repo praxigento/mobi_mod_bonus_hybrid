@@ -20,7 +20,7 @@ class GetOrders
      * @param \Praxigento\BonusHybrid\Service\Calc\SignupDebit\GetOrders\Request $opts
      * @return array
      */
-    public function do($opts)
+    public function exec($opts)
     {
         $dateFrom = $opts->dateFrom;
         $dateTo = $opts->dateTo;

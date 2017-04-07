@@ -73,8 +73,8 @@ class SignupDebit
                         $reqGetOrders = new \Praxigento\BonusHybrid\Service\Calc\SignupDebit\GetOrders\Request();
                         $reqGetOrders->dateFrom = $this->toolPeriod->getTimestampFrom($periodBegin);
                         $reqGetOrders->dateTo = $this->toolPeriod->getTimestampTo($periodEnd);
-                        $orders = $this->subGetOrders->do($reqGetOrders);
-                        $this->subProcessOrders->do([
+                        $orders = $this->subGetOrders->exec($reqGetOrders);
+                        $this->subProcessOrders->exec([
                             \Praxigento\BonusHybrid\Service\Calc\SignupDebit\ProcessOrders::OPT_CALC_ID => $calcId,
                             \Praxigento\BonusHybrid\Service\Calc\SignupDebit\ProcessOrders::OPT_ORDERS => $orders,
                             \Praxigento\BonusHybrid\Service\Calc\SignupDebit\ProcessOrders::OPT_DATE_APPLIED => $dateApplied

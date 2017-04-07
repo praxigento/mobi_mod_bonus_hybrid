@@ -566,7 +566,7 @@ class Call
                 /* ranks configuration (ranks, schemes, qualification levels, etc.)*/
                 $cfgParams = $this->_subDb->getCfgParams();
                 /* calculate updates */
-                $updates = $this->subCompressOi->do([
+                $updates = $this->subCompressOi->exec([
                     \Praxigento\BonusHybrid\Service\Calc\Sub\CompressOi::OPT_MAP_PV => $mapPv,
                     \Praxigento\BonusHybrid\Service\Calc\Sub\CompressOi::OPT_TREE_PLAIN_PTO => $plainPto,
                     \Praxigento\BonusHybrid\Service\Calc\Sub\CompressOi::OPT_TREE_COMPRESSED_PTC => $compressPtc,
@@ -666,7 +666,7 @@ class Call
                     $updates = $this->_subCalc->pvWriteOff($transData);
                     $dateApplied = $this->_toolPeriod->getTimestampTo($periodEnd);
                     $operId = $this->_subDb->saveOperationPvWriteOff($updates, $datePerformed, $dateApplied);
-                    $this->subPto->do([
+                    $this->subPto->exec([
                         SubPto::OPT_CALC_ID => $calcId,
                         SubPto::OPT_PERIOD_END => $periodEnd,
                         SubPto::OPT_UPDATES => $updates
