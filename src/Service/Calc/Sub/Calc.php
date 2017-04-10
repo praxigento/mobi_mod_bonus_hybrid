@@ -645,7 +645,7 @@ class Calc
                         $compressedTree[$custId] = [$pv, $parentId];
                     }
                 } else {
-                    /* move PV up to the closest qualified parent (current customer's level is used for qualification) */
+                    /* move PV up to the closest qualified parent (parent's level is used for qualification) */
                     $path = $treeSnap[$custId][Snap::ATTR_PATH];
                     $parents = $this->toolDownlineTree->getParentsFromPathReversed($path);
                     $foundParentId = null;
@@ -663,7 +663,7 @@ class Calc
                         }
                     }
                     unset($parents);
-                    /* add PV to this parent */
+                    /* add PV to the closest qualified parent */
                     if (
                         !is_null($foundParentId) &&
                         ($pv > 0)
