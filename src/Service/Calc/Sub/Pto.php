@@ -2,6 +2,7 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
+
 namespace Praxigento\BonusHybrid\Service\Calc\Sub;
 
 use Praxigento\BonusHybrid\Config as Cfg;
@@ -20,14 +21,14 @@ class Pto
 
     /** @var \Praxigento\Downline\Service\ISnap */
     protected $callDwnlSnap;
+    /** @var \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds */
+    protected $hlpSignupDebitCust;
     /** @var \Praxigento\Accounting\Repo\Entity\IAccount */
     protected $repoAcc;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Registry\IPto */
     protected $repoRegPto;
     /** @var \Praxigento\Downline\Tool\ITree */
     protected $toolDownlineTree;
-    /** @var \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds */
-    protected $hlpSignupDebitCust;
 
     public function __construct(
         \Praxigento\Downline\Tool\ITree $toolTree,
@@ -41,20 +42,6 @@ class Pto
         $this->repoAcc = $repoAcc;
         $this->repoRegPto = $repoRegPto;
         $this->callDwnlSnap = $callDwnlSnap;
-    }
-
-    /**
-     * @return \Praxigento\Accounting\Data\Entity\Account[]
-     */
-    protected function getCustomersAccounts()
-    {
-        $mapAccs = $this->repoAcc->getAllByAssetTypeCode(Cfg::CODE_TYPE_ASSET_PV);
-        $result = [];
-        foreach ($mapAccs as $one) {
-            $custId = $one->getCustomerId();
-            $result[$custId] = $one;
-        }
-        return $result;
     }
 
     public function exec($opts)
@@ -111,32 +98,32 @@ class Pto
                         $parents = $this->toolDownlineTree->getParentsFromPathReversed($path);
                         $isFather = true;
                         foreach ($parents as $pCustId) {
-                            /* don't process PV for customers w/o personal qualification */
-//                            if (isset($mapAccs[$pCustId])) {
-//                                $accountParent = $mapAccs[$pCustId];
-//                                $accIdParent = $accountParent->getId();
-//                                $pvParent = isset($updates[$accIdParent]) ? $updates[$accIdParent] : 0;
-//                                if ($pvParent > 49.99) {
-                            if (!isset($mapRegistry[$pCustId])) {
-                                $parentId = $tree[$pCustId][\Praxigento\Downline\Data\Entity\Snap::ATTR_PARENT_ID];
-                                $mapRegistry[$pCustId] = [
-                                    \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_CUSTOMER_REF => $pCustId,
-                                    \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_PARENT_REF => $parentId,
-                                    \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_PV => 0,
-                                    \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_TV => 0,
-                                    \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_OV => $pv
-                                ];
-                            } else {
-                                $mapRegistry[$pCustId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_OV] += $pv;
+                            /* don't add PV to OV for customers w/o personal qualification */
+                            if (isset($mapAccs[$pCustId])) {
+                                $accountParent = $mapAccs[$pCustId];
+                                $accIdParent = $accountParent->getId();
+                                $pvParent = isset($updates[$accIdParent]) ? $updates[$accIdParent] : 0;
+                                if ($pvParent > 49.99) {
+                                    if (!isset($mapRegistry[$pCustId])) {
+                                        $parentId = $tree[$pCustId][\Praxigento\Downline\Data\Entity\Snap::ATTR_PARENT_ID];
+                                        $mapRegistry[$pCustId] = [
+                                            \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_CUSTOMER_REF => $pCustId,
+                                            \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_PARENT_REF => $parentId,
+                                            \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_PV => 0,
+                                            \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_TV => 0,
+                                            \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_OV => $pv
+                                        ];
+                                    } else {
+                                        $mapRegistry[$pCustId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_OV] += $pv;
+                                    }
+                                    /* collect TV */
+                                    if ($isFather) {
+                                        $mapRegistry[$pCustId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_TV] += $pv;
+                                    }
+                                } else {
+                                    continue;
+                                }
                             }
-                            /* collect TV */
-                            if ($isFather) {
-                                $mapRegistry[$pCustId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_TV] += $pv;
-                            }
-//                            } else {
-//                                break;
-//                                }
-//                            }
                             $isFather = false;
                         }
                     }
@@ -148,5 +135,19 @@ class Pto
             $item[\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_CALC_REF] = $calcId;
             $this->repoRegPto->create($item);
         }
+    }
+
+    /**
+     * @return \Praxigento\Accounting\Data\Entity\Account[]
+     */
+    protected function getCustomersAccounts()
+    {
+        $mapAccs = $this->repoAcc->getAllByAssetTypeCode(Cfg::CODE_TYPE_ASSET_PV);
+        $result = [];
+        foreach ($mapAccs as $one) {
+            $custId = $one->getCustomerId();
+            $result[$custId] = $one;
+        }
+        return $result;
     }
 }

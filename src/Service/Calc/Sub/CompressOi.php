@@ -2,6 +2,7 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
+
 namespace Praxigento\BonusHybrid\Service\Calc\Sub;
 
 use Praxigento\BonusHybrid\Defaults as Def;
@@ -23,6 +24,8 @@ class CompressOi
     const OPT_SCHEME = 'scheme';
     const OPT_TREE_COMPRESSED_PTC = 'treeCompressedPtc';
     const OPT_TREE_PLAIN_PTO = 'treePlainPto';
+    /** @var \Praxigento\Downline\Service\ISnap */
+    protected $callDwnlSnap;
     /** @var \Praxigento\BonusHybrid\Helper\Calc\GetMaxQualifiedRankId */
     protected $hlpGetMaxRankId;
     /** @var \Praxigento\BonusHybrid\Helper\Calc\IsQualified */
@@ -31,8 +34,7 @@ class CompressOi
     protected $hlpRank;
     /** @var \Praxigento\Downline\Tool\ITree */
     protected $toolDwnlTree;
-    /** @var \Praxigento\Downline\Service\ISnap */
-    protected $callDwnlSnap;
+
     public function __construct(
         \Praxigento\BonusBase\Helper\IRank $hlpRank,
         \Praxigento\BonusHybrid\Helper\Calc\IsQualified $hlpIsQualified,
@@ -110,10 +112,14 @@ class CompressOi
                         /* this customer has downline subtrees in compressed and plain trees */
 
                         /* define legs based on plain OV */
-                        $teamPlain = $mapByTeamPlain[$custId];
-                        $legs = $this->legsCalc($teamPlain, $mapByIdPlain, Pto::ATTR_OV);
-                        list($legMaxP, $legSecondP, $legOthersP) = $legs;
+                        if (isset($mapByTeamPlain[$custId])) {
+                            $teamPlain = $mapByTeamPlain[$custId];
+                            $legs = $this->legsCalc($teamPlain, $mapByIdPlain, Pto::ATTR_OV);
 
+                        } else {
+                            $legs = [0, 0, 0];
+                        }
+                        list($legMaxP, $legSecondP, $legOthersP) = $legs;
                         /* define legs based on compressed OV */
                         $teamCompress = $mapByTeamCompress[$custId];
                         $legs = $this->legsCalc($teamCompress, $mapByIdCompress, Ptc::ATTR_OV);
