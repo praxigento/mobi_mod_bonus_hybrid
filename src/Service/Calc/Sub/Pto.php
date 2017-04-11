@@ -121,15 +121,21 @@ class Pto
                     $parents = $this->toolDownlineTree->getParentsFromPathReversed($path);
                     $isFather = true;
                     foreach ($parents as $pCustId) {
+                        $parentData = $tree[$pCustId];
+                        $parentScheme = $this->toolScheme->getSchemeByCustomer($parentData);
                         $pvParent = 0;
                         if (isset($mapAccs[$pCustId])) {
                             $accountParent = $mapAccs[$pCustId];
                             $accIdParent = $accountParent->getId();
                             $pvParent = isset($updates[$accIdParent]) ? $updates[$accIdParent] : 0;
                         }
+                        $pvParent = $this->toolScheme->getForcedPv($pCustId, $custScheme, $pvParent);
+                        /* correct PV for 'Sign Up Debit' customers */
+                        $isSignupDebit = in_array($pCustId, $signupDebitCustomers);
+                        if ($isSignupDebit) {
+                            $pvParent += \Praxigento\BonusHybrid\Defaults::SIGNUP_DEBIT_PV;
+                        }
                         /* don't add PV of the unqualified customer to OV for parents w/o personal qualification */
-                        $parentData = $tree[$pCustId];
-                        $parentScheme = $this->toolScheme->getSchemeByCustomer($parentData);
                         $isParentQualified = false;
                         if (
                             ($parentScheme == Def::SCHEMA_DEFAULT) && ($pvParent > (Def::PV_QUALIFICATION_LEVEL_DEF - 0.0001)) ||
