@@ -143,7 +143,9 @@ class Pto
                         ) {
                             $isParentQualified = true;
                         }
-                        if ($isParentQualified || $isCustQualified) {
+                        if (!$isParentQualified && !$isCustQualified && $isFather) {
+                            /* skip PV in OV for not qualified parent & customer (for first generation only) */
+                        } else {
                             if (!isset($mapRegistry[$pCustId])) {
                                 $parentId = $tree[$pCustId][\Praxigento\Downline\Data\Entity\Snap::ATTR_PARENT_ID];
                                 $mapRegistry[$pCustId] = [
@@ -160,8 +162,6 @@ class Pto
                             if ($isFather) {
                                 $mapRegistry[$pCustId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_TV] += $pv;
                             }
-                        } else {
-                            continue;
                         }
                         $isFather = false;
                     }
