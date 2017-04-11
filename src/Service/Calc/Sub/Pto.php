@@ -6,6 +6,7 @@
 namespace Praxigento\BonusHybrid\Service\Calc\Sub;
 
 use Praxigento\BonusHybrid\Config as Cfg;
+use Praxigento\BonusHybrid\Defaults as Def;
 
 class Pto
 {
@@ -29,14 +30,18 @@ class Pto
     protected $repoRegPto;
     /** @var \Praxigento\Downline\Tool\ITree */
     protected $toolDownlineTree;
+    /** @var  \Praxigento\BonusHybrid\Tool\IScheme */
+    protected $toolScheme;
 
     public function __construct(
+        \Praxigento\BonusHybrid\Tool\IScheme $toolScheme,
         \Praxigento\Downline\Tool\ITree $toolTree,
         \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust,
         \Praxigento\Accounting\Repo\Entity\IAccount $repoAcc,
         \Praxigento\BonusHybrid\Repo\Entity\Registry\IPto $repoRegPto,
         \Praxigento\Downline\Service\ISnap $callDwnlSnap
     ) {
+        $this->toolScheme = $toolScheme;
         $this->toolDownlineTree = $toolTree;
         $this->hlpSignupDebitCust = $hlpSignupDebitCust;
         $this->repoAcc = $repoAcc;
@@ -56,7 +61,8 @@ class Pto
         /* get customers downline tree */
         $reqTree = new \Praxigento\Downline\Service\Snap\Request\GetStateOnDate();
         $reqTree->setDatestamp($periodEnd);
-        $respTree = $this->callDwnlSnap->getStateOnDate($reqTree);
+        $reqTree->setAddCountryCode(true);
+        $respTree = $this->callDwnlSnap->getStateOnDate($reqTree, true);
         $tree = $respTree->get();
         $mapByDepth = $this->mapByTreeDepthDesc(
             $tree,
@@ -93,36 +99,59 @@ class Pto
                             $mapRegistry[$custId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_TV] += $pv;
                             $mapRegistry[$custId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_OV] += $pv;
                         }
+                        /**
+                         * Qualify current customer. PV for unqualified customers will not be added to unqualified
+                         * parents' OV.
+                         */
+                        $custData = $tree[$custId];
+                        $custScheme = $this->toolScheme->getSchemeByCustomer($custData);
+                        $isCustQualified = false;
+                        if (
+                            ($custScheme == Def::SCHEMA_DEFAULT) && ($pv > (Def::PV_QUALIFICATION_LEVEL_DEF - 0.0001)) ||
+                            ($custScheme == Def::SCHEMA_EU) && ($pv > (Def::PV_QUALIFICATION_LEVEL_EU - 0.0001))
+                        ) {
+                            $isCustQualified = true;
+                        }
                         /* process upline */
                         $path = $tree[$custId][\Praxigento\Downline\Data\Entity\Snap::ATTR_PATH];
                         $parents = $this->toolDownlineTree->getParentsFromPathReversed($path);
                         $isFather = true;
                         foreach ($parents as $pCustId) {
-                            /* don't add PV to OV for customers w/o personal qualification */
+                            $pvParent = 0;
                             if (isset($mapAccs[$pCustId])) {
                                 $accountParent = $mapAccs[$pCustId];
                                 $accIdParent = $accountParent->getId();
                                 $pvParent = isset($updates[$accIdParent]) ? $updates[$accIdParent] : 0;
-                                if ($pvParent > 49.99) {
-                                    if (!isset($mapRegistry[$pCustId])) {
-                                        $parentId = $tree[$pCustId][\Praxigento\Downline\Data\Entity\Snap::ATTR_PARENT_ID];
-                                        $mapRegistry[$pCustId] = [
-                                            \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_CUSTOMER_REF => $pCustId,
-                                            \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_PARENT_REF => $parentId,
-                                            \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_PV => 0,
-                                            \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_TV => 0,
-                                            \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_OV => $pv
-                                        ];
-                                    } else {
-                                        $mapRegistry[$pCustId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_OV] += $pv;
-                                    }
-                                    /* collect TV */
-                                    if ($isFather) {
-                                        $mapRegistry[$pCustId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_TV] += $pv;
-                                    }
+                            }
+                            /* don't add PV of the unqualified customer to OV for parents w/o personal qualification */
+                            $parentData = $tree[$pCustId];
+                            $parentScheme = $this->toolScheme->getSchemeByCustomer($parentData);
+                            $isParentQualified = false;
+                            if (
+                                ($parentScheme == Def::SCHEMA_DEFAULT) && ($pvParent > (Def::PV_QUALIFICATION_LEVEL_DEF - 0.0001)) ||
+                                ($parentScheme == Def::SCHEMA_EU) && ($pvParent > (Def::PV_QUALIFICATION_LEVEL_EU - 0.0001))
+                            ) {
+                                $isParentQualified = true;
+                            }
+                            if ($isParentQualified || $isCustQualified && $isFather) {
+                                if (!isset($mapRegistry[$pCustId])) {
+                                    $parentId = $tree[$pCustId][\Praxigento\Downline\Data\Entity\Snap::ATTR_PARENT_ID];
+                                    $mapRegistry[$pCustId] = [
+                                        \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_CUSTOMER_REF => $pCustId,
+                                        \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_PARENT_REF => $parentId,
+                                        \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_PV => 0,
+                                        \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_TV => 0,
+                                        \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_OV => $pv
+                                    ];
                                 } else {
-                                    continue;
+                                    $mapRegistry[$pCustId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_OV] += $pv;
                                 }
+                                /* collect TV */
+                                if ($isFather) {
+                                    $mapRegistry[$pCustId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_TV] += $pv;
+                                }
+                            } else {
+                                continue;
                             }
                             $isFather = false;
                         }
