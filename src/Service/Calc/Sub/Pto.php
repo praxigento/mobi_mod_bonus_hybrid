@@ -7,6 +7,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Sub;
 
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
+use Praxigento\BonusHybrid\Entity\Registry\Pto as EPto;
 
 class Pto
 {
@@ -93,22 +94,34 @@ class Pto
 
                 /* register customer in OV reg. with initial values for TV/OV (own PV)*/
                 $regOv[$custId] = [
-                    \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_CUSTOMER_REF => $custId,
-                    \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_PARENT_REF => $parentId,
-                    \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_PV => $pv,
-                    \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_TV => $pv,
-                    \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_OV => $pv
+                    EPto::ATTR_CUSTOMER_REF => $custId,
+                    EPto::ATTR_PARENT_REF => $parentId,
+                    EPto::ATTR_PV => $pv,
+                    EPto::ATTR_TV => 0,
+                    EPto::ATTR_OV => 0
                 ];
 
                 /* walk trough the team and add children OV to the customer OV */
                 $team = $regTeam[$custId] ?? [];
+                $custTv = 0;
+                $custOv = 0;
                 foreach ($team as $childId) {
                     /* all children should be registered before */
-                    $childPv = $regOv[$childId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_PV];
-                    $childOv = $regOv[$childId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_OV];
+                    $childPv = $regOv[$childId][EPto::ATTR_PV];
+                    $childOv = $regOv[$childId][EPto::ATTR_OV];
                     $isChildQual = $reqQual[$childId];
 
+                    if (!$isCustQualified && !$isChildQual) {
+                        /* skip unqualified children for unqualified customers */
+                    } else {
+                        /* add child's PV & OV to customer's TV & OV */
+                        $custTv += $childPv;
+                        $custOv += $childOv;
+                    }
                 }
+                /* update customer TV & OV */
+                $regOv[$custId][EPto::ATTR_TV] += $custTv;
+                $regOv[$custId][EPto::ATTR_OV] += $custOv;
 
 //                /* get account ID */
 //                if (isset($mapAccs[$custId])) {
@@ -138,17 +151,17 @@ class Pto
 //                    if (!isset($regOv[$custId])) {
 //                        /* create entry in the registry */
 //                        $regOv[$custId] = [
-//                            \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_CUSTOMER_REF => $custId,
-//                            \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_PARENT_REF => $parentId,
-//                            \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_PV => $pv,
-//                            \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_TV => $pv,
-//                            \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_OV => $pvForOv
+//                            EPto::ATTR_CUSTOMER_REF => $custId,
+//                            EPto::ATTR_PARENT_REF => $parentId,
+//                            EPto::ATTR_PV => $pv,
+//                            EPto::ATTR_TV => $pv,
+//                            EPto::ATTR_OV => $pvForOv
 //                        ];
 //                    } else {
 //                        /* update entry in the registry */
-//                        $regOv[$custId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_PV] += $pv;
-//                        $regOv[$custId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_TV] += $pv;
-//                        $regOv[$custId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_OV] += $pvForOv;
+//                        $regOv[$custId][EPto::ATTR_PV] += $pv;
+//                        $regOv[$custId][EPto::ATTR_TV] += $pv;
+//                        $regOv[$custId][EPto::ATTR_OV] += $pvForOv;
 //                    }
 //
 //                    /* process upline */
@@ -184,18 +197,18 @@ class Pto
 //                            if (!isset($regOv[$pCustId])) {
 //                                $parentId = $tree[$pCustId][\Praxigento\Downline\Data\Entity\Snap::ATTR_PARENT_ID];
 //                                $regOv[$pCustId] = [
-//                                    \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_CUSTOMER_REF => $pCustId,
-//                                    \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_PARENT_REF => $parentId,
-//                                    \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_PV => 0,
-//                                    \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_TV => 0,
-//                                    \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_OV => $pv
+//                                    EPto::ATTR_CUSTOMER_REF => $pCustId,
+//                                    EPto::ATTR_PARENT_REF => $parentId,
+//                                    EPto::ATTR_PV => 0,
+//                                    EPto::ATTR_TV => 0,
+//                                    EPto::ATTR_OV => $pv
 //                                ];
 //                            } else {
-//                                $regOv[$pCustId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_OV] += $pv;
+//                                $regOv[$pCustId][EPto::ATTR_OV] += $pv;
 //                            }
 //                            /* collect TV */
 //                            if ($isFather) {
-//                                $regOv[$pCustId][\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_TV] += $pv;
+//                                $regOv[$pCustId][EPto::ATTR_TV] += $pv;
 //                            }
 //                        }
 //                        $isFather = false;
@@ -203,10 +216,16 @@ class Pto
 //                }
             }
         }
-        /* save registry */
+        /* save data into PTO registry */
         foreach ($regOv as $item) {
-            $item[\Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_CALC_REF] = $calcId;
-            $this->repoRegPto->create($item);
+            $pv = $item[EPto::ATTR_PV];
+            $tv = $item[EPto::ATTR_TV];
+            $ov = $item[EPto::ATTR_OV];
+            if ($pv && $tv && $ov) {
+                /* save not empty items only */
+                $item[EPto::ATTR_CALC_REF] = $calcId;
+                $this->repoRegPto->create($item);
+            }
         }
     }
 
