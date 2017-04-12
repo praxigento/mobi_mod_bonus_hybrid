@@ -96,6 +96,12 @@ class Pto
                 $isCustQualified = $isQualifedByPvDef || $isQualifedByPvEu || $isForced;
                 $reqQual[$custId] = $isCustQualified;
 
+                /* jump unqualif. children's PV if customer is not qualified itself */
+                if (!$isCustQualified && isset($reqJumps[$custId])) {
+                    $reqJumps[$custParentId] = $reqJumps[$custId];
+                    unset($reqJumps[$custId]);
+                }
+
                 /* register customer in OV reg. with initial values for TV/OV (own PV)*/
                 $regOv[$custId] = [
                     EPto::ATTR_CUSTOMER_REF => $custId,
@@ -113,9 +119,9 @@ class Pto
                     /* all children should be registered before */
                     $childPv = $regOv[$childId][EPto::ATTR_PV];
                     $childOv = $regOv[$childId][EPto::ATTR_OV];
-                    $isChildQual = $reqQual[$childId];
+                    $isChildQualified = $reqQual[$childId];
 
-                    if (!$isCustQualified && !$isChildQual) {
+                    if (!$isCustQualified && !$isChildQualified) {
                         /* PV of the unqualified children should jump through unqualified customers */
                         if ($childPv) {
                             if (isset($reqJumps[$custParentId])) {
@@ -130,7 +136,7 @@ class Pto
                         /* add child's PV & OV to customer's TV & OV */
                         $custTv += $childPv;
                         $custOv += $childOv;
-                        if (!$isChildQual) $custOv += $childPv; // PV for unqualified children are not in his OV.
+                        if (!$isChildQualified) $custOv += $childPv; // PV for unqualified children are not in his OV.
                     }
                 }
                 /* update customer TV & OV */
