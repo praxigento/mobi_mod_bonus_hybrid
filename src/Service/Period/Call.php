@@ -78,7 +78,7 @@ class Call
                 $result->setHasNoPvTransactionsYet();
             } else {
                 $this->_logger->info("First PV transaction was performed at '$tsFirstPv'.");
-                $periodMonth = $this->_toolPeriod->getPeriodCurrent($tsFirstPv, ToolPeriod::TYPE_MONTH);
+                $periodMonth = $this->_toolPeriod->getPeriodCurrentOld($tsFirstPv, ToolPeriod::TYPE_MONTH);
                 $dsBegin = $this->_toolPeriod->getPeriodFirstDate($periodMonth);
                 $dsEnd = $this->_toolPeriod->getPeriodLastDate($periodMonth);
                 $periodWriteOffData = $this->_subDb->addNewPeriodAndCalc($calcWriteOffId, $dsBegin, $dsEnd);

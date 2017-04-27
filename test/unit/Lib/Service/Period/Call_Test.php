@@ -281,10 +281,10 @@ class Call_UnitTest extends \Praxigento\Core\Test\BaseCase\Mockery
             ->expects($this->once())
             ->method('getFirstDateForPvTransactions')
             ->willReturn($DATE_FIRST_PV_TRANS);
-        // $periodMonth = $toolPperiod->getPeriodCurrent($ts, ToolPeriod::TYPE_MONTH);
+        // $periodMonth = $toolPperiod->getPeriodCurrentOld($ts, ToolPeriod::TYPE_MONTH);
         $mToolPeriod
             ->expects($this->once())
-            ->method('getPeriodCurrent')
+            ->method('getPeriodCurrentOld')
             ->willReturn($PERIOD_MONTH);
         // $dsBegin = $toolPperiod->getPeriodFirstDate($periodMonth);
         $mToolPeriod
