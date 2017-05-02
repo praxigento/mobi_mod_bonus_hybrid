@@ -6,6 +6,7 @@
 namespace Praxigento\BonusHybrid\Service\Calc;
 
 use Praxigento\BonusHybrid\Config as Cfg;
+use Praxigento\BonusHybrid\Service\Calc\Forecast\GetDownline as SubGetDownline;
 
 class Forecast
     extends \Praxigento\Core\Service\Base\Call
@@ -14,6 +15,8 @@ class Forecast
     protected $callBalanceGetTurnover;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Cache\Downline\IPlain */
     protected $repoCacheDwnlPlain;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\GetDownline */
+    protected $subGetDownline;
     /** @var  \Praxigento\Core\Tool\IPeriod */
     protected $toolPeriod;
 
@@ -22,17 +25,26 @@ class Forecast
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
         \Praxigento\BonusHybrid\Repo\Entity\Cache\Downline\IPlain $repoCacheDwnlPlain,
-        \Praxigento\Accounting\Service\Balance\Get\ITurnover $callBalanceGetTurnover
+        \Praxigento\Accounting\Service\Balance\Get\ITurnover $callBalanceGetTurnover,
+        \Praxigento\BonusHybrid\Service\Calc\Forecast\GetDownline $subGetDownline
     ) {
         parent::__construct($logger, $manObj);
         $this->toolPeriod = $toolPeriod;
         $this->repoCacheDwnlPlain = $repoCacheDwnlPlain;
         $this->callBalanceGetTurnover = $callBalanceGetTurnover;
+        $this->subGetDownline = $subGetDownline;
     }
 
     protected function cleanCachedData()
     {
         $this->repoCacheDwnlPlain->delete();
+    }
+
+    protected function saveDwnlPlain($items)
+    {
+        foreach ($items as $item) {
+            $this->repoCacheDwnlPlain->create($item);
+        }
     }
 
     public function exec(\Praxigento\BonusHybrid\Service\Calc\Forecast\Request $req)
@@ -43,8 +55,11 @@ class Forecast
         /* get calculation period (begin, end dates) */
         list($dateFrom, $dateTo) = $this->getPeriod();
 
-        /* clean up */
-        $this->cleanCachedData();
+        /* get customers */
+        $ctx = new \Flancer32\Lib\Data();
+        $ctx->set(SubGetDownline::CTX_DATE_ON, $dateTo);
+        /** @var \Praxigento\BonusHybrid\Entity\Cache\Downline\Plain[] $plainItems */
+        $plainItems = $this->subGetDownline->exec($ctx);
 
         /* get PV turnover for period */
         $reqTurnover = new \Praxigento\Accounting\Service\Balance\Get\Turnover\Request ();
@@ -62,12 +77,17 @@ class Forecast
             $customerId = $entry->customerId;
             if ($turnover > Cfg::DEF_ZERO) {
                 $positiveTurnover[$customerId] = $entry;
+                /** @var \Praxigento\BonusHybrid\Entity\Cache\Downline\Plain $plainDo */
+                $plainDo = $plainItems[$customerId];
+                $plainDo->setPv($turnover);
             }
         }
 
         /* perform calculation */
 
         /* replace actual data in repository */
+        $this->cleanCachedData();
+        $this->saveDwnlPlain($plainItems);
 
         $this->_logMemoryUsage();
         $this->_logger->info("'Forecast' calculation is completed.");
