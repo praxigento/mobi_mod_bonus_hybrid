@@ -13,6 +13,113 @@
                 "alias": "hyb",
                 "comment": "Hybrid bonus related structures",
                 "package": {
+                  "Cache": {
+                    "alias": "cache",
+                    "comment": "Cached data for DCP reports.",
+                    "package": {
+                      "Downline": {
+                        "alias": "dwnl",
+                        "comment": "Cached data for DCP downline reports.",
+                        "entity": {
+                          "Plain": {
+                            "alias": "plain",
+                            "comment": "Cached data for downline reports updated daily (un-compressed tree).",
+                            "attribute": {
+                              "CustomerRef": {
+                                "alias": "customer_ref",
+                                "comment": "Reference to the customer itself.",
+                                "nullable": false,
+                                "type": {"integer": {"unsigned": true}}
+                              },
+                              "MlmId": {
+                                "alias": "mlm_id",
+                                "comment": "MLM ID for customer.",
+                                "nullable": false,
+                                "type": {
+                                  "text": {
+                                    "length": 255
+                                  }
+                                }
+                              },
+                              "Name": {
+                                "alias": "name",
+                                "comment": "Customer name (full).",
+                                "nullable": false,
+                                "type": {
+                                  "text": {
+                                    "length": 255
+                                  }
+                                }
+                              },
+                              "Email": {
+                                "alias": "email",
+                                "comment": "Customer email.",
+                                "nullable": false,
+                                "type": {"text": {"length": 255}}
+                              },
+                              "ParentId": {
+                                "alias": "parent_ref",
+                                "comment": "Reference to the customer's parent.",
+                                "nullable": false,
+                                "type": {"integer": {"unsigned": true}}
+                              },
+                              "Depth": {
+                                "alias": "depth",
+                                "comment": "Depth of the node in the tree.",
+                                "nullable": false,
+                                "default": 0,
+                                "type": {"integer": {"unsigned": true}}
+                              },
+                              "Path": {
+                                "alias": "path",
+                                "comment": "Path to the node - /1/2/3/.../",
+                                "nullable": false,
+                                "type": {"text": {"length": 255}}
+                              },
+                              "PersonalVolumes": {
+                                "alias": "pv",
+                                "comment": "Compressed value of the PV for the qualified customer.",
+                                "nullable": false,
+                                "type": {"numeric": {"precision": 12, "scale": 4}}
+                              },
+                              "TeamVolumes": {
+                                "alias": "tv",
+                                "comment": "TV value for the qualified customer.",
+                                "nullable": false,
+                                "type": {"numeric": {"precision": 12, "scale": 4}}
+                              },
+                              "OrganizationalVolumes": {
+                                "alias": "ov",
+                                "comment": "OV value for the qualified customer.",
+                                "nullable": false,
+                                "type": {"numeric": {"precision": 12, "scale": 4}}
+                              },
+                              "RankCode": {
+                                "alias": "rank_code",
+                                "comment": "Qualification rank code (MANAGER, ...).",
+                                "nullable": false,
+                                "type": {
+                                  "text": {
+                                    "length": 32
+                                  }
+                                }
+                              },
+                              "UnqualifiedMonths": {
+                                "alias": "unq_months",
+                                "comment": "Number of the last sequentially unqualified months.",
+                                "nullable": false,
+                                "type": {
+                                  "integer": {
+                                    "unsigned": true
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
                   "Compression": {
                     "alias": "cmprs",
                     "comment": "Compressed downline trees with additional calculation data.",
