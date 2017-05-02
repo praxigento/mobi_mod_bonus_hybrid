@@ -28,10 +28,12 @@
     <!-- **** -->
     <!-- Repo -->
     <!-- **** -->
-    <preference for="\Praxigento\BonusHybrid\Repo\Entity\Registry\ISignupDebit"
-            type="\Praxigento\BonusHybrid\Repo\Entity\Registry\Def\SignupDebit"/>
+    <preference for="\Praxigento\BonusHybrid\Repo\Entity\Cache\Downline\IPlain"
+            type="\Praxigento\BonusHybrid\Repo\Entity\Cache\Downline\Plain"/>
     <preference for="\Praxigento\BonusHybrid\Repo\Entity\Registry\IPto"
-            type="\Praxigento\BonusHybrid\Repo\Entity\Registry\Def\Pto"/>
+            type="\Praxigento\BonusHybrid\Repo\Entity\Registry\Pto"/>
+    <preference for="\Praxigento\BonusHybrid\Repo\Entity\Registry\ISignupDebit"
+            type="\Praxigento\BonusHybrid\Repo\Entity\Registry\SignupDebit"/>
 
     <!-- ******** -->
     <!-- Services -->

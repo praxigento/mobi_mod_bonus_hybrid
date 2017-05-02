@@ -2,7 +2,8 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-namespace Praxigento\BonusHybrid\Repo\Entity\Registry\Def;
+
+namespace Praxigento\BonusHybrid\Repo\Entity\Registry;
 
 use Praxigento\BonusHybrid\Entity\Registry\SignupDebit as Entity;
 

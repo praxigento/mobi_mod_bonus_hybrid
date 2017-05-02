@@ -128,7 +128,7 @@
                                 "action": {"delete": "restrict", "update": "restrict"}
                               },
                               "toDownlineCustomerAsParent": {
-                                "own": {"aliases": ["parent_id"]},
+                                "own": {"aliases": ["parent_ref"]},
                                 "reference": {
                                   "entity": {"completeAlias": "prxgt_dwnl_customer"},
                                   "aliases": ["customer_id"]

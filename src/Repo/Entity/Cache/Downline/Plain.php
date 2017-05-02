@@ -2,13 +2,14 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-namespace Praxigento\BonusHybrid\Repo\Entity\Registry\Def;
 
-use Praxigento\BonusHybrid\Entity\Registry\Pto as Entity;
+namespace Praxigento\BonusHybrid\Repo\Entity\Cache\Downline;
 
-class Pto
+use Praxigento\BonusHybrid\Entity\Cache\Downline\Plain as Entity;
+
+class Plain
     extends \Praxigento\Core\Repo\Def\Entity
-    implements \Praxigento\BonusHybrid\Repo\Entity\Registry\IPto
+    implements \Praxigento\BonusHybrid\Repo\Entity\Cache\Downline\IPlain
 {
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resource,

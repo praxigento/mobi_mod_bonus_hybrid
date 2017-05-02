@@ -12,6 +12,8 @@ class Forecast
     implements \Praxigento\BonusHybrid\Service\Calc\IForecast
 {
     protected $callBalanceGetTurnover;
+    /** @var \Praxigento\BonusHybrid\Repo\Entity\Cache\Downline\IPlain */
+    protected $repoCacheDwnlPlain;
     /** @var  \Praxigento\Core\Tool\IPeriod */
     protected $toolPeriod;
 
@@ -19,11 +21,18 @@ class Forecast
         \Praxigento\Core\Fw\Logger\App $logger,
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
+        \Praxigento\BonusHybrid\Repo\Entity\Cache\Downline\IPlain $repoCacheDwnlPlain,
         \Praxigento\Accounting\Service\Balance\Get\ITurnover $callBalanceGetTurnover
     ) {
         parent::__construct($logger, $manObj);
         $this->toolPeriod = $toolPeriod;
+        $this->repoCacheDwnlPlain = $repoCacheDwnlPlain;
         $this->callBalanceGetTurnover = $callBalanceGetTurnover;
+    }
+
+    protected function cleanCachedData()
+    {
+        $this->repoCacheDwnlPlain->delete();
     }
 
     public function exec(\Praxigento\BonusHybrid\Service\Calc\Forecast\Request $req)
@@ -33,6 +42,9 @@ class Forecast
 
         /* get calculation period (begin, end dates) */
         list($dateFrom, $dateTo) = $this->getPeriod();
+
+        /* clean up */
+        $this->cleanCachedData();
 
         /* get PV turnover for period */
         $reqTurnover = new \Praxigento\Accounting\Service\Balance\Get\Turnover\Request ();
