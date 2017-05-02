@@ -114,6 +114,35 @@
                                   }
                                 }
                               }
+                            },
+                            "index": {
+                              "primary": {"type": "primary", "aliases": ["customer_ref"]}
+                            },
+                            "relation": {
+                              "toDownlineCustomer": {
+                                "own": {"aliases": ["customer_ref"]},
+                                "reference": {
+                                  "entity": {"completeAlias": "prxgt_dwnl_customer"},
+                                  "aliases": ["customer_id"]
+                                },
+                                "action": {"delete": "restrict", "update": "restrict"}
+                              },
+                              "toDownlineCustomerAsParent": {
+                                "own": {"aliases": ["parent_id"]},
+                                "reference": {
+                                  "entity": {"completeAlias": "prxgt_dwnl_customer"},
+                                  "aliases": ["customer_id"]
+                                },
+                                "action": {"delete": "restrict", "update": "restrict"}
+                              },
+                              "toRankCode": {
+                                "own": {"aliases": ["rank_code"]},
+                                "reference": {
+                                  "entity": {"completeAlias": "prxgt_bon_base_rank"},
+                                  "aliases": ["code"]
+                                },
+                                "action": {"delete": "restrict", "update": "restrict"}
+                              }
                             }
                           }
                         }
