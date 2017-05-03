@@ -5,8 +5,6 @@
 
 namespace Praxigento\BonusHybrid\Cli\Cmd;
 
-use Praxigento\Accounting\Repo\Query\Balance\OnDate\Closing\ByAsset\Builder as QBalanceClose;
-
 /**
  * Daily calculation to forecast results on final bonus calc.
  */
@@ -53,8 +51,8 @@ class Forecast
             $req = new \Praxigento\BonusHybrid\Service\Calc\Forecast\Request();
             $resp = $this->callCalcForecast->exec($req);
 
-//            $this->conn->commit();
-            $this->conn->rollBack();
+            $this->conn->commit();
+//            $this->conn->rollBack();
         } catch (\Throwable $e) {
             $msg = $e->getMessage();
             $trace = $e->getTraceAsString();

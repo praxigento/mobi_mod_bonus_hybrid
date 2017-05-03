@@ -6,6 +6,7 @@
 namespace Praxigento\BonusHybrid\Service\Calc;
 
 use Praxigento\BonusHybrid\Config as Cfg;
+use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\GetDownline as SubGetDownline;
 
 class Forecast
@@ -80,6 +81,7 @@ class Forecast
                 /** @var \Praxigento\BonusHybrid\Entity\Cache\Downline\Plain $plainDo */
                 $plainDo = $plainItems[$customerId];
                 $plainDo->setPv($turnover);
+                $plainDo->setRankCode(Def::RANK_DISTRIBUTOR);
             }
         }
 

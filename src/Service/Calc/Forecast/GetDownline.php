@@ -5,6 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Forecast;
 
+use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\Downline\Repo\Query\Snap\OnDate\Builder as QBSnapOnDate;
 use Praxigento\Downline\Repo\Query\Snap\OnDate\ForDcp\Builder as QBForDcp;
 
@@ -64,6 +65,9 @@ class GetDownline
             $item->setPv(0);
             $item->setTv(0);
             $item->setOv(0);
+            /* init ranks */
+            $item->setRankCode(Def::RANK_DISTRIBUTOR);
+            $item->setUnqMonths(0);
             $result[$customerId] = $item;
         }
         return $result;
