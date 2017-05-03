@@ -30,6 +30,8 @@
     <!-- **** -->
     <preference for="\Praxigento\BonusHybrid\Repo\Entity\Cache\Downline\IPlain"
             type="\Praxigento\BonusHybrid\Repo\Entity\Cache\Downline\Plain"/>
+    <preference for="\Praxigento\BonusHybrid\Repo\Entity\Compression\IOi"
+            type="\Praxigento\BonusHybrid\Repo\Entity\Compression\Oi"/>
     <preference for="\Praxigento\BonusHybrid\Repo\Entity\Registry\IPto"
             type="\Praxigento\BonusHybrid\Repo\Entity\Registry\Pto"/>
     <preference for="\Praxigento\BonusHybrid\Repo\Entity\Registry\ISignupDebit"

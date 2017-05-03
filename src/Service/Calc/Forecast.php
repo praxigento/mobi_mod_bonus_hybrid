@@ -6,7 +6,6 @@
 namespace Praxigento\BonusHybrid\Service\Calc;
 
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\GetDownline as SubGetDownline;
 
 class Forecast
@@ -18,6 +17,8 @@ class Forecast
     protected $repoCacheDwnlPlain;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\GetDownline */
     protected $subGetDownline;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\GetRanks */
+    protected $subGetRanks;
     /** @var  \Praxigento\Core\Tool\IPeriod */
     protected $toolPeriod;
 
@@ -27,25 +28,20 @@ class Forecast
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
         \Praxigento\BonusHybrid\Repo\Entity\Cache\Downline\IPlain $repoCacheDwnlPlain,
         \Praxigento\Accounting\Service\Balance\Get\ITurnover $callBalanceGetTurnover,
-        \Praxigento\BonusHybrid\Service\Calc\Forecast\GetDownline $subGetDownline
+        \Praxigento\BonusHybrid\Service\Calc\Forecast\GetDownline $subGetDownline,
+        \Praxigento\BonusHybrid\Service\Calc\Forecast\GetRanks $subGetRanks
     ) {
         parent::__construct($logger, $manObj);
         $this->toolPeriod = $toolPeriod;
         $this->repoCacheDwnlPlain = $repoCacheDwnlPlain;
         $this->callBalanceGetTurnover = $callBalanceGetTurnover;
         $this->subGetDownline = $subGetDownline;
+        $this->subGetRanks = $subGetRanks;
     }
 
     protected function cleanCachedData()
     {
         $this->repoCacheDwnlPlain->delete();
-    }
-
-    protected function saveDwnlPlain($items)
-    {
-        foreach ($items as $item) {
-            $this->repoCacheDwnlPlain->create($item);
-        }
     }
 
     public function exec(\Praxigento\BonusHybrid\Service\Calc\Forecast\Request $req)
@@ -61,6 +57,9 @@ class Forecast
         $ctx->set(SubGetDownline::CTX_DATE_ON, $dateTo);
         /** @var \Praxigento\BonusHybrid\Entity\Cache\Downline\Plain[] $plainItems */
         $plainItems = $this->subGetDownline->exec($ctx);
+
+        /* get the last ranks for customers */
+        $ranks = $this->subGetRanks->exec();
 
         /* get PV turnover for period */
         $reqTurnover = new \Praxigento\Accounting\Service\Balance\Get\Turnover\Request ();
@@ -81,7 +80,8 @@ class Forecast
                 /** @var \Praxigento\BonusHybrid\Entity\Cache\Downline\Plain $plainDo */
                 $plainDo = $plainItems[$customerId];
                 $plainDo->setPv($turnover);
-                $plainDo->setRankCode(Def::RANK_DISTRIBUTOR);
+                $rankCode = $ranks[$customerId];
+                $plainDo->setRankCode($rankCode);
             }
         }
 
@@ -114,5 +114,12 @@ class Forecast
 
         $result = [$begin, $end];
         return $result;
+    }
+
+    protected function saveDwnlPlain($items)
+    {
+        foreach ($items as $item) {
+            $this->repoCacheDwnlPlain->create($item);
+        }
     }
 }

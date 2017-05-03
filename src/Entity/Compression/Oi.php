@@ -5,7 +5,9 @@ namespace Praxigento\BonusHybrid\Entity\Compression;
  *
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Oi {
+class Oi
+    extends \Praxigento\Core\Data\Entity\Base
+{
     const ATTR_CALC_ID = 'calc_id';
     const ATTR_CUSTOMER_ID = 'customer_id';
     const ATTR_DEPTH = 'depth';
@@ -20,4 +22,9 @@ class Oi {
     const ATTR_SCHEME = 'scheme';
     const ATTR_TV = 'tv';
     const ENTITY_NAME = 'prxgt_bon_hyb_cmprs_oi';
+
+    public function getPrimaryKeyAttrs()
+    {
+        return [self::ATTR_CALC_ID, self::ATTR_CUSTOMER_ID, self::ATTR_SCHEME];
+    }
 }

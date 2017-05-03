@@ -9,6 +9,10 @@ use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\Downline\Repo\Query\Snap\OnDate\Builder as QBSnapOnDate;
 use Praxigento\Downline\Repo\Query\Snap\OnDate\ForDcp\Builder as QBForDcp;
 
+/**
+ * Collect data and compose array of \Praxigento\BonusHybrid\Entity\Cache\Downline\Plain entities to populate
+ * with additional values and to save in the end.
+ */
 class GetDownline
 {
     const CTX_DATE_ON = 'dateOn';
