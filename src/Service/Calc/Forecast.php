@@ -6,6 +6,7 @@
 namespace Praxigento\BonusHybrid\Service\Calc;
 
 use Praxigento\BonusHybrid\Config as Cfg;
+use Praxigento\BonusHybrid\Service\Calc\Forecast\Calc as SubCalc;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\GetDownline as SubGetDownline;
 
 class Forecast
@@ -15,6 +16,8 @@ class Forecast
     protected $callBalanceGetTurnover;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Cache\Downline\IPlain */
     protected $repoCacheDwnlPlain;
+    /** @var  \Praxigento\BonusHybrid\Service\Calc\Forecast\Calc */
+    protected $subCalc;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\GetDownline */
     protected $subGetDownline;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\GetRanks */
@@ -28,6 +31,7 @@ class Forecast
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
         \Praxigento\BonusHybrid\Repo\Entity\Cache\Downline\IPlain $repoCacheDwnlPlain,
         \Praxigento\Accounting\Service\Balance\Get\ITurnover $callBalanceGetTurnover,
+        \Praxigento\BonusHybrid\Service\Calc\Forecast\Calc $subCalc,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\GetDownline $subGetDownline,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\GetRanks $subGetRanks
     ) {
@@ -35,6 +39,7 @@ class Forecast
         $this->toolPeriod = $toolPeriod;
         $this->repoCacheDwnlPlain = $repoCacheDwnlPlain;
         $this->callBalanceGetTurnover = $callBalanceGetTurnover;
+        $this->subCalc = $subCalc;
         $this->subGetDownline = $subGetDownline;
         $this->subGetRanks = $subGetRanks;
     }
@@ -62,14 +67,9 @@ class Forecast
         $ranks = $this->subGetRanks->exec();
 
         /* get PV turnover for period */
-        $reqTurnover = new \Praxigento\Accounting\Service\Balance\Get\Turnover\Request ();
-        $reqTurnover->assetTypeCode = Cfg::CODE_TYPE_ASSET_PV;
-        $reqTurnover->dateFrom = $dateFrom;
-        $reqTurnover->dateTo = $dateTo;
-        $respTurnover = $this->callBalanceGetTurnover->exec($reqTurnover);
+        $entries = $this->getPvTurnover($dateFrom, $dateTo);
 
         /* extract only positive turnovers */
-        $entries = $respTurnover->entries;
         $positiveTurnover = [];
         /** @var \Praxigento\Accounting\Service\Balance\Get\Turnover\Data\Entry $entry */
         foreach ($entries as $entry) {
@@ -86,6 +86,9 @@ class Forecast
         }
 
         /* perform calculation */
+        $ctx = new \Flancer32\Lib\Data();
+        $ctx->set(SubCalc::CTX_PLAIN_TREE, $plainItems);
+        $this->subCalc->exec($ctx);
 
         /* replace actual data in repository */
         $this->cleanCachedData();
@@ -116,6 +119,16 @@ class Forecast
         return $result;
     }
 
+    protected function getPvTurnover($dateFrom, $dateTo)
+    {
+        $reqTurnover = new \Praxigento\Accounting\Service\Balance\Get\Turnover\Request ();
+        $reqTurnover->assetTypeCode = Cfg::CODE_TYPE_ASSET_PV;
+        $reqTurnover->dateFrom = $dateFrom;
+        $reqTurnover->dateTo = $dateTo;
+        $respTurnover = $this->callBalanceGetTurnover->exec($reqTurnover);
+        $result = $respTurnover->entries;
+        return $result;
+    }
     protected function saveDwnlPlain($items)
     {
         foreach ($items as $item) {
