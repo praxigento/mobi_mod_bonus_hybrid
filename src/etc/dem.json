@@ -359,6 +359,77 @@
                           }
                         }
                       }
+                    },
+                    "package": {
+                      "Phase1": {
+                        "alias": "ph1",
+                        "comment": "Phase I related data.",
+                        "package": {
+                          "Transfer": {
+                            "alias": "trn",
+                            "comment": "Phase I compression transfers.",
+                            "entity": {
+                              "Pv": {
+                                "alias": "pv",
+                                "comment": "PV transfers between customers during phase I compression.",
+                                "attribute": {
+                                  "CalculationRef": {
+                                    "alias": "calc_ref",
+                                    "comment": "Reference to the related calculation (type 'HYBRID_COMPRESS_FOR_PTC' is expected).",
+                                    "nullable": false,
+                                    "type": {"integer": {"unsigned": true}}
+                                  },
+                                  "CustomerFromRef": {
+                                    "alias": "cust_from_ref",
+                                    "comment": "Reference to the customer who send PV to the ancestor.",
+                                    "nullable": false,
+                                    "type": {"integer": {"unsigned": true}}
+                                  },
+                                  "CustomerToRef": {
+                                    "alias": "cust_to_ref",
+                                    "comment": "Reference to the customer who receive PV from the descendant.",
+                                    "nullable": false,
+                                    "type": {"integer": {"unsigned": true}}
+                                  },
+                                  "PersonalVolumes": {
+                                    "alias": "pv",
+                                    "comment": "PV value been transferred from descendant to the ancestor.",
+                                    "nullable": false,
+                                    "type": {"numeric": {"precision": 12, "scale": 4}}
+                                  }
+                                },
+                                "primary": {"type": "primary", "aliases": ["calc_ref", "cust_from_ref", "cust_to_ref"]},
+                                "relation": {
+                                  "toCalculation": {
+                                    "own": {"aliases": ["calc_ref"]},
+                                    "reference": {
+                                      "entity": {"completeAlias": "prxgt_bon_base_calc"},
+                                      "aliases": ["id"]
+                                    },
+                                    "action": {"delete": "restrict", "update": "restrict"}
+                                  },
+                                  "toDownlineCustomerAsFrom": {
+                                    "own": {"aliases": ["cust_from_ref"]},
+                                    "reference": {
+                                      "entity": {"completeAlias": "prxgt_dwnl_customer"},
+                                      "aliases": ["customer_id"]
+                                    },
+                                    "action": {"delete": "restrict", "update": "restrict"}
+                                  },
+                                  "toDownlineCustomerAsTo": {
+                                    "own": {"aliases": ["cust_to_ref"]},
+                                    "reference": {
+                                      "entity": {"completeAlias": "prxgt_dwnl_customer"},
+                                      "aliases": ["customer_id"]
+                                    },
+                                    "action": {"delete": "restrict", "update": "restrict"}
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
                     }
                   },
                   "Config": {

@@ -10,6 +10,7 @@ use Praxigento\BonusHybrid\Entity\Cache\Downline\Plain as CacheDwnlPlain;
 use Praxigento\BonusHybrid\Entity\Cfg\Override as CfgOverride;
 use Praxigento\BonusHybrid\Entity\Cfg\Param as CfgParam;
 use Praxigento\BonusHybrid\Entity\Compression\Oi as OiCompress;
+use Praxigento\BonusHybrid\Entity\Compression\Phase1\Transfer\Pv as Phase1TransPv;
 use Praxigento\BonusHybrid\Entity\Compression\Ptc as PtcCompress;
 use Praxigento\BonusHybrid\Entity\Registry\Pto as RegPto;
 use Praxigento\BonusHybrid\Entity\Registry\SignupDebit as SignupDebit;
@@ -36,6 +37,11 @@ class InstallSchema extends \Praxigento\Core\Setup\Schema\Base
         /* Config Param */
         $entityAlias = CfgParam::ENTITY_NAME;
         $demEntity = $demPackage->get('package/Config/entity/Parameter');
+        $this->_toolDem->createEntity($entityAlias, $demEntity);
+
+        /* Compression / Phase I / Transfer / PV */
+        $entityAlias = Phase1TransPv::ENTITY_NAME;
+        $demEntity = $demPackage->get('package/Compression/package/Phase1/package/Transfer/entity/Pv');
         $this->_toolDem->createEntity($entityAlias, $demEntity);
 
         /* Compression PTC */
