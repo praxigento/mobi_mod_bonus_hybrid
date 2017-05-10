@@ -8,18 +8,21 @@ namespace Praxigento\BonusHybrid\Service\Calc\Traits;
 trait TMap
 {
     /**
-     * Convert array of data ([ 0 => [ 'id' => 321, ... ], ...]) to mapped array ([ 321 => [ 'id'=>321, ... ], ... ]).
+     * Convert array of data or data objects ([ 0 => [ 'id' => 321, ... ], ...])
+     * to mapped array ([ 321 => [ 'id'=>321, ... ], ... ]).
      *
-     * @param $data
-     * @param $labelId
+     * @param array|\Flancer32\Lib\Data[] $data nested array or array of data objects.
+     * @param string $keyId name of the 'id' attribute.
      *
-     * @return array
+     * @return array|\Flancer32\Lib\Data[]
      */
-    public function mapById($data, $labelId)
+    public function mapById($data, $keyId)
     {
         $result = [];
         foreach ($data as $one) {
-            $result[$one[$labelId]] = $one;
+            /* $one should be an array or a DataObject */
+            $id = (is_array($one)) ? $one[$keyId] : $one->get($keyId);
+            $result[$id] = $one;
         }
         return $result;
     }
@@ -28,24 +31,32 @@ trait TMap
      * Create map of the front team members (siblings) [$custId => [$memberId, ...], ...] from compressed or snapshot
      * data.
      *
-     * @param $data
+     * @param array|\Flancer32\Lib\Data[] $data nested array or array of data objects.
+     * @param string $keyCustId name of the 'customer id' attribute.
+     * @param string $keyParentId name of the 'parent id' attribute.
      *
      * @return array [$custId => [$memberId, ...], ...]
      */
-    public function mapByTeams($data, $labelCustId, $labelParentId)
+    public function mapByTeams($data, $keyCustId, $keyParentId)
     {
         $result = [];
         foreach ($data as $one) {
-            $custId = $one[$labelCustId];
-            $parentId = $one[$labelParentId];
-            if ($custId == $parentId) {
+            if (is_array($one)) {
+                $customerId = $one[$keyCustId];
+                $parentId = $one[$keyParentId];
+            } else {
+                /* this should be data object */
+                $customerId = $one->get($keyCustId);
+                $parentId = $one->get($keyParentId);
+            }
+            if ($customerId == $parentId) {
                 /* skip root nodes, root node is not a member of a team. */
                 continue;
             }
             if (!isset($result[$parentId])) {
                 $result[$parentId] = [];
             }
-            $result[$parentId][] = $custId;
+            $result[$parentId][] = $customerId;
         }
         return $result;
     }
@@ -53,18 +64,24 @@ trait TMap
     /**
      * Get depth index for Downline Tree ordered by depth desc.
      *
-     * @param $tree
-     * @param $labelCustId
-     * @param $labelDepth
+     * @param array|\Flancer32\Lib\Data[] $tree nested array or array of data objects.
+     * @param string $keyCustId name of the 'customer id' attribute.
+     * @param string $keyDepth name of the 'depth' attribute.
      *
      * @return array  [$depth => [$custId, ...]]
      */
-    public function mapByTreeDepthDesc($tree, $labelCustId, $labelDepth)
+    public function mapByTreeDepthDesc($tree, $keyCustId, $keyDepth)
     {
         $result = [];
         foreach ($tree as $one) {
-            $customerId = $one[$labelCustId];
-            $depth = $one[$labelDepth];
+            if (is_array($one)) {
+                $customerId = $one[$keyCustId];
+                $depth = $one[$keyDepth];
+            } else {
+                /* this should be data object */
+                $customerId = $one->get($keyCustId);
+                $depth = $one->get($keyDepth);
+            }
             if (!isset($result[$depth])) {
                 $result[$depth] = [];
             }

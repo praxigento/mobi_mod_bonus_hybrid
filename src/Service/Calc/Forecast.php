@@ -112,8 +112,8 @@ class Forecast
         $end = $yesterday;
 
         /* TODO: remove it */
-        $begin = '20170301';
-        $end = '20170310';
+//        $begin = '20170301';
+//        $end = '20170310';
 
         $result = [$begin, $end];
         return $result;
