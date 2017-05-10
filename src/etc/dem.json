@@ -398,7 +398,12 @@
                                     "type": {"numeric": {"precision": 12, "scale": 4}}
                                   }
                                 },
-                                "primary": {"type": "primary", "aliases": ["calc_ref", "cust_from_ref", "cust_to_ref"]},
+                                "index": {
+                                  "primary": {
+                                    "type": "primary",
+                                    "aliases": ["calc_ref", "cust_from_ref", "cust_to_ref"]
+                                  }
+                                },
                                 "relation": {
                                   "toCalculation": {
                                     "own": {"aliases": ["calc_ref"]},
