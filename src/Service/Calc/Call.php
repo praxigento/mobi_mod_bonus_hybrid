@@ -40,8 +40,6 @@ class Call
     protected $subCompressOi;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Sub\Pto */
     protected $subPto;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Sub\SignupDebit */
-    protected $subSignupDebit;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
@@ -54,7 +52,6 @@ class Call
         \Praxigento\BonusHybrid\Service\Calc\Sub\Db $subDb,
         \Praxigento\BonusHybrid\Service\Calc\Sub\Calc $subCalc,
         \Praxigento\BonusHybrid\Service\Calc\Sub\CompressOi $subCompressOi,
-        \Praxigento\BonusHybrid\Service\Calc\Sub\SignupDebit $subSignupDebit,
         \Praxigento\BonusHybrid\Service\Calc\Sub\Pto $subPto
     ) {
         parent::__construct($logger, $manObj);
@@ -66,7 +63,6 @@ class Call
         $this->_subDb = $subDb;
         $this->_subCalc = $subCalc;
         $this->subCompressOi = $subCompressOi;
-        $this->subSignupDebit = $subSignupDebit;
         $this->subPto = $subPto;
     }
 
