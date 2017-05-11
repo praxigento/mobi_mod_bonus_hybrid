@@ -282,16 +282,16 @@ class CompressOi
     {
         $second = $others = 0;
         if ($maxP && !$secondP && !$othersP) {
-            /* there is one only leg: use compressed data */
-            $max = $maxC;
+            /* there is one only leg, use plain data */
+            $max = $maxP;
         } elseif ($maxP && $secondP && !$othersP) {
-            /* there are 2 legs */
-            $max = $maxC;
-            $second = $secondC;
+            /* there are 2 legs, also use plain data */
+            $max = $maxP;
+            $second = $secondP;
         } else {
-            /* there are 2 legs & others */
-            $max = ($maxP > $maxC) ? $maxP : $maxC;
-            $second = ($secondP > $secondC) ? $secondP : $secondC;
+            /* there are 2 legs (use plain) & others (use delta) */
+            $max = $maxP;
+            $second = $secondP;
             $others = $maxC + $secondC + $othersC - ($max + $second);
         }
         $result = [$max, $second, $others];
