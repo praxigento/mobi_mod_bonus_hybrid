@@ -10,10 +10,12 @@ namespace Praxigento\BonusHybrid\Cli\Cmd;
 class Calc
     extends \Praxigento\Core\Cli\Cmd\Base
 {
-    /** @var \Praxigento\BonusHybrid\Service\ICalc */
-    protected $callCalc;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\ICompressPhase1 */
+    protected $callBonusCompressPhase1;
     /** @var  \Praxigento\BonusHybrid\Service\Calc\ISignupDebit */
     protected $callBonusSignup;
+    /** @var \Praxigento\BonusHybrid\Service\ICalc */
+    protected $callCalc;
     /** @var \Magento\Framework\DB\Adapter\AdapterInterface */
     protected $conn;
     /** @var \Magento\Framework\App\ResourceConnection */
@@ -23,7 +25,8 @@ class Calc
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Magento\Framework\App\ResourceConnection $resource,
         \Praxigento\BonusHybrid\Service\ICalc $callCalc,
-        \Praxigento\BonusHybrid\Service\Calc\ISignupDebit $callBonusSignup
+        \Praxigento\BonusHybrid\Service\Calc\ISignupDebit $callBonusSignup,
+        \Praxigento\BonusHybrid\Service\Calc\ICompressPhase1 $callBonusCompressPhase1
     ) {
         parent::__construct(
             $manObj,
@@ -34,6 +37,7 @@ class Calc
         $this->conn = $this->resource->getConnection();
         $this->callCalc = $callCalc;
         $this->callBonusSignup = $callBonusSignup;
+        $this->callBonusCompressPhase1 = $callBonusCompressPhase1;
     }
 
     protected function calcBonusCourtesy()
@@ -137,18 +141,10 @@ class Calc
         return $result;
     }
 
-    protected function calcCompressPtc()
+    protected function calcCompressPhase1()
     {
-        $req = new \Praxigento\BonusHybrid\Service\Calc\Request\CompressPtc();
-        $resp = $this->callCalc->compressPtc($req);
-        $result = $resp->isSucceed();
-        return $result;
-    }
-
-    protected function calcSignupDebit()
-    {
-        $req = new \Praxigento\BonusHybrid\Service\Calc\SignupDebit\Request();
-        $resp = $this->callBonusSignup->exec($req);
+        $req = new \Praxigento\BonusHybrid\Service\Calc\CompressPhase1\Request();
+        $resp = $this->callBonusCompressPhase1->exec($req);
         $result = $resp->isSucceed();
         return $result;
     }
@@ -157,6 +153,14 @@ class Calc
     {
         $req = new \Praxigento\BonusHybrid\Service\Calc\Request\PvWriteOff();
         $resp = $this->callCalc->pvWriteOff($req);
+        $result = $resp->isSucceed();
+        return $result;
+    }
+
+    protected function calcSignupDebit()
+    {
+        $req = new \Praxigento\BonusHybrid\Service\Calc\SignupDebit\Request();
+        $resp = $this->callBonusSignup->exec($req);
         $result = $resp->isSucceed();
         return $result;
     }
@@ -191,7 +195,7 @@ class Calc
             }
             if ($canContinue) {
                 $output->writeln("<info>'PV Write Off' calculation is completed.<info>");
-                $canContinue = $this->calcCompressPtc();
+                $canContinue = $this->calcCompressPhase1();
             }
             if ($canContinue) {
                 $output->writeln("<info>Compression for Personal/Team/Courtesy bonuses is completed.<info>");

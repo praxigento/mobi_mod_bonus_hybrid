@@ -22,10 +22,11 @@ class Builder
     const AS_TBL_DWNL_PARENT = 'dwnp';
     const AS_TBL_ORDER = 'sale';
     const AS_TBL_PV = 'pv';
-    const A_COUNTRY = Dwnl::ATTR_COUNTRY_CODE;
+
     /**
      * Attributes aliases.
      */
+    const A_COUNTRY = Dwnl::ATTR_COUNTRY_CODE;
     const A_CUST_ID = 'cust_id';
     const A_ORDER_ID = 'order_id';
     const A_PARENT_GRAND_ID = 'parent_grand_id';
