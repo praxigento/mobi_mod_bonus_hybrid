@@ -97,12 +97,14 @@ class CompressPhase1
                 $ctx->set(SubCalc::CTX_DWNL_CUST, $dataDwnlCust);
                 $ctx->set(SubCalc::CTX_DWNL_SNAP, $dataDwnlSnap);
                 $ctx->set(SubCalc::CTX_PV, $dataPv);
+                $ctx->set(SubCalc::CTX_CALC_ID, $thisCalcId);
                 $this->subCalc->exec($ctx);
                 $updates = $ctx->get(SubCalc::CTX_COMPRESSED);
                 $pvTransfers = $ctx->get(SubCalc::CTX_PV_TRANSFERS);
 
                 /* save results into DB */
                 $this->subDb->saveCompressedPtc($updates, $thisCalcId);
+                $this->savePvTransfers($pvTransfers);
                 $this->queryMarkComplete->exec($thisCalcId);
                 $this->manTrans->commit($def);
                 $result->markSucceed();
