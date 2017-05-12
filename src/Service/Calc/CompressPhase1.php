@@ -7,11 +7,17 @@ namespace Praxigento\BonusHybrid\Service\Calc;
 
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder as QBldGetPv;
+use Praxigento\BonusHybrid\Service\Calc\CompressPhase1\Calc as SubCalc;
 
 class CompressPhase1
     extends \Praxigento\Core\Service\Base\Call
     implements \Praxigento\BonusHybrid\Service\Calc\ICompressPhase1
 {
+
+    /** Add traits */
+    use \Praxigento\BonusHybrid\Service\Calc\Traits\TMap {
+        mapValueById as protected;
+    }
 
     /** @var  \Praxigento\Downline\Service\ISnap */
     protected $callDownlineSnap;
@@ -19,11 +25,18 @@ class CompressPhase1
     protected $callPeriod;
     /** @var  \Praxigento\Core\Transaction\Database\IManager */
     protected $manTrans;
+    /** @var \Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder */
     protected $qbldGetPv;
+    /** @var \Praxigento\BonusHybrid\Repo\Query\MarkCalcComplete */
+    protected $queryMarkComplete;
     /** @var \Praxigento\Downline\Repo\Entity\ICustomer */
     protected $repoDwnlCustomer;
-    /** @var  \Praxigento\BonusHybrid\Service\Calc\Sub\Calc */
+    /** @var \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase1\Transfer\IPv */
+    protected $repoTransPv;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\CompressPhase1\Calc */
     protected $subCalc;
+    /** @var  \Praxigento\BonusHybrid\Service\Calc\Sub\Calc */
+    protected $subCalcOrig;
     /** @var  \Praxigento\BonusHybrid\Service\Calc\Sub\Db */
     protected $subDb;
 
@@ -32,19 +45,25 @@ class CompressPhase1
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Praxigento\Core\Transaction\Database\IManager $manTrans,
         \Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder $qbldGetPv,
+        \Praxigento\BonusHybrid\Repo\Query\MarkCalcComplete $queryMarkComplete,
         \Praxigento\Downline\Repo\Entity\ICustomer $repoDwnlCustomer,
+        \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase1\Transfer\IPv $repoTransPv,
         \Praxigento\Downline\Service\ISnap $callDownlineSnap,
         \Praxigento\BonusHybrid\Service\IPeriod $callPeriod,
         \Praxigento\BonusHybrid\Service\Calc\Sub\Db $subDb,
-        \Praxigento\BonusHybrid\Service\Calc\Sub\Calc $subCalc
+        \Praxigento\BonusHybrid\Service\Calc\Sub\Calc $subCalcOrig,
+        \Praxigento\BonusHybrid\Service\Calc\CompressPhase1\Calc $subCalc
     ) {
         parent::__construct($logger, $manObj);
         $this->manTrans = $manTrans;
         $this->qbldGetPv = $qbldGetPv;
+        $this->queryMarkComplete = $queryMarkComplete;
         $this->repoDwnlCustomer = $repoDwnlCustomer;
+        $this->repoTransPv = $repoTransPv;
         $this->callDownlineSnap = $callDownlineSnap;
         $this->callPeriod = $callPeriod;
         $this->subDb = $subDb;
+        $this->subCalcOrig = $subCalcOrig;
         $this->subCalc = $subCalc;
     }
 
@@ -71,12 +90,20 @@ class CompressPhase1
                 $baseCalcIdId = $baseCalcData->getId();
                 /* calculation itself */
                 $this->_logger->info("Processing period #$thisPeriodId ($thisDsBegin-$thisDsEnd)");
-                $downlineSnap = $this->getDownlineSnapshot($thisDsEnd);
-                $customersData = $this->repoDwnlCustomer->get();
-                $transData = $this->getPv($baseCalcIdId);
-                $updates = $this->subCalc->compressPtc($downlineSnap, $customersData, $transData);
+                $dataDwnlSnap = $this->getDownlineSnapshot($thisDsEnd);
+                $dataDwnlCust = $this->repoDwnlCustomer->get();
+                $dataPv = $this->getPv($baseCalcIdId);
+                $ctx = new \Flancer32\Lib\Data();
+                $ctx->set(SubCalc::CTX_DWNL_CUST, $dataDwnlCust);
+                $ctx->set(SubCalc::CTX_DWNL_SNAP, $dataDwnlSnap);
+                $ctx->set(SubCalc::CTX_PV, $dataPv);
+                $this->subCalc->exec($ctx);
+                $updates = $ctx->get(SubCalc::CTX_COMPRESSED);
+                $pvTransfers = $ctx->get(SubCalc::CTX_PV_TRANSFERS);
+
+                /* save results into DB */
                 $this->subDb->saveCompressedPtc($updates, $thisCalcId);
-                $this->subDb->markCalcComplete($thisCalcId);
+                $this->queryMarkComplete->exec($thisCalcId);
                 $this->manTrans->commit($def);
                 $result->markSucceed();
                 $result->setPeriodId($thisPeriodId);
@@ -117,7 +144,19 @@ class CompressPhase1
         $query = $this->qbldGetPv->getSelectQuery();
         $conn = $query->getConnection();
         $bind = [QBldGetPv::BIND_CALC_ID => $calcId];
-        $result = $conn->fetchAll($query, $bind);
+        $data = $conn->fetchAll($query, $bind);
+        $result = $this->mapValueById($data, QBldGetPv::A_CUST_ID, QBldGetPv::A_PV);
         return $result;
+    }
+
+    /**
+     * @param \Praxigento\BonusHybrid\Entity\Compression\Phase1\Transfer\Pv[] $data
+     */
+    protected function savePvTransfers($data)
+    {
+        /** @var \Praxigento\BonusHybrid\Entity\Compression\Phase1\Transfer\Pv $one */
+        foreach ($data as $one) {
+            $this->repoTransPv->create($one);
+        }
     }
 }

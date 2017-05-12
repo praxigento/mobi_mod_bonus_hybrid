@@ -198,7 +198,7 @@ class Calc
                 $canContinue = $this->calcCompressPhase1();
             }
             if ($canContinue) {
-                $output->writeln("<info>Compression for Personal/Team/Courtesy bonuses is completed.<info>");
+                $output->writeln("<info>Phase I compression is completed.<info>");
                 $canContinue = $this->calcBonusPersonalDef();
             }
             if ($canContinue) {
@@ -230,11 +230,11 @@ class Calc
                 $canContinue = $this->calcCompressOiDef();
             }
             if ($canContinue) {
-                $output->writeln("<info>Compression for Override/Infinity bonuses (DEFAULT) is completed.<info>");
+                $output->writeln("<info>Phase II compression (DEFAULT) is completed.<info>");
                 $canContinue = $this->calcCompressOiEu();
             }
             if ($canContinue) {
-                $output->writeln("<info>Compression for Override/Infinity bonuses (EU) is completed.<info>");
+                $output->writeln("<info>Phase II compression (EU) is completed.<info>");
                 $canContinue = $this->calcBonusOverrideDef();
             }
             if ($canContinue) {

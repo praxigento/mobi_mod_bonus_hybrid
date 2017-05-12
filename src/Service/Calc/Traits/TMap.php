@@ -91,4 +91,30 @@ trait TMap
         krsort($result);
         return $result;
     }
+
+    /**
+     * Map 'value' elements of the $data array on $id elements.
+     *
+     * @param array|\Flancer32\Lib\Data[] $data associative array with 'id' elements & 'value' elements.
+     * @param $keyId key for 'id' element
+     * @param $keyValue key for 'value' element
+     * @return array [id => value, ...]
+     */
+    public function mapValueById($data, $keyId, $keyValue)
+    {
+        $result = [];
+        foreach ($data as $one) {
+            /* $one should be an array or a DataObject */
+            if (is_array($one)) {
+                $id = $one[$keyId];
+                $value = $one[$keyValue];
+            } else {
+                /* this should be data object */
+                $id = $one->get($keyId);
+                $value = $one->get($keyValue);
+            }
+            $result[$id] = $value;
+        }
+        return $result;
+    }
 }

@@ -28,13 +28,9 @@ class Builder
      * Attributes aliases.
      */
     const A_CUST_ID = EAcc::ATTR_CUST_ID;
-    const A_OPER_ID = 'operId';
     const A_PV = ETrans::ATTR_VALUE;
-    const A_TYPE_ID = 'assetTypeId';
 //    const A_CUST_ID = 'custId';
-//    const A_OPER_ID = 'operId';
 //    const A_PV = 'pv';
-//    const A_TYPE_ID = 'assetTypeId';
 
     /**
      * Bound variables names
@@ -76,16 +72,14 @@ class Builder
         /* SELECT FROM prxgt_bon_base_log_opers */
         $tbl = $this->resource->getTableName(ELogOpers::ENTITY_NAME);
         $as = $asLog;
-        $cols = [self::A_OPER_ID => ELogOpers::ATTR_OPER_ID];
+        $cols = [];
         $result->from([$as => $tbl], $cols);
 
         /* LEFT JOIN prxgt_acc_operation */
         $tbl = $this->resource->getTableName(EOper::ENTITY_NAME);
         $as = $asOper;
         $on = $as . '.' . EOper::ATTR_ID . '=' . $asLog . '.' . ELogOpers::ATTR_OPER_ID;
-        $cols = [
-            self::A_TYPE_ID => EOper::ATTR_TYPE_ID
-        ];
+        $cols = [];
         $result->joinLeft([$as => $tbl], $on, $cols);
 
         /* LEFT JOIN prxgt_acc_transaction */

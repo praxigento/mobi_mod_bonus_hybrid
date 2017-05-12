@@ -585,51 +585,6 @@ class Call
         return $result;
     }
 
-    /**
-     * @param Request\CompressPtc $request
-     *
-     * @return Response\CompressPtc
-     */
-    public function compressPtc(Request\CompressPtc $request)
-    {
-        $result = new Response\CompressPtc();
-        $this->_logger->info("'PTC Compression' calculation is started.");
-        $reqGetPeriod = new PeriodGetForDependentCalcRequest();
-        $reqGetPeriod->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
-        $reqGetPeriod->setDependentCalcTypeCode(Cfg::CODE_TYPE_CALC_COMPRESS_FOR_PTC);
-        $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
-        if ($respGetPeriod->isSucceed()) {
-            $def = $this->_manTrans->begin();
-            try {
-                /* working vars */
-                $thisPeriodData = $respGetPeriod->getDependentPeriodData();
-                $thisPeriodId = $thisPeriodData->getId();
-                $thisDsBegin = $thisPeriodData->getDstampBegin();
-                $thisDsEnd = $thisPeriodData->getDstampEnd();
-                $thisCalcData = $respGetPeriod->getDependentCalcData();
-                $thisCalcId = $thisCalcData->getId();
-                $baseCalcData = $respGetPeriod->getBaseCalcData();
-                $baseCalcIdId = $baseCalcData->getId();
-                /* calculation itself */
-                $this->_logger->info("Processing period #$thisPeriodId ($thisDsBegin-$thisDsEnd)");
-                $downlineSnap = $this->_subDb->getDownlineSnapshot($thisDsEnd);
-                $customersData = $this->_subDb->getDownlineCustomersData();
-                $transData = $this->_subDb->getDataForPvCompression($baseCalcIdId);
-                $updates = $this->_subCalc->compressPtc($downlineSnap, $customersData, $transData);
-                $this->_subDb->saveCompressedPtc($updates, $thisCalcId);
-                $this->_subDb->markCalcComplete($thisCalcId);
-                $this->_manTrans->commit($def);
-                $result->markSucceed();
-                $result->setPeriodId($thisPeriodId);
-                $result->setCalcId($thisCalcId);
-            } finally {
-                $this->_manTrans->end($def);
-            }
-        }
-        $this->_logMemoryUsage();
-        $this->_logger->info("'PTC Compression' calculation is completed.");
-        return $result;
-    }
 
     /**
      * @param Request\PvWriteOff $request
