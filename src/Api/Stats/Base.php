@@ -22,7 +22,7 @@ abstract class Base
     protected $authenticator;
     /** @var  \Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc */
     protected $qPeriodCalc;
-    /** @var \Praxigento\BonusHybrid\Repo\Query\Stats\Phase1\Builder */
+    /** @var \Praxigento\Core\Repo\Query\IBuilder */
     protected $qbld;
     /** @var \Praxigento\Downline\Repo\Entity\ISnap */
     protected $repoSnap;
@@ -31,7 +31,7 @@ abstract class Base
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
-        \Praxigento\Core\Repo\Query\Def\Builder $qbld,
+        \Praxigento\Core\Repo\Query\IBuilder $qbld,
         \Praxigento\Core\Api\IAuthenticator $authenticator,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
         \Praxigento\Downline\Repo\Entity\ISnap $repoSnap,

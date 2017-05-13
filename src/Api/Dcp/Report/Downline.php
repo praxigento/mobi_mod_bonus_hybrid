@@ -11,7 +11,19 @@ class Downline
 {
     public function exec(\Praxigento\BonusHybrid\Api\Dcp\Report\Downline\Request $data)
     {
-        // TODO: Implement exec() method.
+        $result = parent::process($data);
+        return $result;
+    }
+
+    public function __construct(
+        \Magento\Framework\ObjectManagerInterface $manObj,
+        \Praxigento\BonusHybrid\Repo\Query\Cache\Dwnl\Plain\Get\Builder $qbld,
+        \Praxigento\Core\Api\IAuthenticator $authenticator,
+        \Praxigento\Core\Tool\IPeriod $toolPeriod,
+        \Praxigento\Downline\Repo\Entity\ISnap $repoSnap,
+        \Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc $qPeriodCalc
+    ) {
+        parent::__construct($manObj, $qbld, $authenticator, $toolPeriod, $repoSnap, $qPeriodCalc);
     }
 
     protected function populateQuery(\Flancer32\Lib\Data $ctx)
