@@ -52,9 +52,9 @@ abstract class Base
         $rootCustId = $vars->get(self::VAR_CUST_ID);
         $rootCustPath = $vars->get(self::VAR_CUST_PATH);
 
-        /* only currently logged in  customer can get account statement */
+        /* only currently logged in customer can get account statement */
         $currCustData = $this->authenticator->getCurrentCustomerData();
-        $currCustId = $currCustData->get(Cfg::E_CUSTOMER_A_ENTITY_ID);
+        $currCustId = $this->authenticator->getCurrentCustomerId();
         /** @var \Praxigento\Downline\Data\Entity\Customer $currDwnlData */
         $currDwnlData = $currCustData->get(\Praxigento\Downline\Infra\Api\Authenticator::A_DWNL_DATA);
         $currCustPath = $currDwnlData->getPath() . $currDwnlData->getCustomerId() . Cfg::DTPS;
