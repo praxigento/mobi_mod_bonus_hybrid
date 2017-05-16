@@ -18,6 +18,7 @@ class Request
      * Limit tree depth starting from root customer level.
      *
      * @return int|null
+     * @deprecated use absolute depth from downline tree (as regular filter).
      */
     public function getMaxDepth()
     {
@@ -51,6 +52,7 @@ class Request
      * Limit tree depth starting from root customer level.
      *
      * @param int $data
+     * @deprecated use absolute depth from downline tree (as regular filter).
      */
     public function setMaxDepth($data)
     {

@@ -78,6 +78,11 @@ abstract class Base
      */
     protected abstract function prepareCalcRefData(\Flancer32\Lib\Data $ctx);
 
+    /**
+     * Extract parameters for base request (period, root customer, etc.).
+     *
+     * @inheritdoc
+     */
     protected function prepareQueryParameters(\Flancer32\Lib\Data $ctx)
     {
         /* get working vars from context */

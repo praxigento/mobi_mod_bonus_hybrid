@@ -31,6 +31,21 @@ class Downline
         // TODO: Implement populateQuery() method.
     }
 
+    protected function prepareQueryParameters(\Flancer32\Lib\Data $ctx)
+    {
+        parent::prepareQueryParameters($ctx);
+
+        /* get working vars from context */
+        /** @var \Flancer32\Lib\Data $vars */
+        $vars = $ctx->get(self::CTX_VARS);
+        /** @var \Praxigento\BonusHybrid\Api\Dcp\Report\Downline\Request $req */
+        $req = $ctx->get(self::CTX_REQ);
+
+        /* extract this request parameters */
+        $type = $req->getType();
+
+    }
+
 
     protected function prepareCalcRefData(\Flancer32\Lib\Data $ctx)
     {
