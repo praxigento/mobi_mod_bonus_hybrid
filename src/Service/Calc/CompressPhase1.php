@@ -70,7 +70,7 @@ class CompressPhase1
     public function exec(\Praxigento\BonusHybrid\Service\Calc\CompressPhase1\Request $req)
     {
         $result = new \Praxigento\BonusHybrid\Service\Calc\CompressPhase1\Response();
-        $this->_logger->info("Phase1 compression is started.");
+        $this->logger->info("Phase1 compression is started.");
 
         $reqGetPeriod = new \Praxigento\BonusHybrid\Service\Period\Request\GetForDependentCalc();
         $reqGetPeriod->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
@@ -89,7 +89,7 @@ class CompressPhase1
                 $baseCalcData = $respGetPeriod->getBaseCalcData();
                 $baseCalcIdId = $baseCalcData->getId();
                 /* calculation itself */
-                $this->_logger->info("Processing period #$thisPeriodId ($thisDsBegin-$thisDsEnd)");
+                $this->logger->info("Processing period #$thisPeriodId ($thisDsBegin-$thisDsEnd)");
                 $dataDwnlSnap = $this->getDownlineSnapshot($thisDsEnd);
                 $dataDwnlCust = $this->repoDwnlCustomer->get();
                 $dataPv = $this->getPv($baseCalcIdId);
@@ -115,8 +115,8 @@ class CompressPhase1
             }
         }
 
-        $this->_logMemoryUsage();
-        $this->_logger->info("Phase1 compression is completed.");
+        $this->logMemoryUsage();
+        $this->logger->info("Phase1 compression is completed.");
         return $result;
     }
 

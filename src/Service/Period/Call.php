@@ -48,10 +48,10 @@ class Call
         $depCalcTypeCode = $request->getDependentCalcTypeCode();
         $baseCalcTypeCode = $request->getBaseCalcTypeCode();
         $allowIncompleteBaseCalc = (bool) $request->getAllowIncompleteBaseCalc();
-        $this->_logger->info("'Get latest period for Dependent Calculation' operation is started "
+        $this->logger->info("'Get latest period for Dependent Calculation' operation is started "
             . "(dependent=$depCalcTypeCode, base=$baseCalcTypeCode).");
         $result = $this->_subBasedCalcs->getDependentCalcData($depCalcTypeCode, $baseCalcTypeCode, $allowIncompleteBaseCalc);
-        $this->_logger->info("'Get latest period for Dependent Calculation' operation is completed.");
+        $this->logger->info("'Get latest period for Dependent Calculation' operation is completed.");
         return $result;
     }
 
@@ -63,21 +63,21 @@ class Call
     public function getForWriteOff(Request\GetForWriteOff $request)
     {
         $result = new Response\GetForWriteOff();
-        $this->_logger->info("'Get latest period for Write Off calculation' operation is started.");
+        $this->logger->info("'Get latest period for Write Off calculation' operation is started.");
         /* get the last Write Off period data */
         $calcWriteOffCode = Cfg::CODE_TYPE_CALC_PV_WRITE_OFF;
         $calcWriteOffId = $this->_subDb->getCalcIdByCode($calcWriteOffCode);
         $respWriteOffLastPeriod = $this->_subDb->getLastPeriodData($calcWriteOffId);
         $periodWriteOffData = $respWriteOffLastPeriod->getPeriodData();
         if (is_null($periodWriteOffData)) {
-            $this->_logger->info("There is no period for PV Write Off calculation  yet.");
+            $this->logger->info("There is no period for PV Write Off calculation  yet.");
             /* calc period for PV Write Off */
             $tsFirstPv = $this->_subDb->getFirstDateForPvTransactions();
             if ($tsFirstPv === false) {
-                $this->_logger->info("There is no PV transactions yet. Nothing to do.");
+                $this->logger->info("There is no PV transactions yet. Nothing to do.");
                 $result->setHasNoPvTransactionsYet();
             } else {
-                $this->_logger->info("First PV transaction was performed at '$tsFirstPv'.");
+                $this->logger->info("First PV transaction was performed at '$tsFirstPv'.");
                 $periodMonth = $this->_toolPeriod->getPeriodCurrentOld($tsFirstPv, ToolPeriod::TYPE_MONTH);
                 $dsBegin = $this->_toolPeriod->getPeriodFirstDate($periodMonth);
                 $dsEnd = $this->_toolPeriod->getPeriodLastDate($periodMonth);
@@ -89,17 +89,17 @@ class Call
         } else {
             $result->setPeriodData($periodWriteOffData);
             $periodId = $periodWriteOffData->getId();
-            $this->_logger->info("There is registered period #$periodId for '$calcWriteOffCode' calculation.");
+            $this->logger->info("There is registered period #$periodId for '$calcWriteOffCode' calculation.");
             $calcData = $respWriteOffLastPeriod->getCalcData();
             if ($calcData === false) {
-                $this->_logger->info("There is no calculation data for existing period. Use existing period data.");
+                $this->logger->info("There is no calculation data for existing period. Use existing period data.");
                 $result->markSucceed();
             } else {
                 if (
                     $calcData &&
                     ($calcData->getState() == Cfg::CALC_STATE_COMPLETE)
                 ) {
-                    $this->_logger->info("There is complete calculation for existing period. Create new period.");
+                    $this->logger->info("There is complete calculation for existing period. Create new period.");
                     $periodEnd = $periodWriteOffData->getDstampEnd();
                     /* calculate new period bounds */
                     $periodNext = $this->_toolPeriod->getPeriodNext($periodEnd, ToolPeriod::TYPE_MONTH);
@@ -110,13 +110,13 @@ class Call
                     $result->setCalcData($periodWriteOffData->get(Sub\Db::DATA_CALC));
                     $result->markSucceed();
                 } else {
-                    $this->_logger->info("There is no complete calculation for existing period. Use existing period data.");
+                    $this->logger->info("There is no complete calculation for existing period. Use existing period data.");
                     $result->setCalcData($calcData);
                     $result->markSucceed();
                 }
             }
         }
-        $this->_logger->info("'Get latest period for Write Off calculation' operation is completed.");
+        $this->logger->info("'Get latest period for Write Off calculation' operation is completed.");
         return $result;
     }
 }

@@ -52,7 +52,7 @@ class Forecast
     public function exec(\Praxigento\BonusHybrid\Service\Calc\Forecast\Request $req)
     {
         $result = new \Praxigento\BonusHybrid\Service\Calc\Forecast\Response();
-        $this->_logger->info("'Forecast' calculation is started.");
+        $this->logger->info("'Forecast' calculation is started.");
 
         /* get calculation period (begin, end dates) */
         list($dateFrom, $dateTo) = $this->getPeriod();
@@ -94,8 +94,8 @@ class Forecast
         $this->cleanCachedData();
         $this->saveDwnlPlain($plainItems);
 
-        $this->_logMemoryUsage();
-        $this->_logger->info("'Forecast' calculation is completed.");
+        $this->logMemoryUsage();
+        $this->logger->info("'Forecast' calculation is completed.");
         return $result;
     }
 

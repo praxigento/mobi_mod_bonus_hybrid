@@ -42,13 +42,13 @@ class SignupDebit
     public function exec(\Praxigento\BonusHybrid\Service\Calc\SignupDebit\Request $req)
     {
         $result = new \Praxigento\BonusHybrid\Service\Calc\SignupDebit\Response();
-        $this->_logger->info("'Sign Up Volume Debit' bonus is started.");
+        $this->logger->info("'Sign Up Volume Debit' bonus is started.");
         /* PV based calculation. 'PV Write Off' calc should be started (backward dependency) */
         $reqGetPeriod = new \Praxigento\BonusHybrid\Service\Period\Request\GetForWriteOff();
         $respGetPeriod = $this->callPeriod->getForWriteOff($reqGetPeriod);
         if ($respGetPeriod->isSucceed()) {
             if ($respGetPeriod->hasNoPvTransactionsYet()) {
-                $this->_logger->info("There is no PV transactions yet. Nothing to calculate.");
+                $this->logger->info("There is no PV transactions yet. Nothing to calculate.");
                 $result->markSucceed();
             } else {
                 /* get/create period and calc for 'Sign Up Volume Debit' bonus */
@@ -66,7 +66,7 @@ class SignupDebit
                     $periodBegin = $periodData->getDstampBegin();
                     $periodEnd = $periodData->getDstampEnd();
                     $calcState = $calcData->getState();
-                    $this->_logger->info("Processing period #$periodId ($periodBegin-$periodEnd), Sign Up Volume Debit calculation #$calcId ($calcState).");
+                    $this->logger->info("Processing period #$periodId ($periodBegin-$periodEnd), Sign Up Volume Debit calculation #$calcId ($calcState).");
                     if ($calcState != Cfg::CALC_STATE_COMPLETE) {
                         $dateApplied = $this->toolPeriod->getTimestampTo($periodEnd);
                         /* get first orders for just signed up customers */
@@ -85,12 +85,12 @@ class SignupDebit
                         $result->markSucceed();
                     }
                 } else {
-                    $this->_logger->warning("There is no period to calculate 'Sign Up Volume Debit' bonus.");
+                    $this->logger->warning("There is no period to calculate 'Sign Up Volume Debit' bonus.");
                 }
             }
         }
-        $this->_logMemoryUsage();
-        $this->_logger->info("'Sign Up Volume Debit' bonus is completed.");
+        $this->logMemoryUsage();
+        $this->logger->info("'Sign Up Volume Debit' bonus is completed.");
         return $result;
     }
 }

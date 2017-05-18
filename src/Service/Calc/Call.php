@@ -85,7 +85,7 @@ class Call
         $courtesyPercent = $request->getCourtesyBonusPercent();
         $datePerformed = $request->getDatePerformed();
         $dateApplied = $request->getDateApplied();
-        $this->_logger->info("'Courtesy Bonus' calculation is started.");
+        $this->logger->info("'Courtesy Bonus' calculation is started.");
         $reqGetPeriod = new PeriodGetForDependentCalcRequest();
         $reqGetPeriod->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_VALUE_TV);
         $reqGetPeriod->setDependentCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_COURTESY);
@@ -108,7 +108,7 @@ class Call
                     $baseDsEnd
                 );
                 /* calculation itself */
-                $this->_logger->info("Processing period #$thisPeriodId ($baseDsBegin-$baseDsEnd)");
+                $this->logger->info("Processing period #$thisPeriodId ($baseDsBegin-$baseDsEnd)");
                 /* get compressed data by calculation ID */
                 $compressPtc = $this->_subDb->getCompressedPtcData($ptcCompressCalcId);
                 /* get levels to calculate Personal and Team bonuses */
@@ -153,8 +153,8 @@ class Call
                 $this->_manTrans->end($def);
             }
         }
-        $this->_logMemoryUsage();
-        $this->_logger->info("'Courtesy Bonus' calculation is completed.");
+        $this->logMemoryUsage();
+        $this->logger->info("'Courtesy Bonus' calculation is completed.");
         return $result;
     }
 
@@ -164,7 +164,7 @@ class Call
         $scheme = $this->_getCalculationsScheme($request->getScheme());
         $datePerformed = $request->getDatePerformed();
         $dateApplied = $request->getDateApplied();
-        $this->_logger->info("'Infinity Bonus' calculation is started ($scheme scheme).");
+        $this->logger->info("'Infinity Bonus' calculation is started ($scheme scheme).");
         if ($scheme == Def::SCHEMA_EU) {
             $calcTypeBase = Cfg::CODE_TYPE_CALC_COMPRESS_FOR_OI_EU;
             $calcType = Cfg::CODE_TYPE_CALC_BONUS_INFINITY_EU;
@@ -190,7 +190,7 @@ class Call
                 $baseCalcData = $respGetPeriod->getBaseCalcData();
                 $baseCalcId = $baseCalcData->getId();
                 /* calculation itself */
-                $this->_logger->info("Processing period #$thisPeriodId ($baseDsBegin-$baseDsEnd)");
+                $this->logger->info("Processing period #$thisPeriodId ($baseDsBegin-$baseDsEnd)");
                 /* get compressed data by calculation ID */
                 $compressOi = $this->_subDb->getCompressedOiData($baseCalcId);
                 /* get configuration for Override and Infinity bonuses */
@@ -244,8 +244,8 @@ class Call
                 $this->_manTrans->end($def);
             }
         }
-        $this->_logMemoryUsage();
-        $this->_logger->info("'Infinity Bonus' calculation is completed.");
+        $this->logMemoryUsage();
+        $this->logger->info("'Infinity Bonus' calculation is completed.");
         return $result;
     }
 
@@ -260,7 +260,7 @@ class Call
         $scheme = $this->_getCalculationsScheme($request->getScheme());
         $datePerformed = $request->getDatePerformed();
         $dateApplied = $request->getDateApplied();
-        $this->_logger->info("'Override Bonus' calculation is started ($scheme scheme).");
+        $this->logger->info("'Override Bonus' calculation is started ($scheme scheme).");
         if ($scheme == Def::SCHEMA_EU) {
             $calcTypeBase = Cfg::CODE_TYPE_CALC_COMPRESS_FOR_OI_EU;
             $calcType = Cfg::CODE_TYPE_CALC_BONUS_OVERRIDE_EU;
@@ -286,7 +286,7 @@ class Call
                 $baseCalcData = $respGetPeriod->getBaseCalcData();
                 $baseCalcId = $baseCalcData->getId();
                 /* calculation itself */
-                $this->_logger->info("Processing period #$thisPeriodId ($baseDsBegin-$baseDsEnd)");
+                $this->logger->info("Processing period #$thisPeriodId ($baseDsBegin-$baseDsEnd)");
                 /* get compressed data by calculation ID */
                 $compressOi = $this->_subDb->getCompressedOiData($baseCalcId);
                 /* get configuration for Override and Infinity bonuses */
@@ -335,8 +335,8 @@ class Call
                 $this->_manTrans->end($def);
             }
         }
-        $this->_logMemoryUsage();
-        $this->_logger->info("'Override Bonus' calculation is completed.");
+        $this->logMemoryUsage();
+        $this->logger->info("'Override Bonus' calculation is completed.");
         return $result;
     }
 
@@ -346,7 +346,7 @@ class Call
         $scheme = $this->_getCalculationsScheme($request->getScheme());
         $datePerformed = $request->getDatePerformed();
         $dateApplied = $request->getDateApplied();
-        $this->_logger->info("'Personal Bonus' calculation is started. Scheme: $scheme, performed at: $datePerformed, applied at: $dateApplied.");
+        $this->logger->info("'Personal Bonus' calculation is started. Scheme: $scheme, performed at: $datePerformed, applied at: $dateApplied.");
         $reqGetPeriod = new PeriodGetForDependentCalcRequest();
         $calcTypeBase = Cfg::CODE_TYPE_CALC_COMPRESS_FOR_PTC;
         if ($scheme == Def::SCHEMA_EU) {
@@ -371,7 +371,7 @@ class Call
                 $baseCalcData = $respGetPeriod->getBaseCalcData();
                 $baseCalcId = $baseCalcData->getId();
                 /* calculation itself */
-                $this->_logger->info("Processing period #$thisPeriodId ($baseDsBegin-$baseDsEnd)");
+                $this->logger->info("Processing period #$thisPeriodId ($baseDsBegin-$baseDsEnd)");
                 /* get compressed data by calculation ID */
                 $compressPtc = $this->_subDb->getCompressedPtcData($baseCalcId);
                 /* calculates bonus according to the calculation scheme */
@@ -418,8 +418,8 @@ class Call
                 $this->_manTrans->end($def);
             }
         }
-        $this->_logMemoryUsage();
-        $this->_logger->info("'Personal Bonus' calculation is completed.");
+        $this->logMemoryUsage();
+        $this->logger->info("'Personal Bonus' calculation is completed.");
         return $result;
     }
 
@@ -431,7 +431,7 @@ class Call
         $teamBonusPercent = $request->getTeamBonusPercent();
         $datePerformed = $request->getDatePerformed();
         $dateApplied = $request->getDateApplied();
-        $this->_logger->info("'Team Bonus' calculation is started.");
+        $this->logger->info("'Team Bonus' calculation is started.");
         $reqGetPeriod = new PeriodGetForDependentCalcRequest();
         $calcTypeBase = Cfg::CODE_TYPE_CALC_VALUE_TV;
         if ($scheme == Def::SCHEMA_EU) {
@@ -460,7 +460,7 @@ class Call
                     $baseDsEnd
                 );
                 /* calculation itself */
-                $this->_logger->info("Processing period #$thisPeriodId ($baseDsBegin-$baseDsEnd)");
+                $this->logger->info("Processing period #$thisPeriodId ($baseDsBegin-$baseDsEnd)");
                 /* get compressed data by calculation ID */
                 $compressPtc = $this->_subDb->getCompressedPtcData($ptcCompressCalcId);
                 /* calculate bonus values according to DEFAULT or EU schemes */
@@ -509,8 +509,8 @@ class Call
                 $this->_manTrans->end($def);
             }
         }
-        $this->_logMemoryUsage();
-        $this->_logger->info("'Team Bonus' calculation is completed.");
+        $this->logMemoryUsage();
+        $this->logger->info("'Team Bonus' calculation is completed.");
         return $result;
     }
 
@@ -518,7 +518,7 @@ class Call
     {
         $result = new Response\CompressOi();
         $scheme = $this->_getCalculationsScheme($request->getScheme());
-        $this->_logger->info("'OI Compression' calculation is started ($scheme scheme).");
+        $this->logger->info("'OI Compression' calculation is started ($scheme scheme).");
         if ($scheme == Def::SCHEMA_EU) {
             $calcType = Cfg::CODE_TYPE_CALC_COMPRESS_FOR_OI_EU;
         } else {
@@ -551,7 +551,7 @@ class Call
                     $baseDsEnd
                 );
                 /* calculation itself */
-                $this->_logger->info("Processing period #$thisPeriodId ($baseDsBegin-$baseDsEnd)");
+                $this->logger->info("Processing period #$thisPeriodId ($baseDsBegin-$baseDsEnd)");
                 /* get PV write off data MOBI-629 */
                 $transData = $this->_subDb->getDataForPvCompression($pvWriteOffCalcId);
                 $mapPv = $this->_subCalc->mapByPv($transData, Account::ATTR_CUST_ID, Transaction::ATTR_VALUE);
@@ -580,8 +580,8 @@ class Call
                 $this->_manTrans->end($def);
             }
         }
-        $this->_logMemoryUsage();
-        $this->_logger->info("'OI Compression' calculation is completed.");
+        $this->logMemoryUsage();
+        $this->logger->info("'OI Compression' calculation is completed.");
         return $result;
     }
 
@@ -595,12 +595,12 @@ class Call
     {
         $result = new Response\PvWriteOff();
         $datePerformed = $request->getDatePerformed();
-        $this->_logger->info("'PV Write Off' calculation is started.");
+        $this->logger->info("'PV Write Off' calculation is started.");
         $reqGetPeriod = new PeriodGetForWriteOffRequest();
         $respGetPeriod = $this->_callPeriod->getForWriteOff($reqGetPeriod);
         if ($respGetPeriod->isSucceed()) {
             if ($respGetPeriod->hasNoPvTransactionsYet()) {
-                $this->_logger->info("There is no PV transactions yet. Nothing to calculate.");
+                $this->logger->info("There is no PV transactions yet. Nothing to calculate.");
                 $result->markSucceed();
             } else {
                 $def = $this->_manTrans->begin();
@@ -612,7 +612,7 @@ class Call
                     $calcId = $calcData->getId();
                     $periodBegin = $periodData->getDstampBegin();
                     $periodEnd = $periodData->getDstampEnd();
-                    $this->_logger->info("Processing period #$periodId ($periodBegin-$periodEnd), calculation #$calcId.");
+                    $this->logger->info("Processing period #$periodId ($periodBegin-$periodEnd), calculation #$calcId.");
                     $transData = $this->_subDb->getDataForWriteOff($calcId, $periodBegin, $periodEnd);
                     $updates = $this->_subCalc->pvWriteOff($transData);
                     $dateApplied = $this->_toolPeriod->getTimestampTo($periodEnd);
@@ -633,8 +633,8 @@ class Call
                 }
             }
         }
-        $this->_logMemoryUsage();
-        $this->_logger->info("'PV Write Off' calculation is completed.");
+        $this->logMemoryUsage();
+        $this->logger->info("'PV Write Off' calculation is completed.");
         return $result;
     }
 
@@ -646,7 +646,7 @@ class Call
     public function valueOv(Request\ValueOv $request)
     {
         $result = new Response\ValueOv();
-        $this->_logger->info("'OV Value' calculation is started.");
+        $this->logger->info("'OV Value' calculation is started.");
         $reqGetPeriod = new PeriodGetForDependentCalcRequest();
         $reqGetPeriod->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_COMPRESS_FOR_PTC);
         $reqGetPeriod->setDependentCalcTypeCode(Cfg::CODE_TYPE_CALC_VALUE_OV);
@@ -665,7 +665,7 @@ class Call
                 $baseCalcData = $respGetPeriod->getBaseCalcData();
                 $baseCalcId = $baseCalcData->getId();
                 /* calculation itself */
-                $this->_logger->info("Processing period #$thisPeriodId ($baseDsBegin-$baseDsEnd)");
+                $this->logger->info("Processing period #$thisPeriodId ($baseDsBegin-$baseDsEnd)");
                 /* get compressed data by calculation ID */
                 $compressPtc = $this->_subDb->getCompressedPtcData($baseCalcId);
                 $updates = $this->_subCalc->valueOv($compressPtc);
@@ -679,15 +679,15 @@ class Call
                 $this->_manTrans->end($def);
             }
         }
-        $this->_logMemoryUsage();
-        $this->_logger->info("'OV Value' calculation is completed.");
+        $this->logMemoryUsage();
+        $this->logger->info("'OV Value' calculation is completed.");
         return $result;
     }
 
     public function valueTv(Request\ValueTv $request)
     {
         $result = new Response\ValueTv();
-        $this->_logger->info("'TV Value' calculation is started.");
+        $this->logger->info("'TV Value' calculation is started.");
         $reqGetPeriod = new PeriodGetForDependentCalcRequest();
         $reqGetPeriod->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_COMPRESS_FOR_PTC);
         $reqGetPeriod->setDependentCalcTypeCode(Cfg::CODE_TYPE_CALC_VALUE_TV);
@@ -706,7 +706,7 @@ class Call
                 $baseCalcData = $respGetPeriod->getBaseCalcData();
                 $baseCalcId = $baseCalcData->getId();
                 /* calculation itself */
-                $this->_logger->info("Processing period #$thisPeriodId ($baseDsBegin-$baseDsEnd)");
+                $this->logger->info("Processing period #$thisPeriodId ($baseDsBegin-$baseDsEnd)");
                 /* get compressed data by calculation ID */
                 $compressPtc = $this->_subDb->getCompressedPtcData($baseCalcId);
                 $updates = $this->_subCalc->valueTv($compressPtc);
@@ -720,8 +720,8 @@ class Call
                 $this->_manTrans->end($def);
             }
         }
-        $this->_logMemoryUsage();
-        $this->_logger->info("'TV Value' calculation is completed.");
+        $this->logMemoryUsage();
+        $this->logger->info("'TV Value' calculation is completed.");
         return $result;
     }
 }
