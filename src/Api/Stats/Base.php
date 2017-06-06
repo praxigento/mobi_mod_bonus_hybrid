@@ -32,13 +32,14 @@ abstract class Base
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Praxigento\Core\Repo\Query\IBuilder $qbld,
+        \Praxigento\Core\Helper\Config $hlpCfg,
         \Praxigento\Core\Api\IAuthenticator $authenticator,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
         \Praxigento\Downline\Repo\Entity\ISnap $repoSnap,
         \Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc $qPeriodCalc
 
     ) {
-        parent::__construct($manObj, $qbld);
+        parent::__construct($manObj, $qbld, $hlpCfg);
         $this->authenticator = $authenticator;
         $this->toolPeriod = $toolPeriod;
         $this->repoSnap = $repoSnap;
@@ -97,7 +98,8 @@ abstract class Base
         $maxDepth = $req->getMaxDepth();
 
         /* define requested root customer */
-        if (is_null($rootCustId)) {
+        $isLiveMode = !$this->hlpCfg->getApiAuthenticationEnabledDevMode();
+        if (is_null($rootCustId) || $isLiveMode) {
             $rootCustId = $this->authenticator->getCurrentCustomerId();
         }
 

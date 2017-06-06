@@ -21,6 +21,7 @@ class Phase1
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Praxigento\BonusHybrid\Repo\Query\Stats\Phase1\Builder $qbldPhase1,
+        \Praxigento\Core\Helper\Config $hlpCfg,
         \Praxigento\Core\Api\IAuthenticator $authenticator,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
         \Praxigento\Downline\Repo\Entity\ISnap $repoSnap,
@@ -32,6 +33,7 @@ class Phase1
         parent::__construct(
             $manObj,
             $qbldPhase1,
+            $hlpCfg,
             $authenticator,
             $toolPeriod,
             $repoSnap,

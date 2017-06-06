@@ -18,12 +18,13 @@ class Downline
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Praxigento\BonusHybrid\Repo\Query\Cache\Dwnl\Plain\Get\Builder $qbld,
+        \Praxigento\Core\Helper\Config $hlpCfg,
         \Praxigento\Core\Api\IAuthenticator $authenticator,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
         \Praxigento\Downline\Repo\Entity\ISnap $repoSnap,
         \Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc $qPeriodCalc
     ) {
-        parent::__construct($manObj, $qbld, $authenticator, $toolPeriod, $repoSnap, $qPeriodCalc);
+        parent::__construct($manObj, $qbld, $hlpCfg, $authenticator, $toolPeriod, $repoSnap, $qPeriodCalc);
     }
 
     protected function populateQuery(\Flancer32\Lib\Data $ctx)

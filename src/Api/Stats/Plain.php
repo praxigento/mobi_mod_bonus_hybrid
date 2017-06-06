@@ -22,6 +22,7 @@ class Plain
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Praxigento\BonusHybrid\Repo\Query\Stats\Plain\Builder $qbldPlain,
+        \Praxigento\Core\Helper\Config $hlpCfg,
         \Praxigento\Core\Api\IAuthenticator $authenticator,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
         \Praxigento\Downline\Repo\Entity\ISnap $repoSnap,
@@ -32,6 +33,7 @@ class Plain
         parent::__construct(
             $manObj,
             $qbldPlain,
+            $hlpCfg,
             $authenticator,
             $toolPeriod,
             $repoSnap,
