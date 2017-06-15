@@ -15,11 +15,6 @@ namespace Praxigento\BonusHybrid\Api\Dcp\Report\Downline;
 class Request
     extends \Praxigento\Core\Api\Request\WithCond
 {
-    /**
-     * TODO: move types to service/processor/handler. Codifier should not be placed in request.
-     */
-    const TYPE_COMPLETE = 'complete';
-    const TYPE_COMPRESSED = 'compressed';
 
     /**
      * End of the calculation period.

@@ -31,7 +31,7 @@ abstract class Base
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
-        \Praxigento\Core\Repo\Query\IBuilder $qbld,
+        \Praxigento\Core\Repo\Query\IBuilder $qbld = null,
         \Praxigento\Core\Helper\Config $hlpCfg,
         \Praxigento\Core\Api\IAuthenticator $authenticator,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
