@@ -10,7 +10,7 @@ use Praxigento\Downline\Repo\Query\Snap\OnDate\Builder as QBSnapOnDate;
 use Praxigento\Downline\Repo\Query\Snap\OnDate\ForDcp\Builder as QBForDcp;
 
 /**
- * Collect data and compose array of \Praxigento\BonusHybrid\Entity\Cache\Downline\Plain entities to populate
+ * Collect data and compose array of \Praxigento\BonusHybrid\Entity\Actual\Downline\Plain entities to populate
  * with additional values and to save in the end.
  */
 class GetDownline
@@ -32,7 +32,7 @@ class GetDownline
 
     /**
      * @param \Flancer32\Lib\Data $ctx
-     * @return \Praxigento\BonusHybrid\Entity\Cache\Downline\Plain[]
+     * @return \Praxigento\BonusHybrid\Entity\Actual\Downline\Plain[]
      */
     public function exec(\Flancer32\Lib\Data $ctx)
     {
@@ -57,7 +57,7 @@ class GetDownline
             $depth = $row[QBSnapOnDate::A_DEPTH];
             $path = $row[QBSnapOnDate::A_PATH];
             /* prepare result data object */
-            $item = new \Praxigento\BonusHybrid\Entity\Cache\Downline\Plain();
+            $item = new \Praxigento\BonusHybrid\Entity\Actual\Downline\Plain();
             $item->setCustomerRef($customerId);
             $item->setMlmId($mlmId);
             $item->setEmail($email);

@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Repo\Data\Agg\Dcp\Report\Downline;
 
-use Praxigento\BonusHybrid\Entity\Cache\Downline\Plain as Plain;
+use Praxigento\BonusHybrid\Entity\Actual\Downline\Plain as Plain;
 
 /**
  * Common aggregate for DCP Downline report queries.
@@ -14,7 +14,7 @@ class Entry
     extends \Flancer32\Lib\Data
 {
     /**
-     * Attribute names are the same as names in the "\Praxigento\BonusHybrid\Entity\Cache\Downline\Plain" entity.
+     * Attribute names are the same as names in the "\Praxigento\BonusHybrid\Entity\Actual\Downline\Plain" entity.
      *
      * TODO: should we revert relation "agg=>entity" to "entity=>agg"???
      */

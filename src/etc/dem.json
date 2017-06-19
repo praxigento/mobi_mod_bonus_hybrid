@@ -13,17 +13,17 @@
                 "alias": "hyb",
                 "comment": "Hybrid bonus related structures",
                 "package": {
-                  "Cache": {
-                    "alias": "cache",
-                    "comment": "Cached data for DCP reports.",
+                  "Actual": {
+                    "alias": "act",
+                    "comment": "Actual (current) data for DCP reports.",
                     "package": {
                       "Downline": {
                         "alias": "dwnl",
-                        "comment": "Cached data for DCP downline reports.",
+                        "comment": "Actual data for DCP downline reports.",
                         "entity": {
                           "Plain": {
                             "alias": "plain",
-                            "comment": "Cached data for downline reports updated daily (un-compressed tree).",
+                            "comment": "Actual data for downline reports (updated daily, plain tree).",
                             "attribute": {
                               "CustomerRef": {
                                 "alias": "customer_ref",

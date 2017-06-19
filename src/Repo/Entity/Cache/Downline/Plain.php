@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Repo\Entity\Cache\Downline;
 
-use Praxigento\BonusHybrid\Entity\Cache\Downline\Plain as Entity;
+use Praxigento\BonusHybrid\Entity\Actual\Downline\Plain as Entity;
 
 class Plain
     extends \Praxigento\Core\Repo\Def\Entity

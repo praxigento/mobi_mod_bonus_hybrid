@@ -3,10 +3,10 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Entity\Cache\Downline;
+namespace Praxigento\BonusHybrid\Entity\Actual\Downline;
 
 /**
- * Cached data for downline reports updated daily (un-compressed tree).
+ * Actual data for plain downline reports (updated daily).
  */
 class Plain
     extends \Praxigento\Core\Data\Entity\Base
@@ -26,7 +26,7 @@ class Plain
     const ATTR_RANK_CODE = 'rank_code';
     const ATTR_TV = 'tv';
     const ATTR_UNQ_MONTHS = 'unq_months';
-    const ENTITY_NAME = 'prxgt_bon_hyb_cache_dwnl_plain';
+    const ENTITY_NAME = 'prxgt_bon_hyb_act_dwnl_plain';
 
     public function getCustomerRef()
     {

@@ -6,7 +6,7 @@
 
 namespace Praxigento\BonusHybrid\Setup;
 
-use Praxigento\BonusHybrid\Entity\Cache\Downline\Plain as CacheDwnlPlain;
+use Praxigento\BonusHybrid\Entity\Actual\Downline\Plain as ActDwnlPlain;
 use Praxigento\BonusHybrid\Entity\Cfg\Override as CfgOverride;
 use Praxigento\BonusHybrid\Entity\Cfg\Param as CfgParam;
 use Praxigento\BonusHybrid\Entity\Compression\Oi as OiCompress;
@@ -25,8 +25,8 @@ class InstallSchema extends \Praxigento\Core\Setup\Schema\Base
         $demPackage = $this->_toolDem->readDemPackage($pathToFile, $pathToNode);
 
         /* Cache Downline Plain */
-        $entityAlias = CacheDwnlPlain::ENTITY_NAME;
-        $demEntity = $demPackage->get('package/Cache/package/Downline/entity/Plain');
+        $entityAlias = ActDwnlPlain::ENTITY_NAME;
+        $demEntity = $demPackage->get('package/Actual/package/Downline/entity/Plain');
         $this->_toolDem->createEntity($entityAlias, $demEntity);
 
         /* Config Override */

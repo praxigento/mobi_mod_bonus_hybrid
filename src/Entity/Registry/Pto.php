@@ -2,7 +2,7 @@
 namespace Praxigento\BonusHybrid\Entity\Registry;
 
 /**
- * Registry for Pv?Tv/Ov values for plain (not compressed) downline.
+ * Registry for Pv/Tv/Ov values for plain (not compressed) downline.
  *
  * User: Alex Gusev <alex@flancer64.com>
  */
