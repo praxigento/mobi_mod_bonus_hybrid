@@ -8,7 +8,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Sub;
 use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Entity\Compression\Oi as Oi;
 use Praxigento\BonusHybrid\Entity\Compression\Ptc as Ptc;
-use Praxigento\BonusHybrid\Entity\Registry\Pto as Pto;
+use Praxigento\BonusHybrid\Entity\Retro\Downline\Plain as Pto;
 
 class CompressOi
 {

@@ -565,77 +565,6 @@
                     "alias": "reg",
                     "comment": "Registry for additional data.",
                     "entity": {
-                      "PTO": {
-                        "alias": "pto",
-                        "comment": "Registry for plain tree PV/TV/OV calc.",
-                        "attribute": {
-                          "CalculationRef": {
-                            "alias": "calc_ref",
-                            "comment": "Reference to the related calculation (type 'HYBRID_PV_WRITE_OFF' is expected).",
-                            "nullable": false,
-                            "type": {"integer": {"unsigned": true}}
-                          },
-                          "CustomerRef": {
-                            "alias": "cust_ref",
-                            "comment": "Reference to the customer for whom values were calculated.",
-                            "nullable": false,
-                            "type": {"integer": {"unsigned": true}}
-                          },
-                          "ParentRef": {
-                            "alias": "parent_ref",
-                            "comment": "Reference to the customer's parent.",
-                            "nullable": false,
-                            "type": {"integer": {"unsigned": true}}
-                          },
-                          "PersonalVolumes": {
-                            "alias": "pv",
-                            "comment": "PV value for the customer.",
-                            "nullable": false,
-                            "type": {"numeric": {"precision": 12, "scale": 4}}
-                          },
-                          "TeamVolumes": {
-                            "alias": "tv",
-                            "comment": "TV value for the customer.",
-                            "nullable": false,
-                            "type": {"numeric": {"precision": 12, "scale": 4}}
-                          },
-                          "OrganizationalVolumes": {
-                            "alias": "ov",
-                            "comment": "OV value for the customer.",
-                            "nullable": false,
-                            "type": {"numeric": {"precision": 12, "scale": 4}}
-                          }
-                        },
-                        "index": {
-                          "primary": {"type": "primary", "aliases": ["calc_ref", "cust_ref"]}
-                        },
-                        "relation": {
-                          "toCalculation": {
-                            "own": {"aliases": ["calc_ref"]},
-                            "reference": {
-                              "entity": {"completeAlias": "prxgt_bon_base_calc"},
-                              "aliases": ["id"]
-                            },
-                            "action": {"delete": "cascade", "update": "restrict"}
-                          },
-                          "toCustomer": {
-                            "own": {"aliases": ["cust_ref"]},
-                            "reference": {
-                              "entity": {"completeAlias": "prxgt_dwnl_customer"},
-                              "aliases": ["customer_id"]
-                            },
-                            "action": {"delete": "no action", "update": "no action"}
-                          },
-                          "toParent": {
-                            "own": {"aliases": ["parent_ref"]},
-                            "reference": {
-                              "entity": {"completeAlias": "prxgt_dwnl_customer"},
-                              "aliases": ["customer_id"]
-                            },
-                            "action": {"delete": "cascade", "update": "restrict"}
-                          }
-                        }
-                      },
                       "SignUpVolumeDebit": {
                         "alias": "signup",
                         "comment": "Registry for Sign Up Volume Debit calc.",
@@ -686,6 +615,89 @@
                               "aliases": ["entity_id"]
                             },
                             "action": {"delete": "cascade", "update": "restrict"}
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "Retro": {
+                    "alias": "retro",
+                    "comment": "Retrospective data for DCP reports.",
+                    "package": {
+                      "Downline": {
+                        "alias": "dwnl",
+                        "comment": "Retrospective data for DCP downline reports.",
+                        "entity": {
+                          "Plain": {
+                            "alias": "plain",
+                            "comment": "Retrospective data for downline reports (updated periodically, plain tree).",
+                            "attribute": {
+                              "CalculationRef": {
+                                "alias": "calc_ref",
+                                "comment": "Reference to the related calculation (type 'HYBRID_PV_WRITE_OFF' is expected).",
+                                "nullable": false,
+                                "type": {"integer": {"unsigned": true}}
+                              },
+                              "CustomerRef": {
+                                "alias": "cust_ref",
+                                "comment": "Reference to the customer for whom values were calculated.",
+                                "nullable": false,
+                                "type": {"integer": {"unsigned": true}}
+                              },
+                              "ParentRef": {
+                                "alias": "parent_ref",
+                                "comment": "Reference to the customer's parent.",
+                                "nullable": false,
+                                "type": {"integer": {"unsigned": true}}
+                              },
+                              "PersonalVolumes": {
+                                "alias": "pv",
+                                "comment": "PV value for the customer.",
+                                "nullable": false,
+                                "type": {"numeric": {"precision": 12, "scale": 4}}
+                              },
+                              "TeamVolumes": {
+                                "alias": "tv",
+                                "comment": "TV value for the customer.",
+                                "nullable": false,
+                                "type": {"numeric": {"precision": 12, "scale": 4}}
+                              },
+                              "OrganizationalVolumes": {
+                                "alias": "ov",
+                                "comment": "OV value for the customer.",
+                                "nullable": false,
+                                "type": {"numeric": {"precision": 12, "scale": 4}}
+                              }
+                            },
+                            "index": {
+                              "primary": {"type": "primary", "aliases": ["calc_ref", "cust_ref"]}
+                            },
+                            "relation": {
+                              "toCalculation": {
+                                "own": {"aliases": ["calc_ref"]},
+                                "reference": {
+                                  "entity": {"completeAlias": "prxgt_bon_base_calc"},
+                                  "aliases": ["id"]
+                                },
+                                "action": {"delete": "cascade", "update": "restrict"}
+                              },
+                              "toCustomer": {
+                                "own": {"aliases": ["cust_ref"]},
+                                "reference": {
+                                  "entity": {"completeAlias": "prxgt_dwnl_customer"},
+                                  "aliases": ["customer_id"]
+                                },
+                                "action": {"delete": "no action", "update": "no action"}
+                              },
+                              "toParent": {
+                                "own": {"aliases": ["parent_ref"]},
+                                "reference": {
+                                  "entity": {"completeAlias": "prxgt_dwnl_customer"},
+                                  "aliases": ["customer_id"]
+                                },
+                                "action": {"delete": "cascade", "update": "restrict"}
+                              }
+                            }
                           }
                         }
                       }

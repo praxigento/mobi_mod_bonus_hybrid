@@ -1,12 +1,16 @@
 <?php
-namespace Praxigento\BonusHybrid\Entity\Registry;
+/**
+ * User: Alex Gusev <alex@flancer64.com>
+ */
+
+namespace Praxigento\BonusHybrid\Entity\Retro\Downline;
 
 /**
- * Registry for Pv/Tv/Ov values for plain (not compressed) downline.
+ * Retrospective data for plain downline reports (updated by period).
  *
  * User: Alex Gusev <alex@flancer64.com>
  */
-class Pto
+class Plain
     extends \Praxigento\Core\Data\Entity\Base
 {
     const ATTR_CALC_REF = 'calc_ref';
@@ -15,7 +19,7 @@ class Pto
     const ATTR_PARENT_REF = 'parent_ref';
     const ATTR_PV = 'pv';
     const ATTR_TV = 'tv';
-    const ENTITY_NAME = 'prxgt_bon_hyb_reg_pto';
+    const ENTITY_NAME = 'prxgt_bon_hyb_retro_dwnl_plain';
 
     public function getPrimaryKeyAttrs()
     {

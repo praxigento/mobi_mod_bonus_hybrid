@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Sub;
 
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
-use Praxigento\BonusHybrid\Entity\Registry\Pto as EPto;
+use Praxigento\BonusHybrid\Entity\Retro\Downline\Plain as EPto;
 
 class Pto
 {

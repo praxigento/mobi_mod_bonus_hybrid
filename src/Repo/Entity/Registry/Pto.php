@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Repo\Entity\Registry;
 
-use Praxigento\BonusHybrid\Entity\Registry\Pto as Entity;
+use Praxigento\BonusHybrid\Entity\Retro\Downline\Plain as Entity;
 
 class Pto
     extends \Praxigento\Core\Repo\Def\Entity

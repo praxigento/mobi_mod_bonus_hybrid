@@ -389,7 +389,7 @@ class Db
      */
     public function getPlainPtoData($calcId)
     {
-        $where = \Praxigento\BonusHybrid\Entity\Registry\Pto::ATTR_CALC_REF . '=' . (int)$calcId;
+        $where = \Praxigento\BonusHybrid\Entity\Retro\Downline\Plain::ATTR_CALC_REF . '=' . (int)$calcId;
         $result = $this->repoRegPto->get($where);
         return $result;
     }
