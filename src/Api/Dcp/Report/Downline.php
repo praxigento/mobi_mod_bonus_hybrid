@@ -15,25 +15,29 @@ class Downline
     const TYPE_COMPLETE = 'complete';
     const TYPE_COMPRESSED = 'compressed';
 
+    const VAR_ACTUAL_DATA_REQUESTED = 'isActualDataRequested';
     const VAR_TYPE = 'type';
-
-    /** @var \Praxigento\BonusHybrid\Repo\Query\Cache\Dwnl\Plain\Get\Builder */
-    protected $qbldComplete;
-
-    protected $qbldCompressed;
+    protected $qbldActCompressed;
+    /** @var \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Actual\Plain\Builder */
+    protected $qbldActPlain;
+    protected $qbldRetroCompressed;
+    protected $qbldRetroPlain;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
-        \Praxigento\BonusHybrid\Repo\Query\Cache\Dwnl\Plain\Get\Builder $qbldPlain,
+        \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Actual\Plain\Builder $qbldActPlain,
         \Praxigento\Core\Helper\Config $hlpCfg,
         \Praxigento\Core\Api\IAuthenticator $authenticator,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
         \Praxigento\Downline\Repo\Entity\ISnap $repoSnap,
         \Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc $qPeriodCalc
     ) {
+        /* don't pass query builder to the parent - we have 4 builders in the operation, not one */
         parent::__construct($manObj, null, $hlpCfg, $authenticator, $toolPeriod, $repoSnap, $qPeriodCalc);
-        $this->qbld = $qbldPlain;
-        $this->qbldComplete = $qbldPlain;
+        $this->qbldActPlain = $qbldActPlain;
+        $this->qbldActCompressed = $qbldActPlain;
+        $this->qbldRetroPlain = $qbldActPlain;
+        $this->qbldRetroCompressed = $qbldActPlain;
     }
 
     protected function createQuerySelect(\Flancer32\Lib\Data $ctx)
@@ -42,9 +46,25 @@ class Downline
         /** @var \Flancer32\Lib\Data $vars */
         $vars = $ctx->get(self::CTX_VARS);
         $type = $vars->get(self::VAR_TYPE);
-        $query = $this->qbldComplete->getSelectQuery();
-        if ($type == self::TYPE_COMPRESSED) {
-            $query = $this->qbldCompressed->getSelectQuery();
+        $isActualDataRequested = $vars->get(self::VAR_ACTUAL_DATA_REQUESTED);
+
+        /* put appropriate query builder into the context */
+        if ($isActualDataRequested) {
+            if ($type == self::TYPE_COMPRESSED) {
+                /* the last compressed tree */
+                $query = $this->qbldActCompressed->build();
+            } else {
+                /* the last plain tree */
+                $query = $this->qbldActPlain->build();
+            }
+        } else {
+            if ($type == self::TYPE_COMPRESSED) {
+                /* retrospective compressed tree */
+                $query = $this->qbldActCompressed->build();
+            } else {
+                /* retrospective plain tree */
+                $query = $this->qbldActPlain->build();
+            }
         }
         $ctx->set(self::CTX_QUERY, $query);
     }
@@ -79,8 +99,10 @@ class Downline
         $reqPeriod = $req->getPeriod();
         if ($reqPeriod) {
             $onDate = $this->toolPeriod->getPeriodLastDate($reqPeriod);
+            $isActualDataRequested = false;
         } else {
             $onDate = $this->toolPeriod->getPeriodCurrent();
+            $isActualDataRequested = true;
         }
 
         $reqType = $req->getType();
@@ -92,6 +114,7 @@ class Downline
 
         /* save parsed values in context */
         $vars->set(self::VAR_ON_DATE, $onDate);
+        $vars->set(self::VAR_ACTUAL_DATA_REQUESTED, $isActualDataRequested);
         $vars->set(self::VAR_TYPE, $type);
     }
 

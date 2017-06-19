@@ -3,18 +3,18 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Repo\Query\Cache\Dwnl\Plain\Get;
+namespace Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Actual\Plain;
 
 
 /**
- * Build query to get cached data for forecast calculation (plain tree).
+ * Build query to get DCP Downline Report data for actual plain tree.
  */
 class Builder
     extends \Praxigento\Core\Repo\Query\Def\Builder
 {
     const AS_DWNL_PLAIN = 'dwnlPlain';
 
-    public function getSelectQuery(\Praxigento\Core\Repo\Query\IBuilder $qbuild = null)
+    public function build(\Magento\Framework\DB\Select $source = null)
     {
         $result = $this->conn->select(); // this is root builder
         /* define tables aliases */
@@ -24,5 +24,6 @@ class Builder
         $result->from([$as => $tbl]);
         return $result;
     }
+
 
 }
