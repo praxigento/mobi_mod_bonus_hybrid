@@ -9,6 +9,7 @@ class Downline
     extends \Praxigento\BonusHybrid\Api\Stats\Base
     implements \Praxigento\BonusHybrid\Api\Dcp\Report\DownlineInterface
 {
+    const BIND_ON_DATE = \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Retro\Plain\Builder::BIND_DATE;
     /**
      * Types of the requested report.
      */
@@ -17,15 +18,18 @@ class Downline
 
     const VAR_ACTUAL_DATA_REQUESTED = 'isActualDataRequested';
     const VAR_TYPE = 'type';
+
     protected $qbldActCompressed;
     /** @var \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Actual\Plain\Builder */
     protected $qbldActPlain;
     protected $qbldRetroCompressed;
+    /** @var \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Retro\Plain\Builder */
     protected $qbldRetroPlain;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Actual\Plain\Builder $qbldActPlain,
+        \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Retro\Plain\Builder $qbldRetroPlain,
         \Praxigento\Core\Helper\Config $hlpCfg,
         \Praxigento\Core\Api\IAuthenticator $authenticator,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
@@ -36,7 +40,7 @@ class Downline
         parent::__construct($manObj, null, $hlpCfg, $authenticator, $toolPeriod, $repoSnap, $qPeriodCalc);
         $this->qbldActPlain = $qbldActPlain;
         $this->qbldActCompressed = $qbldActPlain;
-        $this->qbldRetroPlain = $qbldActPlain;
+        $this->qbldRetroPlain = $qbldRetroPlain;
         $this->qbldRetroCompressed = $qbldActPlain;
     }
 
@@ -60,10 +64,10 @@ class Downline
         } else {
             if ($type == self::TYPE_COMPRESSED) {
                 /* retrospective compressed tree */
-                $query = $this->qbldActCompressed->build();
+                $query = $this->qbldRetroCompressed->build();
             } else {
                 /* retrospective plain tree */
-                $query = $this->qbldActPlain->build();
+                $query = $this->qbldRetroPlain->build();
             }
         }
         $ctx->set(self::CTX_QUERY, $query);
@@ -77,7 +81,21 @@ class Downline
 
     protected function populateQuery(\Flancer32\Lib\Data $ctx)
     {
-        // TODO: Implement populateQuery() method.
+        /* get working vars from context */
+        /** @var \Flancer32\Lib\Data $bind */
+        $bind = $ctx->get(self::CTX_BIND);
+        /** @var \Flancer32\Lib\Data $vars */
+        $vars = $ctx->get(self::CTX_VARS);
+        /** @var \Magento\Framework\DB\Select $query */
+        $query = $ctx->get(self::CTX_QUERY);
+
+        $isActualDataRequested = $vars->get(self::VAR_ACTUAL_DATA_REQUESTED);
+
+        if (!$isActualDataRequested) {
+            $onDate = $vars->get(self::VAR_ON_DATE);
+            $bind->set(self::BIND_ON_DATE, $onDate);
+        }
+
     }
 
     protected function prepareCalcRefData(\Flancer32\Lib\Data $ctx)
