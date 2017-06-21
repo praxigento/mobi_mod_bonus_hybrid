@@ -30,13 +30,13 @@
     <!-- **** -->
     <!-- Repo -->
     <!-- **** -->
-    <preference for="\Praxigento\BonusHybrid\Repo\Entity\Cache\Downline\IPlain"
-            type="\Praxigento\BonusHybrid\Repo\Entity\Cache\Downline\Plain"/>
+    <preference for="\Praxigento\BonusHybrid\Repo\Entity\Actual\Downline\IPlain"
+            type="\Praxigento\BonusHybrid\Repo\Entity\Actual\Downline\Plain"/>
     <preference for="\Praxigento\BonusHybrid\Repo\Entity\Compression\Phase1\Transfer\IPv"
             type="\Praxigento\BonusHybrid\Repo\Entity\Compression\Phase1\Transfer\Pv"/>
     <preference for="\Praxigento\BonusHybrid\Repo\Entity\Compression\IOi"
             type="\Praxigento\BonusHybrid\Repo\Entity\Compression\Oi"/>
-    <preference for="\Praxigento\BonusHybrid\Repo\Entity\Registry\IPto"
+    <preference for="\Praxigento\BonusHybrid\Repo\Entity\Retro\Downline\IPlain"
             type="\Praxigento\BonusHybrid\Repo\Entity\Registry\Pto"/>
     <preference for="\Praxigento\BonusHybrid\Repo\Entity\Registry\ISignupDebit"
             type="\Praxigento\BonusHybrid\Repo\Entity\Registry\SignupDebit"/>

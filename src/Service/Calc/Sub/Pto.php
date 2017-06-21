@@ -7,8 +7,11 @@ namespace Praxigento\BonusHybrid\Service\Calc\Sub;
 
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
-use Praxigento\BonusHybrid\Entity\Retro\Downline\Plain as EPto;
+use Praxigento\BonusHybrid\Entity\Retro\Downline\Plain as EDwnlPlain;
 
+/**
+ * Process aggregated PV movements and calculate PV/TV/OV values for plain downline tree.
+ */
 class Pto
 {
 
@@ -27,8 +30,8 @@ class Pto
     protected $hlpSignupDebitCust;
     /** @var \Praxigento\Accounting\Repo\Entity\IAccount */
     protected $repoAcc;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Registry\IPto */
-    protected $repoRegPto;
+    /** @var \Praxigento\BonusHybrid\Repo\Entity\Retro\Downline\IPlain */
+    protected $repoDwnlPlain;
     /** @var \Praxigento\Downline\Tool\ITree */
     protected $toolDownlineTree;
     /** @var  \Praxigento\BonusHybrid\Tool\IScheme */
@@ -39,14 +42,14 @@ class Pto
         \Praxigento\Downline\Tool\ITree $toolTree,
         \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust,
         \Praxigento\Accounting\Repo\Entity\IAccount $repoAcc,
-        \Praxigento\BonusHybrid\Repo\Entity\Registry\IPto $repoRegPto,
+        \Praxigento\BonusHybrid\Repo\Entity\Retro\Downline\IPlain $repoDwnlPlain,
         \Praxigento\Downline\Service\ISnap $callDwnlSnap
     ) {
         $this->toolScheme = $toolScheme;
         $this->toolDownlineTree = $toolTree;
         $this->hlpSignupDebitCust = $hlpSignupDebitCust;
         $this->repoAcc = $repoAcc;
-        $this->repoRegPto = $repoRegPto;
+        $this->repoDwnlPlain = $repoDwnlPlain;
         $this->callDwnlSnap = $callDwnlSnap;
     }
 
@@ -104,11 +107,11 @@ class Pto
 
                 /* register customer in OV reg. with initial values for TV/OV (own PV)*/
                 $regOv[$custId] = [
-                    EPto::ATTR_CUSTOMER_REF => $custId,
-                    EPto::ATTR_PARENT_REF => $custParentId,
-                    EPto::ATTR_PV => $custPv,
-                    EPto::ATTR_TV => 0,
-                    EPto::ATTR_OV => 0
+                    EDwnlPlain::ATTR_CUSTOMER_REF => $custId,
+                    EDwnlPlain::ATTR_PARENT_REF => $custParentId,
+                    EDwnlPlain::ATTR_PV => $custPv,
+                    EDwnlPlain::ATTR_TV => 0,
+                    EDwnlPlain::ATTR_OV => 0
                 ];
 
                 /* walk trough the team and add children OV to the customer OV */
@@ -117,8 +120,8 @@ class Pto
                 $custOv = ($isCustQualified) ? $custPv : 0;  // OV = (PV.own + SUM(OV.team)
                 foreach ($team as $childId) {
                     /* all children should be registered before */
-                    $childPv = $regOv[$childId][EPto::ATTR_PV];
-                    $childOv = $regOv[$childId][EPto::ATTR_OV];
+                    $childPv = $regOv[$childId][EDwnlPlain::ATTR_PV];
+                    $childOv = $regOv[$childId][EDwnlPlain::ATTR_OV];
                     $isChildQualified = $reqQual[$childId];
 
                     if (!$isCustQualified && !$isChildQualified) {
@@ -140,116 +143,24 @@ class Pto
                     }
                 }
                 /* update customer TV & OV */
-                $regOv[$custId][EPto::ATTR_TV] += $custTv;
-                $regOv[$custId][EPto::ATTR_OV] += $custOv;
+                $regOv[$custId][EDwnlPlain::ATTR_TV] += $custTv;
+                $regOv[$custId][EDwnlPlain::ATTR_OV] += $custOv;
                 /* add jumped PV of the unqualified children */
                 if (isset($reqJumps[$custId])) {
-                    $regOv[$custId][EPto::ATTR_OV] += $reqJumps[$custId];
+                    $regOv[$custId][EDwnlPlain::ATTR_OV] += $reqJumps[$custId];
                     unset($reqJumps[$custId]);
                 }
-
-//                /* get account ID */
-//                if (isset($mapAccs[$custId])) {
-//                    /* get calculated PV for period */
-//                    $account = $mapAccs[$custId];
-//                    $accId = $account->getId();
-//                    $pv = (isset($updates[$accId])) ? $updates[$accId] : 0;
-//                    /* correct PV value */
-//                    $pv = $this->toolScheme->getForcedPv($custId, $custScheme, $pv);
-//                    /* correct PV for 'Sign Up Debit' customers */
-//                    $isSignupDebit = in_array($custId, $signupDebitCustomers);
-//                    if ($isSignupDebit) {
-//                        $pv += \Praxigento\BonusHybrid\Defaults::SIGNUP_DEBIT_PV;
-//                    }
-//                    /**
-//                     * Qualify current customer. PV for unqualified customers will not be added to unqualified
-//                     * parents' OV.
-//                     */
-//                    $isCustQualified = false;
-//                    if (
-//                        ($custScheme == Def::SCHEMA_DEFAULT) && ($pv > (Def::PV_QUALIFICATION_LEVEL_DEF - 0.0001)) ||
-//                        ($custScheme == Def::SCHEMA_EU) && ($pv > (Def::PV_QUALIFICATION_LEVEL_EU - 0.0001))
-//                    ) {
-//                        $isCustQualified = true;
-//                    }
-//                    $pvForOv = ($isCustQualified) ? $pv : 0;
-//                    if (!isset($regOv[$custId])) {
-//                        /* create entry in the registry */
-//                        $regOv[$custId] = [
-//                            EPto::ATTR_CUSTOMER_REF => $custId,
-//                            EPto::ATTR_PARENT_REF => $parentId,
-//                            EPto::ATTR_PV => $pv,
-//                            EPto::ATTR_TV => $pv,
-//                            EPto::ATTR_OV => $pvForOv
-//                        ];
-//                    } else {
-//                        /* update entry in the registry */
-//                        $regOv[$custId][EPto::ATTR_PV] += $pv;
-//                        $regOv[$custId][EPto::ATTR_TV] += $pv;
-//                        $regOv[$custId][EPto::ATTR_OV] += $pvForOv;
-//                    }
-//
-//                    /* process upline */
-//                    $path = $tree[$custId][\Praxigento\Downline\Data\Entity\Snap::ATTR_PATH];
-//                    $parents = $this->toolDownlineTree->getParentsFromPathReversed($path);
-//                    $isFather = true;
-//                    foreach ($parents as $pCustId) {
-//                        $parentData = $tree[$pCustId];
-//                        $parentScheme = $this->toolScheme->getSchemeByCustomer($parentData);
-//                        $pvParent = 0;
-//                        if (isset($mapAccs[$pCustId])) {
-//                            $accountParent = $mapAccs[$pCustId];
-//                            $accIdParent = $accountParent->getId();
-//                            $pvParent = isset($updates[$accIdParent]) ? $updates[$accIdParent] : 0;
-//                        }
-//                        $pvParent = $this->toolScheme->getForcedPv($pCustId, $custScheme, $pvParent);
-//                        /* correct PV for 'Sign Up Debit' customers */
-//                        $isSignupDebit = in_array($pCustId, $signupDebitCustomers);
-//                        if ($isSignupDebit) {
-//                            $pvParent += \Praxigento\BonusHybrid\Defaults::SIGNUP_DEBIT_PV;
-//                        }
-//                        /* don't add PV of the unqualified customer to OV for parents w/o personal qualification */
-//                        $isParentQualified = false;
-//                        if (
-//                            ($parentScheme == Def::SCHEMA_DEFAULT) && ($pvParent > (Def::PV_QUALIFICATION_LEVEL_DEF - 0.0001)) ||
-//                            ($parentScheme == Def::SCHEMA_EU) && ($pvParent > (Def::PV_QUALIFICATION_LEVEL_EU - 0.0001))
-//                        ) {
-//                            $isParentQualified = true;
-//                        }
-//                        if (!$isParentQualified && !$isCustQualified && $isFather) {
-//                            /* skip PV in OV for not qualified parent & customer (for first generation only) */
-//                        } else {
-//                            if (!isset($regOv[$pCustId])) {
-//                                $parentId = $tree[$pCustId][\Praxigento\Downline\Data\Entity\Snap::ATTR_PARENT_ID];
-//                                $regOv[$pCustId] = [
-//                                    EPto::ATTR_CUSTOMER_REF => $pCustId,
-//                                    EPto::ATTR_PARENT_REF => $parentId,
-//                                    EPto::ATTR_PV => 0,
-//                                    EPto::ATTR_TV => 0,
-//                                    EPto::ATTR_OV => $pv
-//                                ];
-//                            } else {
-//                                $regOv[$pCustId][EPto::ATTR_OV] += $pv;
-//                            }
-//                            /* collect TV */
-//                            if ($isFather) {
-//                                $regOv[$pCustId][EPto::ATTR_TV] += $pv;
-//                            }
-//                        }
-//                        $isFather = false;
-//                    }
-//                }
             }
         }
         /* save data into PTO registry */
         foreach ($regOv as $item) {
-            $custPv = $item[EPto::ATTR_PV];
-            $tv = $item[EPto::ATTR_TV];
-            $ov = $item[EPto::ATTR_OV];
+            $custPv = $item[EDwnlPlain::ATTR_PV];
+            $tv = $item[EDwnlPlain::ATTR_TV];
+            $ov = $item[EDwnlPlain::ATTR_OV];
             if (($custPv + $tv + $ov) > 0) {
                 /* save not empty items only */
-                $item[EPto::ATTR_CALC_REF] = $calcId;
-                $this->repoRegPto->create($item);
+                $item[EDwnlPlain::ATTR_CALC_REF] = $calcId;
+                $this->repoDwnlPlain->create($item);
             }
         }
     }

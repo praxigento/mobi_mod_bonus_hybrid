@@ -6,7 +6,7 @@
 namespace Praxigento\BonusHybrid\Entity\Retro\Downline;
 
 /**
- * Retrospective data for plain downline reports (updated by period).
+ * Retrospective data for plain downline reports (updated periodically).
  *
  * User: Alex Gusev <alex@flancer64.com>
  */

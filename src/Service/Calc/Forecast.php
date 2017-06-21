@@ -14,7 +14,7 @@ class Forecast
     implements \Praxigento\BonusHybrid\Service\Calc\IForecast
 {
     protected $callBalanceGetTurnover;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Cache\Downline\IPlain */
+    /** @var \Praxigento\BonusHybrid\Repo\Entity\Actual\Downline\IPlain */
     protected $repoCacheDwnlPlain;
     /** @var  \Praxigento\BonusHybrid\Service\Calc\Forecast\Calc */
     protected $subCalc;
@@ -29,7 +29,7 @@ class Forecast
         \Praxigento\Core\Fw\Logger\App $logger,
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
-        \Praxigento\BonusHybrid\Repo\Entity\Cache\Downline\IPlain $repoCacheDwnlPlain,
+        \Praxigento\BonusHybrid\Repo\Entity\Actual\Downline\IPlain $repoCacheDwnlPlain,
         \Praxigento\Accounting\Service\Balance\Get\ITurnover $callBalanceGetTurnover,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Calc $subCalc,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\GetDownline $subGetDownline,

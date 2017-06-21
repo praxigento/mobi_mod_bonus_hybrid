@@ -3,13 +3,16 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Repo\Entity\Registry;
+namespace Praxigento\BonusHybrid\Repo\Entity\Retro\Downline;
 
 use Praxigento\BonusHybrid\Entity\Retro\Downline\Plain as Entity;
 
-class Pto
+/**
+ * Repository for retrospective data for plain downline reports (updated periodically).
+ */
+class Plain
     extends \Praxigento\Core\Repo\Def\Entity
-    implements \Praxigento\BonusHybrid\Repo\Entity\Registry\IPto
+    implements \Praxigento\BonusHybrid\Repo\Entity\Retro\Downline\IPlain
 {
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resource,
