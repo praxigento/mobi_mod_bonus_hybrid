@@ -37,7 +37,7 @@
     <preference for="\Praxigento\BonusHybrid\Repo\Entity\Compression\IOi"
             type="\Praxigento\BonusHybrid\Repo\Entity\Compression\Oi"/>
     <preference for="\Praxigento\BonusHybrid\Repo\Entity\Retro\Downline\IPlain"
-            type="\Praxigento\BonusHybrid\Repo\Entity\Registry\Pto"/>
+            type="\Praxigento\BonusHybrid\Repo\Entity\Retro\Downline\Plain"/>
     <preference for="\Praxigento\BonusHybrid\Repo\Entity\Registry\ISignupDebit"
             type="\Praxigento\BonusHybrid\Repo\Entity\Registry\SignupDebit"/>
 
