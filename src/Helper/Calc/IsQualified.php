@@ -6,7 +6,7 @@ namespace Praxigento\BonusHybrid\Helper\Calc;
 
 
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Entity\Cfg\Param as CfgParam;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Cfg\Param as CfgParam;
 
 class IsQualified
 {

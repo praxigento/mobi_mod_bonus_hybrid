@@ -8,7 +8,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Forecast;
 use Praxigento\BonusBase\Data\Entity\Rank as ERank;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
-use Praxigento\BonusHybrid\Entity\Compression\Oi as EOi;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Oi as EOi;
 use Praxigento\Downline\Data\Entity\Customer as ECustomer;
 
 /**

@@ -8,7 +8,7 @@ use Praxigento\Accounting\Data\Entity\Account;
 use Praxigento\Accounting\Data\Entity\Transaction;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
-use Praxigento\BonusHybrid\Entity\Compression\Oi as OiCompress;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Oi as OiCompress;
 use Praxigento\BonusHybrid\Service\Calc\Sub\Calc;
 use Praxigento\BonusHybrid\Service\Calc\Sub\Pto as SubPto;
 use Praxigento\BonusHybrid\Service\Period\Request\GetForDependentCalc as PeriodGetForDependentCalcRequest;

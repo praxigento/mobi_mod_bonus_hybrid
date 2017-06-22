@@ -1,5 +1,5 @@
 <?php
-namespace Praxigento\BonusHybrid\Entity\Registry;
+namespace Praxigento\BonusHybrid\Repo\Data\Entity\Registry;
 
 /**
  * Registry for Sign Up Volume Bonus participants.

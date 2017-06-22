@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Repo\Entity\Compression;
 
-use Praxigento\BonusHybrid\Entity\Compression\Oi as Entity;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Oi as Entity;
 
 class Oi
     extends \Praxigento\Core\Repo\Def\Entity

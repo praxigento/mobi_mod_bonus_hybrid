@@ -6,9 +6,9 @@
 namespace Praxigento\BonusHybrid\Service\Calc\Sub;
 
 use Praxigento\BonusHybrid\Defaults as Def;
-use Praxigento\BonusHybrid\Entity\Compression\Oi as Oi;
-use Praxigento\BonusHybrid\Entity\Compression\Ptc as Ptc;
-use Praxigento\BonusHybrid\Entity\Retro\Downline\Plain as Pto;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Oi as Oi;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Ptc as Ptc;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Plain as Pto;
 
 class CompressOi
 {
@@ -52,7 +52,7 @@ class CompressOi
     /**
      * @param $opts
      *
-     * @return array [$custId=>[\Praxigento\BonusHybrid\Entity\Compression\Oi::...], ...]
+     * @return array [$custId=>[\Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Oi::...], ...]
      */
     public function exec($opts)
     {

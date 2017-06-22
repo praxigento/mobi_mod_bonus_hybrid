@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Tool\Def;
 
 use Praxigento\BonusBase\Data\Entity\Rank;
 use Praxigento\BonusHybrid\Defaults as Def;
-use Praxigento\BonusHybrid\Entity\Cfg\Param as CfgParam;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Cfg\Param as CfgParam;
 use Praxigento\Downline\Data\Entity\Customer;
 
 /**
@@ -202,10 +202,10 @@ class Scheme
         if (is_null($this->cachedSignupDebitCustIds)) {
             $ids = [];
             $calcId = $this->queryGetLastSignupCalcId->exec();
-            $where = \Praxigento\BonusHybrid\Entity\Registry\SignupDebit::ATTR_CALC_REF . '=' . (int)$calcId;
+            $where = \Praxigento\BonusHybrid\Repo\Data\Entity\Registry\SignupDebit::ATTR_CALC_REF . '=' . (int)$calcId;
             $rs = $this->repoRegSignupDebit->get($where);
             foreach ($rs as $one) {
-                $ids[] = $one[\Praxigento\BonusHybrid\Entity\Registry\SignupDebit::ATTR_CUSTOMER_REF];
+                $ids[] = $one[\Praxigento\BonusHybrid\Repo\Data\Entity\Registry\SignupDebit::ATTR_CUSTOMER_REF];
             }
             $this->cachedSignupDebitCustIds = $ids;
         }

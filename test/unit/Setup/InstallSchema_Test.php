@@ -4,11 +4,11 @@
  */
 namespace Praxigento\BonusHybrid\Setup;
 
-use Praxigento\BonusHybrid\Entity\Cfg\Override as CfgOverride;
-use Praxigento\BonusHybrid\Entity\Cfg\Param as CfgParam;
-use Praxigento\BonusHybrid\Entity\Compression\Oi as OiCompress;
-use Praxigento\BonusHybrid\Entity\Compression\Ptc as PtcCompress;
-use Praxigento\BonusHybrid\Entity\Config as HybridCfg;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Cfg\Override as CfgOverride;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Cfg\Param as CfgParam;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Oi as OiCompress;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Ptc as PtcCompress;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Config as HybridCfg;
 
 include_once(__DIR__ . '/../phpunit_bootstrap.php');
 

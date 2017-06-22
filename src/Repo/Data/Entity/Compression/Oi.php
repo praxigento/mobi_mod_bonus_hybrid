@@ -1,5 +1,5 @@
 <?php
-namespace Praxigento\BonusHybrid\Entity\Compression;
+namespace Praxigento\BonusHybrid\Repo\Data\Entity\Compression;
 /**
  * Downline Tree for compressed data (phase 2) to calculate Override and Infinity bonuses.
  *

@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Tool\Def;
 use Flancer32\Lib\Data as DataObject;
 use Praxigento\BonusBase\Data\Entity\Rank;
 use Praxigento\BonusHybrid\Defaults as Def;
-use Praxigento\BonusHybrid\Entity\Cfg\Param as CfgParam;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Cfg\Param as CfgParam;
 use Praxigento\Downline\Data\Entity\Customer;
 
 include_once(__DIR__ . '/../../../phpunit_bootstrap.php');

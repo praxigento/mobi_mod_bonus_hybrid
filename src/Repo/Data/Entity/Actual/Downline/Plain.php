@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Entity\Actual\Downline;
+namespace Praxigento\BonusHybrid\Repo\Data\Entity\Actual\Downline;
 
 /**
  * Actual data for plain downline reports (updated daily).
@@ -11,9 +11,6 @@ namespace Praxigento\BonusHybrid\Entity\Actual\Downline;
 class Plain
     extends \Praxigento\Core\Data\Entity\Base
 {
-    /**
-     * Attribute names are the same as names in "\Praxigento\BonusHybrid\Repo\Data\Agg\Dcp\Report\Downline\Entry"
-     */
     const ATTR_CUSTOMER_REF = 'customer_ref';
     const ATTR_DEPTH = 'depth';
     const ATTR_EMAIL = 'email';

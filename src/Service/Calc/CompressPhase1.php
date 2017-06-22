@@ -152,11 +152,11 @@ class CompressPhase1
     }
 
     /**
-     * @param \Praxigento\BonusHybrid\Entity\Compression\Phase1\Transfer\Pv[] $data
+     * @param \Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Phase1\Transfer\Pv[] $data
      */
     protected function savePvTransfers($data)
     {
-        /** @var \Praxigento\BonusHybrid\Entity\Compression\Phase1\Transfer\Pv $one */
+        /** @var \Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Phase1\Transfer\Pv $one */
         foreach ($data as $one) {
             $this->repoTransPv->create($one);
         }

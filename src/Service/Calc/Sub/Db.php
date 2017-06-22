@@ -17,10 +17,10 @@ use Praxigento\BonusBase\Data\Entity\Log\Opers as LogOpers;
 use Praxigento\BonusBase\Data\Entity\Log\Sales as LogSales;
 use Praxigento\BonusBase\Data\Entity\Period;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Entity\Cfg\Override as CfgOverride;
-use Praxigento\BonusHybrid\Entity\Cfg\Param as CfgParam;
-use Praxigento\BonusHybrid\Entity\Compression\Oi as OiCompress;
-use Praxigento\BonusHybrid\Entity\Compression\Ptc as PtcCompress;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Cfg\Override as CfgOverride;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Cfg\Param as CfgParam;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Oi as OiCompress;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Ptc as PtcCompress;
 use Praxigento\Downline\Data\Entity\Customer;
 use Praxigento\Downline\Service\Snap\Request\GetStateOnDate as DownlineSnapGetStateOnDateRequest;
 use Praxigento\Pv\Data\Entity\Sale as PvSale;
@@ -389,7 +389,7 @@ class Db
      */
     public function getPlainPtoData($calcId)
     {
-        $where = \Praxigento\BonusHybrid\Entity\Retro\Downline\Plain::ATTR_CALC_REF . '=' . (int)$calcId;
+        $where = \Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Plain::ATTR_CALC_REF . '=' . (int)$calcId;
         $result = $this->repoRegPto->get($where);
         return $result;
     }

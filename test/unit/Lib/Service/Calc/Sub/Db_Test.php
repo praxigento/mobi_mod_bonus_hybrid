@@ -14,10 +14,10 @@ use Praxigento\Accounting\Service\Type\Asset\Response\GetByCode as TypeAssetGetB
 use Praxigento\Accounting\Service\Type\Operation\Response\GetByCode as TypeOperationGetByCodeResponse;
 use Praxigento\BonusBase\Data\Entity\Level;
 use Praxigento\BonusBase\Service\Type\Calc\Response\GetByCode as TypeCalcGetByCodeResponse;
-use Praxigento\BonusHybrid\Entity\Cfg\Override as CfgOverride;
-use Praxigento\BonusHybrid\Entity\Cfg\Param as CfgParam;
-use Praxigento\BonusHybrid\Entity\Compression\Oi as OiCompress;
-use Praxigento\BonusHybrid\Entity\Compression\Ptc as PtcCompress;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Cfg\Override as CfgOverride;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Cfg\Param as CfgParam;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Oi as OiCompress;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Ptc as PtcCompress;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\Core\Lib\Service\Repo\Response\AddEntity as RepoAddEntityResponse;
 use Praxigento\Core\Lib\Service\Repo\Response\GetEntities as RepoGetEntitiesResponse;

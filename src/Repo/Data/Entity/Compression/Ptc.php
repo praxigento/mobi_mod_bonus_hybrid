@@ -1,5 +1,5 @@
 <?php
-namespace Praxigento\BonusHybrid\Entity\Compression;
+namespace Praxigento\BonusHybrid\Repo\Data\Entity\Compression;
 /**
  * Downline Tree for compressed data to calculate Personal, Team and Courtesy bonuses.
  * User: Alex Gusev <alex@flancer64.com>

@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Entity\Cfg;
+namespace Praxigento\BonusHybrid\Repo\Data\Entity\Cfg;
 
 
 class Override {

@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\CompressPhase1;
 
-use Praxigento\BonusHybrid\Entity\Compression\Ptc as ECompressPhase1;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Ptc as ECompressPhase1;
 use Praxigento\Downline\Data\Entity\Customer as ECustomer;
 use Praxigento\Downline\Data\Entity\Snap as ESnap;
 
@@ -84,7 +84,7 @@ class Calc
         $calcId = $ctx->get(self::CTX_CALC_ID);
 
         /* prepare results structures */
-        /* array with PV compression transfers results (see \Praxigento\BonusHybrid\Entity\Compression\Phase1\Transfer\Pv) */
+        /* array with PV compression transfers results (see \Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Phase1\Transfer\Pv) */
         $pvTransfers = [];
 
         /* perform action */
@@ -150,7 +150,7 @@ class Calc
                             $compression[$foundParentId] [0] = $pv;
                         }
                         // $pv PV are transferred from customer #$custId to his qualified parent #$foundParentId
-                        $pvTransferItem = new \Praxigento\BonusHybrid\Entity\Compression\Phase1\Transfer\Pv();
+                        $pvTransferItem = new \Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Phase1\Transfer\Pv();
                         $pvTransferItem->setCalcRef($calcId);
                         $pvTransferItem->setCustFromRef($custId);
                         $pvTransferItem->setCustToRef($foundParentId);

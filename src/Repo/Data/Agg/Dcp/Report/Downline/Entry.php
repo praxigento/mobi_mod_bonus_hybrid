@@ -5,29 +5,48 @@
 
 namespace Praxigento\BonusHybrid\Repo\Data\Agg\Dcp\Report\Downline;
 
-use Praxigento\BonusHybrid\Entity\Actual\Downline\Plain as Plain;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Actual\Downline\Plain as Plain;
 
 /**
- * Common aggregate for DCP Downline report queries.
+ * Common aggregate for DCP Downline report queries. Extends downline aggregate with bonus related attributes.
  */
 class Entry
-    extends \Flancer32\Lib\Data
+    extends \Praxigento\Downline\Repo\Data\Agg\Downline
 {
-    /**
-     * Attribute names are the same as names in the "\Praxigento\BonusHybrid\Entity\Actual\Downline\Plain" entity.
-     *
-     * TODO: should we revert relation "agg=>entity" to "entity=>agg"???
-     */
-    const A_CUSTOMER_REF = Plain::ATTR_CUSTOMER_REF;
-    const A_DEPTH = Plain::ATTR_DEPTH;
-    const A_EMAIL = Plain::ATTR_EMAIL;
-    const A_MLM_ID = Plain::ATTR_MLM_ID;
-    const A_NAME = Plain::ATTR_NAME;
     const A_OV = Plain::ATTR_OV;
-    const A_PARENT_REF = Plain::ATTR_PARENT_REF;
-    const A_PATH = Plain::ATTR_PATH;
     const A_PV = Plain::ATTR_PV;
     const A_RANK_CODE = Plain::ATTR_RANK_CODE;
     const A_TV = Plain::ATTR_TV;
     const A_UNQ_MONTHS = Plain::ATTR_UNQ_MONTHS;
+
+    public function getOv()
+    {
+        $result = parent::get(self::A_OV);
+        return $result;
+    }
+
+    public function getPv()
+    {
+        $result = parent::get(self::A_PV);
+        return $result;
+    }
+
+    public function getRankCode()
+    {
+        $result = parent::get(self::A_RANK_CODE);
+        return $result;
+    }
+
+    public function getTv()
+    {
+        $result = parent::get(self::A_TV);
+        return $result;
+    }
+
+    public function getMonthsUnq()
+    {
+        $result = parent::get(self::A_UNQ_MONTHS);
+        return $result;
+    }
+
 }

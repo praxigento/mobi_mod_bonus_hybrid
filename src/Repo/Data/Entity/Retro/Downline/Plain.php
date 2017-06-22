@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Entity\Retro\Downline;
+namespace Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline;
 
 /**
  * Retrospective data for plain downline reports (updated periodically).

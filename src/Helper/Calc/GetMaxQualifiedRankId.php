@@ -5,8 +5,8 @@
 namespace Praxigento\BonusHybrid\Helper\Calc;
 
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Entity\Cfg\Param as CfgParam;
-use Praxigento\BonusHybrid\Entity\Compression\Oi as OiCompress;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Cfg\Param as CfgParam;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Oi as OiCompress;
 
 class GetMaxQualifiedRankId
 {

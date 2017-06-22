@@ -20,7 +20,7 @@ class Builder
         /* define tables aliases */
         $as = self::AS_DWNL_PLAIN;
         /* select from prxgt_bon_hyb_cache_dwnl_plain */
-        $tbl = $this->resource->getTableName(\Praxigento\BonusHybrid\Entity\Actual\Downline\Plain::ENTITY_NAME);
+        $tbl = $this->resource->getTableName(\Praxigento\BonusHybrid\Repo\Data\Entity\Actual\Downline\Plain::ENTITY_NAME);
         $result->from([$as => $tbl]);
         return $result;
     }
