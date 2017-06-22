@@ -89,6 +89,7 @@ class GetRanks
         $calcId = $calcData->getId();
         $where = EOi::ATTR_CALC_ID . '=' . (int)$calcId;
         $rows = $this->repoCompressOi->get($where);
+        $result = [];
         foreach ($rows as $row) {
             $rankId = $row[EOi::ATTR_RANK_ID];
             $custId = $row[EOi::ATTR_CUSTOMER_ID];
