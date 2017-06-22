@@ -68,8 +68,8 @@ class Pto
         $tree = $this->loadDownline($periodEnd);
         $mapByDepth = $this->mapByTreeDepthDesc(
             $tree,
-            \Praxigento\Downline\Data\Entity\Snap::ATTR_CUSTOMER_ID,
-            \Praxigento\Downline\Data\Entity\Snap::ATTR_DEPTH
+            \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::A_CUST_ID,
+            \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::A_DEPTH
         );
         /* create registries for collected data (OV & Teams) */
         $regOv = [];
@@ -82,7 +82,7 @@ class Pto
             /* process all customers from one level of the downline tree */
             foreach ($customers as $custId) {
                 $custData = $tree[$custId];
-                $custParentId = $custData[\Praxigento\Downline\Data\Entity\Snap::ATTR_PARENT_ID];
+                $custParentId = $custData[\Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::A_PARENT_ID];
                 $custScheme = $this->toolScheme->getSchemeByCustomer($custData);
                 /* register current customer in the parent's team */
                 if (!isset($regTeam[$custParentId])) $regTeam[$custParentId] = [];

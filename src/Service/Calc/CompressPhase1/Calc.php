@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\CompressPhase1;
 
 use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Ptc as ECompressPhase1;
 use Praxigento\Downline\Data\Entity\Customer as ECustomer;
-use Praxigento\Downline\Data\Entity\Snap as ESnap;
+use Praxigento\Downline\Repo\Query\Snap\OnDate\Builder as ASnap;
 
 /**
  * Compression calculation itself.
@@ -95,8 +95,8 @@ class Calc
         /* prepare intermediary structures for calculation */
         $mapCustomer = $this->mapById($customers, ECustomer::ATTR_CUSTOMER_ID);
         $mapPv = $pv;
-        $mapDepth = $this->mapByTreeDepthDesc($snap, ESnap::ATTR_CUSTOMER_ID, ESnap::ATTR_DEPTH);
-        $mapTeams = $this->mapByTeams($snap, ESnap::ATTR_CUSTOMER_ID, ESnap::ATTR_PARENT_ID);
+        $mapDepth = $this->mapByTreeDepthDesc($snap, ASnap::A_CUST_ID, ASnap::A_DEPTH);
+        $mapTeams = $this->mapByTeams($snap, ASnap::A_CUST_ID, ASnap::A_PARENT_ID);
 
         /* compression itself */
         /* array for compression results: [$customerId => [$pvCompressed, $parentCompressed], ... ]*/
@@ -104,7 +104,7 @@ class Calc
         foreach ($mapDepth as $depth => $levelCustomers) {
             foreach ($levelCustomers as $custId) {
                 $pv = isset($mapPv[$custId]) ? $mapPv[$custId] : 0;
-                $parentId = $snap[$custId][ESnap::ATTR_PARENT_ID];
+                $parentId = $snap[$custId][ASnap::A_PARENT_ID];
                 $custData = $mapCustomer[$custId];
                 $scheme = $this->toolScheme->getSchemeByCustomer($custData);
                 $level = $qLevels[$scheme]; // qualification level for current customer
@@ -120,7 +120,7 @@ class Calc
                     }
                 } else {
                     /* move PV up to the closest qualified parent (parent's level is used for qualification) */
-                    $path = $snap[$custId][ESnap::ATTR_PATH];
+                    $path = $snap[$custId][ASnap::A_PATH];
                     $parents = $this->toolTree->getParentsFromPathReversed($path);
                     $foundParentId = null;
                     foreach ($parents as $newParentId) {
