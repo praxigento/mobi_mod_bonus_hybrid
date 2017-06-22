@@ -18,7 +18,9 @@ class Plain
     const ATTR_OV = 'ov';
     const ATTR_PARENT_REF = 'parent_ref';
     const ATTR_PV = 'pv';
+    const ATTR_RANK_CODE = 'rank_code';
     const ATTR_TV = 'tv';
+    const ATTR_UNQ_MONTHS = 'unq_months';
     const ENTITY_NAME = 'prxgt_bon_hyb_retro_dwnl_plain';
 
     public function getPrimaryKeyAttrs()

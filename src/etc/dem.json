@@ -667,6 +667,26 @@
                                 "comment": "OV value for the customer.",
                                 "nullable": false,
                                 "type": {"numeric": {"precision": 12, "scale": 4}}
+                              },
+                              "RankCode": {
+                                "alias": "rank_code",
+                                "comment": "Qualification rank code (MANAGER, ...).",
+                                "nullable": false,
+                                "type": {
+                                  "text": {
+                                    "length": 32
+                                  }
+                                }
+                              },
+                              "UnqualifiedMonths": {
+                                "alias": "unq_months",
+                                "comment": "Number of the last sequentially unqualified months.",
+                                "nullable": false,
+                                "type": {
+                                  "integer": {
+                                    "unsigned": true
+                                  }
+                                }
                               }
                             },
                             "index": {
