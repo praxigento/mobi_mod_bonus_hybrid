@@ -120,6 +120,7 @@ abstract class Base
         $vars->set(self::VAR_CUST_DEPTH, $depth);
         $vars->set(self::VAR_CUST_PATH, $path);
         $vars->set(self::VAR_MAX_DEPTH, $maxDepth);
+        $vars->set(self::VAR_ON_DATE, $period);
 
         /* Select ID of the last complete calculation for given calculation type. */
         $this->prepareCalcRefData($ctx);

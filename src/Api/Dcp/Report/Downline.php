@@ -5,11 +5,15 @@
 
 namespace Praxigento\BonusHybrid\Api\Dcp\Report;
 
+use Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder as QBLastCalc;
+use Praxigento\BonusHybrid\Config as Cfg;
+
 class Downline
     extends \Praxigento\BonusHybrid\Api\Stats\Base
     implements \Praxigento\BonusHybrid\Api\Dcp\Report\DownlineInterface
 {
     const BIND_ON_DATE = \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Retro\Plain\Builder::BIND_DATE;
+    const BIND_CALC_REF = \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Retro\Plain\Builder::BIND_CALC_ID;
     /**
      * Types of the requested report.
      */
@@ -19,17 +23,20 @@ class Downline
     const VAR_ACTUAL_DATA_REQUESTED = 'isActualDataRequested';
     const VAR_TYPE = 'type';
 
-    protected $qbldActCompressed;
+    protected $qbActCompressed;
     /** @var \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Actual\Plain\Builder */
-    protected $qbldActPlain;
-    protected $qbldRetroCompressed;
+    protected $qbActPlain;
+    /** @var \Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder */
+    protected $qbLastCalc;
+    protected $qbRetroCompressed;
     /** @var \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Retro\Plain\Builder */
-    protected $qbldRetroPlain;
+    protected $qbRetroPlain;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
-        \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Actual\Plain\Builder $qbldActPlain,
-        \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Retro\Plain\Builder $qbldRetroPlain,
+        \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Actual\Plain\Builder $qbActPlain,
+        \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Retro\Plain\Builder $qbRetroPlain,
+        \Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder $qbLastCalc,
         \Praxigento\Core\Helper\Config $hlpCfg,
         \Praxigento\Core\Api\IAuthenticator $authenticator,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
@@ -38,10 +45,11 @@ class Downline
     ) {
         /* don't pass query builder to the parent - we have 4 builders in the operation, not one */
         parent::__construct($manObj, null, $hlpCfg, $authenticator, $toolPeriod, $repoSnap, $qPeriodCalc);
-        $this->qbldActPlain = $qbldActPlain;
-        $this->qbldActCompressed = $qbldActPlain;
-        $this->qbldRetroPlain = $qbldRetroPlain;
-        $this->qbldRetroCompressed = $qbldActPlain;
+        $this->qbActPlain = $qbActPlain;
+        $this->qbActCompressed = $qbActPlain;
+        $this->qbRetroPlain = $qbRetroPlain;
+        $this->qbRetroCompressed = $qbActPlain;
+        $this->qbLastCalc = $qbLastCalc;
     }
 
     protected function createQuerySelect(\Flancer32\Lib\Data $ctx)
@@ -56,18 +64,18 @@ class Downline
         if ($isActualDataRequested) {
             if ($type == self::TYPE_COMPRESSED) {
                 /* the last compressed tree */
-                $query = $this->qbldActCompressed->build();
+                $query = $this->qbActCompressed->build();
             } else {
                 /* the last plain tree */
-                $query = $this->qbldActPlain->build();
+                $query = $this->qbActPlain->build();
             }
         } else {
             if ($type == self::TYPE_COMPRESSED) {
                 /* retrospective compressed tree */
-                $query = $this->qbldRetroCompressed->build();
+                $query = $this->qbRetroCompressed->build();
             } else {
                 /* retrospective plain tree */
-                $query = $this->qbldRetroPlain->build();
+                $query = $this->qbRetroPlain->build();
             }
         }
         $ctx->set(self::CTX_QUERY, $query);
@@ -93,14 +101,37 @@ class Downline
 
         if (!$isActualDataRequested) {
             $onDate = $vars->get(self::VAR_ON_DATE);
+            $calcRef = $vars->get(self::VAR_CALC_REF);
             $bind->set(self::BIND_ON_DATE, $onDate);
+            $bind->set(self::BIND_CALC_REF, $calcRef);
         }
 
     }
 
     protected function prepareCalcRefData(\Flancer32\Lib\Data $ctx)
     {
-        // TODO: Implement prepareCalcRefData() method.
+        /* get working vars from context */
+        /** @var \Flancer32\Lib\Data $vars */
+        $vars = $ctx->get(self::CTX_VARS);
+
+        /* 'the last calc' query parameters */
+        $dateEnd = $vars->get(self::VAR_ON_DATE);
+        $caltTypeCode = Cfg::CODE_TYPE_CALC_PV_WRITE_OFF;
+
+        $query = $this->qbLastCalc->build();
+        $bind = [
+            QBLastCalc::BND_CODE => $caltTypeCode,
+            QBLastCalc::BND_DATE => $dateEnd,
+            QBLastCalc::BND_STATE => Cfg::CALC_STATE_COMPLETE
+        ];
+
+        /* fetch & parse data */
+        $conn = $query->getConnection();
+        $rs = $conn->fetchRow($query, $bind);
+        $calcRef = $rs[QBLastCalc::A_CALC_ID];
+
+        /* save working variables into execution context */
+        $vars->set(self::VAR_CALC_REF, $calcRef);
     }
 
     protected function prepareQueryParameters(\Flancer32\Lib\Data $ctx)
@@ -113,11 +144,12 @@ class Downline
         /** @var \Praxigento\BonusHybrid\Api\Dcp\Report\Downline\Request $req */
         $req = $ctx->get(self::CTX_REQ);
 
-        /* extract this request parameters */
+        /* extract WEB request parameters */
         $reqPeriod = $req->getPeriod();
         if ($reqPeriod) {
             $onDate = $this->toolPeriod->getPeriodLastDate($reqPeriod);
             $isActualDataRequested = false;
+
         } else {
             $onDate = $this->toolPeriod->getPeriodCurrent();
             $isActualDataRequested = true;

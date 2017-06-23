@@ -12,6 +12,8 @@ use Praxigento\BonusHybrid\Config as Cfg;
 
 /**
  * Base query to select period and calculation data by filter (period last date and calculation type).
+ *
+ * @deprecated  use \Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder
  */
 class GetLastCalc
 {
