@@ -123,7 +123,7 @@
                                 "own": {"aliases": ["customer_ref"]},
                                 "reference": {
                                   "entity": {"completeAlias": "prxgt_dwnl_customer"},
-                                  "aliases": ["customer_id"]
+                                  "aliases": ["customer_ref"]
                                 },
                                 "action": {"delete": "restrict", "update": "restrict"}
                               },
@@ -131,7 +131,7 @@
                                 "own": {"aliases": ["parent_ref"]},
                                 "reference": {
                                   "entity": {"completeAlias": "prxgt_dwnl_customer"},
-                                  "aliases": ["customer_id"]
+                                  "aliases": ["customer_ref"]
                                 },
                                 "action": {"delete": "restrict", "update": "restrict"}
                               },
@@ -164,7 +164,7 @@
                             "type": {"integer": {"unsigned": true}}
                           },
                           "CustomerId": {
-                            "alias": "customer_id",
+                            "alias": "customer_ref",
                             "comment": "Reference to the customer itself.",
                             "nullable": false,
                             "type": {"integer": {"unsigned": true}}
@@ -176,7 +176,7 @@
                             "type": {"text": {"length": 8}}
                           },
                           "ParentId": {
-                            "alias": "parent_id",
+                            "alias": "parent_ref",
                             "comment": "Reference to the customer's parent.",
                             "nullable": false,
                             "type": {"integer": {"unsigned": true}}
@@ -238,7 +238,7 @@
                           }
                         },
                         "index": {
-                          "primary": {"type": "primary", "aliases": ["calc_id", "customer_id", "scheme"]}
+                          "primary": {"type": "primary", "aliases": ["calc_id", "customer_ref", "scheme"]}
                         },
                         "relation": {
                           "toCalculation": {
@@ -250,18 +250,18 @@
                             "action": {"delete": "restrict", "update": "restrict"}
                           },
                           "toDownlineCustomer": {
-                            "own": {"aliases": ["customer_id"]},
+                            "own": {"aliases": ["customer_ref"]},
                             "reference": {
                               "entity": {"completeAlias": "prxgt_dwnl_customer"},
-                              "aliases": ["customer_id"]
+                              "aliases": ["customer_ref"]
                             },
                             "action": {"delete": "restrict", "update": "restrict"}
                           },
                           "toDownlineCustomerAsParent": {
-                            "own": {"aliases": ["parent_id"]},
+                            "own": {"aliases": ["parent_ref"]},
                             "reference": {
                               "entity": {"completeAlias": "prxgt_dwnl_customer"},
-                              "aliases": ["customer_id"]
+                              "aliases": ["customer_ref"]
                             },
                             "action": {"delete": "restrict", "update": "restrict"}
                           },
@@ -333,7 +333,7 @@
                                     "own": {"aliases": ["cust_from_ref"]},
                                     "reference": {
                                       "entity": {"completeAlias": "prxgt_dwnl_customer"},
-                                      "aliases": ["customer_id"]
+                                      "aliases": ["customer_ref"]
                                     },
                                     "action": {"delete": "restrict", "update": "restrict"}
                                   },
@@ -341,7 +341,7 @@
                                     "own": {"aliases": ["cust_to_ref"]},
                                     "reference": {
                                       "entity": {"completeAlias": "prxgt_dwnl_customer"},
-                                      "aliases": ["customer_id"]
+                                      "aliases": ["customer_ref"]
                                     },
                                     "action": {"delete": "restrict", "update": "restrict"}
                                   }
@@ -520,7 +520,7 @@
                             "own": {"aliases": ["cust_ref"]},
                             "reference": {
                               "entity": {"completeAlias": "prxgt_dwnl_customer"},
-                              "aliases": ["customer_id"]
+                              "aliases": ["customer_ref"]
                             },
                             "action": {"delete": "cascade", "update": "restrict"}
                           },
@@ -621,7 +621,7 @@
                                 "own": {"aliases": ["cust_ref"]},
                                 "reference": {
                                   "entity": {"completeAlias": "prxgt_dwnl_customer"},
-                                  "aliases": ["customer_id"]
+                                  "aliases": ["customer_ref"]
                                 },
                                 "action": {"delete": "no action", "update": "no action"}
                               },
@@ -629,16 +629,16 @@
                                 "own": {"aliases": ["parent_ref"]},
                                 "reference": {
                                   "entity": {"completeAlias": "prxgt_dwnl_customer"},
-                                  "aliases": ["customer_id"]
+                                  "aliases": ["customer_ref"]
                                 },
                                 "action": {"delete": "cascade", "update": "restrict"}
                               }
                             }
                           }
                         },
-                        "package":{
-                          "Compressed":{
-                            "alias":"cmprs",
+                        "package": {
+                          "Compressed": {
+                            "alias": "cmprs",
                             "comment": "Retrospective compressed data for DCP downline reports.",
                             "entity": {
                               "Phase1": {
@@ -652,13 +652,13 @@
                                     "type": {"integer": {"unsigned": true}}
                                   },
                                   "CustomerId": {
-                                    "alias": "customer_id",
+                                    "alias": "customer_ref",
                                     "comment": "Reference to the customer itself.",
                                     "nullable": false,
                                     "type": {"integer": {"unsigned": true}}
                                   },
                                   "ParentId": {
-                                    "alias": "parent_id",
+                                    "alias": "parent_ref",
                                     "comment": "Reference to the customer's parent.",
                                     "nullable": false,
                                     "type": {"integer": {"unsigned": true}}
@@ -696,7 +696,7 @@
                                   }
                                 },
                                 "index": {
-                                  "primary": {"type": "primary", "aliases": ["calc_id", "customer_id"]}
+                                  "primary": {"type": "primary", "aliases": ["calc_id", "customer_ref"]}
                                 },
                                 "relation": {
                                   "toCalculation": {
@@ -708,18 +708,18 @@
                                     "action": {"delete": "restrict", "update": "restrict"}
                                   },
                                   "toDownlineCustomer": {
-                                    "own": {"aliases": ["customer_id"]},
+                                    "own": {"aliases": ["customer_ref"]},
                                     "reference": {
                                       "entity": {"completeAlias": "prxgt_dwnl_customer"},
-                                      "aliases": ["customer_id"]
+                                      "aliases": ["customer_ref"]
                                     },
                                     "action": {"delete": "restrict", "update": "restrict"}
                                   },
                                   "toDownlineCustomerAsParent": {
-                                    "own": {"aliases": ["parent_id"]},
+                                    "own": {"aliases": ["parent_ref"]},
                                     "reference": {
                                       "entity": {"completeAlias": "prxgt_dwnl_customer"},
-                                      "aliases": ["customer_id"]
+                                      "aliases": ["customer_ref"]
                                     },
                                     "action": {"delete": "restrict", "update": "restrict"}
                                   }

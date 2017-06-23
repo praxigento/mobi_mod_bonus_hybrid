@@ -20,7 +20,7 @@ use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Entity\Cfg\Override as CfgOverride;
 use Praxigento\BonusHybrid\Repo\Data\Entity\Cfg\Param as CfgParam;
 use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Oi as OiCompress;
-use Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Compressed\Phase1 as PtcCompress;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Compressed\Phase1 as CmprsPhase1;
 use Praxigento\Downline\Data\Entity\Customer;
 use Praxigento\Downline\Service\Snap\Request\GetStateOnDate as DownlineSnapGetStateOnDateRequest;
 use Praxigento\Pv\Data\Entity\Sale as PvSale;
@@ -202,20 +202,20 @@ class Db
         /* aliases and tables */
         $asCompress = 'cmp';
         $asCust = 'cust';
-        $tblCompress = $this->_resource->getTableName(PtcCompress::ENTITY_NAME);
+        $tblCompress = $this->_resource->getTableName(CmprsPhase1::ENTITY_NAME);
         $tblCust = $this->_resource->getTableName(Customer::ENTITY_NAME);
         // FROM prxgt_bon_hyb_cmprs_ptc cmp
         $query = $this->_conn->select();
         $query->from([$asCompress => $tblCompress]);
         // LEFT JOIN prxgt_dwnl_customer cust ON cmp.customer_id = cust.customer_id
-        $on = "$asCompress." . PtcCompress::ATTR_CUSTOMER_ID . "=$asCust." . Customer::ATTR_CUSTOMER_ID;
+        $on = "$asCompress." . CmprsPhase1::ATTR_CUSTOMER_ID . "=$asCust." . Customer::ATTR_CUSTOMER_ID;
         $cols = [
             Customer::ATTR_HUMAN_REF,
             Customer::ATTR_COUNTRY_CODE
         ];
         $query->joinLeft([$asCust => $tblCust], $on, $cols);
         // where
-        $where = PtcCompress::ATTR_CALC_ID . '=' . (int)$calcId;
+        $where = CmprsPhase1::ATTR_CALC_ID . '=' . (int)$calcId;
         $query->where($where);
         // $sql = (string)$query;
         $result = $this->_conn->fetchAll($query);
@@ -483,15 +483,15 @@ class Db
     public function saveCompressedPtc($data, $calcId)
     {
         foreach ($data as $one) {
-            if (!isset($one[PtcCompress::ATTR_CUSTOMER_ID]) || !isset($one[PtcCompress::ATTR_PARENT_ID])) {
+            if (!isset($one[CmprsPhase1::ATTR_CUSTOMER_ID]) || !isset($one[CmprsPhase1::ATTR_PARENT_ID])) {
                 $this->_logger->warning("There is no IDs in record: " . var_export($one, true));
                 continue;
             }
-            $one[PtcCompress::ATTR_CALC_ID] = $calcId;
-            if (!isset($one[PtcCompress::ATTR_PV]) || is_null($one[PtcCompress::ATTR_PV])) {
-                $one[PtcCompress::ATTR_PV] = 0;
+            $one[CmprsPhase1::ATTR_CALC_ID] = $calcId;
+            if (!isset($one[CmprsPhase1::ATTR_PV]) || is_null($one[CmprsPhase1::ATTR_PV])) {
+                $one[CmprsPhase1::ATTR_PV] = 0;
             }
-            $this->_repoBasic->addEntity(PtcCompress::ENTITY_NAME, $one);
+            $this->_repoBasic->addEntity(CmprsPhase1::ENTITY_NAME, $one);
         }
     }
 
@@ -720,11 +720,11 @@ class Db
     public function saveValueOv($data, $calcId)
     {
         foreach ($data as $custId => $ov) {
-            $whereByCalcId = PtcCompress::ATTR_CALC_ID . '=' . $calcId;
-            $whereByCustId = PtcCompress::ATTR_CUSTOMER_ID . '=' . $custId;
+            $whereByCalcId = CmprsPhase1::ATTR_CALC_ID . '=' . $calcId;
+            $whereByCustId = CmprsPhase1::ATTR_CUSTOMER_ID . '=' . $custId;
             $this->_repoBasic->updateEntity(
-                PtcCompress::ENTITY_NAME,
-                [PtcCompress::ATTR_OV => $ov],
+                CmprsPhase1::ENTITY_NAME,
+                [CmprsPhase1::ATTR_OV => $ov],
                 "$whereByCalcId AND $whereByCustId"
             );
         }
@@ -739,11 +739,11 @@ class Db
     public function saveValueTv($data, $calcId)
     {
         foreach ($data as $custId => $tv) {
-            $whereByCalcId = PtcCompress::ATTR_CALC_ID . '=' . $calcId;
-            $whereByCustId = PtcCompress::ATTR_CUSTOMER_ID . '=' . $custId;
+            $whereByCalcId = CmprsPhase1::ATTR_CALC_ID . '=' . $calcId;
+            $whereByCustId = CmprsPhase1::ATTR_CUSTOMER_ID . '=' . $custId;
             $this->_repoBasic->updateEntity(
-                PtcCompress::ENTITY_NAME,
-                [PtcCompress::ATTR_TV => $tv],
+                CmprsPhase1::ENTITY_NAME,
+                [CmprsPhase1::ATTR_TV => $tv],
                 "$whereByCalcId AND $whereByCustId"
             );
         }

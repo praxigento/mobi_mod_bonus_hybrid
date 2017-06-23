@@ -11,10 +11,10 @@ namespace Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Compressed;
 class Phase1
 {
     const ATTR_CALC_ID = 'calc_id';
-    const ATTR_CUSTOMER_ID = 'customer_id';
+    const ATTR_CUSTOMER_ID = 'customer_ref';
     const ATTR_DEPTH = 'depth';
     const ATTR_OV = 'ov';
-    const ATTR_PARENT_ID = 'parent_id';
+    const ATTR_PARENT_ID = 'parent_ref';
     const ATTR_PATH = 'path';
     const ATTR_PV = 'pv';
     const ATTR_TV = 'tv';
