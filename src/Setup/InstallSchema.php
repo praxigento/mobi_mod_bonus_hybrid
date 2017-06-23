@@ -54,15 +54,16 @@ class InstallSchema extends \Praxigento\Core\Setup\Schema\Base
         $demEntity = $demPackage->get('package/Registry/entity/SignUpVolumeDebit');
         $this->_toolDem->createEntity($entityAlias, $demEntity);
 
-        /* Retrospective Downline Tree that is Compressed in Phase 1 */
-        $entityAlias = CmprsPhase1::ENTITY_NAME;
-        $demEntity = $demPackage->get('package/Retro/package/Compressed/entity/Phase1');
-        $this->_toolDem->createEntity($entityAlias, $demEntity);
-
         /* Retrospective Plain Downline Tree */
         $entityAlias = RetroDwnlPlain::ENTITY_NAME;
         $demEntity = $demPackage->get('package/Retro/package/Downline/entity/Plain');
         $this->_toolDem->createEntity($entityAlias, $demEntity);
+
+        /* Retrospective Downline Tree that is Compressed in Phase 1 */
+        $entityAlias = CmprsPhase1::ENTITY_NAME;
+        $demEntity = $demPackage->get('package/Retro/package/Downline/package/Compressed/entity/Phase1');
+        $this->_toolDem->createEntity($entityAlias, $demEntity);
+
     }
 
 
