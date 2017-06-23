@@ -71,7 +71,7 @@ class Phase2
 
         /* filter data by root customer's path */
         $where = \Praxigento\BonusHybrid\Repo\Query\Stats\Phase2\Builder::AS_TREE . '.' .
-            \Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Ptc::ATTR_PATH . ' LIKE :' . self::BIND_PATH;
+            \Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Compressed\Phase1::ATTR_PATH . ' LIKE :' . self::BIND_PATH;
         $path = $rootCustPath . $rootCustId . Cfg::DTPS . '%';
         $query->where($where);
         $bind->set(self::BIND_PATH, $path);
@@ -81,14 +81,14 @@ class Phase2
             /* depth started from 0, add +1 to start from root */
             $depth = $rootCustDepth + 1 + $maxDepth;
             $where = \Praxigento\BonusHybrid\Repo\Query\Stats\Phase2\Builder::AS_TREE . '.' .
-                \Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Ptc::ATTR_DEPTH . ' < :' . self::BIND_MAX_DEPTH;
+                \Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Compressed\Phase1::ATTR_DEPTH . ' < :' . self::BIND_MAX_DEPTH;
             $query->where($where);
             $bind->set(self::BIND_MAX_DEPTH, $depth);
         }
 
         /* filter data by calcId */
         $where = \Praxigento\BonusHybrid\Repo\Query\Stats\Phase2\Builder::AS_TREE . '.' .
-            \Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Ptc::ATTR_CALC_ID . ' = :' . self::BIND_CALC_REF;
+            \Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Compressed\Phase1::ATTR_CALC_ID . ' = :' . self::BIND_CALC_REF;
         $query->where($where);
         $bind->set(self::BIND_CALC_REF, $calcRef);
     }

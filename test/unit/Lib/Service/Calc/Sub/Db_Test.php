@@ -17,7 +17,7 @@ use Praxigento\BonusBase\Service\Type\Calc\Response\GetByCode as TypeCalcGetByCo
 use Praxigento\BonusHybrid\Repo\Data\Entity\Cfg\Override as CfgOverride;
 use Praxigento\BonusHybrid\Repo\Data\Entity\Cfg\Param as CfgParam;
 use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Oi as OiCompress;
-use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Ptc as PtcCompress;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Compressed\Phase1 as PtcCompress;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\Core\Lib\Service\Repo\Response\AddEntity as RepoAddEntityResponse;
 use Praxigento\Core\Lib\Service\Repo\Response\GetEntities as RepoGetEntitiesResponse;

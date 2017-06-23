@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\CompressPhase1;
 
-use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Ptc as ECompressPhase1;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Compressed\Phase1 as ECompressPhase1;
 use Praxigento\Downline\Data\Entity\Customer as ECustomer;
 use Praxigento\Downline\Repo\Query\Snap\OnDate\Builder as ASnap;
 

@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Sub;
 
 use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Oi as Oi;
-use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Ptc as Ptc;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Compressed\Phase1 as Ptc;
 use Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Plain as Pto;
 
 class CompressOi

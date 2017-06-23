@@ -8,7 +8,7 @@ use Praxigento\BonusBase\Data\Entity\Calculation;
 use Praxigento\BonusBase\Data\Entity\Period;
 use Praxigento\BonusBase\Data\Entity\Rank;
 use Praxigento\BonusHybrid\Repo\Data\Entity\Cfg\Param as CfgParam;
-use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Ptc as PtcCompression;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Compressed\Phase1 as PtcCompression;
 use Praxigento\BonusHybrid\Service\Calc\Request\BonusInfinity as CalcBonusInfinityRequest;
 use Praxigento\BonusHybrid\Service\Calc\Request\BonusOverride as CalcBonusOverrideRequest;
 use Praxigento\BonusHybrid\Service\Calc\Request\CompressOi as CalcCompressOiRequest;

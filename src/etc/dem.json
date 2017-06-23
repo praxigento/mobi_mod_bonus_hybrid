@@ -153,90 +153,6 @@
                     "alias": "cmprs",
                     "comment": "Compressed downline trees with additional calculation data.",
                     "entity": {
-                      "PTC": {
-                        "alias": "ptc",
-                        "comment": "Compressed downline tree to calculate Personal, Team & Courtesy bonuses.",
-                        "attribute": {
-                          "CalculationId": {
-                            "alias": "calc_id",
-                            "comment": "Reference to the related calculation (type 'HYBRID_COMPRESS_FOR_PTC' is expected).",
-                            "nullable": false,
-                            "type": {"integer": {"unsigned": true}}
-                          },
-                          "CustomerId": {
-                            "alias": "customer_id",
-                            "comment": "Reference to the customer itself.",
-                            "nullable": false,
-                            "type": {"integer": {"unsigned": true}}
-                          },
-                          "ParentId": {
-                            "alias": "parent_id",
-                            "comment": "Reference to the customer's parent.",
-                            "nullable": false,
-                            "type": {"integer": {"unsigned": true}}
-                          },
-                          "Depth": {
-                            "alias": "depth",
-                            "comment": "Depth of the node in the tree.",
-                            "nullable": false,
-                            "default": 0,
-                            "type": {"integer": {"unsigned": true}}
-                          },
-                          "Path": {
-                            "alias": "path",
-                            "comment": "Path to the node - /1/2/3/.../",
-                            "nullable": false,
-                            "type": {"text": {"length": 255}}
-                          },
-                          "PersonalVolumes": {
-                            "alias": "pv",
-                            "comment": "Compressed value of the PV for the qualified customer.",
-                            "nullable": false,
-                            "type": {"numeric": {"precision": 12, "scale": 4}}
-                          },
-                          "TeamVolumes": {
-                            "alias": "tv",
-                            "comment": "TV value for the qualified customer.",
-                            "nullable": false,
-                            "type": {"numeric": {"precision": 12, "scale": 4}}
-                          },
-                          "OrganizationalVolumes": {
-                            "alias": "ov",
-                            "comment": "OV value for the qualified customer.",
-                            "nullable": false,
-                            "type": {"numeric": {"precision": 12, "scale": 4}}
-                          }
-                        },
-                        "index": {
-                          "primary": {"type": "primary", "aliases": ["calc_id", "customer_id"]}
-                        },
-                        "relation": {
-                          "toCalculation": {
-                            "own": {"aliases": ["calc_id"]},
-                            "reference": {
-                              "entity": {"completeAlias": "prxgt_bon_base_calc"},
-                              "aliases": ["id"]
-                            },
-                            "action": {"delete": "restrict", "update": "restrict"}
-                          },
-                          "toDownlineCustomer": {
-                            "own": {"aliases": ["customer_id"]},
-                            "reference": {
-                              "entity": {"completeAlias": "prxgt_dwnl_customer"},
-                              "aliases": ["customer_id"]
-                            },
-                            "action": {"delete": "restrict", "update": "restrict"}
-                          },
-                          "toDownlineCustomerAsParent": {
-                            "own": {"aliases": ["parent_id"]},
-                            "reference": {
-                              "entity": {"completeAlias": "prxgt_dwnl_customer"},
-                              "aliases": ["customer_id"]
-                            },
-                            "action": {"delete": "restrict", "update": "restrict"}
-                          }
-                        }
-                      },
                       "OI": {
                         "alias": "oi",
                         "comment": "Compressed downline tree to calculate Override & Infinity bonuses.",
@@ -716,6 +632,98 @@
                                   "aliases": ["customer_id"]
                                 },
                                 "action": {"delete": "cascade", "update": "restrict"}
+                              }
+                            }
+                          }
+                        },
+                        "package":{
+                          "Compressed":{
+                            "alias":"cmprs",
+                            "comment": "Retrospective compressed data for DCP downline reports.",
+                            "entity": {
+                              "Phase1": {
+                                "alias": "phase1",
+                                "comment": "Phase 1 compressed downline tree.",
+                                "attribute": {
+                                  "CalculationId": {
+                                    "alias": "calc_id",
+                                    "comment": "Reference to the related calculation (type 'HYBRID_COMPRESS_FOR_PTC' is expected).",
+                                    "nullable": false,
+                                    "type": {"integer": {"unsigned": true}}
+                                  },
+                                  "CustomerId": {
+                                    "alias": "customer_id",
+                                    "comment": "Reference to the customer itself.",
+                                    "nullable": false,
+                                    "type": {"integer": {"unsigned": true}}
+                                  },
+                                  "ParentId": {
+                                    "alias": "parent_id",
+                                    "comment": "Reference to the customer's parent.",
+                                    "nullable": false,
+                                    "type": {"integer": {"unsigned": true}}
+                                  },
+                                  "Depth": {
+                                    "alias": "depth",
+                                    "comment": "Depth of the node in the tree.",
+                                    "nullable": false,
+                                    "default": 0,
+                                    "type": {"integer": {"unsigned": true}}
+                                  },
+                                  "Path": {
+                                    "alias": "path",
+                                    "comment": "Path to the node - /1/2/3/.../",
+                                    "nullable": false,
+                                    "type": {"text": {"length": 255}}
+                                  },
+                                  "PersonalVolumes": {
+                                    "alias": "pv",
+                                    "comment": "Compressed value of the PV for the qualified customer.",
+                                    "nullable": false,
+                                    "type": {"numeric": {"precision": 12, "scale": 4}}
+                                  },
+                                  "TeamVolumes": {
+                                    "alias": "tv",
+                                    "comment": "TV value for the qualified customer.",
+                                    "nullable": false,
+                                    "type": {"numeric": {"precision": 12, "scale": 4}}
+                                  },
+                                  "OrganizationalVolumes": {
+                                    "alias": "ov",
+                                    "comment": "OV value for the qualified customer.",
+                                    "nullable": false,
+                                    "type": {"numeric": {"precision": 12, "scale": 4}}
+                                  }
+                                },
+                                "index": {
+                                  "primary": {"type": "primary", "aliases": ["calc_id", "customer_id"]}
+                                },
+                                "relation": {
+                                  "toCalculation": {
+                                    "own": {"aliases": ["calc_id"]},
+                                    "reference": {
+                                      "entity": {"completeAlias": "prxgt_bon_base_calc"},
+                                      "aliases": ["id"]
+                                    },
+                                    "action": {"delete": "restrict", "update": "restrict"}
+                                  },
+                                  "toDownlineCustomer": {
+                                    "own": {"aliases": ["customer_id"]},
+                                    "reference": {
+                                      "entity": {"completeAlias": "prxgt_dwnl_customer"},
+                                      "aliases": ["customer_id"]
+                                    },
+                                    "action": {"delete": "restrict", "update": "restrict"}
+                                  },
+                                  "toDownlineCustomerAsParent": {
+                                    "own": {"aliases": ["parent_id"]},
+                                    "reference": {
+                                      "entity": {"completeAlias": "prxgt_dwnl_customer"},
+                                      "aliases": ["customer_id"]
+                                    },
+                                    "action": {"delete": "restrict", "update": "restrict"}
+                                  }
+                                }
                               }
                             }
                           }
