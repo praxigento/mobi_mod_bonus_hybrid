@@ -23,6 +23,142 @@ class Plain
     const ATTR_UNQ_MONTHS = 'unq_months';
     const ENTITY_NAME = 'prxgt_bon_hyb_retro_dwnl_plain';
 
+    /**
+     * @return integer
+     */
+    public function getCalcRef()
+    {
+        $result = parent::get(self::ATTR_CALC_REF);
+        return $result;
+    }
+
+    /**
+     * @param integer $data
+     */
+    public function setCalcRef($data)
+    {
+        parent::set(self::ATTR_CALC_REF, $data);
+    }
+
+    /**
+     * @return integer
+     */
+    public function getCustomerRef()
+    {
+        $result = parent::get(self::ATTR_CUSTOMER_REF);
+        return $result;
+    }
+
+    /**
+     * @param integer $data
+     */
+    public function setCustomerRef($data)
+    {
+        parent::set(self::ATTR_CUSTOMER_REF, $data);
+    }
+
+    /**
+     * @return integer
+     */
+    public function getOv()
+    {
+        $result = parent::get(self::ATTR_OV);
+        return $result;
+    }
+
+    /**
+     * @param integer $data
+     */
+    public function setOv($data)
+    {
+        parent::set(self::ATTR_OV, $data);
+    }
+
+    /**
+     * @return integer
+     */
+    public function getParentRef()
+    {
+        $result = parent::get(self::ATTR_PARENT_REF);
+        return $result;
+    }
+
+    /**
+     * @param integer $data
+     */
+    public function setParentRef($data)
+    {
+        parent::set(self::ATTR_PARENT_REF, $data);
+    }
+
+    /**
+     * @return integer
+     */
+    public function getPv()
+    {
+        $result = parent::get(self::ATTR_PV);
+        return $result;
+    }
+
+    /**
+     * @param integer $data
+     */
+    public function setPv($data)
+    {
+        parent::set(self::ATTR_PV, $data);
+    }
+
+    /**
+     * @return integer
+     */
+    public function getRankCode()
+    {
+        $result = parent::get(self::ATTR_RANK_CODE);
+        return $result;
+    }
+
+    /**
+     * @param integer $data
+     */
+    public function setRankCode($data)
+    {
+        parent::set(self::ATTR_RANK_CODE, $data);
+    }
+
+    /**
+     * @return integer
+     */
+    public function getTv()
+    {
+        $result = parent::get(self::ATTR_TV);
+        return $result;
+    }
+
+    /**
+     * @param integer $data
+     */
+    public function setTv($data)
+    {
+        parent::set(self::ATTR_TV, $data);
+    }
+
+    /**
+     * @return integer
+     */
+    public function getUnqMonths()
+    {
+        $result = parent::get(self::ATTR_UNQ_MONTHS);
+        return $result;
+    }
+
+    /**
+     * @param integer $data
+     */
+    public function setUnqMonths($data)
+    {
+        parent::set(self::ATTR_UNQ_MONTHS, $data);
+    }
+
     public function getPrimaryKeyAttrs()
     {
         $result = [self::ATTR_CALC_REF, self::ATTR_CUSTOMER_REF];
