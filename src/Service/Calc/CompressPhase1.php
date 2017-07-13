@@ -91,6 +91,7 @@ class CompressPhase1
                 /* calculation itself */
                 $this->logger->info("Processing period #$thisPeriodId ($thisDsBegin-$thisDsEnd)");
                 $dataDwnlSnap = $this->getDownlineSnapshot($thisDsEnd);
+                /* TODO: use as object not as array */
                 $dataDwnlCust = $this->repoDwnlCustomer->get();
                 $dataPv = $this->getPv($baseCalcIdId);
                 $ctx = new \Flancer32\Lib\Data();

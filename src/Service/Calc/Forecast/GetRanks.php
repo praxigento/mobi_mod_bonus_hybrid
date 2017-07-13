@@ -59,7 +59,10 @@ class GetRanks
         $ranks[Def::SCHEMA_EU] = $eu;
         /* get downline data */
         $customers = $this->repoDownline->get();
-        foreach ($customers as $customer) {
+        /** @var \Praxigento\Downline\Data\Entity\Customer $one */
+        foreach ($customers as $one) {
+            /* TODO: use as object not as array */
+            $customer = (array)$one->get();
             $custId = $customer[ECustomer::ATTR_CUSTOMER_ID];
             $scheme = $this->hlpScheme->getSchemeByCustomer($customer);
             if (isset($ranks[$scheme][$custId])) {
@@ -90,7 +93,9 @@ class GetRanks
         $where = EOi::ATTR_CALC_ID . '=' . (int)$calcId;
         $rows = $this->repoCompressOi->get($where);
         $result = [];
-        foreach ($rows as $row) {
+        foreach ($rows as $data) {
+            /* TODO: use as object not as array */
+            $row = (array)$data;
             $rankId = $row[EOi::ATTR_RANK_ID];
             $custId = $row[EOi::ATTR_CUSTOMER_ID];
             $rankCode = $ranks[$rankId];
@@ -107,7 +112,9 @@ class GetRanks
     {
         $result = [];
         $rows = $this->repoRanks->get();
-        foreach ($rows as $row) {
+        foreach ($rows as $data) {
+            /* TODO: use as object not as array */
+            $row = (array)$data;
             $id = $row[ERank::ATTR_ID];
             $code = $row[ERank::ATTR_CODE];
             $result[$id] = $code;

@@ -391,6 +391,8 @@ class Db
     {
         $where = \Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Plain::ATTR_CALC_REF . '=' . (int)$calcId;
         $result = $this->repoRegPto->get($where);
+        /* TODO: use as object not as array */
+        $result = (array)$result->get();
         return $result;
     }
 

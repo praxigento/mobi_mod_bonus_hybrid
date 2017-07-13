@@ -205,6 +205,8 @@ class Scheme
             $where = \Praxigento\BonusHybrid\Repo\Data\Entity\Registry\SignupDebit::ATTR_CALC_REF . '=' . (int)$calcId;
             $rs = $this->repoRegSignupDebit->get($where);
             foreach ($rs as $one) {
+                /* TODO: use as object not as array */
+                $one = (array)$one->get();
                 $ids[] = $one[\Praxigento\BonusHybrid\Repo\Data\Entity\Registry\SignupDebit::ATTR_CUSTOMER_REF];
             }
             $this->cachedSignupDebitCustIds = $ids;
