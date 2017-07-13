@@ -249,7 +249,7 @@ class Oi
      * @return string
      */
 
-    public function getPrimaryKeyAttrs()
+    public static function getPrimaryKeyAttrs()
     {
         return [self::ATTR_CALC_ID, self::ATTR_CUSTOMER_ID, self::ATTR_SCHEME];
     }

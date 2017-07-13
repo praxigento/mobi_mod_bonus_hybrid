@@ -159,7 +159,7 @@ class Plain
         parent::set(self::ATTR_UNQ_MONTHS, $data);
     }
 
-    public function getPrimaryKeyAttrs()
+    public static function getPrimaryKeyAttrs()
     {
         $result = [self::ATTR_CALC_REF, self::ATTR_CUSTOMER_REF];
         return $result;

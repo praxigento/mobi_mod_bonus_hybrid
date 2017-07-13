@@ -66,7 +66,7 @@ class SignupDebit
         parent::set(self::ATTR_SALE_ORDER_REF, $data);
     }
 
-    public function getPrimaryKeyAttrs()
+    public static function getPrimaryKeyAttrs()
     {
         $result = [self::ATTR_CALC_REF, self::ATTR_CUSTOMER_REF];
         return $result;

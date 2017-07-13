@@ -158,7 +158,7 @@ class Param
     /**
      * @return array
      */
-    public function getPrimaryKeyAttrs()
+    public static function getPrimaryKeyAttrs()
     {
         return [self::ATTR_RANK_ID, self::ATTR_SCHEME];
 

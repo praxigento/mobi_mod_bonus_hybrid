@@ -35,7 +35,7 @@ class Pv
         return $result;
     }
 
-    public function getPrimaryKeyAttrs()
+    public static function getPrimaryKeyAttrs()
     {
         return [self::ATTR_CALC_REF, self::ATTR_CUST_FROM_REF, self::ATTR_CUST_TO_REF];
     }

@@ -157,7 +157,7 @@ class Phase1
         parent::set(self::ATTR_TV, $data);
     }
 
-    public function getPrimaryKeyAttrs()
+    public static function getPrimaryKeyAttrs()
     {
         $result = [self::ATTR_CALC_ID, self::ATTR_CUSTOMER_ID];
         return $result;
