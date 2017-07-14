@@ -389,10 +389,15 @@ class Db
      */
     public function getPlainPtoData($calcId)
     {
+        $result = [];
         $where = \Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Plain::ATTR_CALC_REF . '=' . (int)$calcId;
-        $result = $this->repoRegPto->get($where);
+        $rows = $this->repoRegPto->get($where);
         /* TODO: use as object not as array */
-        $result = (array)$result->get();
+        foreach ($rows as $row) {
+            $data = (array)$row->get();
+            $result[] = $data;
+        }
+
         return $result;
     }
 

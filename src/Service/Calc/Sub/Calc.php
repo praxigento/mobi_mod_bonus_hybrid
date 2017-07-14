@@ -133,9 +133,12 @@ class Calc
         );
         $ibPercentMax = $this->getMaxPercentForInfinityBonus($cfgParams);
         /* get MLM ID map for logging */
-        $dwnl = $this->repoDwnlCust->get();
+        $dwnl = [];
+        $rows = $this->repoDwnlCust->get();
         /* TODO: use as object not as array */
-        $dwnl = (array)$dwnl->get();
+        foreach ($rows as $row) {
+            $dwnl[] = (array)$row->get();
+        }
         $mapDwnlById = $this->mapById($dwnl, Customer::ATTR_CUSTOMER_ID);
         /* process downline tree */
         foreach ($mapTreeExp as $custId => $treeData) {
