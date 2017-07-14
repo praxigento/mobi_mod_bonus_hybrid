@@ -5,7 +5,6 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Forecast;
 
-use Praxigento\BonusBase\Data\Entity\Rank as ERank;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Oi as EOi;
@@ -93,11 +92,10 @@ class GetRanks
         $where = EOi::ATTR_CALC_ID . '=' . (int)$calcId;
         $rows = $this->repoCompressOi->get($where);
         $result = [];
-        foreach ($rows as $data) {
-            /* TODO: use as object not as array */
-            $row = (array)$data;
-            $rankId = $row[EOi::ATTR_RANK_ID];
-            $custId = $row[EOi::ATTR_CUSTOMER_ID];
+        /** @var \Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Oi $row */
+        foreach ($rows as $row) {
+            $rankId = $row->getRankId();
+            $custId = $row->getCustomerId();
             $rankCode = $ranks[$rankId];
             $result[$custId] = $rankCode;
         }
@@ -112,11 +110,10 @@ class GetRanks
     {
         $result = [];
         $rows = $this->repoRanks->get();
-        foreach ($rows as $data) {
-            /* TODO: use as object not as array */
-            $row = (array)$data;
-            $id = $row[ERank::ATTR_ID];
-            $code = $row[ERank::ATTR_CODE];
+        /** @var \Praxigento\BonusBase\Data\Entity\Rank $row */
+        foreach ($rows as $row) {
+            $id = $row->getId();
+            $code = $row->getCode();
             $result[$id] = $code;
         }
         return $result;
