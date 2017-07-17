@@ -41,9 +41,19 @@
                                   }
                                 }
                               },
-                              "Name": {
-                                "alias": "name",
-                                "comment": "Customer name (full).",
+                              "NameFirst": {
+                                "alias": "name_first",
+                                "comment": "Customer name (first).",
+                                "nullable": false,
+                                "type": {
+                                  "text": {
+                                    "length": 255
+                                  }
+                                }
+                              },
+                              "NameLast": {
+                                "alias": "name_last",
+                                "comment": "Customer name (last).",
                                 "nullable": false,
                                 "type": {
                                   "text": {

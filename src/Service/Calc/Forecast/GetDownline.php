@@ -49,10 +49,7 @@ class GetDownline
             $mlmId = $row[QBForDcp::A_MLM_ID];
             $email = $row[QBForDcp::A_EMAIL];
             $nameFirst = trim($row[QBForDcp::A_NAME_FIRST]);
-            $nameMiddle = trim($row[QBForDcp::A_NAME_MIDDLE]);
             $nameLast = trim($row[QBForDcp::A_NAME_LAST]);
-            $name = "$nameFirst $nameMiddle $nameLast";
-            $name = str_replace('  ', ' ', $name);
             $parentId = $row[QBSnapOnDate::A_PARENT_ID];
             $depth = $row[QBSnapOnDate::A_DEPTH];
             $path = $row[QBSnapOnDate::A_PATH];
@@ -61,7 +58,8 @@ class GetDownline
             $item->setCustomerRef($customerId);
             $item->setMlmId($mlmId);
             $item->setEmail($email);
-            $item->setName($name);
+            $item->setNameFirst($nameFirst);
+            $item->setNameLast($nameLast);
             $item->setParentRef($parentId);
             $item->setDepth($depth);
             $item->setPath($path);
