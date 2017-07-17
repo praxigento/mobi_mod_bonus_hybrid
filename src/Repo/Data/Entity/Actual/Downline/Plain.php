@@ -15,7 +15,8 @@ class Plain
     const ATTR_DEPTH = 'depth';
     const ATTR_EMAIL = 'email';
     const ATTR_MLM_ID = 'mlm_id';
-    const ATTR_NAME = 'name';
+    const ATTR_NAME_FIRST = 'name_first';
+    const ATTR_NAME_LAST = 'name_last';
     const ATTR_OV = 'ov';
     const ATTR_PARENT_REF = 'parent_ref';
     const ATTR_PATH = 'path';
@@ -49,9 +50,15 @@ class Plain
         return $result;
     }
 
-    public function getName()
+    public function getNameFirst()
     {
-        $result = parent::get(self::ATTR_NAME);
+        $result = parent::get(self::ATTR_NAME_FIRST);
+        return $result;
+    }
+
+    public function getNameLast()
+    {
+        $result = parent::get(self::ATTR_NAME_LAST);
         return $result;
     }
 
@@ -122,9 +129,14 @@ class Plain
         parent::set(self::ATTR_MLM_ID, $data);
     }
 
-    public function setName($data)
+    public function setNameFirst($data)
     {
-        parent::set(self::ATTR_NAME, $data);
+        parent::set(self::ATTR_NAME_FIRST, $data);
+    }
+
+    public function setNameLast($data)
+    {
+        parent::set(self::ATTR_NAME_LAST, $data);
     }
 
     public function setOv($data)
