@@ -14,6 +14,7 @@ class Downline
 {
     const BIND_ON_DATE = \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Retro\Plain\Builder::BIND_DATE;
     const BIND_CALC_REF = \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Retro\Plain\Builder::BIND_CALC_ID;
+
     /**
      * Types of the requested report.
      */
@@ -97,6 +98,12 @@ class Downline
         /** @var \Magento\Framework\DB\Select $query */
         $query = $ctx->get(self::CTX_QUERY);
 
+        /* get working vars */
+        $type = $vars->get(self::VAR_TYPE);
+        $rootCustId = $vars->get(self::VAR_CUST_ID);
+        $rootPath = $vars->get(self::VAR_CUST_PATH);
+        $path = $rootPath . $rootCustId . Cfg::DTPS . '%';
+
         $isActualDataRequested = $vars->get(self::VAR_ACTUAL_DATA_REQUESTED);
 
 
@@ -107,6 +114,18 @@ class Downline
             $calcRef = $vars->get(self::VAR_CALC_REF);
             $bind->set(self::BIND_ON_DATE, $onDate);
             $bind->set(self::BIND_CALC_REF, $calcRef);
+        } else {
+            /* actual data is requested */
+            if ($type == self::TYPE_COMPRESSED) {
+
+            } else {
+                $where = $this->qbActPlain::AS_DWNL_PLAIN . '.' . $this->qbActPlain::A_PATH;
+                $where .= ' LIKE :' . self::BIND_PATH;
+                $query->where($where);
+                $bind->set(self::BIND_PATH, $path);
+            }
+
+
         }
 
     }
