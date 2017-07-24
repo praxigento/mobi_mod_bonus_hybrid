@@ -99,6 +99,9 @@ class Downline
 
         $isActualDataRequested = $vars->get(self::VAR_ACTUAL_DATA_REQUESTED);
 
+
+
+        /* add filter by date/calcId */
         if (!$isActualDataRequested) {
             $onDate = $vars->get(self::VAR_ON_DATE);
             $calcRef = $vars->get(self::VAR_CALC_REF);
@@ -148,8 +151,12 @@ class Downline
         $reqPeriod = $req->getPeriod();
         if ($reqPeriod) {
             $onDate = $this->toolPeriod->getPeriodLastDate($reqPeriod);
-            $isActualDataRequested = false;
-
+            $current = $this->toolPeriod->getPeriodCurrent();
+            if ($onDate >= $current) {
+                $isActualDataRequested = true;
+            } else {
+                $isActualDataRequested = false;
+            }
         } else {
             $onDate = $this->toolPeriod->getPeriodCurrent();
             $isActualDataRequested = true;
