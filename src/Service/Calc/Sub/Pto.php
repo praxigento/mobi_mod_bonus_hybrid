@@ -28,7 +28,7 @@ class Pto
     protected $callDwnlSnap;
     /** @var \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds */
     protected $hlpSignupDebitCust;
-    /** @var \Praxigento\Accounting\Repo\Entity\IAccount */
+    /** @var \Praxigento\Accounting\Repo\Entity\Account */
     protected $repoAcc;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Retro\Downline\IPlain */
     protected $repoDwnlPlain;
@@ -41,7 +41,7 @@ class Pto
         \Praxigento\BonusHybrid\Tool\IScheme $toolScheme,
         \Praxigento\Downline\Tool\ITree $toolTree,
         \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust,
-        \Praxigento\Accounting\Repo\Entity\IAccount $repoAcc,
+        \Praxigento\Accounting\Repo\Entity\Account $repoAcc,
         \Praxigento\BonusHybrid\Repo\Entity\Retro\Downline\IPlain $repoDwnlPlain,
         \Praxigento\Downline\Service\ISnap $callDwnlSnap
     ) {
