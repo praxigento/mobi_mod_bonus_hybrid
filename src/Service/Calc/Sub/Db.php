@@ -40,11 +40,11 @@ class Db
     protected $_logger;
     /** @var \Praxigento\Core\Repo\IGeneric */
     protected $_repoBasic;
-    /** @var  \Praxigento\Accounting\Repo\Entity\Type\IAsset */
+    /** @var  \Praxigento\Accounting\Repo\Entity\Type\Def\Asset */
     protected $_repoTypeAsset;
     /** @var \Praxigento\BonusBase\Repo\Entity\Type\ICalc */
     protected $_repoTypeCalc;
-    /** @var  \Praxigento\Accounting\Repo\Entity\Type\IOperation */
+    /** @var  \Praxigento\Accounting\Repo\Entity\Type\Def\Operation */
     protected $_repoTypeOper;
     /** @var \Magento\Framework\App\ResourceConnection */
     protected $_resource;
@@ -69,8 +69,8 @@ class Db
         \Praxigento\BonusHybrid\Repo\Entity\Retro\Downline\IPlain $repoRegPto,
         \Praxigento\Downline\Service\ISnap $callDownlineSnap,
         \Praxigento\Core\Repo\IGeneric $repoBasic,
-        \Praxigento\Accounting\Repo\Entity\Type\IAsset $repoTypeAsset,
-        \Praxigento\Accounting\Repo\Entity\Type\IOperation $repoTypeOper
+        \Praxigento\Accounting\Repo\Entity\Type\Def\Asset $repoTypeAsset,
+        \Praxigento\Accounting\Repo\Entity\Type\Def\Operation $repoTypeOper
     ) {
         $this->_logger = $logger;
         $this->_resource = $resource;

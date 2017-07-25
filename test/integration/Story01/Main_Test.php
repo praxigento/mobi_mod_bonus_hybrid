@@ -11,6 +11,7 @@ use Praxigento\Accounting\Service\Operation\Request\Add as AccOperationAddReques
 use Praxigento\BonusBase\Data\Entity\Calculation;
 use Praxigento\BonusBase\Data\Entity\Level;
 use Praxigento\BonusBase\Data\Entity\Period;
+use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Service\Calc\Request\BonusCourtesy as BonusCalcCourtesyBonusRequest;
 use Praxigento\BonusHybrid\Service\Calc\Request\BonusPersonal as BonusCalcPersonalBonusRequest;
@@ -19,8 +20,6 @@ use Praxigento\BonusHybrid\Service\Calc\Request\CompressPtc as BonusCalcPvCompre
 use Praxigento\BonusHybrid\Service\Calc\Request\PvWriteOff as BonusCalcPvWriteOffRequest;
 use Praxigento\BonusHybrid\Service\Calc\Request\ValueOv as BonusCalcOvCompressionRequest;
 use Praxigento\BonusHybrid\Service\Calc\Request\ValueTv as BonusCalcTvCompressionRequest;
-use Praxigento\BonusHybrid\Config as Cfg;
-
 use Praxigento\Core\Test\BaseIntegrationTest;
 use Praxigento\Pv\Service\Transfer\Request\CreditToCustomer as PvTransferCreditToCustomerRequest;
 
@@ -48,7 +47,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
     private $_callPvTransfer;
     /** @var \Praxigento\Core\Repo\IGeneric */
     private $_repoBasic;
-    /** @var  \Praxigento\Accounting\Repo\Entity\Type\IAsset */
+    /** @var  \Praxigento\Accounting\Repo\Entity\Type\Def\Asset */
     private $_repoTypeAsset;
     /** @var  \Praxigento\BonusBase\Repo\Entity\Type\ICalc */
     private $_repoTypeCalc;
@@ -61,7 +60,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
         $this->_callCalc = $this->_manObj->get(\Praxigento\BonusHybrid\Service\ICalc::class);
         $this->_callPeriod = $this->_manObj->get(\Praxigento\BonusHybrid\Service\IPeriod::class);
         $this->_callPvTransfer = $this->_manObj->get(\Praxigento\Pv\Service\ITransfer::class);
-        $this->_repoTypeAsset = $this->_manObj->get(\Praxigento\Accounting\Repo\Entity\Type\IAsset::class);
+        $this->_repoTypeAsset = $this->_manObj->get(\Praxigento\Accounting\Repo\Entity\Type\Def\Asset::class);
         $this->_repoTypeCalc = $this->_manObj->get(\Praxigento\BonusBase\Repo\Entity\Type\ICalc::class);
         $this->_repoBasic = $this->_manObj->get(\Praxigento\Core\Repo\IGeneric::class);
     }

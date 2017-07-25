@@ -7,13 +7,12 @@ namespace Praxigento\BonusHybrid\Test\Story02;
 use Praxigento\BonusBase\Data\Entity\Calculation;
 use Praxigento\BonusBase\Data\Entity\Period;
 use Praxigento\BonusBase\Data\Entity\Rank;
+use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Entity\Cfg\Param as CfgParam;
 use Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Compressed\Phase1 as PtcCompression;
 use Praxigento\BonusHybrid\Service\Calc\Request\BonusInfinity as CalcBonusInfinityRequest;
 use Praxigento\BonusHybrid\Service\Calc\Request\BonusOverride as CalcBonusOverrideRequest;
 use Praxigento\BonusHybrid\Service\Calc\Request\CompressOi as CalcCompressOiRequest;
-use Praxigento\BonusHybrid\Config as Cfg;
-
 use Praxigento\Core\Test\BaseIntegrationTest;
 use Praxigento\Downline\Data\Entity\Snap;
 use Praxigento\Downline\Service\Snap\Request\ExpandMinimal as SnapExtendMinimalRequest;
@@ -70,15 +69,15 @@ class Main_IntegrationTest extends BaseIntegrationTest
     private $_callPeriod;
     /** @var  \Praxigento\Pv\Service\ITransfer */
     private $_callPvTransfer;
-    private $_testCalcIdPtc;
     /** @var \Praxigento\Core\Repo\IGeneric */
     private $_repoBasic;
-    /** @var  \Praxigento\Accounting\Repo\Entity\Type\IAsset */
+    /** @var \Praxigento\BonusBase\Repo\Entity\IRank */
+    private $_repoRank;
+    /** @var  \Praxigento\Accounting\Repo\Entity\Type\Def\Asset */
     private $_repoTypeAsset;
     /** @var  \Praxigento\BonusBase\Repo\Entity\Type\ICalc */
     private $_repoTypeCalc;
-    /** @var \Praxigento\BonusBase\Repo\Entity\IRank */
-    private $_repoRank;
+    private $_testCalcIdPtc;
 
     public function __construct()
     {
@@ -88,7 +87,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
         $this->_callCalc = $this->_manObj->get(\Praxigento\BonusHybrid\Service\ICalc::class);
         $this->_callPeriod = $this->_manObj->get(\Praxigento\BonusHybrid\Service\IPeriod::class);
         $this->_callPvTransfer = $this->_manObj->get(\Praxigento\Pv\Service\ITransfer::class);
-        $this->_repoTypeAsset = $this->_manObj->get(\Praxigento\Accounting\Repo\Entity\Type\IAsset::class);
+        $this->_repoTypeAsset = $this->_manObj->get(\Praxigento\Accounting\Repo\Entity\Type\Def\Asset::class);
         $this->_repoTypeCalc = $this->_manObj->get(\Praxigento\BonusBase\Repo\Entity\Type\ICalc::class);
         $this->_repoBasic = $this->_manObj->get(\Praxigento\Core\Repo\IGeneric::class);
         $this->_repoRank = $this->_manObj->get(\Praxigento\BonusBase\Repo\Entity\IRank::class);

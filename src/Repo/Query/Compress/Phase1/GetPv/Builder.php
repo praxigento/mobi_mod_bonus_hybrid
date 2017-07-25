@@ -37,12 +37,12 @@ class Builder
      */
     const BIND_CALC_ID = 'calcId';
 
-    /** @var  \Praxigento\Accounting\Repo\Entity\Type\IOperation */
+    /** @var  \Praxigento\Accounting\Repo\Entity\Type\Def\Operation */
     protected $repoTypeOper;
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resource,
-        \Praxigento\Accounting\Repo\Entity\Type\IOperation $repoTypeOper
+        \Praxigento\Accounting\Repo\Entity\Type\Def\Operation $repoTypeOper
     ) {
         parent::__construct($resource);
         $this->repoTypeOper = $repoTypeOper;
