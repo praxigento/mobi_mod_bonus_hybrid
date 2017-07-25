@@ -47,7 +47,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
     private $_callPvTransfer;
     /** @var \Praxigento\Core\Repo\IGeneric */
     private $_repoBasic;
-    /** @var  \Praxigento\Accounting\Repo\Entity\Type\Def\Asset */
+    /** @var  \Praxigento\Accounting\Repo\Entity\Type\Asset */
     private $_repoTypeAsset;
     /** @var  \Praxigento\BonusBase\Repo\Entity\Type\ICalc */
     private $_repoTypeCalc;
@@ -60,7 +60,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
         $this->_callCalc = $this->_manObj->get(\Praxigento\BonusHybrid\Service\ICalc::class);
         $this->_callPeriod = $this->_manObj->get(\Praxigento\BonusHybrid\Service\IPeriod::class);
         $this->_callPvTransfer = $this->_manObj->get(\Praxigento\Pv\Service\ITransfer::class);
-        $this->_repoTypeAsset = $this->_manObj->get(\Praxigento\Accounting\Repo\Entity\Type\Def\Asset::class);
+        $this->_repoTypeAsset = $this->_manObj->get(\Praxigento\Accounting\Repo\Entity\Type\Asset::class);
         $this->_repoTypeCalc = $this->_manObj->get(\Praxigento\BonusBase\Repo\Entity\Type\ICalc::class);
         $this->_repoBasic = $this->_manObj->get(\Praxigento\Core\Repo\IGeneric::class);
     }
