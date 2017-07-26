@@ -7,22 +7,34 @@ namespace Praxigento\BonusHybrid\Api\Dcp\Report;
 
 use Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder as QBLastCalc;
 use Praxigento\BonusHybrid\Config as Cfg;
+use Praxigento\BonusHybrid\Repo\Data\Entity\Actual\Downline\Plain as EActPlain;
 
 class Downline
     extends \Praxigento\BonusHybrid\Api\Stats\Base
     implements \Praxigento\BonusHybrid\Api\Dcp\Report\DownlineInterface
 {
-    const BIND_ON_DATE = \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Retro\Plain\Builder::BIND_DATE;
     const BIND_CALC_REF = \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Retro\Plain\Builder::BIND_CALC_ID;
-
+    const BIND_CUST_ID = 'customerId';
+    const BIND_ON_DATE = \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Retro\Plain\Builder::BIND_DATE;
+    /**
+     * Types of the queries.
+     */
+    const QUERY_TYPE_ACT_COMPRESS = 'actual&compressed';
+    const QUERY_TYPE_ACT_PLAIN = 'actual&plain';
+    const QUERY_TYPE_RETRO_COMPRESS = 'retro&compressed';
+    const QUERY_TYPE_RETRO_PLAIN = 'retro&plain';
     /**
      * Types of the requested report.
      */
-    const TYPE_COMPLETE = 'complete';
-    const TYPE_COMPRESSED = 'compressed';
+    const REPORT_TYPE_COMPLETE = 'complete';
+    const REPORT_TYPE_COMPRESSED = 'compressed';
 
+    /**
+     * Name of the local context variables.
+     */
     const VAR_ACTUAL_DATA_REQUESTED = 'isActualDataRequested';
-    const VAR_TYPE = 'type';
+    const VAR_QUERY_TYPE = 'queryType';
+    const VAR_REPORT_TYPE = 'reportType';
 
     protected $qbActCompressed;
     /** @var \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Actual\Plain\Builder */
@@ -43,7 +55,8 @@ class Downline
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
         \Praxigento\Downline\Repo\Entity\ISnap $repoSnap,
         \Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc $qPeriodCalc
-    ) {
+    )
+    {
         /* don't pass query builder to the parent - we have 4 builders in the operation, not one */
         parent::__construct($manObj, null, $hlpCfg, $authenticator, $toolPeriod, $repoSnap, $qPeriodCalc);
         $this->qbActPlain = $qbActPlain;
@@ -58,28 +71,34 @@ class Downline
         /* get working vars from context */
         /** @var \Flancer32\Lib\Data $vars */
         $vars = $ctx->get(self::CTX_VARS);
-        $type = $vars->get(self::VAR_TYPE);
+        $reportType = $vars->get(self::VAR_REPORT_TYPE);
         $isActualDataRequested = $vars->get(self::VAR_ACTUAL_DATA_REQUESTED);
 
         /* put appropriate query builder into the context */
+        $queryType = null;
         if ($isActualDataRequested) {
-            if ($type == self::TYPE_COMPRESSED) {
+            if ($reportType == self::REPORT_TYPE_COMPRESSED) {
                 /* the last compressed tree */
                 $query = $this->qbActCompressed->build();
+                $queryType = self::QUERY_TYPE_ACT_COMPRESS;
             } else {
                 /* the last plain tree */
                 $query = $this->qbActPlain->build();
+                $queryType = self::QUERY_TYPE_ACT_PLAIN;
             }
         } else {
-            if ($type == self::TYPE_COMPRESSED) {
+            if ($reportType == self::REPORT_TYPE_COMPRESSED) {
                 /* retrospective compressed tree */
                 $query = $this->qbRetroCompressed->build();
+                $queryType = self::QUERY_TYPE_RETRO_COMPRESS;
             } else {
                 /* retrospective plain tree */
                 $query = $this->qbRetroPlain->build();
+                $queryType = self::QUERY_TYPE_RETRO_PLAIN;
             }
         }
         $ctx->set(self::CTX_QUERY, $query);
+        $vars->set(self::VAR_QUERY_TYPE, $queryType);
     }
 
     public function exec(\Praxigento\BonusHybrid\Api\Dcp\Report\Downline\Request $data)
@@ -99,34 +118,43 @@ class Downline
         $query = $ctx->get(self::CTX_QUERY);
 
         /* get working vars */
-        $type = $vars->get(self::VAR_TYPE);
+        $reportType = $vars->get(self::VAR_REPORT_TYPE);
+        $queryType = $vars->get(self::VAR_QUERY_TYPE);
         $rootCustId = $vars->get(self::VAR_CUST_ID);
         $rootPath = $vars->get(self::VAR_CUST_PATH);
         $path = $rootPath . $rootCustId . Cfg::DTPS . '%';
 
         $isActualDataRequested = $vars->get(self::VAR_ACTUAL_DATA_REQUESTED);
 
-
-
-        /* add filter by date/calcId */
-        if (!$isActualDataRequested) {
-            $onDate = $vars->get(self::VAR_ON_DATE);
-            $calcRef = $vars->get(self::VAR_CALC_REF);
-            $bind->set(self::BIND_ON_DATE, $onDate);
-            $bind->set(self::BIND_CALC_REF, $calcRef);
-        } else {
-            /* actual data is requested */
-            if ($type == self::TYPE_COMPRESSED) {
-
-            } else {
-                $where = $this->qbActPlain::AS_DWNL_PLAIN . '.' . $this->qbActPlain::A_PATH;
-                $where .= ' LIKE :' . self::BIND_PATH;
+        switch ($queryType) {
+            case self::QUERY_TYPE_ACT_PLAIN:
+                $where = '(' . $this->qbActPlain::AS_DWNL_PLAIN . '.' . EActPlain::ATTR_PATH;
+                $where .= ' LIKE :' . self::BIND_PATH . ')';
+                $where .= " OR ";
+                $where .= '(' . $this->qbActPlain::AS_DWNL_PLAIN . '.' . EActPlain::ATTR_CUSTOMER_REF;
+                $where .= '=:' . self::BIND_CUST_ID . ')';
                 $query->where($where);
                 $bind->set(self::BIND_PATH, $path);
-            }
-
-
+                $bind->set(self::BIND_CUST_ID, $rootCustId);
+                break;
         }
+
+//        /* add filter by date/calcId */
+//        if (!$isActualDataRequested) {
+//            $onDate = $vars->get(self::VAR_ON_DATE);
+//            $calcRef = $vars->get(self::VAR_CALC_REF);
+//            $bind->set(self::BIND_ON_DATE, $onDate);
+//            $bind->set(self::BIND_CALC_REF, $calcRef);
+//        } else {
+//            /* actual data is requested */
+//            if ($reportType == self::REPORT_TYPE_COMPRESSED) {
+//
+//            } else {
+//
+//            }
+//
+//
+//        }
 
     }
 
@@ -182,16 +210,16 @@ class Downline
         }
 
         $reqType = $req->getType();
-        if ($reqType == self::TYPE_COMPRESSED) {
-            $type = self::TYPE_COMPRESSED;
+        if ($reqType == self::REPORT_TYPE_COMPRESSED) {
+            $type = self::REPORT_TYPE_COMPRESSED;
         } else {
-            $type = self::TYPE_COMPLETE;
+            $type = self::REPORT_TYPE_COMPLETE;
         }
 
         /* save parsed values in context */
         $vars->set(self::VAR_ON_DATE, $onDate);
         $vars->set(self::VAR_ACTUAL_DATA_REQUESTED, $isActualDataRequested);
-        $vars->set(self::VAR_TYPE, $type);
+        $vars->set(self::VAR_REPORT_TYPE, $type);
     }
 
 }
