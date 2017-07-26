@@ -10,7 +10,7 @@ use Praxigento\BonusHybrid\Config as Cfg;
 class MarkCalcComplete
     extends \Praxigento\Core\Repo\Def\Db
 {
-    /** @var \Praxigento\BonusBase\Repo\Entity\ICalculation */
+    /** @var \Praxigento\BonusBase\Repo\Entity\Def\Calculation */
     protected $repoCalc;
     /** @var  \Praxigento\Core\Tool\IDate */
     protected $toolDate;
@@ -18,7 +18,7 @@ class MarkCalcComplete
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resource,
         \Praxigento\Core\Tool\IDate $toolDate,
-        \Praxigento\BonusBase\Repo\Entity\ICalculation $repoCalc
+        \Praxigento\BonusBase\Repo\Entity\Def\Calculation $repoCalc
     ) {
         parent::__construct($resource);
         $this->toolDate = $toolDate;

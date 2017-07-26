@@ -103,11 +103,11 @@ class Main_OtherTest extends BaseIntegrationTest
     private $_mapCustomerMlmIdByIndex = [];
     /** @var \Praxigento\Core\Repo\IGeneric */
     private $_repoBasic;
-    /** @var \Praxigento\BonusBase\Repo\Entity\IRank */
+    /** @var \Praxigento\BonusBase\Repo\Entity\Def\Rank */
     private $_repoRank;
     /** @var  \Praxigento\Accounting\Repo\Entity\Type\Asset */
     private $_repoTypeAsset;
-    /** @var  \Praxigento\BonusBase\Repo\Entity\Type\ICalc */
+    /** @var  \Praxigento\BonusBase\Repo\Entity\Type\Def\Calc */
     private $_repoTypeCalc;
     /** @var  \Praxigento\Core\Tool\IDate */
     private $_toolDate;
@@ -125,8 +125,8 @@ class Main_OtherTest extends BaseIntegrationTest
         $this->_callPvTransfer = $this->_manObj->get(\Praxigento\Pv\Service\ITransfer::class);
         $this->_repoBasic = $this->_manObj->get(\Praxigento\Core\Repo\IGeneric::class);
         $this->_repoTypeAsset = $this->_manObj->get(\Praxigento\Accounting\Repo\Entity\Type\Asset::class);
-        $this->_repoTypeCalc = $this->_manObj->get(\Praxigento\BonusBase\Repo\Entity\Type\ICalc::class);
-        $this->_repoRank = $this->_manObj->get(\Praxigento\BonusBase\Repo\Entity\IRank::class);
+        $this->_repoTypeCalc = $this->_manObj->get(\Praxigento\BonusBase\Repo\Entity\Type\Def\Calc::class);
+        $this->_repoRank = $this->_manObj->get(\Praxigento\BonusBase\Repo\Entity\Def\Rank::class);
         $this->_toolScheme = $this->_manObj->get(\Praxigento\BonusHybrid\Tool\IScheme::class);
         $this->_toolDate = $this->_manObj->get(\Praxigento\Core\Tool\IDate::class);
     }

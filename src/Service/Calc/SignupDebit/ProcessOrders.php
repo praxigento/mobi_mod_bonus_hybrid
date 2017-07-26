@@ -33,11 +33,11 @@ class ProcessOrders
     protected $callAccount;
     /** @var \Praxigento\Accounting\Service\IOperation */
     protected $callOper;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Log\ICustomers */
+    /** @var \Praxigento\BonusBase\Repo\Entity\Log\Def\Customers */
     protected $repoLogCust;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Log\IOpers */
+    /** @var \Praxigento\BonusBase\Repo\Entity\Log\Def\Opers */
     protected $repoLogOper;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Log\ISales */
+    /** @var \Praxigento\BonusBase\Repo\Entity\Log\Def\Sales */
     protected $repoLogSale;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Registry\ISignupDebit */
     protected $repoRegSignupDebit;
@@ -46,9 +46,9 @@ class ProcessOrders
 
     public function __construct(
         \Praxigento\BonusHybrid\Tool\IScheme $toolScheme,
-        \Praxigento\BonusBase\Repo\Entity\Log\ICustomers $repoLogCust,
-        \Praxigento\BonusBase\Repo\Entity\Log\IOpers $repoLogOper,
-        \Praxigento\BonusBase\Repo\Entity\Log\ISales $repoLogSale,
+        \Praxigento\BonusBase\Repo\Entity\Log\Def\Customers $repoLogCust,
+        \Praxigento\BonusBase\Repo\Entity\Log\Def\Opers $repoLogOper,
+        \Praxigento\BonusBase\Repo\Entity\Log\Def\Sales $repoLogSale,
         \Praxigento\BonusHybrid\Repo\Entity\Registry\ISignupDebit $repoRegSignupDebit,
         \Praxigento\Accounting\Service\IAccount $callAccount,
         \Praxigento\Accounting\Service\IOperation $callOper

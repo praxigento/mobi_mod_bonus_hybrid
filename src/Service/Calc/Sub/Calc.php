@@ -51,7 +51,7 @@ class Calc
     protected $logger;
     /** @var \Praxigento\Downline\Repo\Entity\ICustomer */
     protected $repoDwnlCust;
-    /** @var  \Praxigento\BonusBase\Repo\Entity\IRank */
+    /** @var  \Praxigento\BonusBase\Repo\Entity\Def\Rank */
     protected $repoRank;
     /** @var \Praxigento\Downline\Tool\ITree */
     protected $toolDownlineTree;
