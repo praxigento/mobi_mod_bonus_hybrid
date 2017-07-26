@@ -26,12 +26,12 @@ class GetRanks
     protected $repoCompressOi;
     /** @var \Praxigento\Downline\Repo\Entity\ICustomer */
     protected $repoDownline;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Def\Rank */
+    /** @var \Praxigento\BonusBase\Repo\Entity\Rank */
     protected $repoRanks;
 
     public function __construct(
         \Praxigento\BonusHybrid\Tool\IScheme $hlpScheme,
-        \Praxigento\BonusBase\Repo\Entity\Def\Rank $repoRanks,
+        \Praxigento\BonusBase\Repo\Entity\Rank $repoRanks,
         \Praxigento\BonusHybrid\Repo\Entity\Compression\IOi $repoCompressOi,
         \Praxigento\Downline\Repo\Entity\ICustomer $repoDownline,
         \Praxigento\BonusBase\Service\IPeriod $callBonusPeriod

@@ -25,7 +25,7 @@ class Db
     protected $_logger;
     /** @var \Praxigento\Core\Repo\IGeneric */
     protected $_repoBasic;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Type\Def\Calc */
+    /** @var \Praxigento\BonusBase\Repo\Entity\Type\Calc */
     protected $_repoTypeCalc;
     /** @var \Magento\Framework\App\ResourceConnection */
     protected $_resource;
@@ -38,7 +38,7 @@ class Db
         \Praxigento\Core\Tool\IDate $toolDate,
         \Praxigento\Core\Repo\IGeneric $repoBasic,
         \Praxigento\BonusBase\Service\IPeriod $callBonusBasePeriod,
-        \Praxigento\BonusBase\Repo\Entity\Type\Def\Calc $repoTypeCalc
+        \Praxigento\BonusBase\Repo\Entity\Type\Calc $repoTypeCalc
     ) {
         $this->_logger = $logger;
         $this->_resource = $resource;

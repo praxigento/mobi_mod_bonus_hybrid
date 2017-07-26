@@ -71,11 +71,11 @@ class Main_IntegrationTest extends BaseIntegrationTest
     private $_callPvTransfer;
     /** @var \Praxigento\Core\Repo\IGeneric */
     private $_repoBasic;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Def\Rank */
+    /** @var \Praxigento\BonusBase\Repo\Entity\Rank */
     private $_repoRank;
     /** @var  \Praxigento\Accounting\Repo\Entity\Type\Asset */
     private $_repoTypeAsset;
-    /** @var  \Praxigento\BonusBase\Repo\Entity\Type\Def\Calc */
+    /** @var  \Praxigento\BonusBase\Repo\Entity\Type\Calc */
     private $_repoTypeCalc;
     private $_testCalcIdPtc;
 
@@ -88,9 +88,9 @@ class Main_IntegrationTest extends BaseIntegrationTest
         $this->_callPeriod = $this->_manObj->get(\Praxigento\BonusHybrid\Service\IPeriod::class);
         $this->_callPvTransfer = $this->_manObj->get(\Praxigento\Pv\Service\ITransfer::class);
         $this->_repoTypeAsset = $this->_manObj->get(\Praxigento\Accounting\Repo\Entity\Type\Asset::class);
-        $this->_repoTypeCalc = $this->_manObj->get(\Praxigento\BonusBase\Repo\Entity\Type\Def\Calc::class);
+        $this->_repoTypeCalc = $this->_manObj->get(\Praxigento\BonusBase\Repo\Entity\Type\Calc::class);
         $this->_repoBasic = $this->_manObj->get(\Praxigento\Core\Repo\IGeneric::class);
-        $this->_repoRank = $this->_manObj->get(\Praxigento\BonusBase\Repo\Entity\Def\Rank::class);
+        $this->_repoRank = $this->_manObj->get(\Praxigento\BonusBase\Repo\Entity\Rank::class);
     }
 
     private function _calcBonusInfinity()

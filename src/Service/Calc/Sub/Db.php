@@ -42,7 +42,7 @@ class Db
     protected $_repoBasic;
     /** @var  \Praxigento\Accounting\Repo\Entity\Type\Asset */
     protected $_repoTypeAsset;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Type\Def\Calc */
+    /** @var \Praxigento\BonusBase\Repo\Entity\Type\Calc */
     protected $_repoTypeCalc;
     /** @var  \Praxigento\Accounting\Repo\Entity\Type\Operation */
     protected $_repoTypeOper;
@@ -52,7 +52,7 @@ class Db
     protected $_toolDate;
     /** @var  \Praxigento\Core\Tool\IPeriod */
     protected $_toolPeriod;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Log\Def\Customers */
+    /** @var \Praxigento\BonusBase\Repo\Entity\Log\Customers */
     protected $repoLogCust;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Retro\Downline\IPlain */
     protected $repoRegPto;
@@ -64,8 +64,8 @@ class Db
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
         \Praxigento\Accounting\Service\IAccount $callAccount,
         \Praxigento\Accounting\Service\IOperation $repoOper,
-        \Praxigento\BonusBase\Repo\Entity\Type\Def\Calc $repoTypeCalc,
-        \Praxigento\BonusBase\Repo\Entity\Log\Def\Customers $repoLogCust,
+        \Praxigento\BonusBase\Repo\Entity\Type\Calc $repoTypeCalc,
+        \Praxigento\BonusBase\Repo\Entity\Log\Customers $repoLogCust,
         \Praxigento\BonusHybrid\Repo\Entity\Retro\Downline\IPlain $repoRegPto,
         \Praxigento\Downline\Service\ISnap $callDownlineSnap,
         \Praxigento\Core\Repo\IGeneric $repoBasic,
