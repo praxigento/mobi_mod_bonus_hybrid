@@ -30,7 +30,7 @@ class Pto
     protected $hlpSignupDebitCust;
     /** @var \Praxigento\Accounting\Repo\Entity\Account */
     protected $repoAcc;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Retro\Downline\IPlain */
+    /** @var \Praxigento\BonusHybrid\Repo\Entity\Retro\Downline\Plain */
     protected $repoDwnlPlain;
     /** @var \Praxigento\Downline\Tool\ITree */
     protected $toolDownlineTree;
@@ -42,7 +42,7 @@ class Pto
         \Praxigento\Downline\Tool\ITree $toolTree,
         \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust,
         \Praxigento\Accounting\Repo\Entity\Account $repoAcc,
-        \Praxigento\BonusHybrid\Repo\Entity\Retro\Downline\IPlain $repoDwnlPlain,
+        \Praxigento\BonusHybrid\Repo\Entity\Retro\Downline\Plain $repoDwnlPlain,
         \Praxigento\Downline\Service\ISnap $callDwnlSnap
     ) {
         $this->toolScheme = $toolScheme;

@@ -36,10 +36,6 @@ class Scheme
      */
     private $_cachedForcedCustomerIds = null;
     /**
-     * @var array of customers with forced qualification from 'Sign Up Volume Debit' (MOBI-635)
-     */
-    private $cachedSignupDebitCustIds = null;
-    /**
      * Cached values for customers with forced ranks. Each customer can be ranked in all schemes.
      *
      * @var array [$custId=>[$schema=>[A_RANK_ID=>$rankId, A_CFG_PARAMS=>[...]], ...], ...]
@@ -47,9 +43,13 @@ class Scheme
     private $_cachedForcedRanks = null;
     /** @var \Praxigento\Core\Repo\IGeneric */
     protected $_repoBasic;
+    /**
+     * @var array of customers with forced qualification from 'Sign Up Volume Debit' (MOBI-635)
+     */
+    private $cachedSignupDebitCustIds = null;
     /** @var \Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetLastCalcIdForPeriod */
     protected $queryGetLastSignupCalcId;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Registry\ISignupDebit */
+    /** @var \Praxigento\BonusHybrid\Repo\Entity\Registry\SignupDebit */
     protected $repoRegSignupDebit;
 
     /**
@@ -58,7 +58,7 @@ class Scheme
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resource,
         \Praxigento\Core\Repo\IGeneric $repoGeneric,
-        \Praxigento\BonusHybrid\Repo\Entity\Registry\ISignupDebit $repoRegSignupDebit,
+        \Praxigento\BonusHybrid\Repo\Entity\Registry\SignupDebit $repoRegSignupDebit,
         \Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetLastCalcIdForPeriod $queryGetLastSignupCalcId
     ) {
         parent::__construct($resource);

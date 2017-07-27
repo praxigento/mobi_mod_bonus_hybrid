@@ -9,7 +9,6 @@ use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Phase1\Transfer\Pv as En
 
 class Pv
     extends \Praxigento\Core\Repo\Def\Entity
-    implements \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase1\Transfer\IPv
 {
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resource,

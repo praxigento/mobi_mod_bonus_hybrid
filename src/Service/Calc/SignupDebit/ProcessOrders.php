@@ -39,7 +39,7 @@ class ProcessOrders
     protected $repoLogOper;
     /** @var \Praxigento\BonusBase\Repo\Entity\Log\Sales */
     protected $repoLogSale;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Registry\ISignupDebit */
+    /** @var \Praxigento\BonusHybrid\Repo\Entity\Registry\SignupDebit */
     protected $repoRegSignupDebit;
     /** @var  \Praxigento\BonusHybrid\Tool\IScheme */
     protected $toolScheme;
@@ -49,7 +49,7 @@ class ProcessOrders
         \Praxigento\BonusBase\Repo\Entity\Log\Customers $repoLogCust,
         \Praxigento\BonusBase\Repo\Entity\Log\Opers $repoLogOper,
         \Praxigento\BonusBase\Repo\Entity\Log\Sales $repoLogSale,
-        \Praxigento\BonusHybrid\Repo\Entity\Registry\ISignupDebit $repoRegSignupDebit,
+        \Praxigento\BonusHybrid\Repo\Entity\Registry\SignupDebit $repoRegSignupDebit,
         \Praxigento\Accounting\Service\IAccount $callAccount,
         \Praxigento\Accounting\Service\IOperation $callOper
     )

@@ -6,15 +6,15 @@ namespace Praxigento\BonusHybrid\Helper\SignupDebit;
 
 class GetCustomersIds
 {
-    /** @var \Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetLastCalcIdForPeriod */
-    protected $queryGetCalcId;
     /** @var array of cached Customers IDs keyd by calculation ID */
     protected $cachedIds = [];
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Registry\ISignupDebit */
+    /** @var \Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetLastCalcIdForPeriod */
+    protected $queryGetCalcId;
+    /** @var \Praxigento\BonusHybrid\Repo\Entity\Registry\SignupDebit */
     protected $repoRegistry;
 
     public function __construct(
-        \Praxigento\BonusHybrid\Repo\Entity\Registry\ISignupDebit $repoRegistry,
+        \Praxigento\BonusHybrid\Repo\Entity\Registry\SignupDebit $repoRegistry,
         \Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetLastCalcIdForPeriod $queryGetCalcId
     ) {
         $this->repoRegistry = $repoRegistry;

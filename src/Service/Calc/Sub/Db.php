@@ -54,7 +54,7 @@ class Db
     protected $_toolPeriod;
     /** @var \Praxigento\BonusBase\Repo\Entity\Log\Customers */
     protected $repoLogCust;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Retro\Downline\IPlain */
+    /** @var \Praxigento\BonusHybrid\Repo\Entity\Retro\Downline\Plain */
     protected $repoRegPto;
 
     public function __construct(
@@ -66,7 +66,7 @@ class Db
         \Praxigento\Accounting\Service\IOperation $repoOper,
         \Praxigento\BonusBase\Repo\Entity\Type\Calc $repoTypeCalc,
         \Praxigento\BonusBase\Repo\Entity\Log\Customers $repoLogCust,
-        \Praxigento\BonusHybrid\Repo\Entity\Retro\Downline\IPlain $repoRegPto,
+        \Praxigento\BonusHybrid\Repo\Entity\Retro\Downline\Plain $repoRegPto,
         \Praxigento\Downline\Service\ISnap $callDownlineSnap,
         \Praxigento\Core\Repo\IGeneric $repoBasic,
         \Praxigento\Accounting\Repo\Entity\Type\Asset $repoTypeAsset,

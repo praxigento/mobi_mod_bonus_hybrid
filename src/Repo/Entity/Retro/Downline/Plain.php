@@ -12,7 +12,6 @@ use Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Plain as Entity;
  */
 class Plain
     extends \Praxigento\Core\Repo\Def\Entity
-    implements \Praxigento\BonusHybrid\Repo\Entity\Retro\Downline\IPlain
 {
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resource,
