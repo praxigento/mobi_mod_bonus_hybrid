@@ -31,7 +31,7 @@ class CompressPhase1
     protected $queryMarkComplete;
     /** @var \Praxigento\Downline\Repo\Entity\ICustomer */
     protected $repoDwnlCustomer;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase1\Transfer\IPv */
+    /** @var \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase1\Transfer\Pv */
     protected $repoTransPv;
     /** @var \Praxigento\BonusHybrid\Service\Calc\CompressPhase1\Calc */
     protected $subCalc;
@@ -47,7 +47,7 @@ class CompressPhase1
         \Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder $qbldGetPv,
         \Praxigento\BonusHybrid\Repo\Query\MarkCalcComplete $queryMarkComplete,
         \Praxigento\Downline\Repo\Entity\ICustomer $repoDwnlCustomer,
-        \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase1\Transfer\IPv $repoTransPv,
+        \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase1\Transfer\Pv $repoTransPv,
         \Praxigento\Downline\Service\ISnap $callDownlineSnap,
         \Praxigento\BonusHybrid\Service\IPeriod $callPeriod,
         \Praxigento\BonusHybrid\Service\Calc\Sub\Db $subDb,

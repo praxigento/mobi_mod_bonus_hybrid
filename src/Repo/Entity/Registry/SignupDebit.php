@@ -9,7 +9,6 @@ use Praxigento\BonusHybrid\Repo\Data\Entity\Registry\SignupDebit as Entity;
 
 class SignupDebit
     extends \Praxigento\Core\Repo\Def\Entity
-    implements \Praxigento\BonusHybrid\Repo\Entity\Registry\ISignupDebit
 {
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resource,

@@ -22,7 +22,7 @@ class GetRanks
     protected $callBonusPeriod;
     /** @var \Praxigento\BonusHybrid\Tool\IScheme */
     protected $hlpScheme;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Compression\IOi */
+    /** @var \Praxigento\BonusHybrid\Repo\Entity\Compression\Oi */
     protected $repoCompressOi;
     /** @var \Praxigento\Downline\Repo\Entity\ICustomer */
     protected $repoDownline;
@@ -32,7 +32,7 @@ class GetRanks
     public function __construct(
         \Praxigento\BonusHybrid\Tool\IScheme $hlpScheme,
         \Praxigento\BonusBase\Repo\Entity\Rank $repoRanks,
-        \Praxigento\BonusHybrid\Repo\Entity\Compression\IOi $repoCompressOi,
+        \Praxigento\BonusHybrid\Repo\Entity\Compression\Oi $repoCompressOi,
         \Praxigento\Downline\Repo\Entity\ICustomer $repoDownline,
         \Praxigento\BonusBase\Service\IPeriod $callBonusPeriod
     ) {

@@ -9,7 +9,6 @@ use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Oi as Entity;
 
 class Oi
     extends \Praxigento\Core\Repo\Def\Entity
-    implements \Praxigento\BonusHybrid\Repo\Entity\Compression\IOi
 {
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resource,
