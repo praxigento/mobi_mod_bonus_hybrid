@@ -16,7 +16,7 @@ class Phase2
 
     const BIND_CALC_REF = 'calcRef';
 
-    /** @var \Praxigento\Downline\Repo\Entity\Def\Customer */
+    /** @var \Praxigento\Downline\Repo\Entity\Customer */
     protected $repoCust;
     /** @var \Praxigento\BonusHybrid\Tool\IScheme */
     protected $toolScheme;
@@ -27,10 +27,10 @@ class Phase2
         \Praxigento\Core\Helper\Config $hlpCfg,
         \Praxigento\Core\Api\IAuthenticator $authenticator,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
-        \Praxigento\Downline\Repo\Entity\Def\Snap $repoSnap,
+        \Praxigento\Downline\Repo\Entity\Snap $repoSnap,
         \Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc $qPeriodCalc,
         \Praxigento\BonusHybrid\Tool\IScheme $toolScheme,
-        \Praxigento\Downline\Repo\Entity\Def\Customer $repoCust
+        \Praxigento\Downline\Repo\Entity\Customer $repoCust
 
     ) {
         parent::__construct(

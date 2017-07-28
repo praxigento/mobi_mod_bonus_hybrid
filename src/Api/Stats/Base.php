@@ -24,7 +24,7 @@ abstract class Base
     protected $qPeriodCalc;
     /** @var \Praxigento\Core\Repo\Query\IBuilder */
     protected $qbld;
-    /** @var \Praxigento\Downline\Repo\Entity\Def\Snap */
+    /** @var \Praxigento\Downline\Repo\Entity\Snap */
     protected $repoSnap;
     /** @var \Praxigento\Core\Tool\IPeriod */
     protected $toolPeriod;
@@ -35,7 +35,7 @@ abstract class Base
         \Praxigento\Core\Helper\Config $hlpCfg,
         \Praxigento\Core\Api\IAuthenticator $authenticator,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
-        \Praxigento\Downline\Repo\Entity\Def\Snap $repoSnap,
+        \Praxigento\Downline\Repo\Entity\Snap $repoSnap,
         \Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc $qPeriodCalc
 
     ) {

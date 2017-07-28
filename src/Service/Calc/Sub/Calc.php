@@ -49,7 +49,7 @@ class Calc
     protected $hlpSignupDebitCust;
     /** @var \Psr\Log\LoggerInterface */
     protected $logger;
-    /** @var \Praxigento\Downline\Repo\Entity\Def\Customer */
+    /** @var \Praxigento\Downline\Repo\Entity\Customer */
     protected $repoDwnlCust;
     /** @var  \Praxigento\BonusBase\Repo\Entity\Rank */
     protected $repoRank;
@@ -67,7 +67,7 @@ class Calc
         \Praxigento\BonusHybrid\Tool\IScheme $toolScheme,
         \Praxigento\BonusBase\Helper\IRank $hlpRank,
         \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust,
-        \Praxigento\Downline\Repo\Entity\Def\Customer $repoDwnlCust,
+        \Praxigento\Downline\Repo\Entity\Customer $repoDwnlCust,
         \Praxigento\Downline\Service\ISnap $callDownlineSnap
     ) {
         $this->logger = $logger;
