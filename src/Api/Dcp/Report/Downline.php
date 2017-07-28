@@ -53,7 +53,7 @@ class Downline
         \Praxigento\Core\Helper\Config $hlpCfg,
         \Praxigento\Core\Api\IAuthenticator $authenticator,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
-        \Praxigento\Downline\Repo\Entity\ISnap $repoSnap,
+        \Praxigento\Downline\Repo\Entity\Def\Snap $repoSnap,
         \Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc $qPeriodCalc
     )
     {

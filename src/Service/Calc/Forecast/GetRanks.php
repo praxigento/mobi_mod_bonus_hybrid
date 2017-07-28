@@ -24,7 +24,7 @@ class GetRanks
     protected $hlpScheme;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Compression\Oi */
     protected $repoCompressOi;
-    /** @var \Praxigento\Downline\Repo\Entity\ICustomer */
+    /** @var \Praxigento\Downline\Repo\Entity\Def\Customer */
     protected $repoDownline;
     /** @var \Praxigento\BonusBase\Repo\Entity\Rank */
     protected $repoRanks;
@@ -33,7 +33,7 @@ class GetRanks
         \Praxigento\BonusHybrid\Tool\IScheme $hlpScheme,
         \Praxigento\BonusBase\Repo\Entity\Rank $repoRanks,
         \Praxigento\BonusHybrid\Repo\Entity\Compression\Oi $repoCompressOi,
-        \Praxigento\Downline\Repo\Entity\ICustomer $repoDownline,
+        \Praxigento\Downline\Repo\Entity\Def\Customer $repoDownline,
         \Praxigento\BonusBase\Service\IPeriod $callBonusPeriod
     ) {
         $this->hlpScheme = $hlpScheme;
