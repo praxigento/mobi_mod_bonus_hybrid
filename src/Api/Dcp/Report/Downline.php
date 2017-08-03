@@ -33,6 +33,7 @@ class Downline
      * Name of the local context variables.
      */
     const VAR_ACTUAL_DATA_REQUESTED = 'isActualDataRequested';
+    const VAR_CALC_ID = 'calcId';
     const VAR_QUERY_TYPE = 'queryType';
     const VAR_REPORT_TYPE = 'reportType';
 
@@ -49,6 +50,7 @@ class Downline
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Actual\Plain\Builder $qbActPlain,
         \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Retro\Plain\Builder $qbRetroPlain,
+        \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Retro\Compress\Builder $qbRetroCompress,
         \Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder $qbLastCalc,
         \Praxigento\Core\Helper\Config $hlpCfg,
         \Praxigento\Core\Api\IAuthenticator $authenticator,
@@ -62,7 +64,7 @@ class Downline
         $this->qbActPlain = $qbActPlain;
         $this->qbActCompressed = $qbActPlain;
         $this->qbRetroPlain = $qbRetroPlain;
-        $this->qbRetroCompressed = $qbActPlain;
+        $this->qbRetroCompressed = $qbRetroCompress;
         $this->qbLastCalc = $qbLastCalc;
     }
 
@@ -122,11 +124,17 @@ class Downline
         $queryType = $vars->get(self::VAR_QUERY_TYPE);
         $rootCustId = $vars->get(self::VAR_CUST_ID);
         $rootPath = $vars->get(self::VAR_CUST_PATH);
+        $onDate = $vars->get(self::VAR_ON_DATE);
+        $calcRef = $vars->get(self::VAR_CALC_REF);
         $path = $rootPath . $rootCustId . Cfg::DTPS . '%';
 
-        $isActualDataRequested = $vars->get(self::VAR_ACTUAL_DATA_REQUESTED);
-
+        /* add more conditions to query and bind parameters */
         switch ($queryType) {
+            case  self::QUERY_TYPE_ACT_COMPRESS:
+                /* TODO */
+                $bind->set(self::BIND_ON_DATE, $onDate);
+                $bind->set(self::BIND_CALC_REF, $calcRef);
+                break;
             case self::QUERY_TYPE_ACT_PLAIN:
                 $where = '(' . $this->qbActPlain::AS_DWNL_PLAIN . '.' . EActPlain::ATTR_PATH;
                 $where .= ' LIKE :' . self::BIND_PATH . ')';
@@ -137,25 +145,16 @@ class Downline
                 $bind->set(self::BIND_PATH, $path);
                 $bind->set(self::BIND_CUST_ID, $rootCustId);
                 break;
+            case  self::QUERY_TYPE_RETRO_COMPRESS:
+                $bind->set(self::BIND_ON_DATE, $onDate);
+                $bind->set(self::BIND_CALC_REF, $calcRef);
+                break;
+            case  self::QUERY_TYPE_RETRO_PLAIN:
+                /* TODO */
+                $bind->set(self::BIND_ON_DATE, $onDate);
+                $bind->set(self::BIND_CALC_REF, $calcRef);
+                break;
         }
-
-//        /* add filter by date/calcId */
-//        if (!$isActualDataRequested) {
-//            $onDate = $vars->get(self::VAR_ON_DATE);
-//            $calcRef = $vars->get(self::VAR_CALC_REF);
-//            $bind->set(self::BIND_ON_DATE, $onDate);
-//            $bind->set(self::BIND_CALC_REF, $calcRef);
-//        } else {
-//            /* actual data is requested */
-//            if ($reportType == self::REPORT_TYPE_COMPRESSED) {
-//
-//            } else {
-//
-//            }
-//
-//
-//        }
-
     }
 
     protected function prepareCalcRefData(\Flancer32\Lib\Data $ctx)
