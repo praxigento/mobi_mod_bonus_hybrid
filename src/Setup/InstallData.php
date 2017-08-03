@@ -44,7 +44,7 @@ class InstallData extends \Praxigento\Core\Setup\Data\Base
                 [Cfg::CODE_TYPE_CALC_BONUS_QUICK_START, 'Quick Start (EU only).'],
                 [Cfg::CODE_TYPE_CALC_PV_WRITE_OFF, 'PV write off calculation.'],
                 [
-                    Cfg::CODE_TYPE_CALC_COMPRESS_FOR_PTC,
+                    Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1,
                     'Compression calculation for Personal, Team & Courtesy bonuses).'
                 ],
                 [Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_DEF, 'Personal bonus calculation (DEFAULT scheme).'],
@@ -55,11 +55,11 @@ class InstallData extends \Praxigento\Core\Setup\Data\Base
                 [Cfg::CODE_TYPE_CALC_BONUS_COURTESY, 'Courtesy bonus calculation.'],
                 [Cfg::CODE_TYPE_CALC_VALUE_OV, 'Organizational Volumes calculation.'],
                 [
-                    Cfg::CODE_TYPE_CALC_COMPRESS_FOR_OI_DEF,
+                    Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_DEF,
                     'Compression calculation for Override & Infinity bonuses (DEFAULT scheme).'
                 ],
                 [
-                    Cfg::CODE_TYPE_CALC_COMPRESS_FOR_OI_EU,
+                    Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_EU,
                     'Compression calculation for Override & Infinity bonuses (EU scheme).'
                 ],
                 [Cfg::CODE_TYPE_CALC_BONUS_OVERRIDE_DEF, 'Override bonus calculation (DEFAULT scheme).'],

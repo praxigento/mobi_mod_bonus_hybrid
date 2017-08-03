@@ -103,7 +103,7 @@ class Call
                 $baseDsEnd = $basePeriodData->getDstampEnd();
                 /* get PTC Compression calculation ID for this period */
                 $ptcCompressCalcId = $this->_subDb->getLastCalculationIdForPeriod(
-                    Cfg::CODE_TYPE_CALC_COMPRESS_FOR_PTC,
+                    Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1,
                     $baseDsBegin,
                     $baseDsEnd
                 );
@@ -166,10 +166,10 @@ class Call
         $dateApplied = $request->getDateApplied();
         $this->logger->info("'Infinity Bonus' calculation is started ($scheme scheme).");
         if ($scheme == Def::SCHEMA_EU) {
-            $calcTypeBase = Cfg::CODE_TYPE_CALC_COMPRESS_FOR_OI_EU;
+            $calcTypeBase = Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_EU;
             $calcType = Cfg::CODE_TYPE_CALC_BONUS_INFINITY_EU;
         } else {
-            $calcTypeBase = Cfg::CODE_TYPE_CALC_COMPRESS_FOR_OI_DEF;
+            $calcTypeBase = Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_DEF;
             $calcType = Cfg::CODE_TYPE_CALC_BONUS_INFINITY_DEF;
         }
         $reqGetPeriod = new PeriodGetForDependentCalcRequest();
@@ -262,10 +262,10 @@ class Call
         $dateApplied = $request->getDateApplied();
         $this->logger->info("'Override Bonus' calculation is started ($scheme scheme).");
         if ($scheme == Def::SCHEMA_EU) {
-            $calcTypeBase = Cfg::CODE_TYPE_CALC_COMPRESS_FOR_OI_EU;
+            $calcTypeBase = Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_EU;
             $calcType = Cfg::CODE_TYPE_CALC_BONUS_OVERRIDE_EU;
         } else {
-            $calcTypeBase = Cfg::CODE_TYPE_CALC_COMPRESS_FOR_OI_DEF;
+            $calcTypeBase = Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_DEF;
             $calcType = Cfg::CODE_TYPE_CALC_BONUS_OVERRIDE_DEF;
         }
         $reqGetPeriod = new PeriodGetForDependentCalcRequest();
@@ -348,7 +348,7 @@ class Call
         $dateApplied = $request->getDateApplied();
         $this->logger->info("'Personal Bonus' calculation is started. Scheme: $scheme, performed at: $datePerformed, applied at: $dateApplied.");
         $reqGetPeriod = new PeriodGetForDependentCalcRequest();
-        $calcTypeBase = Cfg::CODE_TYPE_CALC_COMPRESS_FOR_PTC;
+        $calcTypeBase = Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1;
         if ($scheme == Def::SCHEMA_EU) {
             $calcType = Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_EU;
         } else {
@@ -455,7 +455,7 @@ class Call
                 $baseDsEnd = $basePeriodData->getDstampEnd();
                 /* get the last PTC compression calc id for this period */
                 $ptcCompressCalcId = $this->_subDb->getLastCalculationIdForPeriod(
-                    Cfg::CODE_TYPE_CALC_COMPRESS_FOR_PTC,
+                    Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1,
                     $baseDsBegin,
                     $baseDsEnd
                 );
@@ -520,9 +520,9 @@ class Call
         $scheme = $this->_getCalculationsScheme($request->getScheme());
         $this->logger->info("'OI Compression' calculation is started ($scheme scheme).");
         if ($scheme == Def::SCHEMA_EU) {
-            $calcType = Cfg::CODE_TYPE_CALC_COMPRESS_FOR_OI_EU;
+            $calcType = Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_EU;
         } else {
-            $calcType = Cfg::CODE_TYPE_CALC_COMPRESS_FOR_OI_DEF;
+            $calcType = Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_DEF;
         }
         $reqGetPeriod = new PeriodGetForDependentCalcRequest();
         $reqGetPeriod->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_VALUE_OV);
@@ -546,7 +546,7 @@ class Call
                     $baseDsEnd
                 );
                 $ptcCompressCalcId = $this->_subDb->getLastCalculationIdForPeriod(
-                    Cfg::CODE_TYPE_CALC_COMPRESS_FOR_PTC,
+                    Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1,
                     $baseDsBegin,
                     $baseDsEnd
                 );
@@ -648,7 +648,7 @@ class Call
         $result = new Response\ValueOv();
         $this->logger->info("'OV Value' calculation is started.");
         $reqGetPeriod = new PeriodGetForDependentCalcRequest();
-        $reqGetPeriod->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_COMPRESS_FOR_PTC);
+        $reqGetPeriod->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
         $reqGetPeriod->setDependentCalcTypeCode(Cfg::CODE_TYPE_CALC_VALUE_OV);
         $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         if ($respGetPeriod->isSucceed()) {
@@ -689,7 +689,7 @@ class Call
         $result = new Response\ValueTv();
         $this->logger->info("'TV Value' calculation is started.");
         $reqGetPeriod = new PeriodGetForDependentCalcRequest();
-        $reqGetPeriod->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_COMPRESS_FOR_PTC);
+        $reqGetPeriod->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
         $reqGetPeriod->setDependentCalcTypeCode(Cfg::CODE_TYPE_CALC_VALUE_TV);
         $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
         if ($respGetPeriod->isSucceed()) {

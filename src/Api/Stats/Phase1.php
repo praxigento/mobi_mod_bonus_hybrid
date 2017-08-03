@@ -98,7 +98,7 @@ class Phase1
         $dateEnd = $vars->get(self::VAR_ON_DATE);
         $opts = new \Flancer32\Lib\Data([
             QGetLastCalc::OPT_DATE_END => $dateEnd,
-            QGetLastCalc::OPT_CALC_TYPE_CODE => Cfg::CODE_TYPE_CALC_COMPRESS_FOR_PTC
+            QGetLastCalc::OPT_CALC_TYPE_CODE => Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1
         ]);
         $qres = $this->qPeriodCalc->exec($opts);
         $calcRef = $qres->get(QGetLastCalc::A_CALC_REF);

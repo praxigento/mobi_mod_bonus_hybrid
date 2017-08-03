@@ -387,7 +387,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
     private function _setPeriodAndCalcs()
     {
         /* get calculation types */
-        $calcTypeIdPtc = $this->_repoTypeCalc->getIdByCode(Cfg::CODE_TYPE_CALC_COMPRESS_FOR_PTC);
+        $calcTypeIdPtc = $this->_repoTypeCalc->getIdByCode(Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
         $calcTypeIdTv = $this->_repoTypeCalc->getIdByCode(Cfg::CODE_TYPE_CALC_VALUE_TV);
         $calcTypeIdOv = $this->_repoTypeCalc->getIdByCode(Cfg::CODE_TYPE_CALC_VALUE_OV);
         /* add periods */
@@ -398,7 +398,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
             Period::ATTR_DSTAMP_END => self::PERIOD_DS_END
         ];
         $periodIdPtc = $this->_repoBasic->addEntity(Period::ENTITY_NAME, $bind);
-        $this->_logger->debug("Period for calculation " . Cfg::CODE_TYPE_CALC_COMPRESS_FOR_PTC . " is added with ID=$periodIdPtc.");
+        $this->_logger->debug("Period for calculation " . Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1 . " is added with ID=$periodIdPtc.");
         // TV
         $bind[Period::ATTR_CALC_TYPE_ID] = $calcTypeIdTv;
         $periodIdTv = $this->_repoBasic->addEntity(Period::ENTITY_NAME, $bind);
@@ -412,7 +412,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
         // PTC
         $bind[Calculation::ATTR_PERIOD_ID] = $periodIdPtc;
         $calcPtcId = $this->_repoBasic->addEntity(Calculation::ENTITY_NAME, $bind);
-        $this->_logger->debug("Calculation " . Cfg::CODE_TYPE_CALC_COMPRESS_FOR_PTC . " is added with ID=$calcPtcId.");
+        $this->_logger->debug("Calculation " . Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1 . " is added with ID=$calcPtcId.");
         // TV
         $bind[Calculation::ATTR_PERIOD_ID] = $periodIdTv;
         $calcTvId = $this->_repoBasic->addEntity(Calculation::ENTITY_NAME, $bind);

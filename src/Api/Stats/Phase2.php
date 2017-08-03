@@ -108,8 +108,8 @@ class Phase2
         $scheme = $this->toolScheme->getSchemeByCustomer($dwnl);
 
         $calcCode = ($scheme == Def::SCHEMA_EU)
-            ? Cfg::CODE_TYPE_CALC_COMPRESS_FOR_OI_EU
-            : Cfg::CODE_TYPE_CALC_COMPRESS_FOR_OI_DEF;
+            ? Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_EU
+            : Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_DEF;
         $opts = new \Flancer32\Lib\Data([
             QGetLastCalc::OPT_DATE_END => $dateEnd,
             QGetLastCalc::OPT_CALC_TYPE_CODE => $calcCode

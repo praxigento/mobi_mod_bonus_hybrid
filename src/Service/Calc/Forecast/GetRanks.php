@@ -52,8 +52,8 @@ class GetRanks
         /* get all ranks */
         $ranksCodes = $this->getRanks();
         /* get OI data for both schemas */
-        $def = $this->getOiData(Cfg::CODE_TYPE_CALC_COMPRESS_FOR_OI_DEF, $ranksCodes);
-        $eu = $this->getOiData(Cfg::CODE_TYPE_CALC_COMPRESS_FOR_OI_EU, $ranksCodes);
+        $def = $this->getOiData(Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_DEF, $ranksCodes);
+        $eu = $this->getOiData(Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_EU, $ranksCodes);
         $ranks[Def::SCHEMA_DEFAULT] = $def;
         $ranks[Def::SCHEMA_EU] = $eu;
         /* get downline data */

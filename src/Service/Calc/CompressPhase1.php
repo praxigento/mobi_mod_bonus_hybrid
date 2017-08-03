@@ -74,7 +74,7 @@ class CompressPhase1
 
         $reqGetPeriod = new \Praxigento\BonusHybrid\Service\Period\Request\GetForDependentCalc();
         $reqGetPeriod->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
-        $reqGetPeriod->setDependentCalcTypeCode(Cfg::CODE_TYPE_CALC_COMPRESS_FOR_PTC);
+        $reqGetPeriod->setDependentCalcTypeCode(Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
         $respGetPeriod = $this->callPeriod->getForDependentCalc($reqGetPeriod);
         if ($respGetPeriod->isSucceed()) {
             $def = $this->manTrans->begin();
