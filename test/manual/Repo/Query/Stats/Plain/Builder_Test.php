@@ -8,7 +8,7 @@ namespace Praxigento\BonusHybrid\Repo\Query\Stats\Plain;
 include_once(__DIR__ . '/../../../../phpunit_bootstrap.php');
 
 class Builder_ManualTest
-    extends \Praxigento\Core\Test\BaseCase\Mockery
+    extends \Praxigento\Core\Test\BaseCase\Manual
 {
 
 

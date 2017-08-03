@@ -109,6 +109,29 @@ class Downline
         return $result;
     }
 
+    /**
+     * Get complete calculation ID for given date by calculation type code.
+     *
+     * @param $calcTypeCode
+     * @param $dateEnd
+     * @return mixed
+     */
+    protected function getCalcId($calcTypeCode, $dateEnd)
+    {
+        $query = $this->qbLastCalc->build();
+        $bind = [
+            QBLastCalc::BND_CODE => $calcTypeCode,
+            QBLastCalc::BND_DATE => $dateEnd,
+            QBLastCalc::BND_STATE => Cfg::CALC_STATE_COMPLETE
+        ];
+
+        /* fetch & parse data */
+        $conn = $query->getConnection();
+        $rs = $conn->fetchRow($query, $bind);
+        $result = $rs[QBLastCalc::A_CALC_ID];
+        return $result;
+    }
+
     protected function populateQuery(\Flancer32\Lib\Data $ctx)
     {
         /* get working vars from context */
@@ -136,6 +159,7 @@ class Downline
                 $bind->set(self::BIND_CALC_REF, $calcRef);
                 break;
             case self::QUERY_TYPE_ACT_PLAIN:
+                /* TODO: should we move WHERE clause into the Query Builder? */
                 $where = '(' . $this->qbActPlain::AS_DWNL_PLAIN . '.' . EActPlain::ATTR_PATH;
                 $where .= ' LIKE :' . self::BIND_PATH . ')';
                 $where .= " OR ";
@@ -146,7 +170,7 @@ class Downline
                 $bind->set(self::BIND_CUST_ID, $rootCustId);
                 break;
             case  self::QUERY_TYPE_RETRO_COMPRESS:
-                $bind->set(self::BIND_ON_DATE, $onDate);
+                $calcRef = $this->getCalcId(Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1, $onDate);
                 $bind->set(self::BIND_CALC_REF, $calcRef);
                 break;
             case  self::QUERY_TYPE_RETRO_PLAIN:
@@ -159,25 +183,18 @@ class Downline
 
     protected function prepareCalcRefData(\Flancer32\Lib\Data $ctx)
     {
+        /**
+         * TODO: we need to change this method - it is legacy code from \Praxigento\BonusHybrid\Api\Stats\Base
+         */
         /* get working vars from context */
         /** @var \Flancer32\Lib\Data $vars */
         $vars = $ctx->get(self::CTX_VARS);
 
         /* 'the last calc' query parameters */
         $dateEnd = $vars->get(self::VAR_ON_DATE);
-        $caltTypeCode = Cfg::CODE_TYPE_CALC_PV_WRITE_OFF;
+        $calcTypeCode = Cfg::CODE_TYPE_CALC_PV_WRITE_OFF;
 
-        $query = $this->qbLastCalc->build();
-        $bind = [
-            QBLastCalc::BND_CODE => $caltTypeCode,
-            QBLastCalc::BND_DATE => $dateEnd,
-            QBLastCalc::BND_STATE => Cfg::CALC_STATE_COMPLETE
-        ];
-
-        /* fetch & parse data */
-        $conn = $query->getConnection();
-        $rs = $conn->fetchRow($query, $bind);
-        $calcRef = $rs[QBLastCalc::A_CALC_ID];
+        $calcRef = $this->getCalcId($calcTypeCode, $dateEnd);
 
         /* save working variables into execution context */
         $vars->set(self::VAR_CALC_REF, $calcRef);
