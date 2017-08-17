@@ -14,8 +14,10 @@ use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Phase1\Transfer\Pv as Ph
 use Praxigento\BonusHybrid\Repo\Data\Entity\Registry\SignupDebit as SignupDebit;
 use Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Compressed\Phase1 as CmprsPhase1;
 use Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Plain as RetroDwnlPlain;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as Dwnl;
 
-class InstallSchema extends \Praxigento\Core\Setup\Schema\Base
+class InstallSchema
+    extends \Praxigento\Core\Setup\Schema\Base
 {
     protected function _setup()
     {
@@ -23,6 +25,11 @@ class InstallSchema extends \Praxigento\Core\Setup\Schema\Base
         $pathToFile = __DIR__ . '/../etc/dem.json';
         $pathToNode = '/dBEAR/package/Praxigento/package/Bonus/package/Hybrid';
         $demPackage = $this->_toolDem->readDemPackage($pathToFile, $pathToNode);
+
+        /* Downline Tree (common for actual/retro & plain/compressed cases)*/
+        $entityAlias = Dwnl::ENTITY_NAME;
+        $demEntity = $demPackage->get('entity/Downline');
+        $this->_toolDem->createEntity($entityAlias, $demEntity);
 
         /* Actual Downline Plain Tree */
         $entityAlias = ActDwnlPlain::ENTITY_NAME;
