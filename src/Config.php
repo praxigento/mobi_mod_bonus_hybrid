@@ -4,6 +4,7 @@
  *
  * User: Alex Gusev <alex@flancer64.com>
  */
+
 namespace Praxigento\BonusHybrid;
 
 use Praxigento\BonusBase\Config as BonusBaseCfg;
@@ -17,6 +18,7 @@ class Config extends BonusBaseCfg
      * Asset types.
      */
     const CODE_TYPE_ASSET_PV = PvCfg::CODE_TYPE_ASSET_PV;
+    
     /**
      * Calculation types. Suffix DEF & EU are for DEFAULT & EU1 calculations schemas.
      */
@@ -31,9 +33,11 @@ class Config extends BonusBaseCfg
     const CODE_TYPE_CALC_BONUS_SIGNUP_DEBIT = 'HYBRID_BON_SIGNUP_DEBIT';
     const CODE_TYPE_CALC_BONUS_TEAM_DEF = 'HYBRID_BON_TEAM_DEF';
     const CODE_TYPE_CALC_BONUS_TEAM_EU = 'HYBRID_BON_TEAM_EU';
-    const CODE_TYPE_CALC_COMPRESS_PHASE1 = 'HYBRID_COMPRESS_PHASE1'; // Override & Infinity (DEFAULT scheme)
-    const CODE_TYPE_CALC_COMPRESS_PHASE2_DEF = 'HYBRID_COMPRESS_PHASE2_DEF'; // Override & Infinity (EU scheme)
-    const CODE_TYPE_CALC_COMPRESS_PHASE2_EU = 'HYBRID_COMPRESS_PHASE2_EU'; // Compression for Personal, Team & Courtesy
+    const CODE_TYPE_CALC_COMPRESS_PHASE1 = 'HYBRID_COMPRESS_PHASE1';
+    const CODE_TYPE_CALC_COMPRESS_PHASE2_DEF = 'HYBRID_COMPRESS_PHASE2_DEF'; // Override & Infinity (DEFAULT scheme)
+    const CODE_TYPE_CALC_COMPRESS_PHASE2_EU = 'HYBRID_COMPRESS_PHASE2_EU'; // Override & Infinity (EU scheme)
+    const CODE_TYPE_CALC_FORECAST_COMPRESS = 'HYBRID_FORECAST_COMPRESS'; // Daily forecast calculation (plain tree)
+    const CODE_TYPE_CALC_FORECAST_PLAIN = 'HYBRID_FORECAST_PLAIN'; // Daily forecast calculation (compressed)
     const CODE_TYPE_CALC_PV_WRITE_OFF = 'HYBRID_PV_WRITE_OFF';
     const CODE_TYPE_CALC_VALUE_OV = 'HYBRID_VALUE_OV';
     const CODE_TYPE_CALC_VALUE_TV = 'HYBRID_VALUE_TV';
@@ -51,6 +55,7 @@ class Config extends BonusBaseCfg
     const CODE_TYPE_OPER_PV_FORWARD = 'HYBRID_PV_FWRD';
     const CODE_TYPE_OPER_PV_WRITE_OFF = 'HYBRID_PV_WRITE_OFF';
     const CODE_TYPE_OPER_WALLET_TRANSFER = WalletCfg::CODE_TYPE_OPER_WALLET_TRANSFER;
+
     /**
      * Other hardcode.
      */

@@ -7,6 +7,8 @@ namespace Praxigento\BonusHybrid\Service\Calc\Forecast;
 
 /**
  * Calculate TV/OV for plain downline report.
+ *
+ * @deprecated see \Praxigento\BonusHybrid\Service\Calc\Forecast\IPlain
  */
 class Calc
 {

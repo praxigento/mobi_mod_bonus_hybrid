@@ -12,6 +12,8 @@ use Praxigento\Downline\Repo\Query\Snap\OnDate\ForDcp\Builder as QBForDcp;
 /**
  * Collect data and compose array of \Praxigento\BonusHybrid\Repo\Data\Entity\Actual\Downline\Plain entities to populate
  * with additional values and to save in the end.
+ *
+ * @deprecated see \Praxigento\BonusHybrid\Service\Calc\Forecast\IPlain
  */
 class GetDownline
 {

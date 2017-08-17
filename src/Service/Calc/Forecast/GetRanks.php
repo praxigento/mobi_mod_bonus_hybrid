@@ -12,6 +12,8 @@ use Praxigento\Downline\Data\Entity\Customer as ECustomer;
 
 /**
  * Get the last OI calculation and collect customers and its qualification ranks.
+ *
+ * @deprecated see \Praxigento\BonusHybrid\Service\Calc\Forecast\IPlain
  */
 class GetRanks
 {
