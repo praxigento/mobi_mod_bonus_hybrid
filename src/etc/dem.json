@@ -29,7 +29,11 @@
                                 "alias": "customer_ref",
                                 "comment": "Reference to the customer itself.",
                                 "nullable": false,
-                                "type": {"integer": {"unsigned": true}}
+                                "type": {
+                                  "integer": {
+                                    "unsigned": true
+                                  }
+                                }
                               },
                               "MlmId": {
                                 "alias": "mlm_id",
@@ -65,44 +69,75 @@
                                 "alias": "email",
                                 "comment": "Customer email.",
                                 "nullable": false,
-                                "type": {"text": {"length": 255}}
+                                "type": {
+                                  "text": {
+                                    "length": 255
+                                  }
+                                }
                               },
                               "ParentId": {
                                 "alias": "parent_ref",
                                 "comment": "Reference to the customer's parent.",
                                 "nullable": false,
-                                "type": {"integer": {"unsigned": true}}
+                                "type": {
+                                  "integer": {
+                                    "unsigned": true
+                                  }
+                                }
                               },
                               "Depth": {
                                 "alias": "depth",
                                 "comment": "Depth of the node in the tree.",
                                 "nullable": false,
                                 "default": 0,
-                                "type": {"integer": {"unsigned": true}}
+                                "type": {
+                                  "integer": {
+                                    "unsigned": true
+                                  }
+                                }
                               },
                               "Path": {
                                 "alias": "path",
                                 "comment": "Path to the node - /1/2/3/.../",
                                 "nullable": false,
-                                "type": {"text": {"length": 255}}
+                                "type": {
+                                  "text": {
+                                    "length": 255
+                                  }
+                                }
                               },
                               "PersonalVolumes": {
                                 "alias": "pv",
                                 "comment": "Compressed value of the PV for the qualified customer.",
                                 "nullable": false,
-                                "type": {"numeric": {"precision": 12, "scale": 4}}
+                                "type": {
+                                  "numeric": {
+                                    "precision": 12,
+                                    "scale": 4
+                                  }
+                                }
                               },
                               "TeamVolumes": {
                                 "alias": "tv",
                                 "comment": "TV value for the qualified customer.",
                                 "nullable": false,
-                                "type": {"numeric": {"precision": 12, "scale": 4}}
+                                "type": {
+                                  "numeric": {
+                                    "precision": 12,
+                                    "scale": 4
+                                  }
+                                }
                               },
                               "OrganizationalVolumes": {
                                 "alias": "ov",
                                 "comment": "OV value for the qualified customer.",
                                 "nullable": false,
-                                "type": {"numeric": {"precision": 12, "scale": 4}}
+                                "type": {
+                                  "numeric": {
+                                    "precision": 12,
+                                    "scale": 4
+                                  }
+                                }
                               },
                               "RankCode": {
                                 "alias": "rank_code",
@@ -126,32 +161,70 @@
                               }
                             },
                             "index": {
-                              "primary": {"type": "primary", "aliases": ["customer_ref"]}
+                              "primary": {
+                                "type": "primary",
+                                "aliases": [
+                                  "customer_ref"
+                                ]
+                              }
                             },
                             "relation": {
                               "toDownlineCustomer": {
-                                "own": {"aliases": ["customer_ref"]},
-                                "reference": {
-                                  "entity": {"completeAlias": "prxgt_dwnl_customer"},
-                                  "aliases": ["customer_ref"]
+                                "own": {
+                                  "aliases": [
+                                    "customer_ref"
+                                  ]
                                 },
-                                "action": {"delete": "restrict", "update": "restrict"}
+                                "reference": {
+                                  "entity": {
+                                    "completeAlias": "prxgt_dwnl_customer"
+                                  },
+                                  "aliases": [
+                                    "customer_ref"
+                                  ]
+                                },
+                                "action": {
+                                  "delete": "restrict",
+                                  "update": "restrict"
+                                }
                               },
                               "toDownlineCustomerAsParent": {
-                                "own": {"aliases": ["parent_ref"]},
-                                "reference": {
-                                  "entity": {"completeAlias": "prxgt_dwnl_customer"},
-                                  "aliases": ["customer_ref"]
+                                "own": {
+                                  "aliases": [
+                                    "parent_ref"
+                                  ]
                                 },
-                                "action": {"delete": "restrict", "update": "restrict"}
+                                "reference": {
+                                  "entity": {
+                                    "completeAlias": "prxgt_dwnl_customer"
+                                  },
+                                  "aliases": [
+                                    "customer_ref"
+                                  ]
+                                },
+                                "action": {
+                                  "delete": "restrict",
+                                  "update": "restrict"
+                                }
                               },
                               "toRankCode": {
-                                "own": {"aliases": ["rank_code"]},
-                                "reference": {
-                                  "entity": {"completeAlias": "prxgt_bon_base_rank"},
-                                  "aliases": ["code"]
+                                "own": {
+                                  "aliases": [
+                                    "rank_code"
+                                  ]
                                 },
-                                "action": {"delete": "restrict", "update": "restrict"}
+                                "reference": {
+                                  "entity": {
+                                    "completeAlias": "prxgt_bon_base_rank"
+                                  },
+                                  "aliases": [
+                                    "code"
+                                  ]
+                                },
+                                "action": {
+                                  "delete": "restrict",
+                                  "update": "restrict"
+                                }
                               }
                             }
                           }
@@ -171,117 +244,226 @@
                             "alias": "calc_id",
                             "comment": "Reference to the related calculation (type 'HYBRID_COMPRESS_FOR_OI' is expected).",
                             "nullable": false,
-                            "type": {"integer": {"unsigned": true}}
+                            "type": {
+                              "integer": {
+                                "unsigned": true
+                              }
+                            }
                           },
                           "CustomerId": {
                             "alias": "customer_ref",
                             "comment": "Reference to the customer itself.",
                             "nullable": false,
-                            "type": {"integer": {"unsigned": true}}
+                            "type": {
+                              "integer": {
+                                "unsigned": true
+                              }
+                            }
                           },
                           "Scheme": {
                             "alias": "scheme",
                             "comment": "Scheme code (DEFAULT or EU).",
                             "nullable": false,
-                            "type": {"text": {"length": 8}}
+                            "type": {
+                              "text": {
+                                "length": 8
+                              }
+                            }
                           },
                           "ParentId": {
                             "alias": "parent_ref",
                             "comment": "Reference to the customer's parent.",
                             "nullable": false,
-                            "type": {"integer": {"unsigned": true}}
+                            "type": {
+                              "integer": {
+                                "unsigned": true
+                              }
+                            }
                           },
                           "Depth": {
                             "alias": "depth",
                             "comment": "Depth of the node in the tree.",
                             "nullable": false,
                             "default": 0,
-                            "type": {"integer": {"unsigned": true}}
+                            "type": {
+                              "integer": {
+                                "unsigned": true
+                              }
+                            }
                           },
                           "Path": {
                             "alias": "path",
                             "comment": "Path to the node - /1/2/3/.../",
                             "nullable": false,
-                            "type": {"text": {"length": 255}}
+                            "type": {
+                              "text": {
+                                "length": 255
+                              }
+                            }
                           },
                           "RankId": {
                             "alias": "rank_id",
                             "comment": "Reference to the customer's qualification rank.",
                             "nullable": true,
-                            "type": {"integer": {"unsigned": true}}
+                            "type": {
+                              "integer": {
+                                "unsigned": true
+                              }
+                            }
                           },
                           "PersonalVolumes": {
                             "alias": "pv",
                             "comment": "Compressed value of the PV for the qualified customer.",
                             "nullable": false,
-                            "type": {"numeric": {"precision": 12, "scale": 4}}
+                            "type": {
+                              "numeric": {
+                                "precision": 12,
+                                "scale": 4
+                              }
+                            }
                           },
                           "PersonalVolumesInfinity": {
                             "alias": "pv_inf",
                             "comment": "All compressed PV used in Infinity bonus.",
                             "nullable": false,
-                            "type": {"numeric": {"precision": 12, "scale": 4}}
+                            "type": {
+                              "numeric": {
+                                "precision": 12,
+                                "scale": 4
+                              }
+                            }
                           },
                           "TeamVolumes": {
                             "alias": "tv",
                             "comment": "TV value for the qualified customer.",
                             "nullable": false,
-                            "type": {"numeric": {"precision": 12, "scale": 4}}
+                            "type": {
+                              "numeric": {
+                                "precision": 12,
+                                "scale": 4
+                              }
+                            }
                           },
                           "OvLegMax": {
                             "alias": "ov_leg_max",
                             "comment": "OV value for the leg with maximal amount.",
                             "nullable": false,
-                            "type": {"numeric": {"precision": 12, "scale": 4}}
+                            "type": {
+                              "numeric": {
+                                "precision": 12,
+                                "scale": 4
+                              }
+                            }
                           },
                           "OvLegSecond": {
                             "alias": "ov_leg_second",
                             "comment": "OV value for second leg of the customer.",
                             "nullable": false,
-                            "type": {"numeric": {"precision": 12, "scale": 4}}
+                            "type": {
+                              "numeric": {
+                                "precision": 12,
+                                "scale": 4
+                              }
+                            }
                           },
                           "OvLegOthers": {
                             "alias": "ov_leg_others",
                             "comment": "OV value for the lest legs (summary for all other legs).",
                             "nullable": false,
-                            "type": {"numeric": {"precision": 12, "scale": 4}}
+                            "type": {
+                              "numeric": {
+                                "precision": 12,
+                                "scale": 4
+                              }
+                            }
                           }
                         },
                         "index": {
-                          "primary": {"type": "primary", "aliases": ["calc_id", "customer_ref", "scheme"]}
+                          "primary": {
+                            "type": "primary",
+                            "aliases": [
+                              "calc_id",
+                              "customer_ref",
+                              "scheme"
+                            ]
+                          }
                         },
                         "relation": {
                           "toCalculation": {
-                            "own": {"aliases": ["calc_id"]},
-                            "reference": {
-                              "entity": {"completeAlias": "prxgt_bon_base_calc"},
-                              "aliases": ["id"]
+                            "own": {
+                              "aliases": [
+                                "calc_id"
+                              ]
                             },
-                            "action": {"delete": "restrict", "update": "restrict"}
+                            "reference": {
+                              "entity": {
+                                "completeAlias": "prxgt_bon_base_calc"
+                              },
+                              "aliases": [
+                                "id"
+                              ]
+                            },
+                            "action": {
+                              "delete": "restrict",
+                              "update": "restrict"
+                            }
                           },
                           "toDownlineCustomer": {
-                            "own": {"aliases": ["customer_ref"]},
-                            "reference": {
-                              "entity": {"completeAlias": "prxgt_dwnl_customer"},
-                              "aliases": ["customer_ref"]
+                            "own": {
+                              "aliases": [
+                                "customer_ref"
+                              ]
                             },
-                            "action": {"delete": "restrict", "update": "restrict"}
+                            "reference": {
+                              "entity": {
+                                "completeAlias": "prxgt_dwnl_customer"
+                              },
+                              "aliases": [
+                                "customer_ref"
+                              ]
+                            },
+                            "action": {
+                              "delete": "restrict",
+                              "update": "restrict"
+                            }
                           },
                           "toDownlineCustomerAsParent": {
-                            "own": {"aliases": ["parent_ref"]},
-                            "reference": {
-                              "entity": {"completeAlias": "prxgt_dwnl_customer"},
-                              "aliases": ["customer_ref"]
+                            "own": {
+                              "aliases": [
+                                "parent_ref"
+                              ]
                             },
-                            "action": {"delete": "restrict", "update": "restrict"}
+                            "reference": {
+                              "entity": {
+                                "completeAlias": "prxgt_dwnl_customer"
+                              },
+                              "aliases": [
+                                "customer_ref"
+                              ]
+                            },
+                            "action": {
+                              "delete": "restrict",
+                              "update": "restrict"
+                            }
                           },
                           "toRank": {
-                            "own": {"aliases": ["rank_id"]},
-                            "reference": {
-                              "entity": {"completeAlias": "prxgt_bon_base_rank"},
-                              "aliases": ["id"]
+                            "own": {
+                              "aliases": [
+                                "rank_id"
+                              ]
                             },
-                            "action": {"delete": "restrict", "update": "restrict"}
+                            "reference": {
+                              "entity": {
+                                "completeAlias": "prxgt_bon_base_rank"
+                              },
+                              "aliases": [
+                                "id"
+                              ]
+                            },
+                            "action": {
+                              "delete": "restrict",
+                              "update": "restrict"
+                            }
                           }
                         }
                       }
@@ -303,57 +485,111 @@
                                     "alias": "calc_ref",
                                     "comment": "Reference to the related calculation (type 'HYBRID_COMPRESS_FOR_PTC' is expected).",
                                     "nullable": false,
-                                    "type": {"integer": {"unsigned": true}}
+                                    "type": {
+                                      "integer": {
+                                        "unsigned": true
+                                      }
+                                    }
                                   },
                                   "CustomerFromRef": {
                                     "alias": "cust_from_ref",
                                     "comment": "Reference to the customer who send PV to the ancestor.",
                                     "nullable": false,
-                                    "type": {"integer": {"unsigned": true}}
+                                    "type": {
+                                      "integer": {
+                                        "unsigned": true
+                                      }
+                                    }
                                   },
                                   "CustomerToRef": {
                                     "alias": "cust_to_ref",
                                     "comment": "Reference to the customer who receive PV from the descendant.",
                                     "nullable": false,
-                                    "type": {"integer": {"unsigned": true}}
+                                    "type": {
+                                      "integer": {
+                                        "unsigned": true
+                                      }
+                                    }
                                   },
                                   "PersonalVolumes": {
                                     "alias": "pv",
                                     "comment": "PV value been transferred from descendant to the ancestor.",
                                     "nullable": false,
-                                    "type": {"numeric": {"precision": 12, "scale": 4}}
+                                    "type": {
+                                      "numeric": {
+                                        "precision": 12,
+                                        "scale": 4
+                                      }
+                                    }
                                   }
                                 },
                                 "index": {
                                   "primary": {
                                     "type": "primary",
-                                    "aliases": ["calc_ref", "cust_from_ref", "cust_to_ref"]
+                                    "aliases": [
+                                      "calc_ref",
+                                      "cust_from_ref",
+                                      "cust_to_ref"
+                                    ]
                                   }
                                 },
                                 "relation": {
                                   "toCalculation": {
-                                    "own": {"aliases": ["calc_ref"]},
-                                    "reference": {
-                                      "entity": {"completeAlias": "prxgt_bon_base_calc"},
-                                      "aliases": ["id"]
+                                    "own": {
+                                      "aliases": [
+                                        "calc_ref"
+                                      ]
                                     },
-                                    "action": {"delete": "restrict", "update": "restrict"}
+                                    "reference": {
+                                      "entity": {
+                                        "completeAlias": "prxgt_bon_base_calc"
+                                      },
+                                      "aliases": [
+                                        "id"
+                                      ]
+                                    },
+                                    "action": {
+                                      "delete": "restrict",
+                                      "update": "restrict"
+                                    }
                                   },
                                   "toDownlineCustomerAsFrom": {
-                                    "own": {"aliases": ["cust_from_ref"]},
-                                    "reference": {
-                                      "entity": {"completeAlias": "prxgt_dwnl_customer"},
-                                      "aliases": ["customer_ref"]
+                                    "own": {
+                                      "aliases": [
+                                        "cust_from_ref"
+                                      ]
                                     },
-                                    "action": {"delete": "restrict", "update": "restrict"}
+                                    "reference": {
+                                      "entity": {
+                                        "completeAlias": "prxgt_dwnl_customer"
+                                      },
+                                      "aliases": [
+                                        "customer_ref"
+                                      ]
+                                    },
+                                    "action": {
+                                      "delete": "restrict",
+                                      "update": "restrict"
+                                    }
                                   },
                                   "toDownlineCustomerAsTo": {
-                                    "own": {"aliases": ["cust_to_ref"]},
-                                    "reference": {
-                                      "entity": {"completeAlias": "prxgt_dwnl_customer"},
-                                      "aliases": ["customer_ref"]
+                                    "own": {
+                                      "aliases": [
+                                        "cust_to_ref"
+                                      ]
                                     },
-                                    "action": {"delete": "restrict", "update": "restrict"}
+                                    "reference": {
+                                      "entity": {
+                                        "completeAlias": "prxgt_dwnl_customer"
+                                      },
+                                      "aliases": [
+                                        "customer_ref"
+                                      ]
+                                    },
+                                    "action": {
+                                      "delete": "restrict",
+                                      "update": "restrict"
+                                    }
                                   }
                                 }
                               }
@@ -375,40 +611,75 @@
                             "alias": "rank_id",
                             "comment": "Reference to the rank.",
                             "nullable": false,
-                            "type": {"integer": {"unsigned": true}}
+                            "type": {
+                              "integer": {
+                                "unsigned": true
+                              }
+                            }
                           },
                           "SchemeCode": {
                             "alias": "scheme",
                             "comment": "Scheme code (DEFAULT or EU).",
                             "nullable": false,
-                            "type": {"text": {"length": 8}}
+                            "type": {
+                              "text": {
+                                "length": 8
+                              }
+                            }
                           },
                           "Generation": {
                             "alias": "generation",
                             "comment": "# of the generation in the compressed tree.",
                             "nullable": false,
                             "default": 0,
-                            "type": {"integer": {"unsigned": true}}
+                            "type": {
+                              "integer": {
+                                "unsigned": true
+                              }
+                            }
                           },
                           "Percent": {
                             "alias": "percent",
                             "comment": "Percent to apply to calculate override bonus.",
                             "nullable": false,
                             "default": 0,
-                            "type": {"numeric": {"precision": 12, "scale": 4}}
+                            "type": {
+                              "numeric": {
+                                "precision": 12,
+                                "scale": 4
+                              }
+                            }
                           }
                         },
                         "index": {
-                          "primary": {"type": "primary", "aliases": ["rank_id", "scheme", "generation"]}
+                          "primary": {
+                            "type": "primary",
+                            "aliases": [
+                              "rank_id",
+                              "scheme",
+                              "generation"
+                            ]
+                          }
                         },
                         "relation": {
                           "toRank": {
-                            "own": {"aliases": ["rank_id"]},
-                            "reference": {
-                              "entity": {"completeAlias": "prxgt_bon_base_rank"},
-                              "aliases": ["id"]
+                            "own": {
+                              "aliases": [
+                                "rank_id"
+                              ]
                             },
-                            "action": {"delete": "restrict", "update": "restrict"}
+                            "reference": {
+                              "entity": {
+                                "completeAlias": "prxgt_bon_base_rank"
+                              },
+                              "aliases": [
+                                "id"
+                              ]
+                            },
+                            "action": {
+                              "delete": "restrict",
+                              "update": "restrict"
+                            }
                           }
                         }
                       },
@@ -420,68 +691,204 @@
                             "alias": "rank_id",
                             "comment": "Reference to the rank.",
                             "nullable": false,
-                            "type": {"integer": {"unsigned": true}}
+                            "type": {
+                              "integer": {
+                                "unsigned": true
+                              }
+                            }
                           },
                           "Scheme": {
                             "alias": "scheme",
                             "comment": "Scheme code (DEFAULT or EU).",
                             "nullable": false,
-                            "type": {"text": {"length": 8}}
+                            "type": {
+                              "text": {
+                                "length": 8
+                              }
+                            }
                           },
                           "QualifyPv": {
                             "alias": "qualify_pv",
                             "comment": "PV volume to be a qualified customer.",
                             "nullable": false,
                             "default": 0,
-                            "type": {"numeric": {"precision": 12, "scale": 4}}
+                            "type": {
+                              "numeric": {
+                                "precision": 12,
+                                "scale": 4
+                              }
+                            }
                           },
                           "QualifyTv": {
                             "alias": "qualify_tv",
                             "comment": "TV volume to be a qualified customer.",
                             "nullable": false,
                             "default": 0,
-                            "type": {"numeric": {"precision": 12, "scale": 4}}
+                            "type": {
+                              "numeric": {
+                                "precision": 12,
+                                "scale": 4
+                              }
+                            }
                           },
                           "LegMin": {
                             "alias": "leg_min",
                             "comment": "Qualification volume for the smallest leg.",
                             "nullable": false,
                             "default": 0,
-                            "type": {"numeric": {"precision": 12, "scale": 4}}
+                            "type": {
+                              "numeric": {
+                                "precision": 12,
+                                "scale": 4
+                              }
+                            }
                           },
                           "LegMedium": {
                             "alias": "leg_medium",
                             "comment": "Qualification volume for the medium leg.",
                             "nullable": false,
                             "default": 0,
-                            "type": {"numeric": {"precision": 12, "scale": 4}}
+                            "type": {
+                              "numeric": {
+                                "precision": 12,
+                                "scale": 4
+                              }
+                            }
                           },
                           "LegMax": {
                             "alias": "leg_max",
                             "comment": "Qualification volume for the largest leg.",
                             "nullable": false,
                             "default": 0,
-                            "type": {"numeric": {"precision": 12, "scale": 4}}
+                            "type": {
+                              "numeric": {
+                                "precision": 12,
+                                "scale": 4
+                              }
+                            }
                           },
                           "Infinity": {
                             "alias": "infinity",
                             "comment": "Infinity Bonus percent.",
                             "nullable": false,
                             "default": 0,
-                            "type": {"numeric": {"precision": 12, "scale": 4}}
+                            "type": {
+                              "numeric": {
+                                "precision": 12,
+                                "scale": 4
+                              }
+                            }
                           }
                         },
                         "index": {
-                          "primary": {"type": "primary", "aliases": ["rank_id", "scheme"]}
+                          "primary": {
+                            "type": "primary",
+                            "aliases": [
+                              "rank_id",
+                              "scheme"
+                            ]
+                          }
                         },
                         "relation": {
                           "toRank": {
-                            "own": {"aliases": ["rank_id"]},
-                            "reference": {
-                              "entity": {"completeAlias": "prxgt_bon_base_rank"},
-                              "aliases": ["id"]
+                            "own": {
+                              "aliases": [
+                                "rank_id"
+                              ]
                             },
-                            "action": {"delete": "restrict", "update": "restrict"}
+                            "reference": {
+                              "entity": {
+                                "completeAlias": "prxgt_bon_base_rank"
+                              },
+                              "aliases": [
+                                "id"
+                              ]
+                            },
+                            "action": {
+                              "delete": "restrict",
+                              "update": "restrict"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "Downline": {
+                    "alias": "dwnl",
+                    "comment": "Downline trees (plain & compressed)",
+                    "entity": {
+                      "Calculation": {
+                        "alias": "calc",
+                        "comment": "Relation between downline tree and calculation.",
+                        "attribute": {
+                          "TreeRef": {
+                            "alias": "tree_ref",
+                            "comment": "Reference to downline tree.",
+                            "nullable": false,
+                            "type": {
+                              "integer": {
+                                "unsigned": true
+                              }
+                            }
+                          },
+                          "CalculationRef": {
+                            "alias": "calc_ref",
+                            "comment": "Reference to calculation.",
+                            "nullable": false,
+                            "type": {
+                              "integer": {
+                                "unsigned": true
+                              }
+                            }
+                          }
+                        },
+                        "index": {
+                          "primary": {
+                            "type": "primary",
+                            "aliases": [
+                              "tree_ref",
+                              "calc_ref"
+                            ]
+                          }
+                        },
+                        "relation": {
+                          "toTree": {
+                            "own": {
+                              "aliases": [
+                                "tree_ref"
+                              ]
+                            },
+                            "reference": {
+                              "entity": {
+                                "completeAlias": "prxgt_bon_hyb_dwnl"
+                              },
+                              "aliases": [
+                                "id"
+                              ]
+                            },
+                            "action": {
+                              "delete": "cascade",
+                              "update": "restrict"
+                            }
+                          },
+                          "toCalc": {
+                            "own": {
+                              "aliases": [
+                                "calc_ref"
+                              ]
+                            },
+                            "reference": {
+                              "entity": {
+                                "completeAlias": "prxgt_bon_base_calc"
+                              },
+                              "aliases": [
+                                "id"
+                              ]
+                            },
+                            "action": {
+                              "delete": "cascade",
+                              "update": "restrict"
+                            }
                           }
                         }
                       }
@@ -499,48 +906,99 @@
                             "alias": "calc_ref",
                             "comment": "Reference to the related calculation (type 'HYBRID_SIGN_UP_DEBIT' is expected).",
                             "nullable": false,
-                            "type": {"integer": {"unsigned": true}}
+                            "type": {
+                              "integer": {
+                                "unsigned": true
+                              }
+                            }
                           },
                           "CustomerRef": {
                             "alias": "cust_ref",
                             "comment": "Reference to the customer for whom debit was applied.",
                             "nullable": false,
-                            "type": {"integer": {"unsigned": true}}
+                            "type": {
+                              "integer": {
+                                "unsigned": true
+                              }
+                            }
                           },
                           "SaleRef": {
                             "alias": "sale_ref",
                             "comment": "Reference to the sale order for which bonus was applied.",
                             "nullable": false,
-                            "type": {"integer": {"unsigned": true}}
+                            "type": {
+                              "integer": {
+                                "unsigned": true
+                              }
+                            }
                           }
                         },
                         "index": {
-                          "primary": {"type": "primary", "aliases": ["calc_ref", "cust_ref"]}
+                          "primary": {
+                            "type": "primary",
+                            "aliases": [
+                              "calc_ref",
+                              "cust_ref"
+                            ]
+                          }
                         },
                         "relation": {
                           "toCalculation": {
-                            "own": {"aliases": ["calc_ref"]},
-                            "reference": {
-                              "entity": {"completeAlias": "prxgt_bon_base_calc"},
-                              "aliases": ["id"]
+                            "own": {
+                              "aliases": [
+                                "calc_ref"
+                              ]
                             },
-                            "action": {"delete": "cascade", "update": "restrict"}
+                            "reference": {
+                              "entity": {
+                                "completeAlias": "prxgt_bon_base_calc"
+                              },
+                              "aliases": [
+                                "id"
+                              ]
+                            },
+                            "action": {
+                              "delete": "cascade",
+                              "update": "restrict"
+                            }
                           },
                           "toCustomer": {
-                            "own": {"aliases": ["cust_ref"]},
-                            "reference": {
-                              "entity": {"completeAlias": "prxgt_dwnl_customer"},
-                              "aliases": ["customer_ref"]
+                            "own": {
+                              "aliases": [
+                                "cust_ref"
+                              ]
                             },
-                            "action": {"delete": "cascade", "update": "restrict"}
+                            "reference": {
+                              "entity": {
+                                "completeAlias": "prxgt_dwnl_customer"
+                              },
+                              "aliases": [
+                                "customer_ref"
+                              ]
+                            },
+                            "action": {
+                              "delete": "cascade",
+                              "update": "restrict"
+                            }
                           },
                           "toSaleOrder": {
-                            "own": {"aliases": ["sale_ref"]},
-                            "reference": {
-                              "entity": {"completeAlias": "sales_order"},
-                              "aliases": ["entity_id"]
+                            "own": {
+                              "aliases": [
+                                "sale_ref"
+                              ]
                             },
-                            "action": {"delete": "cascade", "update": "restrict"}
+                            "reference": {
+                              "entity": {
+                                "completeAlias": "sales_order"
+                              },
+                              "aliases": [
+                                "entity_id"
+                              ]
+                            },
+                            "action": {
+                              "delete": "cascade",
+                              "update": "restrict"
+                            }
                           }
                         }
                       }
@@ -562,37 +1020,64 @@
                                 "alias": "calc_ref",
                                 "comment": "Reference to the related calculation (type 'HYBRID_PV_WRITE_OFF' is expected).",
                                 "nullable": false,
-                                "type": {"integer": {"unsigned": true}}
+                                "type": {
+                                  "integer": {
+                                    "unsigned": true
+                                  }
+                                }
                               },
                               "CustomerRef": {
                                 "alias": "cust_ref",
                                 "comment": "Reference to the customer for whom values were calculated.",
                                 "nullable": false,
-                                "type": {"integer": {"unsigned": true}}
+                                "type": {
+                                  "integer": {
+                                    "unsigned": true
+                                  }
+                                }
                               },
                               "ParentRef": {
                                 "alias": "parent_ref",
                                 "comment": "Reference to the customer's parent.",
                                 "nullable": false,
-                                "type": {"integer": {"unsigned": true}}
+                                "type": {
+                                  "integer": {
+                                    "unsigned": true
+                                  }
+                                }
                               },
                               "PersonalVolumes": {
                                 "alias": "pv",
                                 "comment": "PV value for the customer.",
                                 "nullable": false,
-                                "type": {"numeric": {"precision": 12, "scale": 4}}
+                                "type": {
+                                  "numeric": {
+                                    "precision": 12,
+                                    "scale": 4
+                                  }
+                                }
                               },
                               "TeamVolumes": {
                                 "alias": "tv",
                                 "comment": "TV value for the customer.",
                                 "nullable": false,
-                                "type": {"numeric": {"precision": 12, "scale": 4}}
+                                "type": {
+                                  "numeric": {
+                                    "precision": 12,
+                                    "scale": 4
+                                  }
+                                }
                               },
                               "OrganizationalVolumes": {
                                 "alias": "ov",
                                 "comment": "OV value for the customer.",
                                 "nullable": false,
-                                "type": {"numeric": {"precision": 12, "scale": 4}}
+                                "type": {
+                                  "numeric": {
+                                    "precision": 12,
+                                    "scale": 4
+                                  }
+                                }
                               },
                               "RankCode": {
                                 "alias": "rank_code",
@@ -616,32 +1101,71 @@
                               }
                             },
                             "index": {
-                              "primary": {"type": "primary", "aliases": ["calc_ref", "cust_ref"]}
+                              "primary": {
+                                "type": "primary",
+                                "aliases": [
+                                  "calc_ref",
+                                  "cust_ref"
+                                ]
+                              }
                             },
                             "relation": {
                               "toCalculation": {
-                                "own": {"aliases": ["calc_ref"]},
-                                "reference": {
-                                  "entity": {"completeAlias": "prxgt_bon_base_calc"},
-                                  "aliases": ["id"]
+                                "own": {
+                                  "aliases": [
+                                    "calc_ref"
+                                  ]
                                 },
-                                "action": {"delete": "cascade", "update": "restrict"}
+                                "reference": {
+                                  "entity": {
+                                    "completeAlias": "prxgt_bon_base_calc"
+                                  },
+                                  "aliases": [
+                                    "id"
+                                  ]
+                                },
+                                "action": {
+                                  "delete": "cascade",
+                                  "update": "restrict"
+                                }
                               },
                               "toCustomer": {
-                                "own": {"aliases": ["cust_ref"]},
-                                "reference": {
-                                  "entity": {"completeAlias": "prxgt_dwnl_customer"},
-                                  "aliases": ["customer_ref"]
+                                "own": {
+                                  "aliases": [
+                                    "cust_ref"
+                                  ]
                                 },
-                                "action": {"delete": "no action", "update": "no action"}
+                                "reference": {
+                                  "entity": {
+                                    "completeAlias": "prxgt_dwnl_customer"
+                                  },
+                                  "aliases": [
+                                    "customer_ref"
+                                  ]
+                                },
+                                "action": {
+                                  "delete": "no action",
+                                  "update": "no action"
+                                }
                               },
                               "toParent": {
-                                "own": {"aliases": ["parent_ref"]},
-                                "reference": {
-                                  "entity": {"completeAlias": "prxgt_dwnl_customer"},
-                                  "aliases": ["customer_ref"]
+                                "own": {
+                                  "aliases": [
+                                    "parent_ref"
+                                  ]
                                 },
-                                "action": {"delete": "cascade", "update": "restrict"}
+                                "reference": {
+                                  "entity": {
+                                    "completeAlias": "prxgt_dwnl_customer"
+                                  },
+                                  "aliases": [
+                                    "customer_ref"
+                                  ]
+                                },
+                                "action": {
+                                  "delete": "cascade",
+                                  "update": "restrict"
+                                }
                               }
                             }
                           }
@@ -659,84 +1183,357 @@
                                     "alias": "calc_id",
                                     "comment": "Reference to the related calculation (type 'HYBRID_COMPRESS_FOR_PTC' is expected).",
                                     "nullable": false,
-                                    "type": {"integer": {"unsigned": true}}
+                                    "type": {
+                                      "integer": {
+                                        "unsigned": true
+                                      }
+                                    }
                                   },
                                   "CustomerId": {
                                     "alias": "customer_ref",
                                     "comment": "Reference to the customer itself.",
                                     "nullable": false,
-                                    "type": {"integer": {"unsigned": true}}
+                                    "type": {
+                                      "integer": {
+                                        "unsigned": true
+                                      }
+                                    }
                                   },
                                   "ParentId": {
                                     "alias": "parent_ref",
                                     "comment": "Reference to the customer's parent.",
                                     "nullable": false,
-                                    "type": {"integer": {"unsigned": true}}
+                                    "type": {
+                                      "integer": {
+                                        "unsigned": true
+                                      }
+                                    }
                                   },
                                   "Depth": {
                                     "alias": "depth",
                                     "comment": "Depth of the node in the tree.",
                                     "nullable": false,
                                     "default": 0,
-                                    "type": {"integer": {"unsigned": true}}
+                                    "type": {
+                                      "integer": {
+                                        "unsigned": true
+                                      }
+                                    }
                                   },
                                   "Path": {
                                     "alias": "path",
                                     "comment": "Path to the node - /1/2/3/.../",
                                     "nullable": false,
-                                    "type": {"text": {"length": 255}}
+                                    "type": {
+                                      "text": {
+                                        "length": 255
+                                      }
+                                    }
                                   },
                                   "PersonalVolumes": {
                                     "alias": "pv",
                                     "comment": "Compressed value of the PV for the qualified customer.",
                                     "nullable": false,
-                                    "type": {"numeric": {"precision": 12, "scale": 4}}
+                                    "type": {
+                                      "numeric": {
+                                        "precision": 12,
+                                        "scale": 4
+                                      }
+                                    }
                                   },
                                   "TeamVolumes": {
                                     "alias": "tv",
                                     "comment": "TV value for the qualified customer.",
                                     "nullable": false,
-                                    "type": {"numeric": {"precision": 12, "scale": 4}}
+                                    "type": {
+                                      "numeric": {
+                                        "precision": 12,
+                                        "scale": 4
+                                      }
+                                    }
                                   },
                                   "OrganizationalVolumes": {
                                     "alias": "ov",
                                     "comment": "OV value for the qualified customer.",
                                     "nullable": false,
-                                    "type": {"numeric": {"precision": 12, "scale": 4}}
+                                    "type": {
+                                      "numeric": {
+                                        "precision": 12,
+                                        "scale": 4
+                                      }
+                                    }
                                   }
                                 },
                                 "index": {
-                                  "primary": {"type": "primary", "aliases": ["calc_id", "customer_ref"]}
+                                  "primary": {
+                                    "type": "primary",
+                                    "aliases": [
+                                      "calc_id",
+                                      "customer_ref"
+                                    ]
+                                  }
                                 },
                                 "relation": {
                                   "toCalculation": {
-                                    "own": {"aliases": ["calc_id"]},
-                                    "reference": {
-                                      "entity": {"completeAlias": "prxgt_bon_base_calc"},
-                                      "aliases": ["id"]
+                                    "own": {
+                                      "aliases": [
+                                        "calc_id"
+                                      ]
                                     },
-                                    "action": {"delete": "restrict", "update": "restrict"}
+                                    "reference": {
+                                      "entity": {
+                                        "completeAlias": "prxgt_bon_base_calc"
+                                      },
+                                      "aliases": [
+                                        "id"
+                                      ]
+                                    },
+                                    "action": {
+                                      "delete": "restrict",
+                                      "update": "restrict"
+                                    }
                                   },
                                   "toDownlineCustomer": {
-                                    "own": {"aliases": ["customer_ref"]},
-                                    "reference": {
-                                      "entity": {"completeAlias": "prxgt_dwnl_customer"},
-                                      "aliases": ["customer_ref"]
+                                    "own": {
+                                      "aliases": [
+                                        "customer_ref"
+                                      ]
                                     },
-                                    "action": {"delete": "restrict", "update": "restrict"}
+                                    "reference": {
+                                      "entity": {
+                                        "completeAlias": "prxgt_dwnl_customer"
+                                      },
+                                      "aliases": [
+                                        "customer_ref"
+                                      ]
+                                    },
+                                    "action": {
+                                      "delete": "restrict",
+                                      "update": "restrict"
+                                    }
                                   },
                                   "toDownlineCustomerAsParent": {
-                                    "own": {"aliases": ["parent_ref"]},
-                                    "reference": {
-                                      "entity": {"completeAlias": "prxgt_dwnl_customer"},
-                                      "aliases": ["customer_ref"]
+                                    "own": {
+                                      "aliases": [
+                                        "parent_ref"
+                                      ]
                                     },
-                                    "action": {"delete": "restrict", "update": "restrict"}
+                                    "reference": {
+                                      "entity": {
+                                        "completeAlias": "prxgt_dwnl_customer"
+                                      },
+                                      "aliases": [
+                                        "customer_ref"
+                                      ]
+                                    },
+                                    "action": {
+                                      "delete": "restrict",
+                                      "update": "restrict"
+                                    }
                                   }
                                 }
                               }
                             }
                           }
+                        }
+                      }
+                    }
+                  }
+                },
+                "entity": {
+                  "Downline": {
+                    "alias": "dwnl",
+                    "comment": "Downline tree data (plain & compressed, retro & actual).",
+                    "attribute": {
+                      "CalculationRef": {
+                        "alias": "calc_ref",
+                        "comment": "Reference to the related calculation.",
+                        "nullable": false,
+                        "type": {
+                          "integer": {
+                            "unsigned": true
+                          }
+                        }
+                      },
+                      "CustomerRef": {
+                        "alias": "cust_ref",
+                        "comment": "Reference to the customer itself.",
+                        "nullable": false,
+                        "type": {
+                          "integer": {
+                            "unsigned": true
+                          }
+                        }
+                      },
+                      "ParentId": {
+                        "alias": "parent_ref",
+                        "comment": "Reference to the customer's parent.",
+                        "nullable": false,
+                        "type": {
+                          "integer": {
+                            "unsigned": true
+                          }
+                        }
+                      },
+                      "Depth": {
+                        "alias": "depth",
+                        "comment": "Depth of the node in the tree.",
+                        "nullable": false,
+                        "default": 0,
+                        "type": {
+                          "integer": {
+                            "unsigned": true
+                          }
+                        }
+                      },
+                      "Path": {
+                        "alias": "path",
+                        "comment": "Path to the node - :1:2:3:...:",
+                        "nullable": false,
+                        "type": {
+                          "text": {
+                            "length": 255
+                          }
+                        }
+                      },
+                      "PersonalVolumes": {
+                        "alias": "pv",
+                        "comment": "PV value for the customer (own or compressed).",
+                        "nullable": false,
+                        "type": {
+                          "numeric": {
+                            "precision": 12,
+                            "scale": 4
+                          }
+                        }
+                      },
+                      "TeamVolumes": {
+                        "alias": "tv",
+                        "comment": "TV value for the customer.",
+                        "nullable": false,
+                        "type": {
+                          "numeric": {
+                            "precision": 12,
+                            "scale": 4
+                          }
+                        }
+                      },
+                      "OrganizationalVolumes": {
+                        "alias": "ov",
+                        "comment": "OV value for the customer.",
+                        "nullable": false,
+                        "type": {
+                          "numeric": {
+                            "precision": 12,
+                            "scale": 4
+                          }
+                        }
+                      },
+                      "RankCode": {
+                        "alias": "rank_ref",
+                        "comment": "Reference to qualification rank ID.",
+                        "nullable": false,
+                        "type": {
+                          "text": {
+                            "length": 32
+                          }
+                        }
+                      },
+                      "UnqualifiedMonths": {
+                        "alias": "unq_months",
+                        "comment": "Number of the last sequentially unqualified months.",
+                        "nullable": false,
+                        "type": {
+                          "integer": {
+                            "unsigned": true
+                          }
+                        }
+                      }
+                    },
+                    "index": {
+                      "primary": {
+                        "type": "primary",
+                        "aliases": [
+                          "calc_ref"
+                        ]
+                      },
+                      "uniqueCustomer": {"type": "unique", "aliases": ["calc_ref", "cust_ref"]}
+                    },
+                    "relation": {
+                      "toCalculation": {
+                        "own": {
+                          "aliases": [
+                            "calc_ref"
+                          ]
+                        },
+                        "reference": {
+                          "entity": {
+                            "completeAlias": "prxgt_dwnl_customer"
+                          },
+                          "aliases": [
+                            "customer_ref"
+                          ]
+                        },
+                        "action": {
+                          "delete": "restrict",
+                          "update": "restrict"
+                        }
+                      },
+                      "toDownlineCustomer": {
+                        "own": {
+                          "aliases": [
+                            "customer_ref"
+                          ]
+                        },
+                        "reference": {
+                          "entity": {
+                            "completeAlias": "prxgt_dwnl_customer"
+                          },
+                          "aliases": [
+                            "customer_ref"
+                          ]
+                        },
+                        "action": {
+                          "delete": "restrict",
+                          "update": "restrict"
+                        }
+                      },
+                      "toDownlineCustomerAsParent": {
+                        "own": {
+                          "aliases": [
+                            "parent_ref"
+                          ]
+                        },
+                        "reference": {
+                          "entity": {
+                            "completeAlias": "prxgt_dwnl_customer"
+                          },
+                          "aliases": [
+                            "customer_ref"
+                          ]
+                        },
+                        "action": {
+                          "delete": "restrict",
+                          "update": "restrict"
+                        }
+                      },
+                      "toBonusRank": {
+                        "own": {
+                          "aliases": [
+                            "rank_ref"
+                          ]
+                        },
+                        "reference": {
+                          "entity": {
+                            "completeAlias": "prxgt_bon_base_rank"
+                          },
+                          "aliases": [
+                            "id"
+                          ]
+                        },
+                        "action": {
+                          "delete": "restrict",
+                          "update": "restrict"
                         }
                       }
                     }
