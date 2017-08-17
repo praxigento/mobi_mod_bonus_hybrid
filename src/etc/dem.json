@@ -1454,10 +1454,10 @@
                       "primary": {
                         "type": "primary",
                         "aliases": [
-                          "calc_ref"
+                          "calc_ref",
+                          "cust_ref"
                         ]
-                      },
-                      "uniqueCustomer": {"type": "unique", "aliases": ["calc_ref", "cust_ref"]}
+                      }
                     },
                     "relation": {
                       "toCalculation": {
