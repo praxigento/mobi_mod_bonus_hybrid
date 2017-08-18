@@ -5,25 +5,26 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Forecast;
 
+use Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder as QbldPeriodCalcLast;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Oi as EOi;
-use Praxigento\Downline\Data\Entity\Customer as ECustomer;
 
 /**
- * Get the last OI calculation and collect customers and its qualification ranks.
- *
- * @deprecated see \Praxigento\BonusHybrid\Service\Calc\Forecast\IPlain
+ * Get the last OI calculation, collect customers and its qualification ranks then populate downline tree
+ * with ranks.
  */
 class GetRanks
 {
-    const A_CUST_ID = 'custId';
-    const A_RANK_CODE = 'rank';
+    const CTX_IN_DATE_ON = 'dateOn';
+    const CTX_IO_TREE = 'dwnlTree';
 
     /** @var \Praxigento\BonusBase\Service\IPeriod */
     protected $callBonusPeriod;
     /** @var \Praxigento\BonusHybrid\Tool\IScheme */
     protected $hlpScheme;
+    /** @var \Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder */
+    protected $qbldPeriodCalcGetLast;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Compression\Oi */
     protected $repoCompressOi;
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
@@ -36,13 +37,16 @@ class GetRanks
         \Praxigento\BonusBase\Repo\Entity\Rank $repoRanks,
         \Praxigento\BonusHybrid\Repo\Entity\Compression\Oi $repoCompressOi,
         \Praxigento\Downline\Repo\Entity\Customer $repoDownline,
-        \Praxigento\BonusBase\Service\IPeriod $callBonusPeriod
-    ) {
+        \Praxigento\BonusBase\Service\IPeriod $callBonusPeriod,
+        \Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder $qbldPeriodCalcGetLast
+    )
+    {
         $this->hlpScheme = $hlpScheme;
         $this->repoRanks = $repoRanks;
         $this->repoCompressOi = $repoCompressOi;
         $this->repoDownline = $repoDownline;
         $this->callBonusPeriod = $callBonusPeriod;
+        $this->qbldPeriodCalcGetLast = $qbldPeriodCalcGetLast;
     }
 
     /**
@@ -50,29 +54,55 @@ class GetRanks
      */
     public function exec(\Flancer32\Lib\Data $ctx = null)
     {
-        $result = [];
-        /* get all ranks */
-        $ranksCodes = $this->getRanks();
-        /* get OI data for both schemas */
-        $def = $this->getOiData(Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_DEF, $ranksCodes);
-        $eu = $this->getOiData(Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_EU, $ranksCodes);
+        /* get working data from context */
+        $dateOn = $ctx->get(self::CTX_IN_DATE_ON);
+        /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] $dwnlTree */
+        $dwnlTree = $ctx->get(self::CTX_IO_TREE);
+
+
+        /**
+         * Perform processing
+         */
+
+        /* get OI data with ranks for both schemas */
+        $def = $this->getOiData(Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_DEF, $dateOn);
+        $eu = $this->getOiData(Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_EU, $dateOn);
         $ranks[Def::SCHEMA_DEFAULT] = $def;
         $ranks[Def::SCHEMA_EU] = $eu;
-        /* get downline data */
-        $customers = $this->repoDownline->get();
+
+        /* get downline data (with countries) to define bonus scheme for customer */
+        $columns = [
+            \Praxigento\Downline\Data\Entity\Customer::ATTR_CUSTOMER_ID,
+            \Praxigento\Downline\Data\Entity\Customer::ATTR_COUNTRY_CODE
+        ];
+        /** @var \Praxigento\Downline\Data\Entity\Customer[] $customers */
+        $customers = $this->repoDownline->get(null, null, null, null, $columns);
+
+        /**
+         * walk through the customers (w/o IDs in indexes) and map ranks from OI data to current downline
+         * tree (indexed by IDs)
+         */
+        $defRankId = $this->getDefaultRankId();
         /** @var \Praxigento\Downline\Data\Entity\Customer $one */
         foreach ($customers as $one) {
-            /* TODO: use as object not as array */
-            $customer = (array)$one->get();
-            $custId = $customer[ECustomer::ATTR_CUSTOMER_ID];
-            $scheme = $this->hlpScheme->getSchemeByCustomer($customer);
+            $custId = $one->getCustomerId();
+            $scheme = $this->hlpScheme->getSchemeByCustomer($one);
             if (isset($ranks[$scheme][$custId])) {
-                $code = $ranks[$scheme][$custId];
+                $rankId = $ranks[$scheme][$custId];
             } else {
-                $code = Def::RANK_DISTRIBUTOR;
+                $rankId = $defRankId;
             }
-            $result[$custId] = $code;
+            if (isset($dwnlTree[$custId])) $dwnlTree[$custId]->setRankRef($rankId);
         }
+    }
+
+    /**
+     * Get ID for rank with code DISTRIBUTOR.
+     * @return int
+     */
+    protected function getDefaultRankId()
+    {
+        $result = $this->repoRanks->getIdByCode(Def::RANK_DISTRIBUTOR);
         return $result;
     }
 
@@ -83,14 +113,21 @@ class GetRanks
      * @param array $ranks ranks codes map by id
      * @return array
      */
-    protected function getOiData($calcTypeCode, $ranks)
+    protected function getOiData($calcTypeCode, $dateOn)
     {
-        $req = new \Praxigento\BonusBase\Service\Period\Request\GetLatest();
-        $req->setCalcTypeCode($calcTypeCode);
-        $resp = $this->callBonusPeriod->getLatest($req);
-        /** @var \Praxigento\BonusBase\Data\Entity\Calculation $calcData */
-        $calcData = $resp->getCalcData();
-        $calcId = $calcData->getId();
+
+        /* TODO: split code on 2 parts */
+        $query = $this->qbldPeriodCalcGetLast->build();
+        $bind = [
+            QbldPeriodCalcLast::BND_CODE => $calcTypeCode,
+            QbldPeriodCalcLast::BND_DATE => $dateOn,
+            QbldPeriodCalcLast::BND_STATE => Cfg::CALC_STATE_COMPLETE
+        ];
+        $rowCalc = $query->getConnection()->fetchRow($query, $bind);
+        $calcId = $rowCalc[$this->qbldPeriodCalcGetLast::A_CALC_ID];
+
+        /* this is part II ofr splitting */
+        /* get compressed data from repository (DB) by calc ID */
         $where = EOi::ATTR_CALC_ID . '=' . (int)$calcId;
         $rows = $this->repoCompressOi->get($where);
         $result = [];
@@ -98,25 +135,7 @@ class GetRanks
         foreach ($rows as $row) {
             $rankId = $row->getRankId();
             $custId = $row->getCustomerId();
-            $rankCode = $ranks[$rankId];
-            $result[$custId] = $rankCode;
-        }
-        return $result;
-    }
-
-    /**
-     * Map ranks codes by ranks ids.
-     * @return array
-     */
-    protected function getRanks()
-    {
-        $result = [];
-        $rows = $this->repoRanks->get();
-        /** @var \Praxigento\BonusBase\Data\Entity\Rank $row */
-        foreach ($rows as $row) {
-            $id = $row->getId();
-            $code = $row->getCode();
-            $result[$id] = $code;
+            $result[$custId] = $rankId;
         }
         return $result;
     }

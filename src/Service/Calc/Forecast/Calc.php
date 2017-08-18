@@ -21,9 +21,9 @@ class Calc
     }
 
     const CTX_PLAIN_TREE = 'plainTree';
-    const KEY_TREE_ENTITY = \Praxigento\BonusHybrid\Repo\Data\Entity\Actual\Downline\Plain::ATTR_CUSTOMER_REF;
-    const KEY_TREE_DEPTH = \Praxigento\BonusHybrid\Repo\Data\Entity\Actual\Downline\Plain::ATTR_DEPTH;
-    const KEY_TREE_PARENT = \Praxigento\BonusHybrid\Repo\Data\Entity\Actual\Downline\Plain::ATTR_PARENT_REF;
+    const KEY_TREE_ENTITY = \Praxigento\BonusHybrid\Repo\Entity\Data\Downline::ATTR_CUST_REF;
+    const KEY_TREE_DEPTH = \Praxigento\BonusHybrid\Repo\Entity\Data\Downline::ATTR_DEPTH;
+    const KEY_TREE_PARENT = \Praxigento\BonusHybrid\Repo\Entity\Data\Downline::ATTR_PARENT_REF;
 
     public function __construct()
     {
@@ -35,7 +35,6 @@ class Calc
      */
     public function exec(\Flancer32\Lib\Data $ctx = null)
     {
-        $result = [];
         /** @var \Praxigento\BonusHybrid\Repo\Data\Entity\Actual\Downline\Plain[] $plainTree */
         $plainTree = $ctx->get(self::CTX_PLAIN_TREE);
         /* prepare working data: tree maps, etc.*/
@@ -62,6 +61,5 @@ class Calc
                 $plainItem->setOv($ov);
             }
         }
-        return $result;
     }
 }

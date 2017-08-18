@@ -5,63 +5,51 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Forecast;
 
-use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\Downline\Repo\Query\Snap\OnDate\Builder as QBSnapOnDate;
-use Praxigento\Downline\Repo\Query\Snap\OnDate\ForDcp\Builder as QBForDcp;
 
 /**
- * Collect data and compose array of \Praxigento\BonusHybrid\Repo\Data\Entity\Actual\Downline\Plain entities to populate
- * with additional values and to save in the end.
- *
- * @deprecated see \Praxigento\BonusHybrid\Service\Calc\Forecast\IPlain
+ * Processor to collect downline data and compose array of entities
+ * (\Praxigento\BonusHybrid\Repo\Entity\Data\Downline) to populate it with additional values and to it save in the end.
  */
 class GetDownline
 {
-    const CTX_DATE_ON = 'dateOn';
+    const CTX_IN_DATE_ON = 'dateOn';
+    const CTX_OUT_DWNL = 'downline';
 
-    /** @var \Praxigento\Downline\Repo\Query\Snap\OnDate\ForDcp\Builder */
-    protected $qbldDcpSnap;
     /** @var \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder */
-    protected $qbuildSnapOnDate;
+    protected $qbldSnapOnDate;
 
     public function __construct(
-        \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder $qbuildSnapOnDate,
-        \Praxigento\Downline\Repo\Query\Snap\OnDate\ForDcp\Builder $qbldDcpSnap
+        \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder $qbldSnapOnDate
     ) {
-        $this->qbuildSnapOnDate = $qbuildSnapOnDate;
-        $this->qbldDcpSnap = $qbldDcpSnap;
+        $this->qbldSnapOnDate = $qbldSnapOnDate;
     }
 
     /**
      * @param \Flancer32\Lib\Data $ctx
-     * @return \Praxigento\BonusHybrid\Repo\Data\Entity\Actual\Downline\Plain[]
      */
     public function exec(\Flancer32\Lib\Data $ctx)
     {
-        $dateOn = $ctx->get(self::CTX_DATE_ON);
+        /* get input data from context */
+        $dateOn = $ctx->get(self::CTX_IN_DATE_ON);
 
-        $query = $this->qbldDcpSnap->getSelectQuery($this->qbuildSnapOnDate);
+        /* collect downline data to given date */
+        $query = $this->qbldSnapOnDate->getSelectQuery();
         $conn = $query->getConnection();
         $bind = [QBSnapOnDate::BIND_ON_DATE => $dateOn];
         $rows = $conn->fetchAll($query, $bind);
+
+        /* convert downline data to the entity (prxgt_bon_hyb_dwnl) */
         $result = [];
         foreach ($rows as $row) {
             /* extract repo data */
             $customerId = $row[QBSnapOnDate::A_CUST_ID];
-            $mlmId = $row[QBForDcp::A_MLM_ID];
-            $email = $row[QBForDcp::A_EMAIL];
-            $nameFirst = trim($row[QBForDcp::A_NAME_FIRST]);
-            $nameLast = trim($row[QBForDcp::A_NAME_LAST]);
             $parentId = $row[QBSnapOnDate::A_PARENT_ID];
             $depth = $row[QBSnapOnDate::A_DEPTH];
             $path = $row[QBSnapOnDate::A_PATH];
             /* prepare result data object */
-            $item = new \Praxigento\BonusHybrid\Repo\Data\Entity\Actual\Downline\Plain();
+            $item = new \Praxigento\BonusHybrid\Repo\Entity\Data\Downline();
             $item->setCustomerRef($customerId);
-            $item->setMlmId($mlmId);
-            $item->setEmail($email);
-            $item->setNameFirst($nameFirst);
-            $item->setNameLast($nameLast);
             $item->setParentRef($parentId);
             $item->setDepth($depth);
             $item->setPath($path);
@@ -69,11 +57,13 @@ class GetDownline
             $item->setPv(0);
             $item->setTv(0);
             $item->setOv(0);
-            /* init ranks */
-            $item->setRankCode(Def::RANK_DISTRIBUTOR);
+            /* init ranks and unqualified months count */
+            $item->setRankRef(null);
             $item->setUnqMonths(0);
             $result[$customerId] = $item;
         }
-        return $result;
+
+        /* put results into context and return it (classic way) */
+        $ctx->set(self::CTX_OUT_DWNL, $result);
     }
 }

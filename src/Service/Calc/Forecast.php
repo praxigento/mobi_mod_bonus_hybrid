@@ -59,7 +59,7 @@ class Forecast
 
         /* get customers */
         $ctx = new \Flancer32\Lib\Data();
-        $ctx->set(SubGetDownline::CTX_DATE_ON, $dateTo);
+        $ctx->set(SubGetDownline::CTX_IN_DATE_ON, $dateTo);
         /** @var \Praxigento\BonusHybrid\Repo\Data\Entity\Actual\Downline\Plain[] $plainItems */
         $plainItems = $this->subGetDownline->exec($ctx);
 

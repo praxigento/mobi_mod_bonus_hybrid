@@ -1468,10 +1468,10 @@
                         },
                         "reference": {
                           "entity": {
-                            "completeAlias": "prxgt_dwnl_customer"
+                            "completeAlias": "prxgt_bon_base_calc"
                           },
                           "aliases": [
-                            "customer_ref"
+                            "id"
                           ]
                         },
                         "action": {
