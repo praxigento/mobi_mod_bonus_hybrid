@@ -1482,7 +1482,7 @@
                       "toDownlineCustomer": {
                         "own": {
                           "aliases": [
-                            "customer_ref"
+                            "cust_ref"
                           ]
                         },
                         "reference": {
