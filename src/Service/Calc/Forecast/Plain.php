@@ -7,6 +7,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Forecast;
 
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\Calc as SubCalc;
+use Praxigento\BonusHybrid\Service\Calc\Forecast\CleanCalcData as ProcCleanCalcData;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\GetDownline as ProcGetDownline;
 
 class Plain
@@ -15,6 +16,12 @@ class Plain
 {
     /** @var \Praxigento\Accounting\Service\Balance\Get\ITurnover */
     protected $callBalanceGetTurnover;
+    /** @var \Praxigento\BonusBase\Service\IPeriod */
+    protected $callPeriod;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\CleanCalcData */
+    protected $procCleanCalcData;
+    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
+    protected $repoCalc;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     protected $repoDwnl;
     /** @var  \Praxigento\BonusHybrid\Service\Calc\Forecast\Calc */
@@ -25,15 +32,15 @@ class Plain
     protected $subGetRanks;
     /** @var  \Praxigento\Core\Tool\IPeriod */
     protected $toolPeriod;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\CleanCalcData */
-    protected $procCleanCalcData;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnl,
+        \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\Accounting\Service\Balance\Get\ITurnover $callBalanceGetTurnover,
+        \Praxigento\BonusBase\Service\IPeriod $callPeriod,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Calc $subCalc,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\GetDownline $subGetDownline,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\GetRanks $subGetRanks,
@@ -43,13 +50,14 @@ class Plain
         parent::__construct($logger, $manObj);
         $this->toolPeriod = $toolPeriod;
         $this->repoDwnl = $repoDwnl;
+        $this->repoCalc = $repoCalc;
         $this->callBalanceGetTurnover = $callBalanceGetTurnover;
+        $this->callPeriod = $callPeriod;
         $this->subCalc = $subCalc;
         $this->subGetDownline = $subGetDownline;
         $this->subGetRanks = $subGetRanks;
         $this->procCleanCalcData = $procCleanCalcData;
     }
-
 
     public function exec(\Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Request $req)
     {
@@ -58,13 +66,18 @@ class Plain
 
         /* clean up existing forecast calculation data */
         $ctxClean = new \Flancer32\Lib\Data();
+        $ctxClean->set(ProcCleanCalcData::CTX_IN_CALC_TYPE_CODE, Cfg::CODE_TYPE_CALC_FORECAST_PLAIN);
         $this->procCleanCalcData->exec($ctxClean);
 
         /* get calculation period (begin, end dates) */
         list($dateFrom, $dateTo) = $this->getPeriod($req);
 
+        /* register new calculation for period */
+        $calcId = $this->registerNewCalc($dateFrom, $dateTo);
+
         /* get customers downline for $dateTo */
         $ctx = new \Flancer32\Lib\Data();
+        $ctx->set(ProcGetDownline::CTX_IN_CALC_ID, $calcId);
         $ctx->set(ProcGetDownline::CTX_IN_DATE_ON, $dateTo);
         $this->subGetDownline->exec($ctx);
         /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] $dwnlTree */
@@ -101,11 +114,14 @@ class Plain
         $this->subCalc->exec($ctx);
 
         /* replace actual data in repository */
-        $this->cleanCachedData();
         $this->saveDownline($dwnlTree);
+
+        /* finalize calculation */
+        $this->repoCalc->markComplete($calcId);
 
         $this->logMemoryUsage();
         $this->logger->info("'Forecast Plain' calculation is completed.");
+        $result->markSucceed();
         return $result;
     }
 
@@ -144,6 +160,26 @@ class Plain
         $reqTurnover->dateTo = $dateTo;
         $respTurnover = $this->callBalanceGetTurnover->exec($reqTurnover);
         $result = $respTurnover->entries;
+        return $result;
+    }
+
+    /**
+     * Register new period and related calculation.
+     *
+     * @param string $from begin of the period (YYYYMMDD)
+     * @param string $to end of the period (YYYYMMDD)
+     * @return int registered calculation ID
+     *
+     */
+    protected function registerNewCalc($from, $to)
+    {
+        $req = new \Praxigento\BonusBase\Service\Period\Request\RegisterPeriod();
+        $req->setDateStampBegin($from);
+        $req->setDateStampEnd($to);
+        $req->setCalcTypeCode(Cfg::CODE_TYPE_CALC_FORECAST_PLAIN);
+        $resp = $this->callPeriod->registerPeriod($req);
+        $calcData = $resp->getCalcData();
+        $result = $calcData->getId();
         return $result;
     }
 

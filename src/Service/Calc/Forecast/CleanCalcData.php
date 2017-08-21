@@ -47,7 +47,7 @@ class CleanCalcData
 
         /* get calculation type ID by code */
         $calcTypeId = $this->repoTypeCalc->getIdByCode($calcTypeCode);
-        /* get periods by calculation type */
+        /* get all periods by calculation type */
         $where = EPeriod::ATTR_CALC_TYPE_ID . '=' . (int)$calcTypeId;
         $periods = $this->repoPeriod->get($where);
         if (is_array($periods)) {

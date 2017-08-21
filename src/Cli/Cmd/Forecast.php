@@ -41,11 +41,10 @@ class Forecast
         $this->conn->beginTransaction();
         try {
             $req = new \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Request();
-            $req->setPeriod('201706');
             $resp = $this->callCalcPlain->exec($req);
 
-//            $this->conn->commit();
-            $this->conn->rollBack();
+            $this->conn->commit();
+//            $this->conn->rollBack();
         } catch (\Throwable $e) {
             $msg = $e->getMessage();
             $trace = $e->getTraceAsString();

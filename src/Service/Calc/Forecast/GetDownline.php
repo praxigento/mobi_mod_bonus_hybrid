@@ -13,6 +13,7 @@ use Praxigento\Downline\Repo\Query\Snap\OnDate\Builder as QBSnapOnDate;
  */
 class GetDownline
 {
+    const CTX_IN_CALC_ID = 'calcId';
     const CTX_IN_DATE_ON = 'dateOn';
     const CTX_OUT_DWNL = 'downline';
 
@@ -31,6 +32,7 @@ class GetDownline
     public function exec(\Flancer32\Lib\Data $ctx)
     {
         /* get input data from context */
+        $calcId = $ctx->get(self::CTX_IN_CALC_ID);
         $dateOn = $ctx->get(self::CTX_IN_DATE_ON);
 
         /* collect downline data to given date */
@@ -49,6 +51,7 @@ class GetDownline
             $path = $row[QBSnapOnDate::A_PATH];
             /* prepare result data object */
             $item = new \Praxigento\BonusHybrid\Repo\Entity\Data\Downline();
+            $item->setCalculationRef($calcId);
             $item->setCustomerRef($customerId);
             $item->setParentRef($parentId);
             $item->setDepth($depth);
