@@ -8,14 +8,15 @@ namespace Praxigento\BonusHybrid\Api\Dcp\Report;
 use Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder as QBLastCalc;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Entity\Actual\Downline\Plain as EActPlain;
+use Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Retro\Plain\Builder as QBRetroPlain;
 
 class Downline
     extends \Praxigento\BonusHybrid\Api\Stats\Base
     implements \Praxigento\BonusHybrid\Api\Dcp\Report\DownlineInterface
 {
-    const BIND_CALC_REF = \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Retro\Plain\Builder::BIND_CALC_ID;
+    const BIND_CALC_REF = QBRetroPlain::BIND_CALC_ID;
     const BIND_CUST_ID = 'customerId';
-    const BIND_ON_DATE = \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Retro\Plain\Builder::BIND_DATE;
+    const BIND_ON_DATE = QBRetroPlain::BIND_DATE;
     /**
      * Types of the queries.
      */
@@ -174,7 +175,15 @@ class Downline
                 $bind->set(self::BIND_CALC_REF, $calcRef);
                 break;
             case  self::QUERY_TYPE_RETRO_PLAIN:
-                /* TODO */
+                /* TODO: should we move WHERE clause into the Query Builder? */
+                $where = '(' . QBRetroPlain::AS_DWNL_SNAP . '.' . QBRetroPlain::A_PATH;
+                $where .= ' LIKE :' . self::BIND_PATH . ')';
+                $where .= " OR ";
+                $where .= '(' . QBRetroPlain::AS_DWNL_SNAP . '.' . QBRetroPlain::A_CUST_REF;
+                $where .= '=:' . self::BIND_CUST_ID . ')';
+                $query->where($where);
+                $bind->set(self::BIND_PATH, $path);
+                $bind->set(self::BIND_CUST_ID, $rootCustId);
                 $bind->set(self::BIND_ON_DATE, $onDate);
                 $bind->set(self::BIND_CALC_REF, $calcRef);
                 break;
