@@ -56,10 +56,10 @@ class Builder
         $tbl = $this->resource->getTableName(EPh1::ENTITY_NAME);
         $as = $asPhase1;
         $cols = [
-            self::A_CUST_REF => EPh1::ATTR_CUSTOMER_ID,
+            self::A_CUST_REF => EPh1::ATTR_CUSTOMER_REF,
             self::A_DEPTH => EPh1::ATTR_DEPTH,
             self::A_OV => EPh1::ATTR_OV,
-            self::A_PARENT_REF => EPh1::ATTR_PARENT_ID,
+            self::A_PARENT_REF => EPh1::ATTR_PARENT_REF,
             self::A_PATH => EPh1::ATTR_PATH,
             self::A_PV => EPh1::ATTR_PV,
             self::A_RANK_CODE => new Exp('"TODO"'),
@@ -75,7 +75,7 @@ class Builder
             self::A_COUNTRY => EDwnl::ATTR_COUNTRY_CODE,
             self::A_MLM_ID => EDwnl::ATTR_HUMAN_REF,
         ];
-        $cond = $as . '.' . EDwnl::ATTR_CUSTOMER_ID . '=' . $asPhase1 . '.' . EPh1::ATTR_CUSTOMER_ID;
+        $cond = $as . '.' . EDwnl::ATTR_CUSTOMER_ID . '=' . $asPhase1 . '.' . EPh1::ATTR_CUSTOMER_REF;
         $result->joinLeft([$as => $tbl], $cond, $cols);
 
         /* LEFT JOIN customer_entity */

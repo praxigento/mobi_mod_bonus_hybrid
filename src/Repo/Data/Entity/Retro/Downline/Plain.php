@@ -14,7 +14,10 @@ class Plain
     extends \Praxigento\Core\Data\Entity\Base
 {
     const ATTR_CALC_REF = 'calc_ref';
-    const ATTR_CUSTOMER_REF = 'cust_ref';
+    /*
+    * @var string ATTR_CUSTOMER_REF
+    */
+    const ATTR_CUST_REF = 'cust_ref';
     const ATTR_OV = 'ov';
     const ATTR_PARENT_REF = 'parent_ref';
     const ATTR_PV = 'pv';
@@ -45,7 +48,7 @@ class Plain
      */
     public function getCustomerRef()
     {
-        $result = parent::get(self::ATTR_CUSTOMER_REF);
+        $result = parent::get(self::ATTR_CUST_REF);
         return $result;
     }
 
@@ -54,7 +57,7 @@ class Plain
      */
     public function setCustomerRef($data)
     {
-        parent::set(self::ATTR_CUSTOMER_REF, $data);
+        parent::set(self::ATTR_CUST_REF, $data);
     }
 
     /**
@@ -161,7 +164,7 @@ class Plain
 
     public static function getPrimaryKeyAttrs()
     {
-        $result = [self::ATTR_CALC_REF, self::ATTR_CUSTOMER_REF];
+        $result = [self::ATTR_CALC_REF, self::ATTR_CUST_REF];
         return $result;
     }
 }

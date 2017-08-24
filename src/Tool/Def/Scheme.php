@@ -207,7 +207,7 @@ class Scheme
             foreach ($rs as $one) {
                 /* TODO: use as object not as array */
                 $one = (array)$one->get();
-                $ids[] = $one[\Praxigento\BonusHybrid\Repo\Data\Entity\Registry\SignupDebit::ATTR_CUSTOMER_REF];
+                $ids[] = $one[\Praxigento\BonusHybrid\Repo\Data\Entity\Registry\SignupDebit::ATTR_CUST_REF];
             }
             $this->cachedSignupDebitCustIds = $ids;
         }

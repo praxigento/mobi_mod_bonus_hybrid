@@ -12,10 +12,16 @@ class Phase1
     extends \Praxigento\Core\Data\Entity\Base
 {
     const ATTR_CALC_ID = 'calc_id';
-    const ATTR_CUSTOMER_ID = 'customer_ref';
+    /*
+    * @var string ATTR_CUSTOMER_ID
+    */
+    const ATTR_CUSTOMER_REF = 'customer_ref';
     const ATTR_DEPTH = 'depth';
     const ATTR_OV = 'ov';
-    const ATTR_PARENT_ID = 'parent_ref';
+    /*
+    * @var string ATTR_PARENT_ID
+    */
+    const ATTR_PARENT_REF = 'parent_ref';
     const ATTR_PATH = 'path';
     const ATTR_PV = 'pv';
     const ATTR_TV = 'tv';
@@ -43,7 +49,7 @@ class Phase1
      */
     public function getCustomerId()
     {
-        $result = parent::get(self::ATTR_CUSTOMER_ID);
+        $result = parent::get(self::ATTR_CUSTOMER_REF);
         return $result;
     }
 
@@ -52,7 +58,7 @@ class Phase1
      */
     public function setCustomerId($data)
     {
-        parent::set(self::ATTR_CUSTOMER_ID, $data);
+        parent::set(self::ATTR_CUSTOMER_REF, $data);
     }
 
     /**
@@ -94,7 +100,7 @@ class Phase1
      */
     public function getParentId()
     {
-        $result = parent::get(self::ATTR_PARENT_ID);
+        $result = parent::get(self::ATTR_PARENT_REF);
         return $result;
     }
 
@@ -103,7 +109,7 @@ class Phase1
      */
     public function setParentId($data)
     {
-        parent::set(self::ATTR_PARENT_ID, $data);
+        parent::set(self::ATTR_PARENT_REF, $data);
     }
 
     /**
@@ -159,7 +165,7 @@ class Phase1
 
     public static function getPrimaryKeyAttrs()
     {
-        $result = [self::ATTR_CALC_ID, self::ATTR_CUSTOMER_ID];
+        $result = [self::ATTR_CALC_ID, self::ATTR_CUSTOMER_REF];
         return $result;
     }
 }

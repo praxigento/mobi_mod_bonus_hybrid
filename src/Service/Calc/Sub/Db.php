@@ -169,7 +169,7 @@ class Db
         $query = $this->_conn->select();
         $query->from([$asCompress => $tblCompress]);
         // LEFT JOIN prxgt_dwnl_customer cust ON cmp.customer_id = cust.customer_id
-        $on = "$asCompress." . OiCompress::ATTR_CUSTOMER_ID . "=$asCust." . Customer::ATTR_CUSTOMER_ID;
+        $on = "$asCompress." . OiCompress::ATTR_CUSTOMER_REF . "=$asCust." . Customer::ATTR_CUSTOMER_ID;
         $cols = [
             Customer::ATTR_HUMAN_REF,
             Customer::ATTR_COUNTRY_CODE
@@ -208,7 +208,7 @@ class Db
         $query = $this->_conn->select();
         $query->from([$asCompress => $tblCompress]);
         // LEFT JOIN prxgt_dwnl_customer cust ON cmp.customer_id = cust.customer_id
-        $on = "$asCompress." . CmprsPhase1::ATTR_CUSTOMER_ID . "=$asCust." . Customer::ATTR_CUSTOMER_ID;
+        $on = "$asCompress." . CmprsPhase1::ATTR_CUSTOMER_REF . "=$asCust." . Customer::ATTR_CUSTOMER_ID;
         $cols = [
             Customer::ATTR_HUMAN_REF,
             Customer::ATTR_COUNTRY_CODE
@@ -490,7 +490,7 @@ class Db
     public function saveCompressedPtc($data, $calcId)
     {
         foreach ($data as $one) {
-            if (!isset($one[CmprsPhase1::ATTR_CUSTOMER_ID]) || !isset($one[CmprsPhase1::ATTR_PARENT_ID])) {
+            if (!isset($one[CmprsPhase1::ATTR_CUSTOMER_REF]) || !isset($one[CmprsPhase1::ATTR_PARENT_REF])) {
                 $this->_logger->warning("There is no IDs in record: " . var_export($one, true));
                 continue;
             }
@@ -712,7 +712,7 @@ class Db
     {
         foreach ($updates as $custId => $bind) {
             $whereByCalcId = OiCompress::ATTR_CALC_ID . '=' . (int)$calcId;
-            $whereByCustId = OiCompress::ATTR_CUSTOMER_ID . '=' . (int)$custId;
+            $whereByCustId = OiCompress::ATTR_CUSTOMER_REF . '=' . (int)$custId;
             $where = "$whereByCalcId AND $whereByCustId";
             $this->_repoBasic->updateEntity(OiCompress::ENTITY_NAME, $bind, $where);
         }
@@ -728,7 +728,7 @@ class Db
     {
         foreach ($data as $custId => $ov) {
             $whereByCalcId = CmprsPhase1::ATTR_CALC_ID . '=' . $calcId;
-            $whereByCustId = CmprsPhase1::ATTR_CUSTOMER_ID . '=' . $custId;
+            $whereByCustId = CmprsPhase1::ATTR_CUSTOMER_REF . '=' . $custId;
             $this->_repoBasic->updateEntity(
                 CmprsPhase1::ENTITY_NAME,
                 [CmprsPhase1::ATTR_OV => $ov],
@@ -747,7 +747,7 @@ class Db
     {
         foreach ($data as $custId => $tv) {
             $whereByCalcId = CmprsPhase1::ATTR_CALC_ID . '=' . $calcId;
-            $whereByCustId = CmprsPhase1::ATTR_CUSTOMER_ID . '=' . $custId;
+            $whereByCustId = CmprsPhase1::ATTR_CUSTOMER_REF . '=' . $custId;
             $this->_repoBasic->updateEntity(
                 CmprsPhase1::ENTITY_NAME,
                 [CmprsPhase1::ATTR_TV => $tv],

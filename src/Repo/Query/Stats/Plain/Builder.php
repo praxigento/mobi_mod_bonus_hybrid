@@ -55,7 +55,7 @@ class Builder
             self::A_TV => RegPto::ATTR_TV,
             self::A_OV => RegPto::ATTR_OV
         ];
-        $onCustId = $asReg . '.' . RegPto::ATTR_CUSTOMER_REF . '=' . $asSnap . '.' . Snap::ATTR_CUSTOMER_ID;
+        $onCustId = $asReg . '.' . RegPto::ATTR_CUST_REF . '=' . $asSnap . '.' . Snap::ATTR_CUSTOMER_ID;
         $onCalcRef = $asReg . '.' . RegPto::ATTR_CALC_REF . '=:' . self::BIND_CALC_REF;
         $on = "($onCustId) AND ($onCalcRef)";
         $result->joinLeft([$asReg => $tbl], $on, $cols);

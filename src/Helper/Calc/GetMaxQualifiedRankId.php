@@ -32,7 +32,7 @@ class GetMaxQualifiedRankId
 
         /* perform action */
         $result = null;
-        $custId = $compressOiEntry[OiCompress::ATTR_CUSTOMER_ID];
+        $custId = $compressOiEntry[OiCompress::ATTR_CUSTOMER_REF];
         $forcedRankId = $this->toolScheme->getForcedQualificationRank($custId, $scheme);
         if (is_null($forcedRankId)) {
             /* qualification params: PV & TV */

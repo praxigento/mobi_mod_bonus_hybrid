@@ -83,10 +83,10 @@ class Calc
     public function bonusCourtesy($compressPtc, $percentCourtesy, $levelsPersonal, $levelsTeam)
     {
         $result = [];
-        $mapDataById = $this->mapById($compressPtc, PtcCompress::ATTR_CUSTOMER_ID);
-        $mapTeams = $this->mapByTeams($compressPtc, PtcCompress::ATTR_CUSTOMER_ID, PtcCompress::ATTR_PARENT_ID);
+        $mapDataById = $this->mapById($compressPtc, PtcCompress::ATTR_CUSTOMER_REF);
+        $mapTeams = $this->mapByTeams($compressPtc, PtcCompress::ATTR_CUSTOMER_REF, PtcCompress::ATTR_PARENT_REF);
         foreach ($compressPtc as $item) {
-            $custId = $item[PtcCompress::ATTR_CUSTOMER_ID];
+            $custId = $item[PtcCompress::ATTR_CUSTOMER_REF];
             $custScheme = $this->toolScheme->getSchemeByCustomer($item);
             if (
                 isset($mapTeams[$custId]) &&
@@ -125,11 +125,11 @@ class Calc
     public function bonusInfinity($compressOi, $scheme, $cfgParams)
     {
         $result = []; // [$custId=>[A_PV=>..., A_ENTRIES=>[A_VALUE=>..., A_OTHER_ID=>...]], ...]
-        $mapById = $this->mapById($compressOi, OiCompress::ATTR_CUSTOMER_ID);
+        $mapById = $this->mapById($compressOi, OiCompress::ATTR_CUSTOMER_REF);
         $mapTreeExp = $this->getExpandedTreeSnap(
             $compressOi,
-            OiCompress::ATTR_CUSTOMER_ID,
-            OiCompress::ATTR_PARENT_ID
+            OiCompress::ATTR_CUSTOMER_REF,
+            OiCompress::ATTR_PARENT_REF
         );
         $ibPercentMax = $this->getMaxPercentForInfinityBonus($cfgParams);
         /* get MLM ID map for logging */
@@ -206,13 +206,13 @@ class Calc
     public function bonusOverride($compressOi, $scheme, $cfgOverride)
     {
         $result = [];
-        $mapById = $this->mapById($compressOi, OiCompress::ATTR_CUSTOMER_ID);
-        $mapTeams = $this->mapByTeams($compressOi, OiCompress::ATTR_CUSTOMER_ID, OiCompress::ATTR_PARENT_ID);
+        $mapById = $this->mapById($compressOi, OiCompress::ATTR_CUSTOMER_REF);
+        $mapTeams = $this->mapByTeams($compressOi, OiCompress::ATTR_CUSTOMER_REF, OiCompress::ATTR_PARENT_REF);
         /* populate compressed data with depth & path values */
         $mapTreeExp = $this->getExpandedTreeSnap(
             $compressOi,
-            OiCompress::ATTR_CUSTOMER_ID,
-            OiCompress::ATTR_PARENT_ID
+            OiCompress::ATTR_CUSTOMER_REF,
+            OiCompress::ATTR_PARENT_REF
         );
         $mapByDepthDesc = $this->mapByTreeDepthDesc($mapTreeExp, Snap::ATTR_CUSTOMER_ID, Snap::ATTR_DEPTH);
         /* scan all levels starting from the bottom and collect PV by generations */
@@ -221,7 +221,7 @@ class Calc
         $defRankId = $this->hlpRank->getIdByCode(Def::RANK_DISTRIBUTOR);
         /* scan all customers and calculate bonus values */
         foreach ($compressOi as $custData) {
-            $custId = $custData[OiCompress::ATTR_CUSTOMER_ID];
+            $custId = $custData[OiCompress::ATTR_CUSTOMER_REF];
             $custRef = $custData[Customer::ATTR_HUMAN_REF];
             $rankId = $custData[OiCompress::ATTR_RANK_ID];
             $custScheme = $this->toolScheme->getSchemeByCustomer($custData);
@@ -262,7 +262,7 @@ class Calc
     {
         $result = [];
         foreach ($compressPtc as $one) {
-            $custId = $one[PtcCompress::ATTR_CUSTOMER_ID];
+            $custId = $one[PtcCompress::ATTR_CUSTOMER_REF];
             $pvValue = $one[PtcCompress::ATTR_PV];
             $scheme = $this->toolScheme->getSchemeByCustomer($one);
             if ($scheme == Def::SCHEMA_DEFAULT) {
@@ -288,7 +288,7 @@ class Calc
     {
         $result = [];
         $mapFlatById = $this->mapById($treeSnap, Snap::ATTR_CUSTOMER_ID);
-        $mapCompressById = $this->mapById($compressPtc, PtcCompress::ATTR_CUSTOMER_ID);
+        $mapCompressById = $this->mapById($compressPtc, PtcCompress::ATTR_CUSTOMER_REF);
         foreach ($orders as $custId => $items) {
             foreach ($items as $orderId => $amount) {
                 $bonus = $amount * Def::REBATE_PERCENT;
@@ -342,8 +342,8 @@ class Calc
     public function bonusTeamDef($compressPtc, $levelsPersonal, $levelsTeam, $courtesyPct)
     {
         $result = [];
-        $mapDataById = $this->mapById($compressPtc, PtcCompress::ATTR_CUSTOMER_ID);
-        $mapTeams = $this->mapByTeams($compressPtc, PtcCompress::ATTR_CUSTOMER_ID, PtcCompress::ATTR_PARENT_ID);
+        $mapDataById = $this->mapById($compressPtc, PtcCompress::ATTR_CUSTOMER_REF);
+        $mapTeams = $this->mapByTeams($compressPtc, PtcCompress::ATTR_CUSTOMER_REF, PtcCompress::ATTR_PARENT_REF);
         $pctPbMax = $this->getMaxPercentForPersonalBonus($levelsPersonal);
         foreach ($mapDataById as $custId => $custData) {
             $custData = $mapDataById[$custId];
@@ -489,13 +489,13 @@ class Calc
     public function bonusTeamEu($compressPtc, $teamBonusPercent)
     {
         $result = [];
-        $mapDataById = $this->mapById($compressPtc, PtcCompress::ATTR_CUSTOMER_ID);
+        $mapDataById = $this->mapById($compressPtc, PtcCompress::ATTR_CUSTOMER_REF);
         foreach ($mapDataById as $custId => $custData) {
             $custData = $mapDataById[$custId];
             $custRef = $custData[Customer::ATTR_HUMAN_REF];
             $pv = $custData[PtcCompress::ATTR_PV];
 
-            $parentId = $custData[PtcCompress::ATTR_PARENT_ID];
+            $parentId = $custData[PtcCompress::ATTR_PARENT_REF];
             $parentData = $mapDataById[$parentId];
             $parentRef = $parentData[Customer::ATTR_HUMAN_REF];
             $scheme = $this->toolScheme->getSchemeByCustomer($parentData);
@@ -686,7 +686,7 @@ class Calc
     public function getMaxQualifiedRankId($compressOiEntry, $scheme, $cfgParam)
     {
         $result = null;
-        $custId = $compressOiEntry[OiCompress::ATTR_CUSTOMER_ID];
+        $custId = $compressOiEntry[OiCompress::ATTR_CUSTOMER_REF];
         $forcedRankId = $this->toolScheme->getForcedQualificationRank($custId, $scheme);
         if (is_null($forcedRankId)) {
             /* qualification params: PV & TV */
@@ -910,9 +910,9 @@ class Calc
     public function valueOv($compressPtc)
     {
         $result = [];
-        $mapById = $this->mapById($compressPtc, PtcCompress::ATTR_CUSTOMER_ID);
-        $mapDepth = $this->mapByTreeDepthDesc($compressPtc, PtcCompress::ATTR_CUSTOMER_ID, PtcCompress::ATTR_DEPTH);
-        $mapTeams = $this->mapByTeams($compressPtc, PtcCompress::ATTR_CUSTOMER_ID, PtcCompress::ATTR_PARENT_ID);
+        $mapById = $this->mapById($compressPtc, PtcCompress::ATTR_CUSTOMER_REF);
+        $mapDepth = $this->mapByTreeDepthDesc($compressPtc, PtcCompress::ATTR_CUSTOMER_REF, PtcCompress::ATTR_DEPTH);
+        $mapTeams = $this->mapByTeams($compressPtc, PtcCompress::ATTR_CUSTOMER_REF, PtcCompress::ATTR_PARENT_REF);
         /* get Sign Up Volume Debit customers */
         $signupDebitCustomers = $this->hlpSignupDebitCust->exec();
         foreach ($mapDepth as $depth => $levelCustomers) {
@@ -942,10 +942,10 @@ class Calc
     public function valueTv($compressPtc)
     {
         $result = [];
-        $mapById = $this->mapById($compressPtc, PtcCompress::ATTR_CUSTOMER_ID);
-        $mapTeams = $this->mapByTeams($compressPtc, PtcCompress::ATTR_CUSTOMER_ID, PtcCompress::ATTR_PARENT_ID);
+        $mapById = $this->mapById($compressPtc, PtcCompress::ATTR_CUSTOMER_REF);
+        $mapTeams = $this->mapByTeams($compressPtc, PtcCompress::ATTR_CUSTOMER_REF, PtcCompress::ATTR_PARENT_REF);
         foreach ($compressPtc as $one) {
-            $custId = $one[PtcCompress::ATTR_CUSTOMER_ID];
+            $custId = $one[PtcCompress::ATTR_CUSTOMER_REF];
             $tv = $mapById[$custId][PtcCompress::ATTR_PV];
             $this->logger->debug("Customer #$custId has own $tv PV.");
             if (isset($mapTeams[$custId])) {

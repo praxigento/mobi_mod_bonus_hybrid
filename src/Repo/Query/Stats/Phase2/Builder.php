@@ -25,14 +25,14 @@ class Builder
     const AS_TREE = 'tree';
 
     /** Columns aliases */
-    const A_CUST_ID = Oi::ATTR_CUSTOMER_ID;
+    const A_CUST_ID = Oi::ATTR_CUSTOMER_REF;
     const A_CUST_MLM_ID = 'customer_mlm_id';
     const A_CUST_NAME = 'name';
     const A_DEPTH = Oi::ATTR_DEPTH;
     const A_OV_MAX = Oi::ATTR_OV_LEG_MAX;
     const A_OV_OTHER = Oi::ATTR_OV_LEG_OTHERS;
     const A_OV_SECOND = Oi::ATTR_OV_LEG_SECOND;
-    const A_PARENT_ID = Oi::ATTR_PARENT_ID;
+    const A_PARENT_ID = Oi::ATTR_PARENT_REF;
     const A_PARENT_MLM_ID = 'parent_mlm_id';
     const A_PATH = Oi::ATTR_PATH;
     const A_PV = Oi::ATTR_PV;
@@ -59,8 +59,8 @@ class Builder
         $tbl = $this->resource->getTableName(Oi::ENTITY_NAME);
         $as = $asTree;
         $cols = [
-            self::A_CUST_ID => Oi::ATTR_CUSTOMER_ID,
-            self::A_PARENT_ID => Oi::ATTR_PARENT_ID,
+            self::A_CUST_ID => Oi::ATTR_CUSTOMER_REF,
+            self::A_PARENT_ID => Oi::ATTR_PARENT_REF,
             self::A_DEPTH => Oi::ATTR_DEPTH,
             self::A_PATH => Oi::ATTR_PATH,
             self::A_PV => Oi::ATTR_PV,
@@ -80,7 +80,7 @@ class Builder
         $cols = [
             self::A_CUST_NAME => $exp
         ];
-        $on = $asCustM . '.' . Cfg::E_CUSTOMER_A_ENTITY_ID . '=' . $asTree . '.' . Oi::ATTR_CUSTOMER_ID;
+        $on = $asCustM . '.' . Cfg::E_CUSTOMER_A_ENTITY_ID . '=' . $asTree . '.' . Oi::ATTR_CUSTOMER_REF;
         $result->joinLeft([$as => $tbl], $on, $cols);
 
         /* LEFT JOIN prxgt_bon_base_rank */
@@ -98,7 +98,7 @@ class Builder
         $cols = [
             self::A_CUST_MLM_ID => Cust::ATTR_HUMAN_REF
         ];
-        $on = $asCust . '.' . Cust::ATTR_CUSTOMER_ID . '=' . $asTree . '.' . Oi::ATTR_CUSTOMER_ID;
+        $on = $asCust . '.' . Cust::ATTR_CUSTOMER_ID . '=' . $asTree . '.' . Oi::ATTR_CUSTOMER_REF;
         $result->joinLeft([$as => $tbl], $on, $cols);
 
         /* LEFT JOIN prxgt_dwnl_customer (for parent MLM ID) */
@@ -107,7 +107,7 @@ class Builder
         $cols = [
             self::A_PARENT_MLM_ID => Cust::ATTR_HUMAN_REF
         ];
-        $on = $asPrnt . '.' . Cust::ATTR_CUSTOMER_ID . '=' . $asTree . '.' . Oi::ATTR_PARENT_ID;
+        $on = $asPrnt . '.' . Cust::ATTR_CUSTOMER_ID . '=' . $asTree . '.' . Oi::ATTR_PARENT_REF;
         $result->joinLeft([$as => $tbl], $on, $cols);
 
         return $result;

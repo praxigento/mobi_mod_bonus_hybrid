@@ -107,7 +107,7 @@ class Pto
 
                 /* register customer in OV reg. with initial values for TV/OV (own PV)*/
                 $regOv[$custId] = [
-                    EDwnlPlain::ATTR_CUSTOMER_REF => $custId,
+                    EDwnlPlain::ATTR_CUST_REF => $custId,
                     EDwnlPlain::ATTR_PARENT_REF => $custParentId,
                     EDwnlPlain::ATTR_PV => $custPv,
                     EDwnlPlain::ATTR_TV => 0,

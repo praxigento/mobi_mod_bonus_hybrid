@@ -905,8 +905,8 @@ class Main_OtherTest extends BaseIntegrationTest
         $actualItems = [];
         $data = $this->_selectCompressionPtc($this->_calcIdCompressPtc);
         foreach ($data as $one) {
-            $custId = $one[PtcCompression::ATTR_CUSTOMER_ID];
-            $parentId = $one[PtcCompression::ATTR_PARENT_ID];
+            $custId = $one[PtcCompression::ATTR_CUSTOMER_REF];
+            $parentId = $one[PtcCompression::ATTR_PARENT_REF];
             $pv = $one[PtcCompression::ATTR_PV];
             $custMlmId = $this->_getMlmIdByMageId($custId);
             $parentMlmId = $this->_getMlmIdByMageId($parentId);
@@ -956,7 +956,7 @@ class Main_OtherTest extends BaseIntegrationTest
         $missedItems = [];
         $data = $this->_selectCompressionPtc($this->_calcIdCompressPtc);
         foreach ($data as $one) {
-            $custId = $one[PtcCompression::ATTR_CUSTOMER_ID];
+            $custId = $one[PtcCompression::ATTR_CUSTOMER_REF];
             $tv = $one[PtcCompression::ATTR_TV];
             $custMlmId = $this->_getMlmIdByMageId($custId);
             $targetItem = $this->_mapCsvTreePtc[$custMlmId];

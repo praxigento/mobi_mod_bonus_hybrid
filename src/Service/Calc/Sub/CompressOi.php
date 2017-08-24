@@ -67,11 +67,11 @@ class CompressOi
         $result = [];
 
         /* prepare source data for calculation */
-        $mapByIdCompress = $this->mapById($treeCompress, Ptc::ATTR_CUSTOMER_ID);
-        $mapByTeamCompress = $this->mapByTeams($treeCompress, Ptc::ATTR_CUSTOMER_ID, Ptc::ATTR_PARENT_ID);
-        $mapByDepthCompress = $this->mapByTreeDepthDesc($treeCompress, Ptc::ATTR_CUSTOMER_ID, Ptc::ATTR_DEPTH);
-        $mapByIdPlain = $this->mapById($treePlain, Pto::ATTR_CUSTOMER_REF);
-        $mapByTeamPlain = $this->mapByTeams($treePlain, Pto::ATTR_CUSTOMER_REF, Pto::ATTR_PARENT_REF);
+        $mapByIdCompress = $this->mapById($treeCompress, Ptc::ATTR_CUSTOMER_REF);
+        $mapByTeamCompress = $this->mapByTeams($treeCompress, Ptc::ATTR_CUSTOMER_REF, Ptc::ATTR_PARENT_REF);
+        $mapByDepthCompress = $this->mapByTreeDepthDesc($treeCompress, Ptc::ATTR_CUSTOMER_REF, Ptc::ATTR_DEPTH);
+        $mapByIdPlain = $this->mapById($treePlain, Pto::ATTR_CUST_REF);
+        $mapByTeamPlain = $this->mapByTeams($treePlain, Pto::ATTR_CUST_REF, Pto::ATTR_PARENT_REF);
         $rankIdMgr = $this->hlpRank->getIdByCode(Def::RANK_MANAGER);
         /* MOBI-629: add init rank for un-ranked entries */
         $rankIdDistr = $this->hlpRank->getIdByCode(Def::RANK_DISTRIBUTOR);;
@@ -81,14 +81,14 @@ class CompressOi
 
                 /* get compressed data and compose phase2 item */
                 $custData = $mapByIdCompress[$custId];
-                $parentId = $custData[Ptc::ATTR_PARENT_ID];
+                $parentId = $custData[Ptc::ATTR_PARENT_REF];
                 $pvOwn = isset($mapPv[$custId]) ? $mapPv[$custId] : 0;
                 $pvCompress = $custData[Ptc::ATTR_PV];
                 $tvCompress = $custData[Ptc::ATTR_TV];
                 $resultEntry = [
                     Oi::ATTR_SCHEME => $scheme,
-                    Oi::ATTR_CUSTOMER_ID => $custId,
-                    Oi::ATTR_PARENT_ID => $parentId,
+                    Oi::ATTR_CUSTOMER_REF => $custId,
+                    Oi::ATTR_PARENT_REF => $parentId,
                     Oi::ATTR_RANK_ID => $rankIdDistr,
                     Oi::ATTR_PV => $pvCompress,
                     Oi::ATTR_TV => $tvCompress,
@@ -196,12 +196,12 @@ class CompressOi
                     unset($parents);
                     if (is_null($foundParentId)) {
                         /* no qualified parent up to the root, make this customer as root customer  */
-                        $resultEntry[Oi::ATTR_PARENT_ID] = $custId;
+                        $resultEntry[Oi::ATTR_PARENT_REF] = $custId;
                     } elseif ($fatherIsUnqual && ($scheme == Def::SCHEMA_EU)) {
                         /* EU: there is qualified grand for unqualified father, should not compress */
-                        $resultEntry[Oi::ATTR_PARENT_ID] = $prevParentId;
+                        $resultEntry[Oi::ATTR_PARENT_REF] = $prevParentId;
                     } else {
-                        $resultEntry[Oi::ATTR_PARENT_ID] = $foundParentId;
+                        $resultEntry[Oi::ATTR_PARENT_REF] = $foundParentId;
                     }
                 }
 
@@ -212,8 +212,8 @@ class CompressOi
 
         $req = new \Praxigento\Downline\Service\Snap\Request\ExpandMinimal();
         $req->setTree($result);
-        $req->setKeyCustomerId(Oi::ATTR_CUSTOMER_ID);
-        $req->setKeyParentId(Oi::ATTR_PARENT_ID);
+        $req->setKeyCustomerId(Oi::ATTR_CUSTOMER_REF);
+        $req->setKeyParentId(Oi::ATTR_PARENT_REF);
         $resp = $this->callDwnlSnap->expandMinimal($req);
         $snap = $resp->getSnapData();
         foreach ($result as $id => $one) {

@@ -82,7 +82,7 @@ class Builder
             self::A_UNQ_MONTHS => DwnlPlain::ATTR_UNQ_MONTHS
         ];
         $cond = $asPlain . '.' . DwnlPlain::ATTR_CALC_REF . '=:' . self::BIND_CALC_ID;
-        $cond .= ' AND ' . $asPlain . '.' . DwnlPlain::ATTR_CUSTOMER_REF . '='
+        $cond .= ' AND ' . $asPlain . '.' . DwnlPlain::ATTR_CUST_REF . '='
             . self::AS_DOWNLINE_CUSTOMER . '.' . EDwnlCust::ATTR_CUSTOMER_ID;
         $result->joinLeft([$as => $tbl], $cond, $cols);
 

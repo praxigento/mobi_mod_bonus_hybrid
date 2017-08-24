@@ -139,8 +139,8 @@ class ProcessOrders
             $orderId = $one[Query::A_ORDER_ID];
             $this->repoRegSignupDebit->create([
                 RegSignup::ATTR_CALC_REF => $calcId,
-                RegSignup::ATTR_CUSTOMER_REF => $custId,
-                RegSignup::ATTR_SALE_ORDER_REF => $orderId
+                RegSignup::ATTR_CUST_REF => $custId,
+                RegSignup::ATTR_SALE_REF => $orderId
             ]);
 
         }

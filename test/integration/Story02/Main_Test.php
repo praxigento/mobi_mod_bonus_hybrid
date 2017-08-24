@@ -122,176 +122,176 @@ class Main_IntegrationTest extends BaseIntegrationTest
     {
         $data = [
             [
-                PtcCompression::ATTR_CUSTOMER_ID => 1,
-                PtcCompression::ATTR_PARENT_ID => 1,
+                PtcCompression::ATTR_CUSTOMER_REF => 1,
+                PtcCompression::ATTR_PARENT_REF => 1,
                 PtcCompression::ATTR_PV => 100,
                 PtcCompression::ATTR_TV => 750,
                 PtcCompression::ATTR_OV => 750
             ],
             [
-                PtcCompression::ATTR_CUSTOMER_ID => 2,
-                PtcCompression::ATTR_PARENT_ID => 1,
+                PtcCompression::ATTR_CUSTOMER_REF => 2,
+                PtcCompression::ATTR_PARENT_REF => 1,
                 PtcCompression::ATTR_PV => 100,
                 PtcCompression::ATTR_TV => 750,
                 PtcCompression::ATTR_OV => 4550
             ],
             [
-                PtcCompression::ATTR_CUSTOMER_ID => 3,
-                PtcCompression::ATTR_PARENT_ID => 1,
+                PtcCompression::ATTR_CUSTOMER_REF => 3,
+                PtcCompression::ATTR_PARENT_REF => 1,
                 PtcCompression::ATTR_PV => 100,
                 PtcCompression::ATTR_TV => 750,
                 PtcCompression::ATTR_OV => 3755
             ],
             [
-                PtcCompression::ATTR_CUSTOMER_ID => 4,
-                PtcCompression::ATTR_PARENT_ID => 1,
+                PtcCompression::ATTR_CUSTOMER_REF => 4,
+                PtcCompression::ATTR_PARENT_REF => 1,
                 PtcCompression::ATTR_PV => 100,
                 PtcCompression::ATTR_TV => 750,
                 PtcCompression::ATTR_OV => 2255
             ],
             [
-                PtcCompression::ATTR_CUSTOMER_ID => 5,
-                PtcCompression::ATTR_PARENT_ID => 3,
+                PtcCompression::ATTR_CUSTOMER_REF => 5,
+                PtcCompression::ATTR_PARENT_REF => 3,
                 PtcCompression::ATTR_PV => 40,
                 PtcCompression::ATTR_TV => 750,
                 PtcCompression::ATTR_OV => 750
             ],
             [
-                PtcCompression::ATTR_CUSTOMER_ID => 6,
-                PtcCompression::ATTR_PARENT_ID => 3,
+                PtcCompression::ATTR_CUSTOMER_REF => 6,
+                PtcCompression::ATTR_PARENT_REF => 3,
                 PtcCompression::ATTR_PV => 100,
                 PtcCompression::ATTR_TV => 750,
                 PtcCompression::ATTR_OV => 750
             ],
             [
-                PtcCompression::ATTR_CUSTOMER_ID => 7,
-                PtcCompression::ATTR_PARENT_ID => 3,
+                PtcCompression::ATTR_CUSTOMER_REF => 7,
+                PtcCompression::ATTR_PARENT_REF => 3,
                 PtcCompression::ATTR_PV => 100,
                 PtcCompression::ATTR_TV => 750,
                 PtcCompression::ATTR_OV => 750
             ],
             [
-                PtcCompression::ATTR_CUSTOMER_ID => 8,
-                PtcCompression::ATTR_PARENT_ID => 5,
+                PtcCompression::ATTR_CUSTOMER_REF => 8,
+                PtcCompression::ATTR_PARENT_REF => 5,
                 PtcCompression::ATTR_PV => 100,
                 PtcCompression::ATTR_TV => 750,
                 PtcCompression::ATTR_OV => 750
             ],
             [
-                PtcCompression::ATTR_CUSTOMER_ID => 9,
-                PtcCompression::ATTR_PARENT_ID => 6,
+                PtcCompression::ATTR_CUSTOMER_REF => 9,
+                PtcCompression::ATTR_PARENT_REF => 6,
                 PtcCompression::ATTR_PV => 40,
                 PtcCompression::ATTR_TV => 750,
                 PtcCompression::ATTR_OV => 750
             ],
             [
-                PtcCompression::ATTR_CUSTOMER_ID => 10,
-                PtcCompression::ATTR_PARENT_ID => 9,
+                PtcCompression::ATTR_CUSTOMER_REF => 10,
+                PtcCompression::ATTR_PARENT_REF => 9,
                 PtcCompression::ATTR_PV => 100,
                 PtcCompression::ATTR_TV => 750,
                 PtcCompression::ATTR_OV => 750
             ],
             [
-                PtcCompression::ATTR_CUSTOMER_ID => 11,
-                PtcCompression::ATTR_PARENT_ID => 10,
+                PtcCompression::ATTR_CUSTOMER_REF => 11,
+                PtcCompression::ATTR_PARENT_REF => 10,
                 PtcCompression::ATTR_PV => 100,
                 PtcCompression::ATTR_TV => 750,
                 PtcCompression::ATTR_OV => 750
             ],
             [
-                PtcCompression::ATTR_CUSTOMER_ID => 12,
-                PtcCompression::ATTR_PARENT_ID => 10,
+                PtcCompression::ATTR_CUSTOMER_REF => 12,
+                PtcCompression::ATTR_PARENT_REF => 10,
                 PtcCompression::ATTR_PV => 100,
                 PtcCompression::ATTR_TV => 750,
                 PtcCompression::ATTR_OV => 750
             ],
             [
-                PtcCompression::ATTR_CUSTOMER_ID => 13,
-                PtcCompression::ATTR_PARENT_ID => 10,
+                PtcCompression::ATTR_CUSTOMER_REF => 13,
+                PtcCompression::ATTR_PARENT_REF => 10,
                 PtcCompression::ATTR_PV => 100,
                 PtcCompression::ATTR_TV => 750,
                 PtcCompression::ATTR_OV => 750
             ],
             [
-                PtcCompression::ATTR_CUSTOMER_ID => 14,
-                PtcCompression::ATTR_PARENT_ID => 11,
+                PtcCompression::ATTR_CUSTOMER_REF => 14,
+                PtcCompression::ATTR_PARENT_REF => 11,
                 PtcCompression::ATTR_PV => 100,
                 PtcCompression::ATTR_TV => 750,
                 PtcCompression::ATTR_OV => 750
             ],
             [
-                PtcCompression::ATTR_CUSTOMER_ID => 15,
-                PtcCompression::ATTR_PARENT_ID => 11,
+                PtcCompression::ATTR_CUSTOMER_REF => 15,
+                PtcCompression::ATTR_PARENT_REF => 11,
                 PtcCompression::ATTR_PV => 100,
                 PtcCompression::ATTR_TV => 750,
                 PtcCompression::ATTR_OV => 750
             ],
             [
-                PtcCompression::ATTR_CUSTOMER_ID => 16,
-                PtcCompression::ATTR_PARENT_ID => 12,
+                PtcCompression::ATTR_CUSTOMER_REF => 16,
+                PtcCompression::ATTR_PARENT_REF => 12,
                 PtcCompression::ATTR_PV => 100,
                 PtcCompression::ATTR_TV => 750,
                 PtcCompression::ATTR_OV => 750
             ],
             [
-                PtcCompression::ATTR_CUSTOMER_ID => 17,
-                PtcCompression::ATTR_PARENT_ID => 12,
+                PtcCompression::ATTR_CUSTOMER_REF => 17,
+                PtcCompression::ATTR_PARENT_REF => 12,
                 PtcCompression::ATTR_PV => 100,
                 PtcCompression::ATTR_TV => 750,
                 PtcCompression::ATTR_OV => 750
             ],
             [
-                PtcCompression::ATTR_CUSTOMER_ID => 18,
-                PtcCompression::ATTR_PARENT_ID => 13,
+                PtcCompression::ATTR_CUSTOMER_REF => 18,
+                PtcCompression::ATTR_PARENT_REF => 13,
                 PtcCompression::ATTR_PV => 100,
                 PtcCompression::ATTR_TV => 750,
                 PtcCompression::ATTR_OV => 750
             ],
             [
-                PtcCompression::ATTR_CUSTOMER_ID => 19,
-                PtcCompression::ATTR_PARENT_ID => 13,
+                PtcCompression::ATTR_CUSTOMER_REF => 19,
+                PtcCompression::ATTR_PARENT_REF => 13,
                 PtcCompression::ATTR_PV => 100,
                 PtcCompression::ATTR_TV => 800,
                 PtcCompression::ATTR_OV => 800
             ],
             [
-                PtcCompression::ATTR_CUSTOMER_ID => 20,
-                PtcCompression::ATTR_PARENT_ID => 13,
+                PtcCompression::ATTR_CUSTOMER_REF => 20,
+                PtcCompression::ATTR_PARENT_REF => 13,
                 PtcCompression::ATTR_PV => 100,
                 PtcCompression::ATTR_TV => 900,
                 PtcCompression::ATTR_OV => 900
             ],
             [
-                PtcCompression::ATTR_CUSTOMER_ID => 21,
-                PtcCompression::ATTR_PARENT_ID => 14,
+                PtcCompression::ATTR_CUSTOMER_REF => 21,
+                PtcCompression::ATTR_PARENT_REF => 14,
                 PtcCompression::ATTR_PV => 100,
                 PtcCompression::ATTR_TV => 750,
                 PtcCompression::ATTR_OV => 750
             ],
             [
-                PtcCompression::ATTR_CUSTOMER_ID => 22,
-                PtcCompression::ATTR_PARENT_ID => 15,
+                PtcCompression::ATTR_CUSTOMER_REF => 22,
+                PtcCompression::ATTR_PARENT_REF => 15,
                 PtcCompression::ATTR_PV => 100,
                 PtcCompression::ATTR_TV => 750,
                 PtcCompression::ATTR_OV => 750
             ],
             [
-                PtcCompression::ATTR_CUSTOMER_ID => 23,
-                PtcCompression::ATTR_PARENT_ID => 16,
+                PtcCompression::ATTR_CUSTOMER_REF => 23,
+                PtcCompression::ATTR_PARENT_REF => 16,
                 PtcCompression::ATTR_PV => 100,
                 PtcCompression::ATTR_TV => 750,
                 PtcCompression::ATTR_OV => 750
             ],
             [
-                PtcCompression::ATTR_CUSTOMER_ID => 24,
-                PtcCompression::ATTR_PARENT_ID => 17,
+                PtcCompression::ATTR_CUSTOMER_REF => 24,
+                PtcCompression::ATTR_PARENT_REF => 17,
                 PtcCompression::ATTR_PV => 100,
                 PtcCompression::ATTR_TV => 750,
                 PtcCompression::ATTR_OV => 750
             ],
             [
-                PtcCompression::ATTR_CUSTOMER_ID => 25,
-                PtcCompression::ATTR_PARENT_ID => 18,
+                PtcCompression::ATTR_CUSTOMER_REF => 25,
+                PtcCompression::ATTR_PARENT_REF => 18,
                 PtcCompression::ATTR_PV => 100,
                 PtcCompression::ATTR_TV => 750,
                 PtcCompression::ATTR_OV => 750
@@ -300,12 +300,12 @@ class Main_IntegrationTest extends BaseIntegrationTest
         /* replace customer indexes by Magento IDs */
         $tree = []; // tree data as [$custId => $parentId, ...]
         foreach ($data as $key => $one) {
-            $custNdx = $one[PtcCompression::ATTR_CUSTOMER_ID];
-            $parentNdx = $one[PtcCompression::ATTR_PARENT_ID];
+            $custNdx = $one[PtcCompression::ATTR_CUSTOMER_REF];
+            $parentNdx = $one[PtcCompression::ATTR_PARENT_REF];
             $custId = $this->_mapCustomerMageIdByIndex[$custNdx];
             $parentId = $this->_mapCustomerMageIdByIndex[$parentNdx];
-            $data[$key][PtcCompression::ATTR_CUSTOMER_ID] = $custId;
-            $data[$key][PtcCompression::ATTR_PARENT_ID] = $parentId;
+            $data[$key][PtcCompression::ATTR_CUSTOMER_REF] = $custId;
+            $data[$key][PtcCompression::ATTR_PARENT_REF] = $parentId;
             $tree[$custId] = $parentId;
         }
         /* populate tree with depth & path */
@@ -315,7 +315,7 @@ class Main_IntegrationTest extends BaseIntegrationTest
         $snap = $respExtend->getSnapData(); // [$custId=>[...], ...]
         /* populate initial data with depth & path */
         foreach ($data as $key => $one) {
-            $custId = $one[PtcCompression::ATTR_CUSTOMER_ID];
+            $custId = $one[PtcCompression::ATTR_CUSTOMER_REF];
             $snapEntry = $snap[$custId];
             $data[$key][PtcCompression::ATTR_DEPTH] = $snapEntry[Snap::ATTR_DEPTH];
             $data[$key][PtcCompression::ATTR_PATH] = $snapEntry[Snap::ATTR_PATH];

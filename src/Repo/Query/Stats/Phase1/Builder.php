@@ -20,11 +20,11 @@ class Builder
     const AS_TREE = 'tree';
 
     /** Columns aliases */
-    const A_CUST_ID = Ptc::ATTR_CUSTOMER_ID;
+    const A_CUST_ID = Ptc::ATTR_CUSTOMER_REF;
     const A_CUST_MLM_ID = 'customer_mlm_id';
     const A_DEPTH = Ptc::ATTR_DEPTH;
     const A_OV = Ptc::ATTR_OV;
-    const A_PARENT_ID = Ptc::ATTR_PARENT_ID;
+    const A_PARENT_ID = Ptc::ATTR_PARENT_REF;
     const A_PARENT_MLM_ID = 'parent_mlm_id';
     const A_PATH = Ptc::ATTR_PATH;
     const A_PV = Ptc::ATTR_PV;
@@ -60,8 +60,8 @@ class Builder
         /* SELECT FROM prxgt_bon_hyb_cmprs_ptc */
         $tbl = $this->resource->getTableName(Ptc::ENTITY_NAME);
         $cols = [
-            self::A_CUST_ID => Ptc::ATTR_CUSTOMER_ID,
-            self::A_PARENT_ID => Ptc::ATTR_PARENT_ID,
+            self::A_CUST_ID => Ptc::ATTR_CUSTOMER_REF,
+            self::A_PARENT_ID => Ptc::ATTR_PARENT_REF,
             self::A_DEPTH => Ptc::ATTR_DEPTH,
             self::A_PATH => Ptc::ATTR_PATH,
             self::A_PV => Ptc::ATTR_PV,
@@ -75,7 +75,7 @@ class Builder
         $cols = [
             self::A_CUST_MLM_ID => Cust::ATTR_HUMAN_REF
         ];
-        $on = $asCust . '.' . Cust::ATTR_CUSTOMER_ID . '=' . $asTree . '.' . Ptc::ATTR_CUSTOMER_ID;
+        $on = $asCust . '.' . Cust::ATTR_CUSTOMER_ID . '=' . $asTree . '.' . Ptc::ATTR_CUSTOMER_REF;
         $result->joinLeft([$asCust => $tbl], $on, $cols);
 
         /* LEFT JOIN prxgt_dwnl_customer (for parent MLM ID) */
@@ -83,7 +83,7 @@ class Builder
         $cols = [
             self::A_PARENT_MLM_ID => Cust::ATTR_HUMAN_REF
         ];
-        $on = $asPrnt . '.' . Cust::ATTR_CUSTOMER_ID . '=' . $asTree . '.' . Ptc::ATTR_PARENT_ID;
+        $on = $asPrnt . '.' . Cust::ATTR_CUSTOMER_ID . '=' . $asTree . '.' . Ptc::ATTR_PARENT_REF;
         $result->joinLeft([$asPrnt => $tbl], $on, $cols);
 
         return $result;

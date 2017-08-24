@@ -10,12 +10,18 @@ class Oi
     extends \Praxigento\Core\Data\Entity\Base
 {
     const ATTR_CALC_ID = 'calc_id';
-    const ATTR_CUSTOMER_ID = 'customer_ref';
+    /*
+     * @var string ATTR_CUSTOMER_ID
+     */
+    const ATTR_CUSTOMER_REF = 'customer_ref';
     const ATTR_DEPTH = 'depth';
     const ATTR_OV_LEG_MAX = 'ov_leg_max';
     const ATTR_OV_LEG_SECOND = 'ov_leg_second';
     const ATTR_OV_LEG_OTHERS = 'ov_leg_others';
-    const ATTR_PARENT_ID = 'parent_ref';
+    /*
+     * @var string ATTR_PARENT_ID
+     */
+    const ATTR_PARENT_REF = 'parent_ref';
     const ATTR_PATH = 'path';
     const ATTR_PV = 'pv';
     const ATTR_PV_INF = 'pv_inf';
@@ -46,7 +52,7 @@ class Oi
      */
     public function getCustomerId()
     {
-        $result = parent::get(self::ATTR_CUSTOMER_ID);
+        $result = parent::get(self::ATTR_CUSTOMER_REF);
         return $result;
     }
 
@@ -55,7 +61,7 @@ class Oi
      */
     public function setCustomerId($data)
     {
-        parent::set(self::ATTR_CUSTOMER_ID, $data);
+        parent::set(self::ATTR_CUSTOMER_REF, $data);
     }
 
     /**
@@ -131,7 +137,7 @@ class Oi
      */
     public function getParentId()
     {
-        $result = parent::get(self::ATTR_PARENT_ID);
+        $result = parent::get(self::ATTR_PARENT_REF);
         return $result;
     }
 
@@ -140,7 +146,7 @@ class Oi
      */
     public function setParentId($data)
     {
-        parent::set(self::ATTR_PARENT_ID, $data);
+        parent::set(self::ATTR_PARENT_REF, $data);
     }
 
     /**
@@ -251,6 +257,6 @@ class Oi
 
     public static function getPrimaryKeyAttrs()
     {
-        return [self::ATTR_CALC_ID, self::ATTR_CUSTOMER_ID, self::ATTR_SCHEME];
+        return [self::ATTR_CALC_ID, self::ATTR_CUSTOMER_REF, self::ATTR_SCHEME];
     }
 }
