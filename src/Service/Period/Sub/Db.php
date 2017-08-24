@@ -57,6 +57,8 @@ class Db
      * @param $dsEnd
      *
      * @return DataObject
+     *
+     * @deprecated see \Praxigento\BonusBase\Service\Period\Calc\IAdd
      */
     public function addNewPeriodAndCalc($calcTypeId, $dsBegin, $dsEnd)
     {
@@ -101,6 +103,7 @@ class Db
 
     /**
      * Return timestamp for the first transaction related to PV.
+     * @deprecated see \Praxigento\Accounting\Repo\Query\Trans\Get\FirstDate\ByAssetType\Builder
      */
     public function getFirstDateForPvTransactions()
     {
