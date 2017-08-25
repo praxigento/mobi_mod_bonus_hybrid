@@ -21,6 +21,8 @@ interface IPeriod {
      * @param Request\GetForWriteOff $request
      *
      * @return Response\GetForWriteOff
+     *
+     * @deprecated use \Praxigento\BonusBase\Service\Period\Calc\Get\IBasis
      */
     public function getForWriteOff(Request\GetForWriteOff $request);
 
