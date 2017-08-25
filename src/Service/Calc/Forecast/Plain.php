@@ -15,23 +15,25 @@ class Plain
     implements \Praxigento\BonusHybrid\Service\Calc\Forecast\IPlain
 {
     /** @var \Praxigento\Accounting\Service\Balance\Get\ITurnover */
-    protected $callBalanceGetTurnover;
+    private $callBalanceGetTurnover;
     /** @var \Praxigento\BonusBase\Service\IPeriod */
-    protected $callPeriod;
+    private $callPeriod;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\CleanCalcData */
-    protected $procCleanCalcData;
+    private $procCleanCalcData;
+    /** @var \Praxigento\BonusBase\Service\Period\Calc\IAdd */
+    private $procPeriodAdd;
     /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
-    protected $repoCalc;
+    private $repoCalc;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
-    protected $repoDwnl;
+    private $repoDwnl;
     /** @var  \Praxigento\BonusHybrid\Service\Calc\Forecast\Calc */
-    protected $subCalc;
+    private $subCalc;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\GetDownline */
-    protected $subGetDownline;
+    private $subGetDownline;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\GetRanks */
-    protected $subGetRanks;
+    private $subGetRanks;
     /** @var  \Praxigento\Core\Tool\IPeriod */
-    protected $toolPeriod;
+    private $toolPeriod;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
@@ -44,6 +46,7 @@ class Plain
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Calc $subCalc,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\GetDownline $subGetDownline,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\GetRanks $subGetRanks,
+        \Praxigento\BonusBase\Service\Period\Calc\IAdd $procPeriodAdd,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\CleanCalcData $procCleanCalcData
     )
     {
@@ -56,6 +59,7 @@ class Plain
         $this->subCalc = $subCalc;
         $this->subGetDownline = $subGetDownline;
         $this->subGetRanks = $subGetRanks;
+        $this->procPeriodAdd = $procPeriodAdd;
         $this->procCleanCalcData = $procCleanCalcData;
     }
 
@@ -131,7 +135,7 @@ class Plain
      * @param \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Request $req
      * @return array
      */
-    protected function getPeriod(\Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Request $req)
+    private function getPeriod(\Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Request $req)
     {
         $requested = $req->getPeriod();
         if ($requested) {
@@ -152,7 +156,7 @@ class Plain
         return $result;
     }
 
-    protected function getPvTurnover($dateFrom, $dateTo)
+    private function getPvTurnover($dateFrom, $dateTo)
     {
         $reqTurnover = new \Praxigento\Accounting\Service\Balance\Get\Turnover\Request ();
         $reqTurnover->assetTypeCode = Cfg::CODE_TYPE_ASSET_PV;
@@ -171,19 +175,22 @@ class Plain
      * @return int registered calculation ID
      *
      */
-    protected function registerNewCalc($from, $to)
+    private function registerNewCalc($from, $to)
     {
-        $req = new \Praxigento\BonusBase\Service\Period\Request\RegisterPeriod();
-        $req->setDateStampBegin($from);
-        $req->setDateStampEnd($to);
-        $req->setCalcTypeCode(Cfg::CODE_TYPE_CALC_FORECAST_PLAIN);
-        $resp = $this->callPeriod->registerPeriod($req);
-        $calcData = $resp->getCalcData();
-        $result = $calcData->getId();
+        $result = null;
+        $ctx = new \Praxigento\Core\Data();
+        $ctx->set($this->procPeriodAdd::CTX_IN_DSTAMP_BEGIN, $from);
+        $ctx->set($this->procPeriodAdd::CTX_IN_DSTAMP_END, $to);
+        $ctx->set($this->procPeriodAdd::CTX_IN_CALC_TYPE_CODE, Cfg::CODE_TYPE_CALC_FORECAST_PLAIN);
+        $this->procPeriodAdd($ctx);
+        $success = $ctx->get($this->procPeriodAdd::CTX_OUT_SUCCESS);
+        if ($success) {
+            $result = $ctx->get($this->procPeriodAdd::CTX_OUT_CALC_ID);
+        }
         return $result;
     }
 
-    protected function saveDownline($items)
+    private function saveDownline($items)
     {
         foreach ($items as $item) {
             $this->repoDwnl->create($item);
