@@ -5,9 +5,9 @@
 namespace Praxigento\BonusHybrid\Service\Period\Sub;
 
 use Flancer32\Lib\Data as DataObject;
-use Praxigento\Accounting\Data\Entity\Account;
-use Praxigento\Accounting\Data\Entity\Transaction;
-use Praxigento\Accounting\Data\Entity\Type\Asset as TypeAsset;
+use Praxigento\Accounting\Repo\Entity\Data\Account;
+use Praxigento\Accounting\Repo\Entity\Data\Transaction;
+use Praxigento\Accounting\Repo\Entity\Data\Type\Asset as TypeAsset;
 use Praxigento\BonusBase\Data\Entity\Calculation;
 use Praxigento\BonusBase\Data\Entity\Period;
 use Praxigento\BonusBase\Service\Period\Request\GetLatest as BonusBasePeriodGetLatestRequest;

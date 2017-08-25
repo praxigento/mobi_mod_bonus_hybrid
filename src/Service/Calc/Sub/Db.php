@@ -4,9 +4,9 @@
  */
 namespace Praxigento\BonusHybrid\Service\Calc\Sub;
 
-use Praxigento\Accounting\Data\Entity\Account;
-use Praxigento\Accounting\Data\Entity\Operation;
-use Praxigento\Accounting\Data\Entity\Transaction;
+use Praxigento\Accounting\Repo\Entity\Data\Account;
+use Praxigento\Accounting\Repo\Entity\Data\Operation;
+use Praxigento\Accounting\Repo\Entity\Data\Transaction;
 use Praxigento\Accounting\Service\Account\Request\Get as AccountGetRequest;
 use Praxigento\Accounting\Service\Account\Request\GetRepresentative as AccountGetRepresentativeRequest;
 use Praxigento\Accounting\Service\Operation\Request\Add as OperationAddRequest;
