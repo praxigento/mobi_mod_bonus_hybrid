@@ -5,8 +5,8 @@
 namespace Praxigento\BonusHybrid\Test\Compare;
 
 
-use Praxigento\Accounting\Data\Entity\Account;
-use Praxigento\Accounting\Data\Entity\Transaction;
+use Praxigento\Accounting\Repo\Entity\Data\Account;
+use Praxigento\Accounting\Repo\Entity\Data\Transaction;
 use Praxigento\BonusBase\Data\Entity\Level;
 use Praxigento\BonusBase\Data\Entity\Log\Opers as LogOpers;
 use Praxigento\BonusBase\Data\Entity\Rank;

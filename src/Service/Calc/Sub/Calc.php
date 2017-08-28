@@ -4,7 +4,7 @@
  */
 namespace Praxigento\BonusHybrid\Service\Calc\Sub;
 
-use Praxigento\Accounting\Data\Entity\Transaction;
+use Praxigento\Accounting\Repo\Entity\Data\Transaction;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Data\Entity\Cfg\Override as CfgOverride;

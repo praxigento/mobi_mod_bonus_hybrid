@@ -4,8 +4,8 @@
  */
 namespace Praxigento\BonusHybrid\Service\Calc;
 
-use Praxigento\Accounting\Data\Entity\Account;
-use Praxigento\Accounting\Data\Entity\Transaction;
+use Praxigento\Accounting\Repo\Entity\Data\Account;
+use Praxigento\Accounting\Repo\Entity\Data\Transaction;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Oi as OiCompress;

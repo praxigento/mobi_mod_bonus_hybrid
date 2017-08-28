@@ -187,7 +187,7 @@ class Pto
     /**
      * Load accounts by asset type code and map its using $customerId as a key.
      *
-     * @return \Praxigento\Accounting\Data\Entity\Account[]
+     * @return \Praxigento\Accounting\Repo\Entity\Data\Account[]
      */
     protected function loadCustomersAccounts()
     {
