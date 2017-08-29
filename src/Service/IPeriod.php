@@ -14,6 +14,8 @@ interface IPeriod {
      * @param Request\GetForDependentCalc $request
      *
      * @return Response\GetForDependentCalc
+     *
+     * @deprecated use \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent
      */
     public function getForDependentCalc(Request\GetForDependentCalc $request);
 
