@@ -4,9 +4,9 @@
  */
 namespace Praxigento\BonusHybrid\Api\Stats\Base\Query;
 
-use Praxigento\BonusBase\Data\Entity\Calculation as Calc;
-use Praxigento\BonusBase\Data\Entity\Period;
-use Praxigento\BonusBase\Data\Entity\Type\Calc as TypeCalc;
+use Praxigento\BonusBase\Repo\Entity\Data\Calculation as Calc;
+use Praxigento\BonusBase\Repo\Entity\Data\Period;
+use Praxigento\BonusBase\Repo\Entity\Data\Type\Calc as TypeCalc;
 use Praxigento\BonusBase\Repo\Query\Period\Calcs\Builder as BldPeriod;
 use Praxigento\BonusHybrid\Config as Cfg;
 

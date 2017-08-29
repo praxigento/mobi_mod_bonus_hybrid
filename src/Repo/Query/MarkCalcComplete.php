@@ -4,7 +4,7 @@
  */
 namespace Praxigento\BonusHybrid\Repo\Query;
 
-use Praxigento\BonusBase\Data\Entity\Calculation;
+use Praxigento\BonusBase\Repo\Entity\Data\Calculation;
 use Praxigento\BonusHybrid\Config as Cfg;
 
 class MarkCalcComplete

@@ -4,9 +4,9 @@
  */
 namespace Praxigento\BonusHybrid\Test\Story02;
 
-use Praxigento\BonusBase\Data\Entity\Calculation;
-use Praxigento\BonusBase\Data\Entity\Period;
-use Praxigento\BonusBase\Data\Entity\Rank;
+use Praxigento\BonusBase\Repo\Entity\Data\Calculation;
+use Praxigento\BonusBase\Repo\Entity\Data\Period;
+use Praxigento\BonusBase\Repo\Entity\Data\Rank;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Entity\Cfg\Param as CfgParam;
 use Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Compressed\Phase1 as PtcCompression;

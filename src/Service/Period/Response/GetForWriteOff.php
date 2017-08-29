@@ -5,10 +5,10 @@
 namespace Praxigento\BonusHybrid\Service\Period\Response;
 
 /**
- * @method \Praxigento\BonusBase\Data\Entity\Period getPeriodData()
- * @method void setPeriodData(\Praxigento\BonusBase\Data\Entity\Period | array $data)
- * @method \Praxigento\BonusBase\Data\Entity\Calculation getCalcData()
- * @method void setCalcData(\Praxigento\BonusBase\Data\Entity\Calculation | array $data)
+ * @method \Praxigento\BonusBase\Repo\Entity\Data\Period getPeriodData()
+ * @method void setPeriodData(\Praxigento\BonusBase\Repo\Entity\Data\Period | array $data)
+ * @method \Praxigento\BonusBase\Repo\Entity\Data\Calculation getCalcData()
+ * @method void setCalcData(\Praxigento\BonusBase\Repo\Entity\Data\Calculation | array $data)
  */
 class GetForWriteOff extends \Praxigento\Core\Service\Base\Response {
     const HAS_NO_PV_TRANSACTIONS_YET = 'has_no_pv_transactions_yet';

@@ -5,9 +5,9 @@
 namespace Praxigento\BonusHybrid\Service\Calc\SignupDebit;
 
 use Praxigento\Accounting\Repo\Entity\Data\Transaction as Trans;
-use Praxigento\BonusBase\Data\Entity\Log\Customers as LogCust;
-use Praxigento\BonusBase\Data\Entity\Log\Opers as LogOpers;
-use Praxigento\BonusBase\Data\Entity\Log\Sales as LogSales;
+use Praxigento\BonusBase\Repo\Entity\Data\Log\Customers as LogCust;
+use Praxigento\BonusBase\Repo\Entity\Data\Log\Opers as LogOpers;
+use Praxigento\BonusBase\Repo\Entity\Data\Log\Sales as LogSales;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Data\Entity\Registry\SignupDebit as RegSignup;

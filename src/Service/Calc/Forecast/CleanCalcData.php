@@ -5,10 +5,8 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Forecast;
 
-use Praxigento\BonusBase\Data\Entity\Calculation as ECalc;
-use Praxigento\BonusBase\Data\Entity\Period as EPeriod;
-use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Defaults as Def;
+use Praxigento\BonusBase\Repo\Entity\Data\Calculation as ECalc;
+use Praxigento\BonusBase\Repo\Entity\Data\Period as EPeriod;
 
 /**
  * Internal processor to clean calculation data for forecast calculations (plain & compressed).
@@ -51,14 +49,14 @@ class CleanCalcData
         $where = EPeriod::ATTR_CALC_TYPE_ID . '=' . (int)$calcTypeId;
         $periods = $this->repoPeriod->get($where);
         if (is_array($periods)) {
-            /** @var \Praxigento\BonusBase\Data\Entity\Period $period */
+            /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $period */
             foreach ($periods as $period) {
                 /* get calculations by period */
                 $periodId = $period->getId();
                 $whereCalc = ECalc::ATTR_PERIOD_ID . '=' . (int)$periodId;
                 $calcs = $this->repoCalc->get($whereCalc);
                 if (is_array($calcs)) {
-                    /** @var \Praxigento\BonusBase\Data\Entity\Calculation $calc */
+                    /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $calc */
                     foreach ($calcs as $calc) {
                         $calcId = $calc->getId();
                         /* delete all downline trees for the calculation */

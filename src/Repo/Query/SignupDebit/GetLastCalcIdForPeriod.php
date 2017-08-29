@@ -4,9 +4,9 @@
  */
 namespace Praxigento\BonusHybrid\Repo\Query\SignupDebit;
 
-use Praxigento\BonusBase\Data\Entity\Calculation as Calc;
-use Praxigento\BonusBase\Data\Entity\Period as Period;
-use Praxigento\BonusBase\Data\Entity\Type\Calc as TypeCalc;
+use Praxigento\BonusBase\Repo\Entity\Data\Calculation as Calc;
+use Praxigento\BonusBase\Repo\Entity\Data\Period as Period;
+use Praxigento\BonusBase\Repo\Entity\Data\Type\Calc as TypeCalc;
 use Praxigento\BonusHybrid\Config as Cfg;
 
 class GetLastCalcIdForPeriod
