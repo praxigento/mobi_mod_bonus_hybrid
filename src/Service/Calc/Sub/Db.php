@@ -23,7 +23,7 @@ use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Oi as OiCompress;
 use Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Compressed\Phase1 as CmprsPhase1;
 use Praxigento\Downline\Repo\Entity\Data\Customer;
 use Praxigento\Downline\Service\Snap\Request\GetStateOnDate as DownlineSnapGetStateOnDateRequest;
-use Praxigento\Pv\Data\Entity\Sale as PvSale;
+use Praxigento\Pv\Repo\Entity\Data\Sale as PvSale;
 
 class Db
 {
