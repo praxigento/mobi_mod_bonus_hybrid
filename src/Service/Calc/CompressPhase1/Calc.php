@@ -6,7 +6,7 @@
 namespace Praxigento\BonusHybrid\Service\Calc\CompressPhase1;
 
 use Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Compressed\Phase1 as ECompressPhase1;
-use Praxigento\Downline\Data\Entity\Customer as ECustomer;
+use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
 use Praxigento\Downline\Repo\Query\Snap\OnDate\Builder as ASnap;
 
 /**
@@ -21,12 +21,12 @@ class Calc
         mapByTreeDepthDesc as protected;
     }
 
+    /** (IN) Calculation ID to reference in compressed PV transfers  */
+    const CTX_CALC_ID = 'calcId';
     /** (OUT) Calculation results, data for compression table */
     const CTX_COMPRESSED = 'compressed';
     /** (IN)  Customers actual data */
     const CTX_DWNL_CUST = 'dwnlCust';
-    /** (IN) Calculation ID to reference in compressed PV transfers  */
-    const CTX_CALC_ID = 'calcId';
     /** (IN) Customers downline tree to the end of calculation period */
     const CTX_DWNL_SNAP = 'dwnlSnap';
     /** (IN) PV by customer id map */

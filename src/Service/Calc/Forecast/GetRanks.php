@@ -72,10 +72,10 @@ class GetRanks
 
         /* get downline data (with countries) to define bonus scheme for customer */
         $columns = [
-            \Praxigento\Downline\Data\Entity\Customer::ATTR_CUSTOMER_ID,
-            \Praxigento\Downline\Data\Entity\Customer::ATTR_COUNTRY_CODE
+            \Praxigento\Downline\Repo\Entity\Data\Customer::ATTR_CUSTOMER_ID,
+            \Praxigento\Downline\Repo\Entity\Data\Customer::ATTR_COUNTRY_CODE
         ];
-        /** @var \Praxigento\Downline\Data\Entity\Customer[] $customers */
+        /** @var \Praxigento\Downline\Repo\Entity\Data\Customer[] $customers */
         $customers = $this->repoDownline->get(null, null, null, null, $columns);
 
         /**
@@ -83,7 +83,7 @@ class GetRanks
          * tree (indexed by IDs)
          */
         $defRankId = $this->getDefaultRankId();
-        /** @var \Praxigento\Downline\Data\Entity\Customer $one */
+        /** @var \Praxigento\Downline\Repo\Entity\Data\Customer $one */
         foreach ($customers as $one) {
             $custId = $one->getCustomerId();
             $scheme = $this->hlpScheme->getSchemeByCustomer($one);

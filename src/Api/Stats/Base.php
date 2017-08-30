@@ -56,7 +56,7 @@ abstract class Base
         /* only currently logged in customer can get account statement */
         $currCustData = $this->authenticator->getCurrentCustomerData();
         $currCustId = $this->authenticator->getCurrentCustomerId();
-        /** @var \Praxigento\Downline\Data\Entity\Customer $currDwnlData */
+        /** @var \Praxigento\Downline\Repo\Entity\Data\Customer $currDwnlData */
         $currDwnlData = $currCustData->get(\Praxigento\Downline\Infra\Api\Authenticator::A_DWNL_DATA);
         $currCustPath = $currDwnlData->getPath() . $currDwnlData->getCustomerId() . Cfg::DTPS;
 

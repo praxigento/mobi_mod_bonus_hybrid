@@ -10,7 +10,7 @@ use Praxigento\BonusHybrid\Api\Dcp\Report\Downline\Response\Entry as AReport;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Compressed\Phase1 as EPh1;
 use Praxigento\Core\Repo\Query\Expression as Exp;
-use Praxigento\Downline\Data\Entity\Customer as EDwnl;
+use Praxigento\Downline\Repo\Entity\Data\Customer as EDwnl;
 
 /**
  * Build query to get DCP Downline Report data for retrospective compressed tree.

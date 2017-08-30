@@ -5,7 +5,7 @@
 namespace Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetOrders;
 
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\Downline\Data\Entity\Customer as Dwnl;
+use Praxigento\Downline\Repo\Entity\Data\Customer as Dwnl;
 use Praxigento\Pv\Data\Entity\Sale as Pv;
 
 /**

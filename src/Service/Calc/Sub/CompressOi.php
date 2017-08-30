@@ -217,8 +217,8 @@ class CompressOi
         $resp = $this->callDwnlSnap->expandMinimal($req);
         $snap = $resp->getSnapData();
         foreach ($result as $id => $one) {
-            $depth = $snap[$id][\Praxigento\Downline\Data\Entity\Snap::ATTR_DEPTH];
-            $path = $snap[$id][\Praxigento\Downline\Data\Entity\Snap::ATTR_PATH];
+            $depth = $snap[$id][\Praxigento\Downline\Repo\Entity\Data\Snap::ATTR_DEPTH];
+            $path = $snap[$id][\Praxigento\Downline\Repo\Entity\Data\Snap::ATTR_PATH];
             $result[$id][Oi::ATTR_DEPTH] = $depth;
             $result[$id][Oi::ATTR_PATH] = $path;
         }

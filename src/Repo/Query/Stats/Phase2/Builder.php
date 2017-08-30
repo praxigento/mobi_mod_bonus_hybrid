@@ -9,7 +9,7 @@ use Praxigento\BonusBase\Repo\Entity\Data\Rank as Rank;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Oi as Oi;
 use Praxigento\Core\Repo\Query\Expression as Expression;
-use Praxigento\Downline\Data\Entity\Customer as Cust;
+use Praxigento\Downline\Repo\Entity\Data\Customer as Cust;
 
 /**
  * Build query to get phase1 compressed PV/TV/OV statistics for the given calculation.

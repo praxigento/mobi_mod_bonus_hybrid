@@ -8,7 +8,7 @@ namespace Praxigento\BonusHybrid\Tool\Def;
 use Praxigento\BonusBase\Data\Entity\Rank;
 use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Data\Entity\Cfg\Param as CfgParam;
-use Praxigento\Downline\Data\Entity\Customer;
+use Praxigento\Downline\Repo\Entity\Data\Customer;
 
 /**
  * TODO: move this tool to Repo section or extract DB related methods to standalone class.

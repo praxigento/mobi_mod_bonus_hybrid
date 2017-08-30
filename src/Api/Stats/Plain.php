@@ -71,7 +71,7 @@ class Plain
 
         /* filter snap data by root customer path */
         $where = \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::AS_DWNL_SNAP . '.' .
-            \Praxigento\Downline\Data\Entity\Snap::ATTR_PATH . ' LIKE :' . self::BIND_PATH;
+            \Praxigento\Downline\Repo\Entity\Data\Snap::ATTR_PATH . ' LIKE :' . self::BIND_PATH;
         $path = $rootCustPath . $rootCustId . Cfg::DTPS . '%';
         $query->where($where);
         $bind->set(self::BIND_PATH, $path);
@@ -81,7 +81,7 @@ class Plain
             /* depth started from 0, add +1 to start from root */
             $depth = $rootCustDepth + 1 + $maxDepth;
             $where = \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::AS_DWNL_SNAP . '.' .
-                \Praxigento\Downline\Data\Entity\Snap::ATTR_DEPTH . ' < :' . self::BIND_MAX_DEPTH;
+                \Praxigento\Downline\Repo\Entity\Data\Snap::ATTR_DEPTH . ' < :' . self::BIND_MAX_DEPTH;
             $query->where($where);
             $bind->set(self::BIND_MAX_DEPTH, $depth);
         }

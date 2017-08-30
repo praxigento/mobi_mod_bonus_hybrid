@@ -11,8 +11,8 @@ use Praxigento\BonusHybrid\Repo\Data\Entity\Cfg\Override as CfgOverride;
 use Praxigento\BonusHybrid\Repo\Data\Entity\Cfg\Param as CfgParam;
 use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Oi as OiCompress;
 use Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Compressed\Phase1 as PtcCompress;
-use Praxigento\Downline\Data\Entity\Customer;
-use Praxigento\Downline\Data\Entity\Snap;
+use Praxigento\Downline\Repo\Entity\Data\Customer;
+use Praxigento\Downline\Repo\Entity\Data\Snap;
 use Praxigento\Downline\Service\Snap\Request\ExpandMinimal as DownlineSnapExtendMinimalRequest;
 
 class Calc

@@ -5,8 +5,7 @@
 namespace Praxigento\BonusHybrid\Repo\Query\Stats\Phase1;
 
 use Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Compressed\Phase1 as Ptc;
-use Praxigento\Downline\Data\Entity\Customer as Cust;
-use Praxigento\Pv\Data\Entity\Sale as Pv;
+use Praxigento\Downline\Repo\Entity\Data\Customer as Cust;
 
 /**
  * Build query to get phase1 compressed PV/TV/OV statistics for the given calculation.

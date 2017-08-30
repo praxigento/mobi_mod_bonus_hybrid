@@ -26,7 +26,7 @@ use Praxigento\BonusHybrid\Service\Calc\Request\PvWriteOff as BonusCalcPvWriteOf
 use Praxigento\BonusHybrid\Service\Calc\Request\ValueOv as BonusCalcValueOvRequest;
 use Praxigento\BonusHybrid\Service\Calc\Request\ValueTv as BonusCalcValueTvRequest;
 use Praxigento\Core\Test\BaseIntegrationTest;
-use Praxigento\Downline\Data\Entity\Snap;
+use Praxigento\Downline\Repo\Entity\Data\Snap;
 use Praxigento\Downline\Service\Customer\Request\Add as CustomerAddRequest;
 use Praxigento\Downline\Service\Snap\Request\Calc as SnapCalcRequest;
 use Praxigento\Downline\Service\Snap\Request\ExpandMinimal as SnapExtendMinimalRequest;

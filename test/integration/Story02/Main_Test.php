@@ -14,7 +14,7 @@ use Praxigento\BonusHybrid\Service\Calc\Request\BonusInfinity as CalcBonusInfini
 use Praxigento\BonusHybrid\Service\Calc\Request\BonusOverride as CalcBonusOverrideRequest;
 use Praxigento\BonusHybrid\Service\Calc\Request\CompressOi as CalcCompressOiRequest;
 use Praxigento\Core\Test\BaseIntegrationTest;
-use Praxigento\Downline\Data\Entity\Snap;
+use Praxigento\Downline\Repo\Entity\Data\Snap;
 use Praxigento\Downline\Service\Snap\Request\ExpandMinimal as SnapExtendMinimalRequest;
 
 include_once(__DIR__ . '/../phpunit_bootstrap.php');

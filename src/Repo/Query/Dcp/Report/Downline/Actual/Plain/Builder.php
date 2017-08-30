@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Actual\Plain;
 
 use Praxigento\BonusHybrid\Api\Dcp\Report\Downline\Response\Entry as AReport;
 use Praxigento\BonusHybrid\Repo\Data\Entity\Actual\Downline\Plain as EPlain;
-use Praxigento\Downline\Data\Entity\Customer as ECust;
+use Praxigento\Downline\Repo\Entity\Data\Customer as ECust;
 
 /**
  * Build query to get DCP Downline Report data for actual plain tree.

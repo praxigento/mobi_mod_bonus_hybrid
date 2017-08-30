@@ -5,8 +5,7 @@
 namespace Praxigento\BonusHybrid\Repo\Query\Stats\Plain;
 
 use Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Plain as RegPto;
-use Praxigento\Downline\Data\Entity\Snap as Snap;
-use Praxigento\Pv\Data\Entity\Sale as Pv;
+use Praxigento\Downline\Repo\Entity\Data\Snap as Snap;
 
 /**
  * Build query to get plain PV/TV/OV statistics for the given calculation.
