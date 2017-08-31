@@ -590,6 +590,8 @@ class Call
      * @param Request\PvWriteOff $request
      *
      * @return Response\PvWriteOff
+     *
+     * @deprecated see \Praxigento\BonusHybrid\Service\Calc\IPvWriteOff
      */
     public function pvWriteOff(Request\PvWriteOff $request)
     {
