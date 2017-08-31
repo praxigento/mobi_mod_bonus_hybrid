@@ -9,6 +9,7 @@ use Praxigento\Accounting\Repo\Entity\Data\Account as EAcc;
 use Praxigento\Accounting\Repo\Entity\Data\Operation as EOper;
 use Praxigento\Accounting\Repo\Entity\Data\Transaction as ETrans;
 use Praxigento\BonusBase\Repo\Entity\Data\Log\Opers as ELogOpers;
+use Praxigento\BonusHybrid\Service\Calc\PvWriteOff\Data\Trans as DTrans;
 
 /**
  * Compose query to get accounting data for "PV Write Off" calculation:
@@ -41,10 +42,10 @@ class Builder
     const AS_TRANS = 'pat';
 
     /** Columns/expressions aliases for external usage ('underscore' naming for database fields; 'camelCase' naming for aliases) */
-    const A_ACC_ID_CREDIT = 'accIdCredit';
-    const A_ACC_ID_DEBIT = 'accIdDebit';
-    const A_AMOUNT = 'amount';
-    const A_OPER_ID = 'operId';
+    const A_ACC_ID_CREDIT = DTrans::A_ACC_ID_CREDIT;
+    const A_ACC_ID_DEBIT = DTrans::A_ACC_ID_DEBIT;
+    const A_AMOUNT = DTrans::A_AMOUNT;
+    const A_OPER_ID = DTrans::A_OPER_ID;
 
     /** Bound variables names ('camelCase' naming) */
     const BND_ASSET_TYPE_ID = 'assetTypeId';

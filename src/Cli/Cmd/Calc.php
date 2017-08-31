@@ -20,13 +20,16 @@ class Calc
     protected $conn;
     /** @var \Magento\Framework\App\ResourceConnection */
     protected $resource;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\IPvWriteOff */
+    private $procPvWriteOff;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Magento\Framework\App\ResourceConnection $resource,
         \Praxigento\BonusHybrid\Service\ICalc $callCalc,
         \Praxigento\BonusHybrid\Service\Calc\ISignupDebit $callBonusSignup,
-        \Praxigento\BonusHybrid\Service\Calc\ICompressPhase1 $callBonusCompressPhase1
+        \Praxigento\BonusHybrid\Service\Calc\ICompressPhase1 $callBonusCompressPhase1,
+        \Praxigento\BonusHybrid\Service\Calc\IPvWriteOff $procPvWriteOff
     ) {
         parent::__construct(
             $manObj,
@@ -38,6 +41,7 @@ class Calc
         $this->callCalc = $callCalc;
         $this->callBonusSignup = $callBonusSignup;
         $this->callBonusCompressPhase1 = $callBonusCompressPhase1;
+        $this->procPvWriteOff = $procPvWriteOff;
     }
 
     protected function calcBonusCourtesy()
@@ -151,9 +155,9 @@ class Calc
 
     protected function calcPvWriteOff()
     {
-        $req = new \Praxigento\BonusHybrid\Service\Calc\Request\PvWriteOff();
-        $resp = $this->callCalc->pvWriteOff($req);
-        $result = $resp->isSucceed();
+        $ctx = new \Praxigento\Core\Data();
+        $this->procPvWriteOff->exec($ctx);
+        $result = (bool)$ctx->get($this->procPvWriteOff::CTX_OUT_SUCCESS);
         return $result;
     }
 

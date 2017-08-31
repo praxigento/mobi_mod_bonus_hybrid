@@ -865,6 +865,8 @@ class Calc
      * @param $trans
      *
      * @return array [$accId=>$pvWriteOff, ...]
+     *
+     * @deprecated use \Praxigento\BonusHybrid\Service\Calc\PvWriteOff::groupPvTrans
      */
     public function pvWriteOff($trans)
     {
