@@ -11,17 +11,17 @@ class Calc
     extends \Praxigento\Core\Cli\Cmd\Base
 {
     /** @var  \Praxigento\BonusHybrid\Service\Calc\ISignupDebit */
-    protected $callBonusSignup;
+    private $callBonusSignup;
     /** @var \Praxigento\BonusHybrid\Service\ICalc */
-    protected $callCalc;
+    private $callCalc;
     /** @var \Magento\Framework\DB\Adapter\AdapterInterface */
-    protected $conn;
+    private $conn;
     /** @var \Praxigento\BonusHybrid\Service\Calc\ICompressPhase1 */
-    protected $procCompressPhase1;
+    private $procCompressPhase1;
     /** @var \Praxigento\BonusHybrid\Service\Calc\IPvWriteOff */
     private $procPvWriteOff;
     /** @var \Magento\Framework\App\ResourceConnection */
-    protected $resource;
+    private $resource;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
@@ -44,7 +44,7 @@ class Calc
         $this->procPvWriteOff = $procPvWriteOff;
     }
 
-    protected function calcBonusCourtesy()
+    private function calcBonusCourtesy()
     {
         $req = new \Praxigento\BonusHybrid\Service\Calc\Request\BonusCourtesy();
         $req->setCourtesyBonusPercent(\Praxigento\BonusHybrid\Defaults::COURTESY_BONUS_PERCENT);
@@ -53,7 +53,7 @@ class Calc
         return $result;
     }
 
-    protected function calcBonusInfinityDef()
+    private function calcBonusInfinityDef()
     {
         $req = new \Praxigento\BonusHybrid\Service\Calc\Request\BonusInfinity();
         $req->setScheme(\Praxigento\BonusHybrid\Defaults::SCHEMA_DEFAULT);
@@ -62,7 +62,7 @@ class Calc
         return $result;
     }
 
-    protected function calcBonusInfinityEu()
+    private function calcBonusInfinityEu()
     {
         $req = new \Praxigento\BonusHybrid\Service\Calc\Request\BonusInfinity();
         $req->setScheme(\Praxigento\BonusHybrid\Defaults::SCHEMA_EU);
@@ -71,7 +71,7 @@ class Calc
         return $result;
     }
 
-    protected function calcBonusOverrideDef()
+    private function calcBonusOverrideDef()
     {
         $req = new \Praxigento\BonusHybrid\Service\Calc\Request\BonusOverride();
         $req->setScheme(\Praxigento\BonusHybrid\Defaults::SCHEMA_DEFAULT);
@@ -80,7 +80,7 @@ class Calc
         return $result;
     }
 
-    protected function calcBonusOverrideEu()
+    private function calcBonusOverrideEu()
     {
         $req = new \Praxigento\BonusHybrid\Service\Calc\Request\BonusOverride();
         $req->setScheme(\Praxigento\BonusHybrid\Defaults::SCHEMA_EU);
@@ -89,7 +89,7 @@ class Calc
         return $result;
     }
 
-    protected function calcBonusPersonalDef()
+    private function calcBonusPersonalDef()
     {
         $req = new \Praxigento\BonusHybrid\Service\Calc\Request\BonusPersonal();
         $req->setScheme(\Praxigento\BonusHybrid\Defaults::SCHEMA_DEFAULT);
@@ -98,7 +98,7 @@ class Calc
         return $result;
     }
 
-    protected function calcBonusPersonalEu()
+    private function calcBonusPersonalEu()
     {
         $req = new \Praxigento\BonusHybrid\Service\Calc\Request\BonusPersonal();
         $req->setScheme(\Praxigento\BonusHybrid\Defaults::SCHEMA_EU);
@@ -107,7 +107,7 @@ class Calc
         return $result;
     }
 
-    protected function calcBonusTeamDef()
+    private function calcBonusTeamDef()
     {
         $req = new \Praxigento\BonusHybrid\Service\Calc\Request\BonusTeam();
         $req->setScheme(\Praxigento\BonusHybrid\Defaults::SCHEMA_DEFAULT);
@@ -117,7 +117,7 @@ class Calc
         return $result;
     }
 
-    protected function calcBonusTeamEu()
+    private function calcBonusTeamEu()
     {
         $req = new \Praxigento\BonusHybrid\Service\Calc\Request\BonusTeam();
         $req->setScheme(\Praxigento\BonusHybrid\Defaults::SCHEMA_EU);
@@ -127,7 +127,7 @@ class Calc
         return $result;
     }
 
-    protected function calcCompressOiDef()
+    private function calcCompressOiDef()
     {
         $req = new \Praxigento\BonusHybrid\Service\Calc\Request\CompressOi();
         $req->setScheme(\Praxigento\BonusHybrid\Defaults::SCHEMA_DEFAULT);
@@ -136,7 +136,7 @@ class Calc
         return $result;
     }
 
-    protected function calcCompressOiEu()
+    private function calcCompressOiEu()
     {
         $req = new \Praxigento\BonusHybrid\Service\Calc\Request\CompressOi();
         $req->setScheme(\Praxigento\BonusHybrid\Defaults::SCHEMA_EU);
@@ -145,7 +145,7 @@ class Calc
         return $result;
     }
 
-    protected function calcCompressPhase1()
+    private function calcCompressPhase1()
     {
         $ctx = new \Praxigento\Core\Data();
         $this->procCompressPhase1->exec($ctx);
@@ -153,7 +153,7 @@ class Calc
         return $result;
     }
 
-    protected function calcPvWriteOff()
+    private function calcPvWriteOff()
     {
         $ctx = new \Praxigento\Core\Data();
         $this->procPvWriteOff->exec($ctx);
@@ -161,7 +161,7 @@ class Calc
         return $result;
     }
 
-    protected function calcSignupDebit()
+    private function calcSignupDebit()
     {
         $req = new \Praxigento\BonusHybrid\Service\Calc\SignupDebit\Request();
         $resp = $this->callBonusSignup->exec($req);
@@ -169,7 +169,7 @@ class Calc
         return $result;
     }
 
-    protected function calcValueOv()
+    private function calcValueOv()
     {
         $req = new \Praxigento\BonusHybrid\Service\Calc\Request\ValueOv();
         $resp = $this->callCalc->valueOv($req);
@@ -177,7 +177,7 @@ class Calc
         return $result;
     }
 
-    protected function calcValueTv()
+    private function calcValueTv()
     {
         $req = new \Praxigento\BonusHybrid\Service\Calc\Request\ValueTv();
         $resp = $this->callCalc->valueTv($req);
