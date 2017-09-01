@@ -148,7 +148,7 @@ class Calc
     protected function calcCompressPhase1()
     {
         $ctx = new \Praxigento\Core\Data();
-        $resp = $this->procCompressPhase1->exec($ctx);
+        $this->procCompressPhase1->exec($ctx);
         $result = (bool)$ctx->get($this->procCompressPhase1::CTX_OUT_SUCCESS);
         return $result;
     }

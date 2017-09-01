@@ -6,8 +6,11 @@
 namespace Praxigento\BonusHybrid\Service\Calc;
 
 use Praxigento\BonusHybrid\Config as Cfg;
+use Praxigento\BonusHybrid\Defaults as Def;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonusDwnl;
 use Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder as QBldGetPv;
 use Praxigento\BonusHybrid\Service\Calc\CompressPhase1\Calc as SubCalc;
+use Praxigento\Downline\Repo\Entity\Data\Snap as ESnap;
 
 class CompressPhase1
     implements \Praxigento\BonusHybrid\Service\Calc\ICompressPhase1
@@ -17,19 +20,26 @@ class CompressPhase1
     use \Praxigento\BonusHybrid\Service\Calc\Traits\TMap {
         mapValueById as protected;
     }
-
     /** @var \Praxigento\BonusHybrid\Service\IPeriod */
     protected $callPeriod;
+    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
+    private $repoCalc;
     /** @var \Psr\Log\LoggerInterface */
     protected $logger;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
     /** @var \Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder */
     protected $qbGetPv;
+    /** @var \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder */
+    private $qbSnapOnDate;
     /** @var \Praxigento\BonusHybrid\Repo\Query\MarkCalcComplete */
     protected $queryMarkComplete;
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
     protected $repoDwnl;
+    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
+    protected $repoDwnlBon;
+    /** @var \Praxigento\BonusBase\Repo\Entity\Rank */
+    private $repoRank;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase1\Transfer\Pv */
     protected $repoTransPv;
     /** @var \Praxigento\BonusHybrid\Service\Calc\CompressPhase1\Calc */
@@ -38,11 +48,13 @@ class CompressPhase1
     protected $subCalcOrig;
     /** @var  \Praxigento\BonusHybrid\Service\Calc\Sub\Db */
     protected $subDb;
-    /** @var \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder */
-    private $qbSnapOnDate;
+
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
         \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
+        \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
+        \Praxigento\BonusBase\Repo\Entity\Rank $repoRank,
+        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon,
         \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase1\Transfer\Pv $repoTransPv,
         \Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder $qbGetPv,
         \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder $qbSnapOnDate,
@@ -56,6 +68,9 @@ class CompressPhase1
     {
         $this->logger = $logger;
         $this->repoDwnl = $repoDwnl;
+        $this->repoCalc = $repoCalc;
+        $this->repoRank = $repoRank;
+        $this->repoDwnlBon = $repoDwnlBon;
         $this->repoTransPv = $repoTransPv;
         $this->qbGetPv = $qbGetPv;
         $this->qbSnapOnDate = $qbSnapOnDate;
@@ -65,6 +80,29 @@ class CompressPhase1
         $this->subDb = $subDb;
         $this->subCalcOrig = $subCalcOrig;
         $this->subCalc = $subCalc;
+    }
+
+    /**
+     * Wrapper for compression sub-process.
+     *
+     * @param \Praxigento\Downline\Repo\Entity\Data\Customer[] $dwnlCurrent
+     * @param array $dwnlSnap see \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder
+     * @param array $pv [custId => pv]
+     * @param int $calcId
+     * @return array [$updates, $pvTransfers]
+     */
+    private function compress($dwnlCurrent, $dwnlSnap, $pv, $calcId)
+    {
+        $ctx = new \Praxigento\Core\Data();
+        $ctx->set(SubCalc::CTX_DWNL_CUST, $dwnlCurrent);
+        $ctx->set(SubCalc::CTX_DWNL_SNAP, $dwnlSnap);
+        $ctx->set(SubCalc::CTX_PV, $pv);
+        $ctx->set(SubCalc::CTX_CALC_ID, $calcId);
+        $this->subCalc->exec($ctx);
+        $updates = $ctx->get(SubCalc::CTX_COMPRESSED);
+        $pvTransfers = $ctx->get(SubCalc::CTX_PV_TRANSFERS);
+        $result = [$updates, $pvTransfers];
+        return $result;
     }
 
     public function exec(\Praxigento\Core\Data $ctx)
@@ -89,23 +127,14 @@ class CompressPhase1
         $dwnlSnap = $this->getDownlineSnapshot($dsEnd);
         $dwnlCurrent = $this->repoDwnl->get();
         $dataPv = $this->getPv($baseCalcId);
-        $ctx = new \Praxigento\Core\Data();
-        $ctx->set(SubCalc::CTX_DWNL_CUST, $dwnlCurrent);
-        $ctx->set(SubCalc::CTX_DWNL_SNAP, $dwnlSnap);
-        $ctx->set(SubCalc::CTX_PV, $dataPv);
-        $ctx->set(SubCalc::CTX_CALC_ID, $depCalcId);
-        $this->subCalc->exec($ctx);
-        $updates = $ctx->get(SubCalc::CTX_COMPRESSED);
-        $pvTransfers = $ctx->get(SubCalc::CTX_PV_TRANSFERS);
-
-        /* save results into DB */
-        $this->subDb->saveCompressedPtc($updates, $depCalcId);
+        /** @var \Praxigento\Downline\Repo\Entity\Data\Snap[] $updates */
+        /** @var \Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Phase1\Transfer\Pv[] $pvTransfers */
+        list($updates, $pvTransfers) = $this->compress($dwnlCurrent, $dwnlSnap, $dataPv, $depCalcId);
+        /* save compressed downline & PV transfers into DB */
+        $this->saveBonusDownline($updates, $depCalcId);
         $this->savePvTransfers($pvTransfers);
-        $this->queryMarkComplete->exec($depCalcId);
-        $result->markSucceed();
-        $result->setPeriodId($depPeriodId);
-        $result->setCalcId($depCalcId);
-
+        /* mark this calculation complete */
+        $this->repoCalc->markComplete($depCalcId);
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);
         $this->logger->info("Phase1 compression is completed.");
@@ -130,6 +159,17 @@ class CompressPhase1
         /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $depCalcData */
         $depCalcData = $ctxPeriod->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
         $result = [$baseCalcData, $depPeriodData, $depCalcData];
+        return $result;
+    }
+
+    /**
+     * Get ID for default rank.
+     *
+     * @return int
+     */
+    private function getDefaultRankId()
+    {
+        $result = $this->repoRank->getIdByCode(Def::RANK_DISTRIBUTOR);
         return $result;
     }
 
@@ -163,6 +203,37 @@ class CompressPhase1
         $data = $conn->fetchAll($query, $bind);
         $result = $this->mapValueById($data, QBldGetPv::A_CUST_ID, QBldGetPv::A_PV);
         return $result;
+    }
+
+    /**
+     * @param array $snap snap data with PV (see \Praxigento\BonusHybrid\Service\Calc\CompressPhase1\Calc::populateCompressedSnapWithPv)
+     * @param int $calcId
+     */
+    private function saveBonusDownline($snap, $calcId)
+    {
+        $rankId = $this->getDefaultRankId();
+
+        foreach ($snap as $one) {
+            /* get working vars */
+            $custId = $one[ESnap::ATTR_CUSTOMER_ID];
+            $depth = $one[ESnap::ATTR_DEPTH];
+            $parentId = $one[ESnap::ATTR_PARENT_ID];
+            $path = $one[ESnap::ATTR_PATH];
+            $pv = $one[EBonusDwnl::ATTR_PV];
+            /* compose new entity to save */
+            $entity = new EBonusDwnl();
+            $entity->setCalculationRef($calcId);
+            $entity->setCustomerRef($custId);
+            $entity->setDepth($depth);
+            $entity->setOv(0);
+            $entity->setParentRef($parentId);
+            $entity->setPath($path);
+            $entity->setPv($pv);
+            $entity->setRankRef($rankId);
+            $entity->setTv(0);
+            $entity->setUnqMonths(0);
+            $this->repoDwnlBon->create($entity);
+        }
     }
 
     /**

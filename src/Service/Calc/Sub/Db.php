@@ -493,6 +493,12 @@ class Db
         }
     }
 
+    /**
+     * @param $data
+     * @param $calcId
+     *
+     * @deprecated see \Praxigento\BonusHybrid\Service\Calc\CompressPhase1::saveBonusDownline
+     */
     public function saveCompressedPtc($data, $calcId)
     {
         foreach ($data as $one) {

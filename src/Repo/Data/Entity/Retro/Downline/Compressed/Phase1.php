@@ -7,6 +7,8 @@ namespace Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Compressed;
 
 /**
  * Retrospective Downline Tree that is Compressed in Phase 1
+ *
+ * @deprecated see \Praxigento\BonusHybrid\Repo\Entity\Data\Downline
  */
 class Phase1
     extends \Praxigento\Core\Data\Entity\Base
