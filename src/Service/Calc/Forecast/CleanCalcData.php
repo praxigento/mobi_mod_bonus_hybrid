@@ -38,7 +38,7 @@ class CleanCalcData
         $this->repoDwnl = $repoDwnl;
     }
 
-    public function exec(\Flancer32\Lib\Data $ctx)
+    public function exec(\Praxigento\Core\Data $ctx)
     {
         /* get working data from context */
         $calcTypeCode = $ctx->get(self::CTX_IN_CALC_TYPE_CODE);

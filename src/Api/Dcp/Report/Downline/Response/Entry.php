@@ -40,7 +40,7 @@ namespace Praxigento\BonusHybrid\Api\Dcp\Report\Downline\Response;
  * @method void setUnqMonths(int $data)
  */
 class Entry
-    extends \Flancer32\Lib\Data
+    extends \Praxigento\Core\Data
 {
     const A_COUNTRY = 'country';
     const A_CUSTOMER_REF = 'customer_ref';

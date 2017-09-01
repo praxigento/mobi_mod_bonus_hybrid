@@ -46,7 +46,7 @@ abstract class Base
         $this->qPeriodCalc = $qPeriodCalc;
     }
 
-    protected function authorize(\Flancer32\Lib\Data $ctx)
+    protected function authorize(\Praxigento\Core\Data $ctx)
     {
         /* get working vars from context */
         $vars = $ctx->get(self::CTX_VARS);
@@ -75,19 +75,19 @@ abstract class Base
     /**
      * Select ID of the last complete calculation for given calculation type.
      *
-     * @param \Flancer32\Lib\Data $ctx
+     * @param \Praxigento\Core\Data $ctx
      */
-    protected abstract function prepareCalcRefData(\Flancer32\Lib\Data $ctx);
+    protected abstract function prepareCalcRefData(\Praxigento\Core\Data $ctx);
 
     /**
      * Extract parameters for base request (period, root customer, etc.).
      *
      * @inheritdoc
      */
-    protected function prepareQueryParameters(\Flancer32\Lib\Data $ctx)
+    protected function prepareQueryParameters(\Praxigento\Core\Data $ctx)
     {
         /* get working vars from context */
-        /** @var \Flancer32\Lib\Data $vars */
+        /** @var \Praxigento\Core\Data $vars */
         $vars = $ctx->get(self::CTX_VARS);
         /** @var \Praxigento\BonusHybrid\Api\Stats\Base\Request $req */
         $req = $ctx->get(self::CTX_REQ);

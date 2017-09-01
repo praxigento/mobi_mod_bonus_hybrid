@@ -50,9 +50,9 @@ class GetRanks
     }
 
     /**
-     * @param \Flancer32\Lib\Data $ctx
+     * @param \Praxigento\Core\Data $ctx
      */
-    public function exec(\Flancer32\Lib\Data $ctx = null)
+    public function exec(\Praxigento\Core\Data $ctx = null)
     {
         /* get working data from context */
         $dateOn = $ctx->get(self::CTX_IN_DATE_ON);

@@ -8,7 +8,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Sub\Pto;
  * @property array $updates
  */
 class Request
-    extends \Flancer32\Lib\Data
+    extends \Praxigento\Core\Data
 {
 
 }

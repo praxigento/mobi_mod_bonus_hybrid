@@ -75,7 +75,7 @@ class Calc
         return $result;
     }
 
-    public function exec(\Flancer32\Lib\Data $ctx)
+    public function exec(\Praxigento\Core\Data $ctx)
     {
         /* extract working variables from execution context */
         $snap = $ctx->get(self::CTX_DWNL_SNAP);

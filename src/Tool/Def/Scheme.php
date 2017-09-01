@@ -244,7 +244,7 @@ class Scheme
         $result = Def::SCHEMA_DEFAULT;
         if (is_array($data)) {
             $countryCode = $data[Customer::ATTR_COUNTRY_CODE];
-        } elseif ($data instanceof \Flancer32\Lib\Data) {
+        } elseif ($data instanceof \Praxigento\Core\Data) {
             $countryCode = $data->get(Customer::ATTR_COUNTRY_CODE);
         }
         $code = strtoupper($countryCode);

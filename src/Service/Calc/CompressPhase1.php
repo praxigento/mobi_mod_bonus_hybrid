@@ -94,7 +94,7 @@ class CompressPhase1
                 /* TODO: use as object not as array */
                 $dataDwnlCust = $this->repoDwnlCustomer->get();
                 $dataPv = $this->getPv($baseCalcIdId);
-                $ctx = new \Flancer32\Lib\Data();
+                $ctx = new \Praxigento\Core\Data();
                 $ctx->set(SubCalc::CTX_DWNL_CUST, $dataDwnlCust);
                 $ctx->set(SubCalc::CTX_DWNL_SNAP, $dataDwnlSnap);
                 $ctx->set(SubCalc::CTX_PV, $dataPv);

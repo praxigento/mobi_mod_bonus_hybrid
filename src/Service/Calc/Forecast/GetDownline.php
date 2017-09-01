@@ -27,9 +27,9 @@ class GetDownline
     }
 
     /**
-     * @param \Flancer32\Lib\Data $ctx
+     * @param \Praxigento\Core\Data $ctx
      */
-    public function exec(\Flancer32\Lib\Data $ctx)
+    public function exec(\Praxigento\Core\Data $ctx)
     {
         /* get input data from context */
         $calcId = $ctx->get(self::CTX_IN_CALC_ID);

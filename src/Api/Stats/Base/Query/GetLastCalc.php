@@ -36,9 +36,9 @@ class GetLastCalc
         $this->qbldPeriod = $qbldPeriod;
     }
 
-    public function exec(\Flancer32\Lib\Data $opts)
+    public function exec(\Praxigento\Core\Data $opts)
     {
-        $result = new \Flancer32\Lib\Data();
+        $result = new \Praxigento\Core\Data();
         $bind = [];
         /* parse input options */
         $dsEnd = $opts->get(self::OPT_DATE_END);

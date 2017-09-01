@@ -47,12 +47,12 @@ class Plain
         return $result;
     }
 
-    protected function populateQuery(\Flancer32\Lib\Data $ctx)
+    protected function populateQuery(\Praxigento\Core\Data $ctx)
     {
         /* get working vars from context */
-        /** @var \Flancer32\Lib\Data $bind */
+        /** @var \Praxigento\Core\Data $bind */
         $bind = $ctx->get(self::CTX_BIND);
-        /** @var \Flancer32\Lib\Data $vars */
+        /** @var \Praxigento\Core\Data $vars */
         $vars = $ctx->get(self::CTX_VARS);
         /** @var \Magento\Framework\DB\Select $query */
         $query = $ctx->get(self::CTX_QUERY);
@@ -87,17 +87,17 @@ class Plain
         }
     }
 
-    protected function prepareCalcRefData(\Flancer32\Lib\Data $ctx)
+    protected function prepareCalcRefData(\Praxigento\Core\Data $ctx)
     {
         /* get working vars from context */
-        /** @var \Flancer32\Lib\Data $vars */
+        /** @var \Praxigento\Core\Data $vars */
         $vars = $ctx->get(self::CTX_VARS);
 
         /* query parameters */
         $dateEnd = $vars->get(self::VAR_ON_DATE);
 
         // get last calculation data ($calcId & $lastDate)
-        $opts = new \Flancer32\Lib\Data([
+        $opts = new \Praxigento\Core\Data([
             QGetLastCalc::OPT_DATE_END => $dateEnd,
             QGetLastCalc::OPT_CALC_TYPE_CODE => Cfg::CODE_TYPE_CALC_PV_WRITE_OFF
         ]);

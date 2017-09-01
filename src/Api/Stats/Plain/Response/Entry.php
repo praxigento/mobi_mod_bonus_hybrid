@@ -5,7 +5,7 @@
 namespace Praxigento\BonusHybrid\Api\Stats\Plain\Response;
 
 class Entry
-    extends \Flancer32\Lib\Data
+    extends \Praxigento\Core\Data
 {
 
 }

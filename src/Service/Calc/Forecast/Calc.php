@@ -21,8 +21,8 @@ class Calc
     }
 
     const CTX_PLAIN_TREE = 'plainTree';
-    const KEY_TREE_ENTITY = \Praxigento\BonusHybrid\Repo\Entity\Data\Downline::ATTR_CUST_REF;
     const KEY_TREE_DEPTH = \Praxigento\BonusHybrid\Repo\Entity\Data\Downline::ATTR_DEPTH;
+    const KEY_TREE_ENTITY = \Praxigento\BonusHybrid\Repo\Entity\Data\Downline::ATTR_CUST_REF;
     const KEY_TREE_PARENT = \Praxigento\BonusHybrid\Repo\Entity\Data\Downline::ATTR_PARENT_REF;
 
     public function __construct()
@@ -31,9 +31,9 @@ class Calc
 
 
     /**
-     * @param \Flancer32\Lib\Data $ctx
+     * @param \Praxigento\Core\Data $ctx
      */
-    public function exec(\Flancer32\Lib\Data $ctx = null)
+    public function exec(\Praxigento\Core\Data $ctx = null)
     {
         /** @var \Praxigento\BonusHybrid\Repo\Data\Entity\Actual\Downline\Plain[] $plainTree */
         $plainTree = $ctx->get(self::CTX_PLAIN_TREE);

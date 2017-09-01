@@ -58,7 +58,7 @@ class Forecast
         list($dateFrom, $dateTo) = $this->getPeriod();
 
         /* get customers */
-        $ctx = new \Flancer32\Lib\Data();
+        $ctx = new \Praxigento\Core\Data();
         $ctx->set(SubGetDownline::CTX_IN_DATE_ON, $dateTo);
         /** @var \Praxigento\BonusHybrid\Repo\Data\Entity\Actual\Downline\Plain[] $plainItems */
         $plainItems = $this->subGetDownline->exec($ctx);
@@ -86,7 +86,7 @@ class Forecast
         }
 
         /* perform calculation */
-        $ctx = new \Flancer32\Lib\Data();
+        $ctx = new \Praxigento\Core\Data();
         $ctx->set(SubCalc::CTX_PLAIN_TREE, $plainItems);
         $this->subCalc->exec($ctx);
 

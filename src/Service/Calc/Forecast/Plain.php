@@ -69,7 +69,7 @@ class Plain
         $this->logger->info("'Forecast Plain' calculation is started.");
 
         /* clean up existing forecast calculation data */
-        $ctxClean = new \Flancer32\Lib\Data();
+        $ctxClean = new \Praxigento\Core\Data();
         $ctxClean->set(ProcCleanCalcData::CTX_IN_CALC_TYPE_CODE, Cfg::CODE_TYPE_CALC_FORECAST_PLAIN);
         $this->procCleanCalcData->exec($ctxClean);
 
@@ -80,7 +80,7 @@ class Plain
         $calcId = $this->registerNewCalc($dateFrom, $dateTo);
 
         /* get customers downline for $dateTo */
-        $ctx = new \Flancer32\Lib\Data();
+        $ctx = new \Praxigento\Core\Data();
         $ctx->set(ProcGetDownline::CTX_IN_CALC_ID, $calcId);
         $ctx->set(ProcGetDownline::CTX_IN_DATE_ON, $dateTo);
         $this->subGetDownline->exec($ctx);
@@ -88,7 +88,7 @@ class Plain
         $dwnlTree = $ctx->get(ProcGetDownline::CTX_OUT_DWNL);
 
         /* get the last ranks for customers (date before $dateFrom) */
-        $ctxRanks = new \Flancer32\Lib\Data();
+        $ctxRanks = new \Praxigento\Core\Data();
         $ctxRanks->set($this->subGetRanks::CTX_IN_DATE_ON, $dateFrom);
         $ctxRanks->set($this->subGetRanks::CTX_IO_TREE, $dwnlTree);
         $ranks = $this->subGetRanks->exec($ctxRanks);
@@ -113,7 +113,7 @@ class Plain
         }
 
         /* perform calculation */
-        $ctx = new \Flancer32\Lib\Data();
+        $ctx = new \Praxigento\Core\Data();
         $ctx->set(SubCalc::CTX_PLAIN_TREE, $dwnlTree);
         $this->subCalc->exec($ctx);
 

@@ -9,7 +9,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\SignupDebit\GetOrders;
  * @property string $dateFrom
  */
 class Request
-    extends \Flancer32\Lib\Data
+    extends \Praxigento\Core\Data
 {
 
 }

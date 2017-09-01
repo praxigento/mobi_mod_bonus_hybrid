@@ -11,10 +11,10 @@ trait TMap
      * Convert array of data or data objects ([ 0 => [ 'id' => 321, ... ], ...])
      * to mapped array ([ 321 => [ 'id'=>321, ... ], ... ]).
      *
-     * @param array|\Flancer32\Lib\Data[] $data nested array or array of data objects.
+     * @param array|\Praxigento\Core\Data[] $data nested array or array of data objects.
      * @param string $keyId name of the 'id' attribute.
      *
-     * @return array|\Flancer32\Lib\Data[]
+     * @return array|\Praxigento\Core\Data[]
      */
     public function mapById($data, $keyId)
     {
@@ -31,7 +31,7 @@ trait TMap
      * Create map of the front team members (siblings) [$custId => [$memberId, ...], ...] from compressed or snapshot
      * data.
      *
-     * @param array|\Flancer32\Lib\Data[] $data nested array or array of data objects.
+     * @param array|\Praxigento\Core\Data[] $data nested array or array of data objects.
      * @param string $keyCustId name of the 'customer id' attribute.
      * @param string $keyParentId name of the 'parent id' attribute.
      *
@@ -64,7 +64,7 @@ trait TMap
     /**
      * Get depth index for Downline Tree ordered by depth desc.
      *
-     * @param array|\Flancer32\Lib\Data[] $tree nested array or array of data objects.
+     * @param array|\Praxigento\Core\Data[] $tree nested array or array of data objects.
      * @param string $keyCustId name of the 'customer id' attribute.
      * @param string $keyDepth name of the 'depth' attribute.
      *
@@ -95,7 +95,7 @@ trait TMap
     /**
      * Map 'value' elements of the $data array on $id elements.
      *
-     * @param array|\Flancer32\Lib\Data[] $data associative array with 'id' elements & 'value' elements.
+     * @param array|\Praxigento\Core\Data[] $data associative array with 'id' elements & 'value' elements.
      * @param $keyId key for 'id' element
      * @param $keyValue key for 'value' element
      * @return array [id => value, ...]

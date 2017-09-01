@@ -18,7 +18,7 @@ class CleanCalcData_Test
         $def = $this->manTrans->begin();
         /** @var  $obj \Praxigento\BonusHybrid\Service\Calc\Forecast\CleanCalcData */
         $obj = $this->manObj->get(\Praxigento\BonusHybrid\Service\Calc\Forecast\CleanCalcData::class);
-        $ctx = new \Flancer32\Lib\Data();
+        $ctx = new \Praxigento\Core\Data();
         $ctx->set($obj::CTX_IN_CALC_TYPE_CODE, Cfg::CODE_TYPE_CALC_FORECAST_PLAIN);
         $obj->exec($ctx);
         $this->manTrans->rollback($def);

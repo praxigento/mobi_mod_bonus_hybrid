@@ -69,10 +69,10 @@ class Downline
         $this->qbLastCalc = $qbLastCalc;
     }
 
-    protected function createQuerySelect(\Flancer32\Lib\Data $ctx)
+    protected function createQuerySelect(\Praxigento\Core\Data $ctx)
     {
         /* get working vars from context */
-        /** @var \Flancer32\Lib\Data $vars */
+        /** @var \Praxigento\Core\Data $vars */
         $vars = $ctx->get(self::CTX_VARS);
         $reportType = $vars->get(self::VAR_REPORT_TYPE);
         $isActualDataRequested = $vars->get(self::VAR_ACTUAL_DATA_REQUESTED);
@@ -133,12 +133,12 @@ class Downline
         return $result;
     }
 
-    protected function populateQuery(\Flancer32\Lib\Data $ctx)
+    protected function populateQuery(\Praxigento\Core\Data $ctx)
     {
         /* get working vars from context */
-        /** @var \Flancer32\Lib\Data $bind */
+        /** @var \Praxigento\Core\Data $bind */
         $bind = $ctx->get(self::CTX_BIND);
-        /** @var \Flancer32\Lib\Data $vars */
+        /** @var \Praxigento\Core\Data $vars */
         $vars = $ctx->get(self::CTX_VARS);
         /** @var \Magento\Framework\DB\Select $query */
         $query = $ctx->get(self::CTX_QUERY);
@@ -190,13 +190,13 @@ class Downline
         }
     }
 
-    protected function prepareCalcRefData(\Flancer32\Lib\Data $ctx)
+    protected function prepareCalcRefData(\Praxigento\Core\Data $ctx)
     {
         /**
          * TODO: we need to change this method - it is legacy code from \Praxigento\BonusHybrid\Api\Stats\Base
          */
         /* get working vars from context */
-        /** @var \Flancer32\Lib\Data $vars */
+        /** @var \Praxigento\Core\Data $vars */
         $vars = $ctx->get(self::CTX_VARS);
 
         /* 'the last calc' query parameters */
@@ -209,12 +209,12 @@ class Downline
         $vars->set(self::VAR_CALC_REF, $calcRef);
     }
 
-    protected function prepareQueryParameters(\Flancer32\Lib\Data $ctx)
+    protected function prepareQueryParameters(\Praxigento\Core\Data $ctx)
     {
         parent::prepareQueryParameters($ctx);
 
         /* get working vars from context */
-        /** @var \Flancer32\Lib\Data $vars */
+        /** @var \Praxigento\Core\Data $vars */
         $vars = $ctx->get(self::CTX_VARS);
         /** @var \Praxigento\BonusHybrid\Api\Dcp\Report\Downline\Request $req */
         $req = $ctx->get(self::CTX_REQ);
