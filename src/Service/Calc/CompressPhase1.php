@@ -10,7 +10,6 @@ use Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder as QBldGetPv
 use Praxigento\BonusHybrid\Service\Calc\CompressPhase1\Calc as SubCalc;
 
 class CompressPhase1
-    extends \Praxigento\Core\Service\Base\Call
     implements \Praxigento\BonusHybrid\Service\Calc\ICompressPhase1
 {
 
@@ -19,18 +18,18 @@ class CompressPhase1
         mapValueById as protected;
     }
 
-    /** @var  \Praxigento\Downline\Service\ISnap */
-    protected $callDownlineSnap;
     /** @var \Praxigento\BonusHybrid\Service\IPeriod */
     protected $callPeriod;
-    /** @var  \Praxigento\Core\Transaction\Database\IManager */
-    protected $manTrans;
+    /** @var \Psr\Log\LoggerInterface */
+    protected $logger;
+    /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
+    private $procPeriodGet;
     /** @var \Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder */
-    protected $qbldGetPv;
+    protected $qbGetPv;
     /** @var \Praxigento\BonusHybrid\Repo\Query\MarkCalcComplete */
     protected $queryMarkComplete;
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
-    protected $repoDwnlCustomer;
+    protected $repoDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase1\Transfer\Pv */
     protected $repoTransPv;
     /** @var \Praxigento\BonusHybrid\Service\Calc\CompressPhase1\Calc */
@@ -39,101 +38,115 @@ class CompressPhase1
     protected $subCalcOrig;
     /** @var  \Praxigento\BonusHybrid\Service\Calc\Sub\Db */
     protected $subDb;
-
+    /** @var \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder */
+    private $qbSnapOnDate;
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
-        \Magento\Framework\ObjectManagerInterface $manObj,
-        \Praxigento\Core\Transaction\Database\IManager $manTrans,
-        \Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder $qbldGetPv,
-        \Praxigento\BonusHybrid\Repo\Query\MarkCalcComplete $queryMarkComplete,
-        \Praxigento\Downline\Repo\Entity\Customer $repoDwnlCustomer,
+        \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
         \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase1\Transfer\Pv $repoTransPv,
-        \Praxigento\Downline\Service\ISnap $callDownlineSnap,
+        \Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder $qbGetPv,
+        \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder $qbSnapOnDate,
+        \Praxigento\BonusHybrid\Repo\Query\MarkCalcComplete $qMarkComplete,
         \Praxigento\BonusHybrid\Service\IPeriod $callPeriod,
+        \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\Sub\Db $subDb,
         \Praxigento\BonusHybrid\Service\Calc\Sub\Calc $subCalcOrig,
         \Praxigento\BonusHybrid\Service\Calc\CompressPhase1\Calc $subCalc
-    ) {
-        parent::__construct($logger, $manObj);
-        $this->manTrans = $manTrans;
-        $this->qbldGetPv = $qbldGetPv;
-        $this->queryMarkComplete = $queryMarkComplete;
-        $this->repoDwnlCustomer = $repoDwnlCustomer;
+    )
+    {
+        $this->logger = $logger;
+        $this->repoDwnl = $repoDwnl;
         $this->repoTransPv = $repoTransPv;
-        $this->callDownlineSnap = $callDownlineSnap;
+        $this->qbGetPv = $qbGetPv;
+        $this->qbSnapOnDate = $qbSnapOnDate;
+        $this->queryMarkComplete = $qMarkComplete;
         $this->callPeriod = $callPeriod;
+        $this->procPeriodGet = $procPeriodGet;
         $this->subDb = $subDb;
         $this->subCalcOrig = $subCalcOrig;
         $this->subCalc = $subCalc;
     }
 
-    public function exec(\Praxigento\BonusHybrid\Service\Calc\CompressPhase1\Request $req)
+    public function exec(\Praxigento\Core\Data $ctx)
     {
-        $result = new \Praxigento\BonusHybrid\Service\Calc\CompressPhase1\Response();
+        /**
+         * perform processing
+         */
+        $ctx->set(self::CTX_OUT_SUCCESS, false);
         $this->logger->info("Phase1 compression is started.");
+        /* get dependent calculation data */
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $baseCalcData */
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $depPeriodData */
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $depCalcData */
+        list($baseCalcData, $depPeriodData, $depCalcData) = $this->getCalcData();
+        $depPeriodId = $depPeriodData->getId();
+        $dsBegin = $depPeriodData->getDstampBegin();
+        $dsEnd = $depPeriodData->getDstampEnd();
+        $baseCalcId = $baseCalcData->getId();
+        $depCalcId = $depCalcData->getId();
+        $this->logger->info("Processing period #$depPeriodId ($dsBegin-$dsEnd)");
+        /* load source data for calculation */
+        $dwnlSnap = $this->getDownlineSnapshot($dsEnd);
+        $dwnlCurrent = $this->repoDwnl->get();
+        $dataPv = $this->getPv($baseCalcId);
+        $ctx = new \Praxigento\Core\Data();
+        $ctx->set(SubCalc::CTX_DWNL_CUST, $dwnlCurrent);
+        $ctx->set(SubCalc::CTX_DWNL_SNAP, $dwnlSnap);
+        $ctx->set(SubCalc::CTX_PV, $dataPv);
+        $ctx->set(SubCalc::CTX_CALC_ID, $depCalcId);
+        $this->subCalc->exec($ctx);
+        $updates = $ctx->get(SubCalc::CTX_COMPRESSED);
+        $pvTransfers = $ctx->get(SubCalc::CTX_PV_TRANSFERS);
 
-        $reqGetPeriod = new \Praxigento\BonusHybrid\Service\Period\Request\GetForDependentCalc();
-        $reqGetPeriod->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
-        $reqGetPeriod->setDependentCalcTypeCode(Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
-        $respGetPeriod = $this->callPeriod->getForDependentCalc($reqGetPeriod);
-        if ($respGetPeriod->isSucceed()) {
-            $def = $this->manTrans->begin();
-            try {
-                /* working vars */
-                $thisPeriodData = $respGetPeriod->getDependentPeriodData();
-                $thisPeriodId = $thisPeriodData->getId();
-                $thisDsBegin = $thisPeriodData->getDstampBegin();
-                $thisDsEnd = $thisPeriodData->getDstampEnd();
-                $thisCalcData = $respGetPeriod->getDependentCalcData();
-                $thisCalcId = $thisCalcData->getId();
-                $baseCalcData = $respGetPeriod->getBaseCalcData();
-                $baseCalcIdId = $baseCalcData->getId();
-                /* calculation itself */
-                $this->logger->info("Processing period #$thisPeriodId ($thisDsBegin-$thisDsEnd)");
-                $dataDwnlSnap = $this->getDownlineSnapshot($thisDsEnd);
-                /* TODO: use as object not as array */
-                $dataDwnlCust = $this->repoDwnlCustomer->get();
-                $dataPv = $this->getPv($baseCalcIdId);
-                $ctx = new \Praxigento\Core\Data();
-                $ctx->set(SubCalc::CTX_DWNL_CUST, $dataDwnlCust);
-                $ctx->set(SubCalc::CTX_DWNL_SNAP, $dataDwnlSnap);
-                $ctx->set(SubCalc::CTX_PV, $dataPv);
-                $ctx->set(SubCalc::CTX_CALC_ID, $thisCalcId);
-                $this->subCalc->exec($ctx);
-                $updates = $ctx->get(SubCalc::CTX_COMPRESSED);
-                $pvTransfers = $ctx->get(SubCalc::CTX_PV_TRANSFERS);
+        /* save results into DB */
+        $this->subDb->saveCompressedPtc($updates, $depCalcId);
+        $this->savePvTransfers($pvTransfers);
+        $this->queryMarkComplete->exec($depCalcId);
+        $result->markSucceed();
+        $result->setPeriodId($depPeriodId);
+        $result->setCalcId($depCalcId);
 
-                /* save results into DB */
-                $this->subDb->saveCompressedPtc($updates, $thisCalcId);
-                $this->savePvTransfers($pvTransfers);
-                $this->queryMarkComplete->exec($thisCalcId);
-                $this->manTrans->commit($def);
-                $result->markSucceed();
-                $result->setPeriodId($thisPeriodId);
-                $result->setCalcId($thisCalcId);
-            } finally {
-                $this->manTrans->end($def);
-            }
-        }
-
-        $this->logMemoryUsage();
+        /* mark process as successful */
+        $ctx->set(self::CTX_OUT_SUCCESS, true);
         $this->logger->info("Phase1 compression is completed.");
+    }
+
+    /**
+     * Get data for dependent calculation.
+     *
+     * @return array [$periodData, $calcData]
+     */
+    private function getCalcData()
+    {
+        /* get period & calc data */
+        $ctxPeriod = new \Praxigento\Core\Data();
+        $ctxPeriod->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
+        $ctxPeriod->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
+        $this->procPeriodGet->exec($ctxPeriod);
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $depCalcData */
+        $baseCalcData = $ctxPeriod->get($this->procPeriodGet::CTX_OUT_BASE_CALC_DATA);
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $depPeriodData */
+        $depPeriodData = $ctxPeriod->get($this->procPeriodGet::CTX_OUT_DEP_PERIOD_DATA);
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $depCalcData */
+        $depCalcData = $ctxPeriod->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
+        $result = [$baseCalcData, $depPeriodData, $depCalcData];
         return $result;
     }
 
     /**
      * Get Downline Tree snapshot on the $datestamp. Result is an array [$customerId => [...], ...]
      *
-     * @param $datestamp 'YYYYMMDD'
+     * @param $dateOn 'YYYYMMDD'
      *
      * @return array|null
      */
-    protected function getDownlineSnapshot($datestamp)
+    protected function getDownlineSnapshot($dateOn)
     {
-        $req = new \Praxigento\Downline\Service\Snap\Request\GetStateOnDate();
-        $req->setDatestamp($datestamp);
-        $resp = $this->callDownlineSnap->getStateOnDate($req);
-        $result = $resp->get();
+        /* collect downline data to given date */
+        $query = $this->qbSnapOnDate->getSelectQuery();
+        $conn = $query->getConnection();
+        $bind = [$this->qbSnapOnDate::BIND_ON_DATE => $dateOn];
+        $result = $conn->fetchAll($query, $bind);
         return $result;
     }
 
@@ -144,7 +157,7 @@ class CompressPhase1
      */
     protected function getPv($calcId)
     {
-        $query = $this->qbldGetPv->getSelectQuery();
+        $query = $this->qbGetPv->getSelectQuery();
         $conn = $query->getConnection();
         $bind = [QBldGetPv::BIND_CALC_ID => $calcId];
         $data = $conn->fetchAll($query, $bind);

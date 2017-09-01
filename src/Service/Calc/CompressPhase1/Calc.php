@@ -94,6 +94,7 @@ class Calc
 
         /* prepare intermediary structures for calculation */
         $mapCustomer = $this->mapById($customers, ECustomer::ATTR_CUSTOMER_ID);
+        $mapSnap = $this->mapById($snap, ASnap::A_CUST_ID);
         $mapPv = $pv;
         $mapDepth = $this->mapByTreeDepthDesc($snap, ASnap::A_CUST_ID, ASnap::A_DEPTH);
         $mapTeams = $this->mapByTeams($snap, ASnap::A_CUST_ID, ASnap::A_PARENT_ID);
@@ -104,7 +105,7 @@ class Calc
         foreach ($mapDepth as $depth => $levelCustomers) {
             foreach ($levelCustomers as $custId) {
                 $pv = isset($mapPv[$custId]) ? $mapPv[$custId] : 0;
-                $parentId = $snap[$custId][ASnap::A_PARENT_ID];
+                $parentId = $mapSnap[$custId][ASnap::A_PARENT_ID];
                 $custData = $mapCustomer[$custId];
                 $scheme = $this->toolScheme->getSchemeByCustomer($custData);
                 $level = $qLevels[$scheme]; // qualification level for current customer
@@ -120,7 +121,7 @@ class Calc
                     }
                 } else {
                     /* move PV up to the closest qualified parent (parent's level is used for qualification) */
-                    $path = $snap[$custId][ASnap::A_PATH];
+                    $path = $mapSnap[$custId][ASnap::A_PATH];
                     $parents = $this->toolTree->getParentsFromPathReversed($path);
                     $foundParentId = null;
                     foreach ($parents as $newParentId) {

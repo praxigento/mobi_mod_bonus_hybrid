@@ -18,10 +18,7 @@ class PvWriteOff
     private $hlpDate;
     /** @var  \Praxigento\Core\Tool\IPeriod */
     private $hlpPeriod;
-    /**
-     * @var \Praxigento\Core\Fw\Logger\App
-     * @deprecated use it or remove it
-     */
+    /** @var \Praxigento\Core\Fw\Logger\App */
     private $logger;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
@@ -93,24 +90,14 @@ class PvWriteOff
 
     public function exec(\Praxigento\Core\Data $ctx)
     {
-        /* get working data from context */
-
+        $this->logger->info("PV Write Off calculation is started.");
         /**
          * perform processing
          */
-        /* get period & calc data */
-        $ctxPeriod = new \Praxigento\Core\Data();
-        $ctxPeriod->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_BONUS_SIGNUP_DEBIT);
-        $ctxPeriod->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
-        $ctxPeriod->set($this->procPeriodGet::CTX_IN_LOAD_DATA, true);
-        $this->procPeriodGet->exec($ctxPeriod);
-        /* get calculation data */
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $periodData */
-        $periodData = $ctxPeriod->get($this->procPeriodGet::CTX_OUT_PERIOD_DATA);
+        /* get dependent calculation data */
+        list($periodData, $calcData) = $this->getCalcData();
         $dsBegin = $periodData->getDstampBegin();
         $dsEnd = $periodData->getDstampEnd();
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $calcData */
-        $calcData = $ctxPeriod->get($this->procPeriodGet::CTX_OUT_CALC_DATA);
         $calcId = $calcData->getId();
         /* get accounting data for calculation (PV transitions) */
         $transitions = $this->getTransitions($calcId, $dsBegin, $dsEnd);
@@ -128,6 +115,27 @@ class PvWriteOff
         $this->repoCalc->markComplete($calcId);
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);
+        $this->logger->info("PV Write Off calculation is completed.");
+    }
+
+    /**
+     * Get data for dependent calculation.
+     *
+     * @return array [$periodData, $calcData]
+     */
+    private function getCalcData()
+    {
+        /* get period & calc data */
+        $ctxPeriod = new \Praxigento\Core\Data();
+        $ctxPeriod->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_BONUS_SIGNUP_DEBIT);
+        $ctxPeriod->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
+        $this->procPeriodGet->exec($ctxPeriod);
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $periodData */
+        $periodData = $ctxPeriod->get($this->procPeriodGet::CTX_OUT_DEP_PERIOD_DATA);
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $calcData */
+        $calcData = $ctxPeriod->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
+        $result = [$periodData, $calcData];
+        return $result;
     }
 
     /**

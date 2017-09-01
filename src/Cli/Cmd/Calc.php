@@ -10,25 +10,25 @@ namespace Praxigento\BonusHybrid\Cli\Cmd;
 class Calc
     extends \Praxigento\Core\Cli\Cmd\Base
 {
-    /** @var \Praxigento\BonusHybrid\Service\Calc\ICompressPhase1 */
-    protected $callBonusCompressPhase1;
     /** @var  \Praxigento\BonusHybrid\Service\Calc\ISignupDebit */
     protected $callBonusSignup;
     /** @var \Praxigento\BonusHybrid\Service\ICalc */
     protected $callCalc;
     /** @var \Magento\Framework\DB\Adapter\AdapterInterface */
     protected $conn;
-    /** @var \Magento\Framework\App\ResourceConnection */
-    protected $resource;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\ICompressPhase1 */
+    protected $procCompressPhase1;
     /** @var \Praxigento\BonusHybrid\Service\Calc\IPvWriteOff */
     private $procPvWriteOff;
+    /** @var \Magento\Framework\App\ResourceConnection */
+    protected $resource;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Magento\Framework\App\ResourceConnection $resource,
         \Praxigento\BonusHybrid\Service\ICalc $callCalc,
         \Praxigento\BonusHybrid\Service\Calc\ISignupDebit $callBonusSignup,
-        \Praxigento\BonusHybrid\Service\Calc\ICompressPhase1 $callBonusCompressPhase1,
+        \Praxigento\BonusHybrid\Service\Calc\ICompressPhase1 $procCompressPhase1,
         \Praxigento\BonusHybrid\Service\Calc\IPvWriteOff $procPvWriteOff
     ) {
         parent::__construct(
@@ -40,7 +40,7 @@ class Calc
         $this->conn = $this->resource->getConnection();
         $this->callCalc = $callCalc;
         $this->callBonusSignup = $callBonusSignup;
-        $this->callBonusCompressPhase1 = $callBonusCompressPhase1;
+        $this->procCompressPhase1 = $procCompressPhase1;
         $this->procPvWriteOff = $procPvWriteOff;
     }
 
@@ -147,9 +147,9 @@ class Calc
 
     protected function calcCompressPhase1()
     {
-        $req = new \Praxigento\BonusHybrid\Service\Calc\CompressPhase1\Request();
-        $resp = $this->callBonusCompressPhase1->exec($req);
-        $result = $resp->isSucceed();
+        $ctx = new \Praxigento\Core\Data();
+        $resp = $this->procCompressPhase1->exec($ctx);
+        $result = (bool)$ctx->get($this->procCompressPhase1::CTX_OUT_SUCCESS);
         return $result;
     }
 
