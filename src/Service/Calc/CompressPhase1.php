@@ -20,10 +20,6 @@ class CompressPhase1
     use \Praxigento\BonusHybrid\Service\Calc\Traits\TMap {
         mapValueById as protected;
     }
-    /** @var \Praxigento\BonusHybrid\Service\IPeriod */
-    protected $callPeriod;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
-    private $repoCalc;
     /** @var \Psr\Log\LoggerInterface */
     protected $logger;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
@@ -32,8 +28,8 @@ class CompressPhase1
     protected $qbGetPv;
     /** @var \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder */
     private $qbSnapOnDate;
-    /** @var \Praxigento\BonusHybrid\Repo\Query\MarkCalcComplete */
-    protected $queryMarkComplete;
+    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
+    private $repoCalc;
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
     protected $repoDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
@@ -44,10 +40,6 @@ class CompressPhase1
     protected $repoTransPv;
     /** @var \Praxigento\BonusHybrid\Service\Calc\CompressPhase1\Calc */
     protected $subCalc;
-    /** @var  \Praxigento\BonusHybrid\Service\Calc\Sub\Calc */
-    protected $subCalcOrig;
-    /** @var  \Praxigento\BonusHybrid\Service\Calc\Sub\Db */
-    protected $subDb;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
@@ -58,12 +50,8 @@ class CompressPhase1
         \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase1\Transfer\Pv $repoTransPv,
         \Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder $qbGetPv,
         \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder $qbSnapOnDate,
-        \Praxigento\BonusHybrid\Repo\Query\MarkCalcComplete $qMarkComplete,
-        \Praxigento\BonusHybrid\Service\IPeriod $callPeriod,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
-        \Praxigento\BonusHybrid\Service\Calc\Sub\Db $subDb,
-        \Praxigento\BonusHybrid\Service\Calc\Sub\Calc $subCalcOrig,
-        \Praxigento\BonusHybrid\Service\Calc\CompressPhase1\Calc $subCalc
+        CompressPhase1\Calc $subCalc
     )
     {
         $this->logger = $logger;
@@ -74,11 +62,7 @@ class CompressPhase1
         $this->repoTransPv = $repoTransPv;
         $this->qbGetPv = $qbGetPv;
         $this->qbSnapOnDate = $qbSnapOnDate;
-        $this->queryMarkComplete = $qMarkComplete;
-        $this->callPeriod = $callPeriod;
         $this->procPeriodGet = $procPeriodGet;
-        $this->subDb = $subDb;
-        $this->subCalcOrig = $subCalcOrig;
         $this->subCalc = $subCalc;
     }
 
@@ -122,7 +106,7 @@ class CompressPhase1
         $dsEnd = $depPeriodData->getDstampEnd();
         $baseCalcId = $baseCalcData->getId();
         $depCalcId = $depCalcData->getId();
-        $this->logger->info("Processing period #$depPeriodId ($dsBegin-$dsEnd)");
+        $this->logger->info("Phase1 compression period #$depPeriodId ($dsBegin-$dsEnd)");
         /* load source data for calculation */
         $dwnlSnap = $this->getDownlineSnapshot($dsEnd);
         $dwnlCurrent = $this->repoDwnl->get();

@@ -8,7 +8,7 @@ namespace Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline;
 /**
  * Retrospective data for plain downline reports (updated periodically).
  *
- * User: Alex Gusev <alex@flancer64.com>
+ * @deprecated see \Praxigento\BonusHybrid\Repo\Entity\Data\Downline
  */
 class Plain
     extends \Praxigento\Core\Data\Entity\Base
