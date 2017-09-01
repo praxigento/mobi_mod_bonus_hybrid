@@ -467,6 +467,12 @@ class Db
         return $result;
     }
 
+    /**
+     * @param $calcId
+     * @return int
+     *
+     * @deprecated see \Praxigento\BonusBase\Repo\Entity\Calculation::markComplete
+     */
     public function markCalcComplete($calcId)
     {
         $tsEnded = $this->_toolDate->getUtcNowForDb();
