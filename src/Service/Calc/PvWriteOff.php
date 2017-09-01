@@ -69,13 +69,23 @@ class PvWriteOff
         $this->subSaveDownline = $subSaveDownline;
     }
 
-    private function createOperation($trans)
+    /**
+     * Register new operation.
+     *
+     * @param \Praxigento\Accounting\Repo\Entity\Data\Transaction[] $trans
+     * @param string $dsBegin
+     * @param string $dsEnd
+     * @return int operation ID
+     */
+    private function createOperation($trans, $dsBegin, $dsEnd)
     {
         $datePerformed = $this->hlpDate->getUtcNowForDb();
         $req = new \Praxigento\Accounting\Service\Operation\Request\Add();
         $req->setOperationTypeCode(Cfg::CODE_TYPE_OPER_PV_WRITE_OFF);
         $req->setDatePerformed($datePerformed);
         $req->setTransactions($trans);
+        $note = "PV Write Off ($dsBegin-$dsEnd)";
+        $req->setOperationNote($note);
         $resp = $this->callOperation->add($req);
         $result = $resp->getOperationId();
         return $result;
@@ -105,13 +115,13 @@ class PvWriteOff
         /* get accounting data for calculation (PV transitions) */
         $transitions = $this->getTransitions($calcId, $dsBegin, $dsEnd);
         /* group PV transitions by account */
-        $turnover = $this->groupPvTrans($transitions);
+        $balances = $this->groupPvTrans($transitions);
         /* compose transactions for the operation */
-        $trans = $this->getTransactions($turnover, $dsEnd);
+        $trans = $this->getTransactions($balances, $dsEnd);
         /* create 'PV Write Off' operation */
-        $operId = $this->createOperation($trans);
+        $operId = $this->createOperation($trans, $dsBegin, $dsEnd);
         /* calculate PV/TV/OV and save plain downline */
-        $this->subSaveDownline->exec($calcId, $dsEnd, $turnover);
+        $this->subSaveDownline->exec($calcId, $dsEnd, $balances);
         /* register operation in log */
         $this->saveLog($transitions, $operId, $calcId);
         /* mark this calculation complete */
