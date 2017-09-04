@@ -209,16 +209,16 @@ class Personal
     private function getCalcData()
     {
         /* get period & calc data */
-        $ctxPeriod = new \Praxigento\Core\Data();
-        $ctxPeriod->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
-        $ctxPeriod->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_DEF);
-        $this->procPeriodGet->exec($ctxPeriod);
+        $ctx = new \Praxigento\Core\Data();
+        $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
+        $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_DEF);
+        $this->procPeriodGet->exec($ctx);
         /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $depCalcData */
-        $baseCalcData = $ctxPeriod->get($this->procPeriodGet::CTX_OUT_BASE_CALC_DATA);
+        $baseCalcData = $ctx->get($this->procPeriodGet::CTX_OUT_BASE_CALC_DATA);
         /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $depPeriodData */
-        $depPeriodData = $ctxPeriod->get($this->procPeriodGet::CTX_OUT_DEP_PERIOD_DATA);
+        $depPeriodData = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_PERIOD_DATA);
         /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $depCalcData */
-        $depCalcData = $ctxPeriod->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
+        $depCalcData = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
         $result = [$baseCalcData, $depPeriodData, $depCalcData];
         return $result;
     }

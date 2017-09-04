@@ -126,14 +126,14 @@ class PvWriteOff
     private function getCalcData()
     {
         /* get period & calc data */
-        $ctxPeriod = new \Praxigento\Core\Data();
-        $ctxPeriod->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_BONUS_SIGNUP_DEBIT);
-        $ctxPeriod->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
-        $this->procPeriodGet->exec($ctxPeriod);
+        $ctx = new \Praxigento\Core\Data();
+        $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_BONUS_SIGNUP_DEBIT);
+        $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
+        $this->procPeriodGet->exec($ctx);
         /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $periodData */
-        $periodData = $ctxPeriod->get($this->procPeriodGet::CTX_OUT_DEP_PERIOD_DATA);
+        $periodData = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_PERIOD_DATA);
         /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $calcData */
-        $calcData = $ctxPeriod->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
+        $calcData = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
         $result = [$periodData, $calcData];
         return $result;
     }

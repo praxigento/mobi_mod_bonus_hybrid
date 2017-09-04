@@ -500,7 +500,6 @@ class Call
         return $result;
     }
 
-
     /**
      * @param Request\ValueOv $request
      *
