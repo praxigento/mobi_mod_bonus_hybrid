@@ -51,7 +51,9 @@
     <preference for="\Praxigento\BonusHybrid\Service\Calc\IPvWriteOff"
                 type="\Praxigento\BonusHybrid\Service\Calc\PvWriteOff"/>
     <preference for="\Praxigento\BonusHybrid\Service\Calc\ISignupDebit"
-            type="\Praxigento\BonusHybrid\Service\Calc\SignupDebit"/>
+                type="\Praxigento\BonusHybrid\Service\Calc\SignupDebit"/>
+    <preference for="\Praxigento\BonusHybrid\Service\Calc\IValueTv"
+                type="\Praxigento\BonusHybrid\Service\Calc\ValueTv"/>
 
     <!-- ***** -->
     <!-- Tools -->

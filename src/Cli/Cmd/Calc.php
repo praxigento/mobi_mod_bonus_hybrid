@@ -22,6 +22,8 @@ class Calc
     private $procCompressPhase1;
     /** @var \Praxigento\BonusHybrid\Service\Calc\IPvWriteOff */
     private $procPvWriteOff;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\IValueTv */
+    private $procTv;
     /** @var \Magento\Framework\App\ResourceConnection */
     private $resource;
 
@@ -32,7 +34,8 @@ class Calc
         \Praxigento\BonusHybrid\Service\Calc\ISignupDebit $callBonusSignup,
         \Praxigento\BonusHybrid\Service\Calc\ICompressPhase1 $procCompressPhase1,
         \Praxigento\BonusHybrid\Service\Calc\IPvWriteOff $procPvWriteOff,
-        \Praxigento\BonusHybrid\Service\Calc\Bonus\IPersonal $procBonusPers
+        \Praxigento\BonusHybrid\Service\Calc\Bonus\IPersonal $procBonusPers,
+        \Praxigento\BonusHybrid\Service\Calc\IValueTv $procTv
     ) {
         parent::__construct(
             $manObj,
@@ -46,6 +49,7 @@ class Calc
         $this->procCompressPhase1 = $procCompressPhase1;
         $this->procPvWriteOff = $procPvWriteOff;
         $this->procBonusPers = $procBonusPers;
+        $this->procTv = $procTv;
     }
 
     private function calcBonusCourtesy()
@@ -173,9 +177,9 @@ class Calc
 
     private function calcValueTv()
     {
-        $req = new \Praxigento\BonusHybrid\Service\Calc\Request\ValueTv();
-        $resp = $this->callCalc->valueTv($req);
-        $result = $resp->isSucceed();
+        $ctx = new \Praxigento\Core\Data();
+        $this->procTv->exec($ctx);
+        $result = (bool)$ctx->get($this->procTv::CTX_OUT_SUCCESS);
         return $result;
     }
 
@@ -201,10 +205,6 @@ class Calc
             }
             if ($canContinue) {
                 $output->writeln("<info>Personal bonus (DEFAULT) is calculated.<info>");
-//                $canContinue = $this->calcBonusPersonalEu();
-            }
-            if ($canContinue) {
-                $output->writeln("<info>Personal bonus (EU) is skipped.<info>");
                 $canContinue = $this->calcValueTv();
             }
             if ($canContinue) {

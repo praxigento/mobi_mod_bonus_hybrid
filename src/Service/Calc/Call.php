@@ -10,9 +10,7 @@ use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Oi as OiCompress;
 use Praxigento\BonusHybrid\Service\Calc\Sub\Calc;
-use Praxigento\BonusHybrid\Service\Calc\Sub\Pto as SubPto;
 use Praxigento\BonusHybrid\Service\Period\Request\GetForDependentCalc as PeriodGetForDependentCalcRequest;
-use Praxigento\BonusHybrid\Service\Period\Request\GetForWriteOff as PeriodGetForWriteOffRequest;
 
 /**
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
@@ -337,89 +335,6 @@ class Call
         }
         $this->logMemoryUsage();
         $this->logger->info("'Override Bonus' calculation is completed.");
-        return $result;
-    }
-
-    public function bonusPersonal(Request\BonusPersonal $request)
-    {
-        $result = new Response\BonusPersonal();
-        $scheme = $this->_getCalculationsScheme($request->getScheme());
-        $datePerformed = $request->getDatePerformed();
-        $dateApplied = $request->getDateApplied();
-        $this->logger->info("'Personal Bonus' calculation is started. Scheme: $scheme, performed at: $datePerformed, applied at: $dateApplied.");
-        $reqGetPeriod = new PeriodGetForDependentCalcRequest();
-        $calcTypeBase = Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1;
-        if ($scheme == Def::SCHEMA_EU) {
-            $calcType = Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_EU;
-        } else {
-            $calcType = Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_DEF;
-        }
-        $reqGetPeriod->setBaseCalcTypeCode($calcTypeBase);
-        $reqGetPeriod->setDependentCalcTypeCode($calcType);
-        $respGetPeriod = $this->_callPeriod->getForDependentCalc($reqGetPeriod);
-        if ($respGetPeriod->isSucceed()) {
-            $def = $this->_manTrans->begin();
-            try {
-                /* working vars */
-                $thisPeriodData = $respGetPeriod->getDependentPeriodData();
-                $thisPeriodId = $thisPeriodData->getId();
-                $thisCalcData = $respGetPeriod->getDependentCalcData();
-                $thisCalcId = $thisCalcData->getId();
-                $basePeriodData = $respGetPeriod->getBasePeriodData();
-                $baseDsBegin = $basePeriodData->getDstampBegin();
-                $baseDsEnd = $basePeriodData->getDstampEnd();
-                $baseCalcData = $respGetPeriod->getBaseCalcData();
-                $baseCalcId = $baseCalcData->getId();
-                /* calculation itself */
-                $this->logger->info("Processing period #$thisPeriodId ($baseDsBegin-$baseDsEnd)");
-                /* get compressed data by calculation ID */
-                $compressPtc = $this->_subDb->getCompressedPtcData($baseCalcId);
-                /* calculates bonus according to the calculation scheme */
-                if ($scheme == Def::SCHEMA_EU) {
-                    /* use EU scheme */
-                    $treeFlat = $this->_subDb->getDownlineSnapshot($baseDsEnd);
-                    $orders = $this->_subDb->getSaleOrdersForRebate($baseDsBegin, $baseDsEnd);
-                    $updates = $this->_subCalc->bonusPersonalEu($treeFlat, $compressPtc, $orders);
-                    /* convert */
-                    $respAdd = $this->_subDb->saveOperationWalletActive(
-                        $updates,
-                        Cfg::CODE_TYPE_OPER_BONUS_REBATE,
-                        $datePerformed,
-                        $dateApplied
-                    );
-                    $operId = $respAdd->getOperationId();
-                    $transIds = $respAdd->getTransactionsIds();
-                    /* save orders and correspondent transactions into the log */
-                    $this->_subDb->saveLogSaleOrders($updates, $transIds);
-                } else {
-                    /* use DEFAULT scheme */
-                    /* get levels to calculate Personal bonus */
-                    $levelsPersonal = $this->_subDb->getBonusLevels($calcType);
-                    $updates = $this->_subCalc->bonusPersonalDef($compressPtc, $levelsPersonal);
-                    /* save bonus operation with transactions */
-                    $respAdd = $this->_subDb->saveOperationWalletActive(
-                        $updates,
-                        Cfg::CODE_TYPE_OPER_BONUS_PERSONAL,
-                        $datePerformed,
-                        $dateApplied
-                    );
-                    $operId = $respAdd->getOperationId();
-                }
-                /* mark calculation as complete */
-                $this->_subDb->saveLogOperations($operId, $thisCalcId);
-                $this->_subDb->markCalcComplete($thisCalcId);
-                /* finalize response as succeed */
-                $this->_manTrans->commit($def);
-                $result->markSucceed();
-                $result->setPeriodId($thisPeriodId);
-                $result->setCalcId($thisCalcId);
-            } finally {
-                // transaction will be rolled back if commit is not done (otherwise - do nothing)
-                $this->_manTrans->end($def);
-            }
-        }
-        $this->logMemoryUsage();
-        $this->logger->info("'Personal Bonus' calculation is completed.");
         return $result;
     }
 

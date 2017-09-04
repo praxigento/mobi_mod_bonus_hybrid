@@ -152,7 +152,7 @@ class Personal
         $baseCalcId = $baseCalc->getId();
         $depCalcId = $depCalc->getId();
         /* load downlines (compressed for period & current) */
-        $dwnlCompress = $this->getCompressedDwnl($baseCalcId);
+        $dwnlCompress = $this->getBonusDwnl($baseCalcId);
         $dwnlCurrent = $this->repoDwnl->get();
         /* get levels to calculate Personal bonus */
         $calcTypeId = $this->repoCalcType->getIdByCode(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_DEF);
@@ -224,12 +224,12 @@ class Personal
     }
 
     /**
-     * Get compressed downline for base calculation.
+     * Get compressed downline for base calculation from Bonus module.
      *
      * @param int $calcId
      * @return \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[]
      */
-    private function getCompressedDwnl($calcId)
+    private function getBonusDwnl($calcId)
     {
         $where = EDwnlBon::ATTR_CALC_REF . '=' . (int)$calcId;
         $result = $this->repoDwnlBon->get($where);

@@ -30,13 +30,6 @@ interface ICalc {
     public function bonusOverride(Request\BonusOverride $request);
 
     /**
-     * @param Request\BonusPersonal $request
-     *
-     * @return Response\BonusPersonal
-     */
-    public function bonusPersonal(Request\BonusPersonal $request);
-
-    /**
      * @param Request\BonusTeam $request
      *
      * @return Response\BonusTeam
