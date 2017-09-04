@@ -11,7 +11,7 @@ use Praxigento\BonusHybrid\Config as Cfg;
  * Calculate Team Bonus.
  */
 class Team
-    implements IPersonal
+    implements ITeam
 {
 
 
@@ -35,12 +35,11 @@ class Team
          * perform processing
          */
         $ctx->set(self::CTX_OUT_SUCCESS, false);
-        $this->logger->info("Personal bonus is started.");
+        $this->logger->info("Team bonus is started.");
         /* get dependent calculation data */
         /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $baseCalc */
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $depPeriod */
         /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $depCalc */
-        list($baseCalc, $depPeriod, $depCalc) = $this->getCalcData();
+        list($baseCalc, $depCalc) = $this->getCalcData();
         $baseCalcId = $baseCalc->getId();
         $depCalcId = $depCalc->getId();
         /* load downlines (compressed for period & current) */
@@ -48,7 +47,7 @@ class Team
 
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, false);
-        $this->logger->info("Personal bonus is completed.");
+        $this->logger->info("Team bonus is completed.");
     }
 
     /**
@@ -63,11 +62,11 @@ class Team
         $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_VALUE_TV);
         $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF);
         $this->procPeriodGet->exec($ctx);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $depCalcData */
-        $baseCalcData = $ctx->get($this->procPeriodGet::CTX_OUT_BASE_CALC_DATA);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $depCalcData */
-        $depCalcData = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
-        $result = [$baseCalcData, $depCalcData];
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $baseCalc */
+        $baseCalc = $ctx->get($this->procPeriodGet::CTX_OUT_BASE_CALC_DATA);
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $depCalc */
+        $depCalc = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
+        $result = [$baseCalc, $depCalc];
         return $result;
     }
 

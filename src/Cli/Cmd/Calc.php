@@ -4,6 +4,8 @@
  */
 namespace Praxigento\BonusHybrid\Cli\Cmd;
 
+use Praxigento\BonusHybrid\Defaults as Def;
+
 /**
  * Calculate hybrid bonus.
  */
@@ -18,6 +20,8 @@ class Calc
     private $conn;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\IPersonal */
     private $procBonusPers;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\ITeam */
+    private $procBonusTeam;
     /** @var \Praxigento\BonusHybrid\Service\Calc\ICompressPhase1 */
     private $procCompressPhase1;
     /** @var \Praxigento\BonusHybrid\Service\Calc\IPvWriteOff */
@@ -35,6 +39,7 @@ class Calc
         \Praxigento\BonusHybrid\Service\Calc\ICompressPhase1 $procCompressPhase1,
         \Praxigento\BonusHybrid\Service\Calc\IPvWriteOff $procPvWriteOff,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\IPersonal $procBonusPers,
+        \Praxigento\BonusHybrid\Service\Calc\Bonus\ITeam $procBonusTeam,
         \Praxigento\BonusHybrid\Service\Calc\IValueTv $procTv
     ) {
         parent::__construct(
@@ -49,6 +54,7 @@ class Calc
         $this->procCompressPhase1 = $procCompressPhase1;
         $this->procPvWriteOff = $procPvWriteOff;
         $this->procBonusPers = $procBonusPers;
+        $this->procBonusTeam = $procBonusTeam;
         $this->procTv = $procTv;
     }
 
@@ -107,11 +113,10 @@ class Calc
 
     private function calcBonusTeamDef()
     {
-        $req = new \Praxigento\BonusHybrid\Service\Calc\Request\BonusTeam();
-        $req->setScheme(\Praxigento\BonusHybrid\Defaults::SCHEMA_DEFAULT);
-        $req->setCourtesyBonusPercent(\Praxigento\BonusHybrid\Defaults::COURTESY_BONUS_PERCENT);
-        $resp = $this->callCalc->bonusTeam($req);
-        $result = $resp->isSucceed();
+        $ctx = new \Praxigento\Core\Data();
+        $ctx->set($this->procBonusTeam::CTX_IN_SCHEME, Def::SCHEMA_DEFAULT);
+        $this->procBonusTeam->exec($ctx);
+        $result = (bool)$ctx->get($this->procBonusTeam::CTX_OUT_SUCCESS);
         return $result;
     }
 
