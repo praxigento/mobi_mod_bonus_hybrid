@@ -587,60 +587,6 @@ class Call
 
 
     /**
-     * @param Request\PvWriteOff $request
-     *
-     * @return Response\PvWriteOff
-     *
-     * @deprecated see \Praxigento\BonusHybrid\Service\Calc\IPvWriteOff
-     */
-    public function pvWriteOff(Request\PvWriteOff $request)
-    {
-        $result = new Response\PvWriteOff();
-        $datePerformed = $request->getDatePerformed();
-        $this->logger->info("'PV Write Off' calculation is started.");
-        $reqGetPeriod = new PeriodGetForWriteOffRequest();
-        $respGetPeriod = $this->_callPeriod->getForWriteOff($reqGetPeriod);
-        if ($respGetPeriod->isSucceed()) {
-            if ($respGetPeriod->hasNoPvTransactionsYet()) {
-                $this->logger->info("There is no PV transactions yet. Nothing to calculate.");
-                $result->markSucceed();
-            } else {
-                $def = $this->_manTrans->begin();
-                try {
-                    /* working vars */
-                    $periodData = $respGetPeriod->getPeriodData();
-                    $periodId = $periodData->getId();
-                    $calcData = $respGetPeriod->getCalcData();
-                    $calcId = $calcData->getId();
-                    $periodBegin = $periodData->getDstampBegin();
-                    $periodEnd = $periodData->getDstampEnd();
-                    $this->logger->info("Processing period #$periodId ($periodBegin-$periodEnd), calculation #$calcId.");
-                    $transData = $this->_subDb->getDataForWriteOff($calcId, $periodBegin, $periodEnd);
-                    $updates = $this->_subCalc->pvWriteOff($transData);
-                    $dateApplied = $this->_toolPeriod->getTimestampTo($periodEnd);
-                    $operId = $this->_subDb->saveOperationPvWriteOff($updates, $datePerformed, $dateApplied);
-                    $this->subPto->exec([
-                        SubPto::OPT_CALC_ID => $calcId,
-                        SubPto::OPT_PERIOD_END => $periodEnd,
-                        SubPto::OPT_UPDATES => $updates
-                    ]);
-                    $this->_subDb->saveLogPvWriteOff($transData, $operId, $calcId);
-                    $this->_subDb->markCalcComplete($calcId);
-                    $this->_manTrans->commit($def);
-                    $result->setPeriodId($periodId);
-                    $result->setCalcId($calcId);
-                    $result->markSucceed();
-                } finally {
-                    $this->_manTrans->end($def);
-                }
-            }
-        }
-        $this->logMemoryUsage();
-        $this->logger->info("'PV Write Off' calculation is completed.");
-        return $result;
-    }
-
-    /**
      * @param Request\ValueOv $request
      *
      * @return Response\ValueOv

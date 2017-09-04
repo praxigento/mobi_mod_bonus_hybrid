@@ -16,6 +16,8 @@ class Calc
     private $callCalc;
     /** @var \Magento\Framework\DB\Adapter\AdapterInterface */
     private $conn;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\IPersonal */
+    private $procBonusPers;
     /** @var \Praxigento\BonusHybrid\Service\Calc\ICompressPhase1 */
     private $procCompressPhase1;
     /** @var \Praxigento\BonusHybrid\Service\Calc\IPvWriteOff */
@@ -29,7 +31,8 @@ class Calc
         \Praxigento\BonusHybrid\Service\ICalc $callCalc,
         \Praxigento\BonusHybrid\Service\Calc\ISignupDebit $callBonusSignup,
         \Praxigento\BonusHybrid\Service\Calc\ICompressPhase1 $procCompressPhase1,
-        \Praxigento\BonusHybrid\Service\Calc\IPvWriteOff $procPvWriteOff
+        \Praxigento\BonusHybrid\Service\Calc\IPvWriteOff $procPvWriteOff,
+        \Praxigento\BonusHybrid\Service\Calc\Bonus\IPersonal $procBonusPers
     ) {
         parent::__construct(
             $manObj,
@@ -42,6 +45,7 @@ class Calc
         $this->callBonusSignup = $callBonusSignup;
         $this->procCompressPhase1 = $procCompressPhase1;
         $this->procPvWriteOff = $procPvWriteOff;
+        $this->procBonusPers = $procBonusPers;
     }
 
     private function calcBonusCourtesy()
@@ -89,21 +93,11 @@ class Calc
         return $result;
     }
 
-    private function calcBonusPersonalDef()
+    private function calcBonusPersonal()
     {
-        $req = new \Praxigento\BonusHybrid\Service\Calc\Request\BonusPersonal();
-        $req->setScheme(\Praxigento\BonusHybrid\Defaults::SCHEMA_DEFAULT);
-        $resp = $this->callCalc->bonusPersonal($req);
-        $result = $resp->isSucceed();
-        return $result;
-    }
-
-    private function calcBonusPersonalEu()
-    {
-        $req = new \Praxigento\BonusHybrid\Service\Calc\Request\BonusPersonal();
-        $req->setScheme(\Praxigento\BonusHybrid\Defaults::SCHEMA_EU);
-        $resp = $this->callCalc->bonusPersonal($req);
-        $result = $resp->isSucceed();
+        $ctx = new \Praxigento\Core\Data();
+        $this->procBonusPers->exec($ctx);
+        $result = (bool)$ctx->get($this->procBonusPers::CTX_OUT_SUCCESS);
         return $result;
     }
 
@@ -203,7 +197,7 @@ class Calc
             }
             if ($canContinue) {
                 $output->writeln("<info>Phase I compression is completed.<info>");
-                $canContinue = $this->calcBonusPersonalDef();
+                $canContinue = $this->calcBonusPersonal();
             }
             if ($canContinue) {
                 $output->writeln("<info>Personal bonus (DEFAULT) is calculated.<info>");

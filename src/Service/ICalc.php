@@ -51,13 +51,6 @@ interface ICalc {
     public function compressOi(Request\CompressOi $request);
 
     /**
-     * @param Request\PvWriteOff $request
-     *
-     * @return Response\PvWriteOff
-     */
-    public function pvWriteOff(Request\PvWriteOff $request);
-
-    /**
      * @param Request\ValueOv $request
      *
      * @return Response\ValueOv

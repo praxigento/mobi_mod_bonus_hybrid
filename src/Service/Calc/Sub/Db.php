@@ -94,6 +94,8 @@ class Db
      * @param $calcTypeCode
      *
      * @return array [ level => percent, ... ]
+     *
+     * @deprecated see \Praxigento\BonusBase\Repo\Entity\Level::getByCalcTypeId
      */
     public function getBonusLevels($calcTypeCode)
     {

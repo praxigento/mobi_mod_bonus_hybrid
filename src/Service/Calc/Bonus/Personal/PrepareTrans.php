@@ -3,15 +3,15 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Service\Calc\PvWriteOff;
+namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Personal;
 
 use Praxigento\Accounting\Repo\Entity\Data\Transaction as ETrans;
 use Praxigento\BonusHybrid\Config as Cfg;
 
 /**
- * Prepare transaction data to register "PV Write Off" operation.
+ * Prepare transaction data to register "Personal Bonus" operation.
  *
- * TODO: merge with \Praxigento\BonusHybrid\Service\Calc\Personal\PrepareTrans
+ * TODO: merge with \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\PrepareTrans
  */
 class PrepareTrans
 {
@@ -30,15 +30,22 @@ class PrepareTrans
     }
 
     /**
-     * @param array $turnover [$accId => $turnover]; see ..\PvWriteOff::groupPvTrans
+     * @param array $turnover [$custId => $turnover]; see ..\Personal::calcBonus
+     *
+     * TODO: we need flag for index - is it a 'accountId' or ' customerId' data?
+     * TODO: we should use asset type code as input parameter
+     * TODO: should we move this process into the Accounting module?
      */
     public function exec($turnover, $dateApplied)
     {
-        $assetTypeId = $this->repoAssetType->getIdByCode(Cfg::CODE_TYPE_ASSET_PV);
+        $assetTypeId = $this->repoAssetType->getIdByCode(Cfg::CODE_TYPE_ASSET_WALLET_ACTIVE);
         $represAccId = $this->repoAcc->getRepresentativeAccountId($assetTypeId);
         $result = [];
-        foreach ($turnover as $accId => $value) {
+        foreach ($turnover as $custId => $value) {
             if ($value > Cfg::DEF_ZERO) {
+                /* get account ID for customer ID */
+                $acc = $this->repoAcc->getByCustomerId($custId, $assetTypeId);
+                $accId = $acc->getId();
                 /* skip representative account */
                 if ($accId == $represAccId) {
                     continue;
