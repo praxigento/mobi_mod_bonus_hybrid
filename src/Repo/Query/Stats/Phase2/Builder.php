@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Repo\Query\Stats\Phase2;
 
 use Praxigento\BonusBase\Repo\Entity\Data\Rank as Rank;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Oi as Oi;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Oi as Oi;
 use Praxigento\Core\Repo\Query\Expression as Expression;
 use Praxigento\Downline\Repo\Entity\Data\Customer as Cust;
 

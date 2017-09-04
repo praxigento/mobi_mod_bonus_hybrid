@@ -112,7 +112,7 @@ class CompressPhase1
         $dwnlCurrent = $this->repoDwnl->get();
         $dataPv = $this->getPv($baseCalcId);
         /** @var \Praxigento\Downline\Repo\Entity\Data\Snap[] $updates */
-        /** @var \Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Phase1\Transfer\Pv[] $pvTransfers */
+        /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase1\Transfer\Pv[] $pvTransfers */
         list($updates, $pvTransfers) = $this->compress($dwnlCurrent, $dwnlSnap, $dataPv, $depCalcId);
         /* save compressed downline & PV transfers into DB */
         $this->saveBonusDownline($updates, $depCalcId);
@@ -221,11 +221,11 @@ class CompressPhase1
     }
 
     /**
-     * @param \Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Phase1\Transfer\Pv[] $data
+     * @param \Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase1\Transfer\Pv[] $data
      */
     protected function savePvTransfers($data)
     {
-        /** @var \Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Phase1\Transfer\Pv $one */
+        /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase1\Transfer\Pv $one */
         foreach ($data as $one) {
             $this->repoTransPv->create($one);
         }

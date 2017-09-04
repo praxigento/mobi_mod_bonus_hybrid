@@ -4,7 +4,7 @@
  */
 namespace Praxigento\BonusHybrid\Repo\Query\Stats\Plain;
 
-use Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Plain as RegPto;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Retro\Downline\Plain as RegPto;
 use Praxigento\Downline\Repo\Entity\Data\Snap as Snap;
 
 /**

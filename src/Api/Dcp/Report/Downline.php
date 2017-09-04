@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Api\Dcp\Report;
 
 use Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder as QBLastCalc;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Repo\Data\Entity\Actual\Downline\Plain as EActPlain;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Actual\Downline\Plain as EActPlain;
 use Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Retro\Plain\Builder as QBRetroPlain;
 
 class Downline

@@ -1,6 +1,6 @@
 <?php
 
-namespace Praxigento\BonusHybrid\Repo\Data\Entity\Registry;
+namespace Praxigento\BonusHybrid\Repo\Entity\Data\Registry;
 
 /**
  * Registry for Sign Up Volume Bonus participants.
@@ -31,14 +31,6 @@ class SignupDebit
     }
 
     /**
-     * @param integer $data
-     */
-    public function setCalcRef($data)
-    {
-        parent::set(self::ATTR_CALC_REF, $data);
-    }
-
-    /**
      * @return integer
      */
     public function getCustomerRef()
@@ -47,12 +39,10 @@ class SignupDebit
         return $result;
     }
 
-    /**
-     * @param integer $data
-     */
-    public function setCustomerRef($data)
+    public static function getPrimaryKeyAttrs()
     {
-        parent::set(self::ATTR_CUST_REF, $data);
+        $result = [self::ATTR_CALC_REF, self::ATTR_CUST_REF];
+        return $result;
     }
 
     /**
@@ -67,14 +57,24 @@ class SignupDebit
     /**
      * @param integer $data
      */
+    public function setCalcRef($data)
+    {
+        parent::set(self::ATTR_CALC_REF, $data);
+    }
+
+    /**
+     * @param integer $data
+     */
+    public function setCustomerRef($data)
+    {
+        parent::set(self::ATTR_CUST_REF, $data);
+    }
+
+    /**
+     * @param integer $data
+     */
     public function setSaleOrderRer($data)
     {
         parent::set(self::ATTR_SALE_REF, $data);
-    }
-
-    public static function getPrimaryKeyAttrs()
-    {
-        $result = [self::ATTR_CALC_REF, self::ATTR_CUST_REF];
-        return $result;
     }
 }

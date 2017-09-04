@@ -8,7 +8,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Forecast;
 use Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder as QbldPeriodCalcLast;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
-use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Oi as EOi;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Oi as EOi;
 
 /**
  * Get the last OI calculation, collect customers and its qualification ranks then populate downline tree
@@ -131,7 +131,7 @@ class GetRanks
         $where = EOi::ATTR_CALC_ID . '=' . (int)$calcId;
         $rows = $this->repoCompressOi->get($where);
         $result = [];
-        /** @var \Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Oi $row */
+        /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Oi $row */
         foreach ($rows as $row) {
             $rankId = $row->getRankId();
             $custId = $row->getCustomerId();

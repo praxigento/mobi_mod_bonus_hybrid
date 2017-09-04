@@ -151,7 +151,7 @@ class Calc
                             $compression[$foundParentId] [0] = $pv;
                         }
                         // $pv PV are transferred from customer #$custId to his qualified parent #$foundParentId
-                        $pvTransferItem = new \Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Phase1\Transfer\Pv();
+                        $pvTransferItem = new \Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase1\Transfer\Pv();
                         $pvTransferItem->setCalcRef($calcId);
                         $pvTransferItem->setCustFromRef($custId);
                         $pvTransferItem->setCustToRef($foundParentId);

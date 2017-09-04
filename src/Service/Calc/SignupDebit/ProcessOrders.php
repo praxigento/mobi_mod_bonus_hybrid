@@ -10,7 +10,7 @@ use Praxigento\BonusBase\Repo\Entity\Data\Log\Opers as LogOpers;
 use Praxigento\BonusBase\Repo\Entity\Data\Log\Sales as LogSales;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
-use Praxigento\BonusHybrid\Repo\Data\Entity\Registry\SignupDebit as RegSignup;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Registry\SignupDebit as RegSignup;
 use Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetOrders\Builder as Query;
 
 /**

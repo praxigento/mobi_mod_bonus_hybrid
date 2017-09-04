@@ -104,7 +104,7 @@ class Plain
             $customerId = $entry->customerId;
             if ($turnover > Cfg::DEF_ZERO) {
                 $positiveTurnover[$customerId] = $entry;
-                /** @var \Praxigento\BonusHybrid\Repo\Data\Entity\Actual\Downline\Plain $plainDo */
+                /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Actual\Downline\Plain $plainDo */
                 $plainDo = $dwnlTree[$customerId];
                 $plainDo->setPv($turnover);
                 $rankCode = $ranks[$customerId];

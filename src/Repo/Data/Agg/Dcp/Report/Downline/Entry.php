@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Repo\Data\Agg\Dcp\Report\Downline;
 
-use Praxigento\BonusHybrid\Repo\Data\Entity\Actual\Downline\Plain as Plain;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Actual\Downline\Plain as Plain;
 
 /**
  * Common aggregate for DCP Downline report queries. Extends downline aggregate with bonus related attributes.
@@ -18,6 +18,12 @@ class Entry
     const A_RANK_CODE = Plain::ATTR_RANK_CODE;
     const A_TV = Plain::ATTR_TV;
     const A_UNQ_MONTHS = Plain::ATTR_UNQ_MONTHS;
+
+    public function getMonthsUnq()
+    {
+        $result = parent::get(self::A_UNQ_MONTHS);
+        return $result;
+    }
 
     public function getOv()
     {
@@ -40,12 +46,6 @@ class Entry
     public function getTv()
     {
         $result = parent::get(self::A_TV);
-        return $result;
-    }
-
-    public function getMonthsUnq()
-    {
-        $result = parent::get(self::A_UNQ_MONTHS);
         return $result;
     }
 

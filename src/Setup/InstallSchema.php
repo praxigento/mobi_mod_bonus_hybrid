@@ -6,15 +6,15 @@
 
 namespace Praxigento\BonusHybrid\Setup;
 
-use Praxigento\BonusHybrid\Repo\Data\Entity\Actual\Downline\Plain as ActDwnlPlain;
-use Praxigento\BonusHybrid\Repo\Data\Entity\Cfg\Override as CfgOverride;
-use Praxigento\BonusHybrid\Repo\Data\Entity\Cfg\Param as CfgParam;
-use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Oi as OiCompress;
-use Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Phase1\Transfer\Pv as Phase1TransPv;
-use Praxigento\BonusHybrid\Repo\Data\Entity\Registry\SignupDebit as SignupDebit;
-use Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Compressed\Phase1 as CmprsPhase1;
-use Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Plain as RetroDwnlPlain;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Actual\Downline\Plain as ActDwnlPlain;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Cfg\Override as CfgOverride;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Cfg\Param as CfgParam;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Oi as OiCompress;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase1\Transfer\Pv as Phase1TransPv;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as Dwnl;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Registry\SignupDebit as SignupDebit;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Retro\Downline\Compressed\Phase1 as CmprsPhase1;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Retro\Downline\Plain as RetroDwnlPlain;
 
 class InstallSchema
     extends \Praxigento\Core\Setup\Schema\Base

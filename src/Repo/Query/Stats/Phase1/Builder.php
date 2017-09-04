@@ -4,7 +4,7 @@
  */
 namespace Praxigento\BonusHybrid\Repo\Query\Stats\Phase1;
 
-use Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Compressed\Phase1 as Ptc;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Retro\Downline\Compressed\Phase1 as Ptc;
 use Praxigento\Downline\Repo\Entity\Data\Customer as Cust;
 
 /**

@@ -6,7 +6,7 @@
 namespace Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Retro\Plain;
 
 use Praxigento\BonusHybrid\Repo\Data\Agg\Dcp\Report\Downline\Entry as AReport;
-use Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Plain as DwnlPlain;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Retro\Downline\Plain as DwnlPlain;
 use Praxigento\Downline\Repo\Entity\Data\Customer as EDwnlCust;
 use Praxigento\Downline\Repo\Query\Snap\OnDate\Builder as BldOnDate;
 use Praxigento\Downline\Repo\Query\Snap\OnDate\ForDcp\Builder as BldForDcp;

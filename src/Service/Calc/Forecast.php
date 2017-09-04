@@ -60,7 +60,7 @@ class Forecast
         /* get customers */
         $ctx = new \Praxigento\Core\Data();
         $ctx->set(SubGetDownline::CTX_IN_DATE_ON, $dateTo);
-        /** @var \Praxigento\BonusHybrid\Repo\Data\Entity\Actual\Downline\Plain[] $plainItems */
+        /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Actual\Downline\Plain[] $plainItems */
         $plainItems = $this->subGetDownline->exec($ctx);
 
         /* get the last ranks for customers */
@@ -77,7 +77,7 @@ class Forecast
             $customerId = $entry->customerId;
             if ($turnover > Cfg::DEF_ZERO) {
                 $positiveTurnover[$customerId] = $entry;
-                /** @var \Praxigento\BonusHybrid\Repo\Data\Entity\Actual\Downline\Plain $plainDo */
+                /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Actual\Downline\Plain $plainDo */
                 $plainDo = $plainItems[$customerId];
                 $plainDo->setPv($turnover);
                 $rankCode = $ranks[$customerId];

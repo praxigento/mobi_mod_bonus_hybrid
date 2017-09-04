@@ -6,7 +6,7 @@
 namespace Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Actual\Plain;
 
 use Praxigento\BonusHybrid\Api\Dcp\Report\Downline\Response\Entry as AReport;
-use Praxigento\BonusHybrid\Repo\Data\Entity\Actual\Downline\Plain as EPlain;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Actual\Downline\Plain as EPlain;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECust;
 
 /**

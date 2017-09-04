@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Repo\Entity\Retro\Downline;
 
-use Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Plain as Entity;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Retro\Downline\Plain as Entity;
 
 /**
  * Repository for retrospective data for plain downline reports (updated periodically).

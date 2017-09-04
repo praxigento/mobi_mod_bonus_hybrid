@@ -34,9 +34,9 @@ class GetCustomersIds
         }
         if (!isset($this->cachedIds[$calcId])) {
             $ids = [];
-            $where = \Praxigento\BonusHybrid\Repo\Data\Entity\Registry\SignupDebit::ATTR_CALC_REF . '=' . (int)$calcId;
+            $where = \Praxigento\BonusHybrid\Repo\Entity\Data\Registry\SignupDebit::ATTR_CALC_REF . '=' . (int)$calcId;
             $rs = $this->repoRegistry->get($where);
-            /** @var \Praxigento\BonusHybrid\Repo\Data\Entity\Registry\SignupDebit $one */
+            /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Registry\SignupDebit $one */
             foreach ($rs as $one) {
                 $ids[] = $one->getCustomerRef();
             }

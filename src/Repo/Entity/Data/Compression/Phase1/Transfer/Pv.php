@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Phase1\Transfer;
+namespace Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase1\Transfer;
 
 /**
  * PV transfers between customers during phase I compression.

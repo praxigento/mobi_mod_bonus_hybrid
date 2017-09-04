@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Repo\Data\Entity\Actual\Downline;
+namespace Praxigento\BonusHybrid\Repo\Entity\Data\Actual\Downline;
 
 /**
  * Actual data for plain downline reports (updated daily).

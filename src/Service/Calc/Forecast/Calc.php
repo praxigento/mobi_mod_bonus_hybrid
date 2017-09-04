@@ -35,7 +35,7 @@ class Calc
      */
     public function exec(\Praxigento\Core\Data $ctx = null)
     {
-        /** @var \Praxigento\BonusHybrid\Repo\Data\Entity\Actual\Downline\Plain[] $plainTree */
+        /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Actual\Downline\Plain[] $plainTree */
         $plainTree = $ctx->get(self::CTX_PLAIN_TREE);
         /* prepare working data: tree maps, etc.*/
         $mapByDepth = $this->mapByTreeDepthDesc($plainTree, self::KEY_TREE_ENTITY, self::KEY_TREE_DEPTH);

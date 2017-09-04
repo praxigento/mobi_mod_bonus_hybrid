@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Sub;
 
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
-use Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Plain as EDwnlPlain;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Retro\Downline\Plain as EDwnlPlain;
 
 /**
  * Process aggregated PV movements and calculate PV/TV/OV values for plain downline tree.

@@ -8,7 +8,7 @@ namespace Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Retro\Compress;
 
 use Praxigento\BonusHybrid\Api\Dcp\Report\Downline\Response\Entry as AReport;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Repo\Data\Entity\Retro\Downline\Compressed\Phase1 as EPh1;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Retro\Downline\Compressed\Phase1 as EPh1;
 use Praxigento\Core\Repo\Query\Expression as Exp;
 use Praxigento\Downline\Repo\Entity\Data\Customer as EDwnl;
 

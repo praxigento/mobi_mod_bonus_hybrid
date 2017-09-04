@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Repo\Data\Entity\Cfg;
+namespace Praxigento\BonusHybrid\Repo\Entity\Data\Cfg;
 
 
 class Override
@@ -25,14 +25,6 @@ class Override
     }
 
     /**
-     * @param integer $data
-     */
-    public function setGeneration($data)
-    {
-        parent::set(self::ATTR_GENERATION, $data);
-    }
-
-    /**
      * @return integer
      */
     public function getPercent()
@@ -41,12 +33,10 @@ class Override
         return $result;
     }
 
-    /**
-     * @param float $data
-     */
-    public function setPercent($data)
+    public static function getPrimaryKeyAttrs()
     {
-        parent::set(self::ATTR_PERCENT, $data);
+        return [self::ATTR_RANK_ID, self::ATTR_SCHEME, self::ATTR_GENERATION];
+
     }
 
     /**
@@ -59,14 +49,6 @@ class Override
     }
 
     /**
-     * @param integer $data
-     */
-    public function setRankId($data)
-    {
-        parent::set(self::ATTR_RANK_ID, $data);
-    }
-
-    /**
      * @return string
      */
     public function getScheme()
@@ -76,16 +58,34 @@ class Override
     }
 
     /**
+     * @param integer $data
+     */
+    public function setGeneration($data)
+    {
+        parent::set(self::ATTR_GENERATION, $data);
+    }
+
+    /**
+     * @param float $data
+     */
+    public function setPercent($data)
+    {
+        parent::set(self::ATTR_PERCENT, $data);
+    }
+
+    /**
+     * @param integer $data
+     */
+    public function setRankId($data)
+    {
+        parent::set(self::ATTR_RANK_ID, $data);
+    }
+
+    /**
      * @param string $data
      */
     public function setScheme($data)
     {
         parent::set(self::ATTR_SCHEME, $data);
-    }
-
-    public static function getPrimaryKeyAttrs()
-    {
-        return [self::ATTR_RANK_ID, self::ATTR_SCHEME, self::ATTR_GENERATION];
-
     }
 }
