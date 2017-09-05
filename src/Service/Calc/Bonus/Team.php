@@ -29,25 +29,33 @@ class Team
     private $subCalc;
     /** @var Team\PrepareTrans */
     private $subPrepareTrans;
+    /** @var \Praxigento\Core\Tool\IDate */
+    private $hlpDate;
     /** @var  \Praxigento\Core\Tool\IPeriod */
     private $hlpPeriod;
+    /** @var \Praxigento\Accounting\Service\IOperation */
+    private $callOperation;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
+        \Praxigento\Core\Tool\IDate $hlpDate,
         \Praxigento\Core\Tool\IPeriod $hlpPeriod,
         \Praxigento\BonusBase\Repo\Entity\Level $repoLevel,
         \Praxigento\BonusBase\Repo\Entity\Type\Calc $repoCalcType,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon,
+        \Praxigento\Accounting\Service\IOperation $callOperation,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Team\Calc $subCalc,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Team\PrepareTrans $subPrepareTrans
     )
     {
         $this->logger = $logger;
+        $this->hlpDate = $hlpDate;
         $this->hlpPeriod = $hlpPeriod;
         $this->repoLevel = $repoLevel;
         $this->repoCalcType = $repoCalcType;
         $this->repoDwnlBon = $repoDwnlBon;
+        $this->callOperation = $callOperation;
         $this->procPeriodGet = $procPeriodGet;
         $this->subCalc = $subCalc;
         $this->subPrepareTrans = $subPrepareTrans;
@@ -82,6 +90,7 @@ class Team
         /* convert calculated bonus to transactions */
         $trans = $this->getTransactions($bonus, $teamPeriod);
         /* register bonus operation */
+        list($operId, $transIds) = $this->createOperation($trans, $teamPeriod);
         /* register operation in log */
         /* mark this calculation complete */
         /* mark process as successful */
@@ -158,4 +167,30 @@ class Team
         return $result;
     }
 
+    /**
+     * Create operations for personal bonus.
+     *
+     * @param \Praxigento\Accounting\Repo\Entity\Data\Transaction[] $trans
+     * @param \Praxigento\BonusBase\Repo\Entity\Data\Period $period
+     * @return array [$operId, $transIds]
+     */
+    private function createOperation($trans, $period)
+    {
+        $dsBegin = $period->getDstampBegin();
+        $dsEnd = $period->getDstampEnd();
+        $datePerformed = $this->hlpDate->getUtcNowForDb();
+        $req = new \Praxigento\Accounting\Service\Operation\Request\Add();
+        $req->setOperationTypeCode(Cfg::CODE_TYPE_OPER_BONUS_TEAM);
+        $req->setDatePerformed($datePerformed);
+        $req->setTransactions($trans);
+        $note = "Team bonus ($dsBegin-$dsEnd)";
+        $req->setOperationNote($note);
+        /* add key to link newly created transaction IDs with donators */
+        $req->setAsTransRef($this->subPrepareTrans::REF_DONATOR_ID);
+        $resp = $this->callOperation->add($req);
+        $operId = $resp->getOperationId();
+        $transIds = $resp->getTransactionsIds();
+        $result = [$operId, $transIds];
+        return $result;
+    }
 }

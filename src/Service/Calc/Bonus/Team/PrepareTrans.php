@@ -13,6 +13,11 @@ use Praxigento\BonusHybrid\Config as Cfg;
  */
 class PrepareTrans
 {
+    /**
+     * Additional field in transaction object to bind transaction ID to donator ID on operation add. This link (between transaction & donated customer) will be registered in 'prxgt_bon_base_log_cust' later.
+     */
+    const REF_DONATOR_ID = 'refDonatorId';
+
     /** @var \Praxigento\Accounting\Repo\Entity\Account */
     private $repoAcc;
     /** @var \Praxigento\Accounting\Repo\Entity\Type\Asset */
@@ -30,17 +35,17 @@ class PrepareTrans
     /**
      * @param Calc\Data[] $bonus
      * @param $dateApplied
-     *
-     * TODO: we need flag for index - is it an 'accountId' or a 'customerId' data?
-     * TODO: we should use asset type code as input parameter
-     * TODO: should we move this process into the Accounting module?
      */
     public function exec($bonus, $dateApplied)
     {
         $assetTypeId = $this->repoAssetType->getIdByCode(Cfg::CODE_TYPE_ASSET_WALLET_ACTIVE);
         $represAccId = $this->repoAcc->getRepresentativeAccountId($assetTypeId);
         $result = [];
-        foreach ($bonus as $custId => $value) {
+        /** @var Calc\Data $one */
+        foreach ($bonus as $one) {
+            $custId = $one->getCustomerRef();
+            $donatorId = $one->getDonatorRef();
+            $value = $one->getValue();
             if ($value > Cfg::DEF_ZERO) {
                 /* get account ID for customer ID */
                 $acc = $this->repoAcc->getByCustomerId($custId, $assetTypeId);
@@ -50,10 +55,11 @@ class PrepareTrans
                     continue;
                 }
                 $tran = new ETrans();
-                $tran->setDebitAccId($accId);
-                $tran->setCreditAccId($represAccId);
+                $tran->setDebitAccId($represAccId);
+                $tran->setCreditAccId($accId);
                 $tran->setDateApplied($dateApplied);
                 $tran->setValue($value);
+                $tran->set(self::REF_DONATOR_ID, $donatorId);
                 $result[] = $tran;
             } else {
                 /* skip zero amounts */
