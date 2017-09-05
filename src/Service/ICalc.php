@@ -33,6 +33,8 @@ interface ICalc {
      * @param Request\BonusTeam $request
      *
      * @return Response\BonusTeam
+     *
+     * @deprecated use \Praxigento\BonusHybrid\Service\Calc\Bonus\Team
      */
     public function bonusTeam(Request\BonusTeam $request);
 

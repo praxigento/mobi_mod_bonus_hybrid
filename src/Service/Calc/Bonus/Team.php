@@ -112,13 +112,11 @@ class Team
          * get dependent calculation data
          *
          * @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $compressCalc
-         * @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $tvCalc
          * @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $teamPeriod
          * @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $teamCalc
          */
-        list($compressCalc, $tvCalc, $teamPeriod, $teamCalc) = $this->getCalcData();
+        list($compressCalc, $teamPeriod, $teamCalc) = $this->getCalcData();
         $compressCalcId = $compressCalc->getId();
-        $tvCalcId = $tvCalc->getId();
         $teamCalcId = $teamCalc->getId();
         /* load downlines (compressed for period & current) */
         $dwnlCompress = $this->getBonusDwnl($compressCalcId);
@@ -158,7 +156,7 @@ class Team
     /**
      * Get period and calculation data for all related calculation types.
      *
-     * @return array [$compressCalc, $tvCalc, $teamPeriod, $teamCalc]
+     * @return array [$compressCalc, $teamPeriod, $teamCalc]
      */
     private function getCalcData()
     {
@@ -167,8 +165,6 @@ class Team
         $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_VALUE_TV);
         $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF);
         $this->procPeriodGet->exec($ctx);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $tvCalc */
-        $tvCalc = $ctx->get($this->procPeriodGet::CTX_OUT_BASE_CALC_DATA);
         /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $teamPeriod */
         $teamPeriod = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_PERIOD_DATA);
         /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $teamCalc */
@@ -181,7 +177,7 @@ class Team
         /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $compressCalc */
         $compressCalc = $ctx->get($this->procPeriodGet::CTX_OUT_BASE_CALC_DATA);
         /* compose result */
-        $result = [$compressCalc, $tvCalc, $teamPeriod, $teamCalc];
+        $result = [$compressCalc, $teamPeriod, $teamCalc];
         return $result;
     }
 
