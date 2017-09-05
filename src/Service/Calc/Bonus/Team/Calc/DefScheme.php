@@ -20,6 +20,7 @@ class DefScheme
         mapById as protected;
         mapByTeams as protected;
     }
+
     /** @var \Praxigento\Downline\Tool\ITree */
     private $hlpDwnl;
     /** @var \Praxigento\Core\Tool\IFormat */
@@ -28,15 +29,23 @@ class DefScheme
     private $hlpScheme;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
+    /** @var \Praxigento\BonusBase\Repo\Entity\Type\Calc */
+    private $repoCalcType;
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
     private $repoDwnl;
-
+    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
+    private $repoDwnlBon;
+    /** @var \Praxigento\BonusBase\Repo\Entity\Level */
+    private $repoLevel;
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
         \Praxigento\Core\Tool\IFormat $hlpFormat,
         \Praxigento\Downline\Tool\ITree $hlpDwnl,
         \Praxigento\BonusHybrid\Tool\IScheme $hlpScheme,
-        \Praxigento\Downline\Repo\Entity\Customer $repoDwnl
+        \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
+        \Praxigento\BonusBase\Repo\Entity\Level $repoLevel,
+        \Praxigento\BonusBase\Repo\Entity\Type\Calc $repoCalcType,
+        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon
     )
     {
         $this->logger = $logger;
@@ -44,20 +53,24 @@ class DefScheme
         $this->hlpDwnl = $hlpDwnl;
         $this->hlpScheme = $hlpScheme;
         $this->repoDwnl = $repoDwnl;
+        $this->repoLevel = $repoLevel;
+        $this->repoCalcType = $repoCalcType;
+        $this->repoDwnlBon = $repoDwnlBon;
     }
 
     /**
      * Walk trough the compressed downline & calculate team bonus for EU scheme.
      *
-     * @param EDwnlBon[] $dwnlCompress
-     * @param array $levelsPersonal asc ordered set of the personal bonus levels & percents ([$level=>$percent])
-     * @param array $levelsTeam asc ordered set of the team bonus levels & percents ([$level=>$percent])
+     * @param int $calcId ID of the compression calculation to get downline.
      * @return Data[]
      */
-    public function exec($dwnlCompress, $levelsPersonal, $levelsTeam)
+    public function exec($calcId)
     {
         $result = [];
         /* collect additional data */
+        $levelsPersonal = $this->getLevelsByType(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_DEF);
+        $levelsTeam = $this->getLevelsByType(Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF);
+        $dwnlCompress = $this->getBonusDwnl($calcId);
         $dwnlCurrent = $this->repoDwnl->get();
         $pctPbMax = $this->getMaxPercentForPersonalBonus($levelsPersonal);
         $courtesyPct = \Praxigento\BonusHybrid\Defaults::COURTESY_BONUS_PERCENT;
@@ -218,6 +231,19 @@ class DefScheme
     }
 
     /**
+     * Get compressed downline for base calculation from Bonus module.
+     *
+     * @param int $calcId
+     * @return \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[]
+     */
+    private function getBonusDwnl($calcId)
+    {
+        $where = EDwnlBon::ATTR_CALC_REF . '=' . (int)$calcId;
+        $result = $this->repoDwnlBon->get($where);
+        return $result;
+    }
+
+    /**
      * Get percent for the first level that is greater then given $value.
      *
      * @param int $value PV/TV/... value to get level's percent
@@ -234,6 +260,19 @@ class DefScheme
             }
             $result = $percent;
         }
+        return $result;
+    }
+
+    /**
+     * Load bonus percents by levels for given calculation type.
+     *
+     * @param string $code
+     * @return array ordered by level asc ([$level => $percent])
+     */
+    private function getLevelsByType($code)
+    {
+        $calcTypeId = $this->repoCalcType->getIdByCode($code);
+        $result = $this->repoLevel->getByCalcTypeId($calcTypeId);
         return $result;
     }
 

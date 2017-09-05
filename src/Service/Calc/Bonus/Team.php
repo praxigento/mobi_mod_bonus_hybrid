@@ -8,7 +8,6 @@ use Praxigento\BonusBase\Repo\Entity\Data\Log\Customers as ELogCust;
 use Praxigento\BonusBase\Repo\Entity\Data\Log\Opers as ELogOper;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
 
 /**
  * Calculate Team Bonus.
@@ -28,18 +27,13 @@ class Team
     private $procPeriodGet;
     /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
     private $repoCalc;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Type\Calc */
-    private $repoCalcType;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
-    private $repoDwnlBon;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Level */
-    private $repoLevel;
     /** @var \Praxigento\BonusBase\Repo\Entity\Log\Customers */
     private $repoLogCust;
     /** @var \Praxigento\BonusBase\Repo\Entity\Log\Opers */
     private $repoLogOper;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Team\Calc\DefScheme */
+    /** @var Team\Calc\DefScheme */
     private $subCalcDef;
+    /** @var Team\Calc\EuScheme */
     private $subCalcEu;
     /** @var Team\PrepareTrans */
     private $subPrepareTrans;
@@ -49,11 +43,8 @@ class Team
         \Praxigento\Core\Tool\IDate $hlpDate,
         \Praxigento\Core\Tool\IPeriod $hlpPeriod,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
-        \Praxigento\BonusBase\Repo\Entity\Level $repoLevel,
         \Praxigento\BonusBase\Repo\Entity\Log\Customers $repoLogCust,
         \Praxigento\BonusBase\Repo\Entity\Log\Opers $repoLogOper,
-        \Praxigento\BonusBase\Repo\Entity\Type\Calc $repoCalcType,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon,
         \Praxigento\Accounting\Service\IOperation $callOperation,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         Team\Calc\DefScheme $subCalcDef,
@@ -65,11 +56,8 @@ class Team
         $this->hlpDate = $hlpDate;
         $this->hlpPeriod = $hlpPeriod;
         $this->repoCalc = $repoCalc;
-        $this->repoLevel = $repoLevel;
         $this->repoLogCust = $repoLogCust;
         $this->repoLogOper = $repoLogOper;
-        $this->repoCalcType = $repoCalcType;
-        $this->repoDwnlBon = $repoDwnlBon;
         $this->callOperation = $callOperation;
         $this->procPeriodGet = $procPeriodGet;
         $this->subCalcDef = $subCalcDef;
@@ -123,18 +111,11 @@ class Team
         list($compressCalc, $teamPeriod, $teamCalc) = $this->getCalcData($scheme);
         $compressCalcId = $compressCalc->getId();
         $teamCalcId = $teamCalc->getId();
-        /* load downlines (compressed for period & current) */
-        $dwnlCompress = $this->getBonusDwnl($compressCalcId);
         /* calculate bonus according to given SCHEME */
         if ($scheme == Def::SCHEMA_EU) {
-            /* load levels & percents for team bonuses */
-            $levelsTeam = $this->getLevelsByType(Cfg::CODE_TYPE_CALC_BONUS_TEAM_EU);
-            $bonus = $this->subCalcEu->exec($dwnlCompress, $levelsTeam);
+            $bonus = $this->subCalcEu->exec($compressCalcId);
         } else {
-            /* load levels & percents for personal & team bonuses */
-            $levelsPers = $this->getLevelsByType(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_DEF);
-            $levelsTeam = $this->getLevelsByType(Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF);
-            $bonus = $this->subCalcDef->exec($dwnlCompress, $levelsPers, $levelsTeam);
+            $bonus = $this->subCalcDef->exec($compressCalcId);
         }
         /* convert calculated bonus to transactions */
         $trans = $this->getTransactions($bonus, $teamPeriod);
@@ -149,19 +130,6 @@ class Team
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);
         $this->logger->info("Team bonus is completed.");
-    }
-
-    /**
-     * Get compressed downline for base calculation from Bonus module.
-     *
-     * @param int $calcId
-     * @return \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[]
-     */
-    private function getBonusDwnl($calcId)
-    {
-        $where = EDwnlBon::ATTR_CALC_REF . '=' . (int)$calcId;
-        $result = $this->repoDwnlBon->get($where);
-        return $result;
     }
 
     /**
@@ -191,19 +159,6 @@ class Team
         $compressCalc = $ctx->get($this->procPeriodGet::CTX_OUT_BASE_CALC_DATA);
         /* compose result */
         $result = [$compressCalc, $teamPeriod, $teamCalc];
-        return $result;
-    }
-
-    /**
-     * Load bonus percents by levels for given calculation type.
-     *
-     * @param string $code
-     * @return array ordered by level asc ([$level => $percent])
-     */
-    private function getLevelsByType($code)
-    {
-        $calcTypeId = $this->repoCalcType->getIdByCode($code);
-        $result = $this->repoLevel->getByCalcTypeId($calcTypeId);
         return $result;
     }
 

@@ -19,6 +19,7 @@ class EuScheme
     use \Praxigento\BonusHybrid\Service\Calc\Traits\TMap {
         mapById as protected;
     }
+
     /** @var \Praxigento\Core\Tool\IFormat */
     private $hlpFormat;
     /** @var  \Praxigento\BonusHybrid\Tool\IScheme */
@@ -27,31 +28,36 @@ class EuScheme
     private $logger;
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
     private $repoDwnl;
+    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
+    private $repoDwnlBon;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
         \Praxigento\Core\Tool\IFormat $hlpFormat,
         \Praxigento\BonusHybrid\Tool\IScheme $hlpScheme,
-        \Praxigento\Downline\Repo\Entity\Customer $repoDwnl
+        \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
+        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon
     )
     {
         $this->logger = $logger;
         $this->hlpFormat = $hlpFormat;
         $this->hlpScheme = $hlpScheme;
         $this->repoDwnl = $repoDwnl;
+        $this->repoDwnlBon = $repoDwnlBon;
     }
 
     /**
      * Walk trough the compressed downline & calculate team bonus for EU scheme.
      *
-     * @param EDwnlBon[] $dwnlCompress
+     * @param int $calcId ID of the compression calculation to get downline.
      * @return Data[]
      */
-    public function exec($dwnlCompress)
+    public function exec($calcId)
     {
         $result = [];
         /* collect additional data */
         $bonusPercent = Def::TEAM_BONUS_EU_PERCENT;
+        $dwnlCompress = $this->getBonusDwnl($calcId);
         $dwnlCurrent = $this->repoDwnl->get();
         /* create maps to access data */
         $mapDwnlById = $this->mapById($dwnlCompress, EDwnlBon::ATTR_CUST_REF);
@@ -98,4 +104,16 @@ class EuScheme
         return $result;
     }
 
+    /**
+     * Get compressed downline for base calculation from Bonus module.
+     *
+     * @param int $calcId
+     * @return \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[]
+     */
+    private function getBonusDwnl($calcId)
+    {
+        $where = EDwnlBon::ATTR_CALC_REF . '=' . (int)$calcId;
+        $result = $this->repoDwnlBon->get($where);
+        return $result;
+    }
 }
