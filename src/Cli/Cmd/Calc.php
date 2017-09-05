@@ -122,11 +122,10 @@ class Calc
 
     private function calcBonusTeamEu()
     {
-        $req = new \Praxigento\BonusHybrid\Service\Calc\Request\BonusTeam();
-        $req->setScheme(\Praxigento\BonusHybrid\Defaults::SCHEMA_EU);
-        $req->setTeamBonusPercent(\Praxigento\BonusHybrid\Defaults::TEAM_BONUS_EU_PERCENT);
-        $resp = $this->callCalc->bonusTeam($req);
-        $result = $resp->isSucceed();
+        $ctx = new \Praxigento\Core\Data();
+        $ctx->set($this->procBonusTeam::CTX_IN_SCHEME, Def::SCHEMA_EU);
+        $this->procBonusTeam->exec($ctx);
+        $result = (bool)$ctx->get($this->procBonusTeam::CTX_OUT_SUCCESS);
         return $result;
     }
 

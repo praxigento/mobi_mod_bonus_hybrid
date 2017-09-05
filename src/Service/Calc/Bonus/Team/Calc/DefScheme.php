@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Team;
+namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Team\Calc;
 
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
@@ -11,9 +11,9 @@ use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
 
 /**
- * Calculate Team bonus.
+ * Calculate Team bonus according to DEFAULT scheme.
  */
-class Calc
+class DefScheme
 {
     /** Add traits */
     use \Praxigento\BonusHybrid\Service\Calc\Traits\TMap {
@@ -21,13 +21,13 @@ class Calc
         mapByTeams as protected;
     }
     /** @var \Praxigento\Downline\Tool\ITree */
-    protected $hlpDwnl;
+    private $hlpDwnl;
     /** @var \Praxigento\Core\Tool\IFormat */
-    protected $hlpFormat;
+    private $hlpFormat;
     /** @var  \Praxigento\BonusHybrid\Tool\IScheme */
-    protected $hlpScheme;
+    private $hlpScheme;
     /** @var \Psr\Log\LoggerInterface */
-    protected $logger;
+    private $logger;
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
     private $repoDwnl;
 
@@ -47,10 +47,12 @@ class Calc
     }
 
     /**
+     * Walk trough the compressed downline & calculate team bonus for EU scheme.
+     *
      * @param EDwnlBon[] $dwnlCompress
      * @param array $levelsPersonal asc ordered set of the personal bonus levels & percents ([$level=>$percent])
      * @param array $levelsTeam asc ordered set of the team bonus levels & percents ([$level=>$percent])
-     * @return Calc\Data[]
+     * @return Data[]
      */
     public function exec($dwnlCompress, $levelsPersonal, $levelsTeam)
     {
@@ -64,20 +66,18 @@ class Calc
         $mapTeams = $this->mapByTeams($dwnlCompress, EDwnlBon::ATTR_CUST_REF, EDwnlBon::ATTR_PARENT_REF);
         $mapCustById = $this->mapById($dwnlCurrent, ECustomer::ATTR_CUSTOMER_ID);
         /**
-         * Go thorough all customers from compressed tree and calculate bonus.
+         * Go through all customers from compressed tree and calculate bonus.
          *
          * @var int $custId
-         * @var EDwnlBon $cmprsData
+         * @var EDwnlBon $custDwnl
          */
-        foreach ($mapDwnlById as $custId => $cmprsData) {
-            //$custData = $mapDataById[$custId];
+        foreach ($mapDwnlById as $custId => $custDwnl) {
             /** @var ECustomer $custData */
             $custData = $mapCustById[$custId];
             $custMlmId = $custData->getHumanRef();
-
             $scheme = $this->hlpScheme->getSchemeByCustomer($custData);
             /* only DEFAULT-schema customers may apply to Team Bonus */
-            $pv = $cmprsData->getPv();
+            $pv = $custDwnl->getPv();
             /* customer has PV to calculate bonus */
             if ($pv > Cfg::DEF_ZERO) {
                 /* personal % for this customer */
@@ -88,7 +88,7 @@ class Calc
                     continue;
                 }
                 /* traverse up to tree root to calculate team bonus values */
-                $path = $cmprsData->getPath();
+                $path = $custDwnl->getPath();
                 $parents = $this->hlpDwnl->getParentsFromPathReversed($path);
                 /* init undistributed delta: 20% - 5% */
                 $pctPbLeft = $pctPbMax - $pctPb;
@@ -140,7 +140,7 @@ class Calc
                                 /* parent's TV allows him to get all team bonus from this customer */
                                 if ($parentScheme == Def::SCHEMA_DEFAULT) {
                                     $bonus = $this->hlpFormat->roundBonus($pv * $pctPbLeft);
-                                    $entry = new \Praxigento\BonusHybrid\Service\Calc\Bonus\Team\Calc\Data();
+                                    $entry = new Data();
                                     $entry->setCustomerRef($parentId);
                                     $entry->setDonatorRef($custId);
                                     $entry->setValue($bonus);
@@ -163,7 +163,7 @@ class Calc
                                 /* parent's TV allows him to get only part of the team bonus from this customer */
                                 if ($parentScheme == Def::SCHEMA_DEFAULT) {
                                     $bonus = $this->hlpFormat->roundBonus($pv * $pctTbAvlbDelta);
-                                    $entry = new \Praxigento\BonusHybrid\Service\Calc\Bonus\Team\Calc\Data();
+                                    $entry = new Data();
                                     $entry->setCustomerRef($parentId);
                                     $entry->setDonatorRef($custId);
                                     $entry->setValue($bonus);

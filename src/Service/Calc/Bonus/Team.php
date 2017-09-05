@@ -4,10 +4,10 @@
  */
 
 namespace Praxigento\BonusHybrid\Service\Calc\Bonus;
-
 use Praxigento\BonusBase\Repo\Entity\Data\Log\Customers as ELogCust;
 use Praxigento\BonusBase\Repo\Entity\Data\Log\Opers as ELogOper;
 use Praxigento\BonusHybrid\Config as Cfg;
+use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
 
 /**
@@ -16,8 +16,6 @@ use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
 class Team
     implements ITeam
 {
-    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
-    private $repoCalc;
     /** @var \Praxigento\Accounting\Service\IOperation */
     private $callOperation;
     /** @var \Praxigento\Core\Tool\IDate */
@@ -28,6 +26,8 @@ class Team
     private $logger;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
+    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
+    private $repoCalc;
     /** @var \Praxigento\BonusBase\Repo\Entity\Type\Calc */
     private $repoCalcType;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
@@ -38,8 +38,9 @@ class Team
     private $repoLogCust;
     /** @var \Praxigento\BonusBase\Repo\Entity\Log\Opers */
     private $repoLogOper;
-    /** @var Team\Calc */
-    private $subCalc;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Team\Calc\DefScheme */
+    private $subCalcDef;
+    private $subCalcEu;
     /** @var Team\PrepareTrans */
     private $subPrepareTrans;
 
@@ -55,7 +56,8 @@ class Team
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon,
         \Praxigento\Accounting\Service\IOperation $callOperation,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
-        \Praxigento\BonusHybrid\Service\Calc\Bonus\Team\Calc $subCalc,
+        Team\Calc\DefScheme $subCalcDef,
+        Team\Calc\EuScheme $subCalcEu,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Team\PrepareTrans $subPrepareTrans
     )
     {
@@ -70,7 +72,8 @@ class Team
         $this->repoDwnlBon = $repoDwnlBon;
         $this->callOperation = $callOperation;
         $this->procPeriodGet = $procPeriodGet;
-        $this->subCalc = $subCalc;
+        $this->subCalcDef = $subCalcDef;
+        $this->subCalcEu = $subCalcEu;
         $this->subPrepareTrans = $subPrepareTrans;
     }
 
@@ -103,6 +106,8 @@ class Team
 
     public function exec(\Praxigento\Core\Data $ctx)
     {
+        /* get working data from context */
+        $scheme = $ctx->get(self::CTX_IN_SCHEME) ?? Def::SCHEMA_DEFAULT;
         /**
          * perform processing
          */
@@ -115,16 +120,22 @@ class Team
          * @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $teamPeriod
          * @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $teamCalc
          */
-        list($compressCalc, $teamPeriod, $teamCalc) = $this->getCalcData();
+        list($compressCalc, $teamPeriod, $teamCalc) = $this->getCalcData($scheme);
         $compressCalcId = $compressCalc->getId();
         $teamCalcId = $teamCalc->getId();
         /* load downlines (compressed for period & current) */
         $dwnlCompress = $this->getBonusDwnl($compressCalcId);
-        /* load levels & percents for personal & team bonuses */
-        $levelsPers = $this->getLevelsByType(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_DEF);
-        $levelsTeam = $this->getLevelsByType(Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF);
-        /* calculate bonus */
-        $bonus = $this->subCalc->exec($dwnlCompress, $levelsPers, $levelsTeam);
+        /* calculate bonus according to given SCHEME */
+        if ($scheme == Def::SCHEMA_EU) {
+            /* load levels & percents for team bonuses */
+            $levelsTeam = $this->getLevelsByType(Cfg::CODE_TYPE_CALC_BONUS_TEAM_EU);
+            $bonus = $this->subCalcEu->exec($dwnlCompress, $levelsTeam);
+        } else {
+            /* load levels & percents for personal & team bonuses */
+            $levelsPers = $this->getLevelsByType(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_DEF);
+            $levelsTeam = $this->getLevelsByType(Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF);
+            $bonus = $this->subCalcDef->exec($dwnlCompress, $levelsPers, $levelsTeam);
+        }
         /* convert calculated bonus to transactions */
         $trans = $this->getTransactions($bonus, $teamPeriod);
         /* register bonus operation */
@@ -158,12 +169,14 @@ class Team
      *
      * @return array [$compressCalc, $teamPeriod, $teamCalc]
      */
-    private function getCalcData()
+    private function getCalcData($scheme)
     {
+        $calcTypeCode = ($scheme == Def::SCHEMA_EU) ?
+            Cfg::CODE_TYPE_CALC_BONUS_TEAM_EU : Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF;
         /* get period & calc data for team bonus & TV volumes calculations */
         $ctx = new \Praxigento\Core\Data();
         $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_VALUE_TV);
-        $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF);
+        $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, $calcTypeCode);
         $this->procPeriodGet->exec($ctx);
         /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $teamPeriod */
         $teamPeriod = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_PERIOD_DATA);
