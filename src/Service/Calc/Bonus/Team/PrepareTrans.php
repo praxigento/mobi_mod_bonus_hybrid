@@ -3,15 +3,13 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Personal;
+namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Team;
 
 use Praxigento\Accounting\Repo\Entity\Data\Transaction as ETrans;
 use Praxigento\BonusHybrid\Config as Cfg;
 
 /**
- * Prepare transaction data to register "Personal Bonus" operation.
- *
- * TODO: merge with \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\PrepareTrans
+ * Prepare transaction data to register "Team Bonus" operation.
  */
 class PrepareTrans
 {
@@ -30,18 +28,19 @@ class PrepareTrans
     }
 
     /**
-     * @param array $turnover [$custId => $turnover]; see ..\Personal::calcBonus
+     * @param Calc\Data[] $bonus
+     * @param $dateApplied
      *
      * TODO: we need flag for index - is it an 'accountId' or a 'customerId' data?
      * TODO: we should use asset type code as input parameter
      * TODO: should we move this process into the Accounting module?
      */
-    public function exec($turnover, $dateApplied)
+    public function exec($bonus, $dateApplied)
     {
         $assetTypeId = $this->repoAssetType->getIdByCode(Cfg::CODE_TYPE_ASSET_WALLET_ACTIVE);
         $represAccId = $this->repoAcc->getRepresentativeAccountId($assetTypeId);
         $result = [];
-        foreach ($turnover as $custId => $value) {
+        foreach ($bonus as $custId => $value) {
             if ($value > Cfg::DEF_ZERO) {
                 /* get account ID for customer ID */
                 $acc = $this->repoAcc->getByCustomerId($custId, $assetTypeId);
