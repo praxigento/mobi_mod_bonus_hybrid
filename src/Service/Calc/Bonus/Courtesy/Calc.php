@@ -9,7 +9,7 @@ use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
-
+use Praxigento\BonusHybrid\Service\Calc\Data\Bonus as DBonus;
 class Calc
 {
     /** Add traits */
@@ -96,7 +96,7 @@ class Calc
                         } else {
                             $bonusPart = $this->hlpFormat->roundBonus($pv * $percentCourtesy);
                             /* add new bonus entry */
-                            $entry = new \Praxigento\BonusHybrid\Service\Calc\Bonus\Team\Calc\Data();
+                            $entry = new DBonus();
                             $entry->setCustomerRef($custId);
                             $entry->setDonatorRef($memberId);
                             $entry->setValue($bonusPart);

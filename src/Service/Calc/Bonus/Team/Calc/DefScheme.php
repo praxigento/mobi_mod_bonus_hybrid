@@ -9,6 +9,7 @@ use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
+use Praxigento\BonusHybrid\Service\Calc\Data\Bonus as DBonus;
 
 /**
  * Calculate Team bonus according to DEFAULT scheme.
@@ -150,7 +151,7 @@ class DefScheme
                                 /* parent's TV allows him to get all team bonus from this customer */
                                 if ($parentScheme == Def::SCHEMA_DEFAULT) {
                                     $bonus = $this->hlpFormat->roundBonus($pv * $pctPbLeft);
-                                    $entry = new Data();
+                                    $entry = new DBonus();
                                     $entry->setCustomerRef($parentId);
                                     $entry->setDonatorRef($custId);
                                     $entry->setValue($bonus);
@@ -173,7 +174,7 @@ class DefScheme
                                 /* parent's TV allows him to get only part of the team bonus from this customer */
                                 if ($parentScheme == Def::SCHEMA_DEFAULT) {
                                     $bonus = $this->hlpFormat->roundBonus($pv * $pctTbAvlbDelta);
-                                    $entry = new Data();
+                                    $entry = new DBonus();
                                     $entry->setCustomerRef($parentId);
                                     $entry->setDonatorRef($custId);
                                     $entry->setValue($bonus);

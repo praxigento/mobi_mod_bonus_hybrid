@@ -9,7 +9,7 @@ use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
-
+use Praxigento\BonusHybrid\Service\Calc\Data\Bonus as DBonus;
 /**
  * Calculate Team bonus according to EU scheme.
  */
@@ -85,7 +85,7 @@ class EuScheme
                 if ($pvParent > (Def::PV_QUALIFICATION_LEVEL_EU - Cfg::DEF_ZERO)) {
                     $bonus = $this->hlpFormat->roundBonus($pv * $bonusPercent);
                     if ($bonus > Cfg::DEF_ZERO) {
-                        $entry = new Data();
+                        $entry = new DBonus();
                         $entry->setCustomerRef($parentId);
                         $entry->setDonatorRef($custId);
                         $entry->setValue($bonus);

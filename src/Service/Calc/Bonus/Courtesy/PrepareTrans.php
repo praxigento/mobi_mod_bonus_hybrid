@@ -41,7 +41,7 @@ class PrepareTrans
         $assetTypeId = $this->repoAssetType->getIdByCode(Cfg::CODE_TYPE_ASSET_WALLET_ACTIVE);
         $represAccId = $this->repoAcc->getRepresentativeAccountId($assetTypeId);
         $result = [];
-        /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Team\Calc\Data $one */
+        /** @var \Praxigento\BonusHybrid\Service\Calc\Data\Bonus $one */
         foreach ($bonus as $one) {
             $custId = $one->getCustomerRef();
             $donatorId = $one->getDonatorRef();

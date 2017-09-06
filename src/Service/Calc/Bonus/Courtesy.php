@@ -153,7 +153,7 @@ class Courtesy
     /**
      * Convert bonus data to transactions data.
      *
-     * @param \Praxigento\BonusHybrid\Service\Calc\Bonus\Team\Calc\Data[] $bonus [custId => bonusValue]
+     * @param \Praxigento\BonusHybrid\Service\Calc\Data\Bonus[] $bonus [custId => bonusValue]
      * @param \Praxigento\BonusBase\Repo\Entity\Data\Period $period
      * @return \Praxigento\Accounting\Repo\Entity\Data\Transaction[]
      */

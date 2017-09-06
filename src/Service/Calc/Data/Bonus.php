@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Team\Calc;
+namespace Praxigento\BonusHybrid\Service\Calc\Data;
 /**
  * Data object to structure results of the team bonus calculation.
  *
@@ -15,7 +15,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Team\Calc;
  * @method void setValue(int)
  *
  */
-class Data
+class Bonus
     extends \Praxigento\Core\Data
 {
 

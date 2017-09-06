@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Team;
 
 use Praxigento\Accounting\Repo\Entity\Data\Transaction as ETrans;
 use Praxigento\BonusHybrid\Config as Cfg;
-
+use \Praxigento\BonusHybrid\Service\Calc\Data\Bonus as DBonus;
 /**
  * Prepare transaction data to register "Team Bonus" operation.
  */
@@ -41,7 +41,7 @@ class PrepareTrans
         $assetTypeId = $this->repoAssetType->getIdByCode(Cfg::CODE_TYPE_ASSET_WALLET_ACTIVE);
         $represAccId = $this->repoAcc->getRepresentativeAccountId($assetTypeId);
         $result = [];
-        /** @var Calc\Data $one */
+        /** @var DBonus $one */
         foreach ($bonus as $one) {
             $custId = $one->getCustomerRef();
             $donatorId = $one->getDonatorRef();
