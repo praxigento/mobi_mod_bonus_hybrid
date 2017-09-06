@@ -5,6 +5,7 @@
 namespace Praxigento\BonusHybrid\Cli\Cmd;
 
 use Praxigento\BonusHybrid\Defaults as Def;
+use Praxigento\Core\Service\IProcess as PBase;
 
 /**
  * Calculate hybrid bonus.
@@ -26,6 +27,8 @@ class Calc
     private $procBonusTeam;
     /** @var \Praxigento\BonusHybrid\Service\Calc\ICompressPhase1 */
     private $procCompressPhase1;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Value\IOv */
+    private $procOv;
     /** @var \Praxigento\BonusHybrid\Service\Calc\IPvWriteOff */
     private $procPvWriteOff;
     /** @var \Praxigento\BonusHybrid\Service\Calc\IValueTv */
@@ -43,7 +46,8 @@ class Calc
         \Praxigento\BonusHybrid\Service\Calc\Bonus\ICourtesy $procBonusCourtesy,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\IPersonal $procBonusPers,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\ITeam $procBonusTeam,
-        \Praxigento\BonusHybrid\Service\Calc\IValueTv $procTv
+        \Praxigento\BonusHybrid\Service\Calc\IValueTv $procTv,
+        \Praxigento\BonusHybrid\Service\Calc\Value\IOv $procOv
     ) {
         parent::__construct(
             $manObj,
@@ -60,13 +64,14 @@ class Calc
         $this->procBonusPers = $procBonusPers;
         $this->procBonusTeam = $procBonusTeam;
         $this->procTv = $procTv;
+        $this->procOv = $procOv;
     }
 
     private function calcBonusCourtesy()
     {
         $ctx = new \Praxigento\Core\Data();
         $this->procBonusCourtesy->exec($ctx);
-        $result = (bool)$ctx->get($this->procBonusCourtesy::CTX_OUT_SUCCESS);
+        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
         return $result;
     }
 
@@ -110,7 +115,7 @@ class Calc
     {
         $ctx = new \Praxigento\Core\Data();
         $this->procBonusPers->exec($ctx);
-        $result = (bool)$ctx->get($this->procBonusPers::CTX_OUT_SUCCESS);
+        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
         return $result;
     }
 
@@ -119,7 +124,7 @@ class Calc
         $ctx = new \Praxigento\Core\Data();
         $ctx->set($this->procBonusTeam::CTX_IN_SCHEME, Def::SCHEMA_DEFAULT);
         $this->procBonusTeam->exec($ctx);
-        $result = (bool)$ctx->get($this->procBonusTeam::CTX_OUT_SUCCESS);
+        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
         return $result;
     }
 
@@ -128,7 +133,7 @@ class Calc
         $ctx = new \Praxigento\Core\Data();
         $ctx->set($this->procBonusTeam::CTX_IN_SCHEME, Def::SCHEMA_EU);
         $this->procBonusTeam->exec($ctx);
-        $result = (bool)$ctx->get($this->procBonusTeam::CTX_OUT_SUCCESS);
+        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
         return $result;
     }
 
@@ -154,7 +159,7 @@ class Calc
     {
         $ctx = new \Praxigento\Core\Data();
         $this->procCompressPhase1->exec($ctx);
-        $result = (bool)$ctx->get($this->procCompressPhase1::CTX_OUT_SUCCESS);
+        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
         return $result;
     }
 
@@ -162,7 +167,7 @@ class Calc
     {
         $ctx = new \Praxigento\Core\Data();
         $this->procPvWriteOff->exec($ctx);
-        $result = (bool)$ctx->get($this->procPvWriteOff::CTX_OUT_SUCCESS);
+        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
         return $result;
     }
 
@@ -176,9 +181,9 @@ class Calc
 
     private function calcValueOv()
     {
-        $req = new \Praxigento\BonusHybrid\Service\Calc\Request\ValueOv();
-        $resp = $this->callCalc->valueOv($req);
-        $result = $resp->isSucceed();
+        $ctx = new \Praxigento\Core\Data();
+        $this->procOv->exec($ctx);
+        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
         return $result;
     }
 
@@ -186,7 +191,7 @@ class Calc
     {
         $ctx = new \Praxigento\Core\Data();
         $this->procTv->exec($ctx);
-        $result = (bool)$ctx->get($this->procTv::CTX_OUT_SUCCESS);
+        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
         return $result;
     }
 
@@ -197,6 +202,12 @@ class Calc
         $output->writeln("<info>Start bonus calculation.<info>");
         $this->conn->beginTransaction();
         try {
+
+            // TODO: remove it
+            $canContinue = $this->calcValueOv();
+            $this->conn->rollBack();
+            return;
+
             $canContinue = $this->calcSignupDebit();
             if ($canContinue) {
                 $output->writeln("<info>'Sign Up Volume Debit' calculation is completed.<info>");
