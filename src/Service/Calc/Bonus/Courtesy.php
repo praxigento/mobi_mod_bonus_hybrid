@@ -15,8 +15,6 @@ use Praxigento\BonusHybrid\Config as Cfg;
 class Courtesy
     implements ICourtesy
 {
-    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
-    private $repoCalc;
     /** @var \Praxigento\Accounting\Service\IOperation */
     private $callOperation;
     /** @var \Praxigento\Core\Tool\IDate */
@@ -27,6 +25,8 @@ class Courtesy
     private $logger;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
+    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
+    private $repoCalc;
     /** @var \Praxigento\BonusBase\Repo\Entity\Log\Customers */
     private $repoLogCust;
     /** @var \Praxigento\BonusBase\Repo\Entity\Log\Opers */
@@ -105,7 +105,7 @@ class Courtesy
         list($compressCalc, $courtesyPeriod, $courtesyCalc) = $this->getCalcData();
         $compressCalcId = $compressCalc->getId();
         $courtesyCalcId = $courtesyCalc->getId();
-        /* calculate bonus according to given SCHEME */
+        /* calculate bonus */
         $bonus = $this->subCalc->exec($compressCalcId);
         /* convert calculated bonus to transactions */
         $trans = $this->getTransactions($bonus, $courtesyPeriod);
@@ -129,22 +129,30 @@ class Courtesy
      */
     private function getCalcData()
     {
-        /* get period & calc data */
+        /* get period & calc data for Courtesy based on TV */
         $ctx = new \Praxigento\Core\Data();
-        $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
+        $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_VALUE_TV);
         $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_BONUS_COURTESY);
         $this->procPeriodGet->exec($ctx);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $courtesyCalc */
-        $compressCalc = $ctx->get($this->procPeriodGet::CTX_OUT_BASE_CALC_DATA);
         /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $courtesyPeriod */
         $courtesyPeriod = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_PERIOD_DATA);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $depCalcData */
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $courtesyCalc */
         $courtesyCalc = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
+        /* get period and calc data for compression calc (basic for TV volumes) */
+        $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
+        $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_VALUE_TV);
+        $ctx->set($this->procPeriodGet::CTX_IN_DEP_IGNORE_COMPLETE, true);
+        $this->procPeriodGet->exec($ctx);
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $compressCalc */
+        $compressCalc = $ctx->get($this->procPeriodGet::CTX_OUT_BASE_CALC_DATA);
+        /* composer result */
         $result = [$compressCalc, $courtesyPeriod, $courtesyCalc];
         return $result;
     }
 
     /**
+     * Convert bonus data to transactions data.
+     *
      * @param \Praxigento\BonusHybrid\Service\Calc\Bonus\Team\Calc\Data[] $bonus [custId => bonusValue]
      * @param \Praxigento\BonusBase\Repo\Entity\Data\Period $period
      * @return \Praxigento\Accounting\Repo\Entity\Data\Transaction[]
