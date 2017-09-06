@@ -43,8 +43,6 @@ class Personal
     private $procPeriodGet;
     /** @var  \Praxigento\BonusHybrid\Service\Calc\Bonus\Personal\PrepareTrans */
     private $procPrepareTrans;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Type\Calc */
-    private $repoCalcType;
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
     private $repoDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
@@ -62,7 +60,6 @@ class Personal
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\BonusBase\Repo\Entity\Level $repoLevel,
         \Praxigento\BonusBase\Repo\Entity\Log\Opers $repoLogOper,
-        \Praxigento\BonusBase\Repo\Entity\Type\Calc $repoCalcType,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon,
         \Praxigento\Accounting\Service\IOperation $callOperation,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
@@ -78,7 +75,6 @@ class Personal
         $this->repoCalc = $repoCalc;
         $this->repoLevel = $repoLevel;
         $this->repoLogOper = $repoLogOper;
-        $this->repoCalcType = $repoCalcType;
         $this->repoDwnlBon = $repoDwnlBon;
         $this->callOperation = $callOperation;
         $this->procPeriodGet = $procPeriodGet;
@@ -155,8 +151,7 @@ class Personal
         $dwnlCompress = $this->getBonusDwnl($baseCalcId);
         $dwnlCurrent = $this->repoDwnl->get();
         /* get levels to calculate Personal bonus */
-        $calcTypeId = $this->repoCalcType->getIdByCode(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_DEF);
-        $levels = $this->repoLevel->getByCalcTypeId($calcTypeId);
+        $levels = $this->repoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_DEF);
         /* calculate bonus*/
         $bonus = $this->calcBonus($dwnlCurrent, $dwnlCompress, $levels);
         /* convert calculated bonus to transactions */

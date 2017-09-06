@@ -11,7 +11,6 @@ use Praxigento\Accounting\Service\Account\Request\Get as AccountGetRequest;
 use Praxigento\Accounting\Service\Account\Request\GetRepresentative as AccountGetRepresentativeRequest;
 use Praxigento\Accounting\Service\Operation\Request\Add as OperationAddRequest;
 use Praxigento\BonusBase\Repo\Entity\Data\Calculation;
-use Praxigento\BonusBase\Repo\Entity\Data\Level;
 use Praxigento\BonusBase\Repo\Entity\Data\Log\Customers as LogCustomers;
 use Praxigento\BonusBase\Repo\Entity\Data\Log\Opers as LogOpers;
 use Praxigento\BonusBase\Repo\Entity\Data\Log\Sales as LogSales;
@@ -86,28 +85,6 @@ class Db
         $this->repoRegPto = $repoRegPto;
         $this->_repoTypeAsset = $repoTypeAsset;
         $this->_repoTypeOper = $repoTypeOper;
-    }
-
-    /**
-     * Get bonus levels by calculation type code to calculate bonus fee.
-     *
-     * @param $calcTypeCode
-     *
-     * @return array [ level => percent, ... ]
-     *
-     * @deprecated see \Praxigento\BonusBase\Repo\Entity\Level::getByCalcTypeId
-     */
-    public function getBonusLevels($calcTypeCode)
-    {
-        $result = [];
-        $calcTypeId = $this->_repoTypeCalc->getIdByCode($calcTypeCode);
-        $where = Level::ATTR_CALC_TYPE_ID . '=' . $calcTypeId;
-        $order = Level::ATTR_LEVEL . ' ASC';
-        $data = $this->_repoBasic->getEntities(Level::ENTITY_NAME, null, $where, $order);
-        foreach ($data as $one) {
-            $result[$one[Level::ATTR_LEVEL]] = $one[Level::ATTR_PERCENT];
-        }
-        return $result;
     }
 
     public function getCfgOverride()

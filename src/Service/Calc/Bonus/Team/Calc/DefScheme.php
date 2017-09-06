@@ -29,8 +29,6 @@ class DefScheme
     private $hlpScheme;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Type\Calc */
-    private $repoCalcType;
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
     private $repoDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
@@ -45,7 +43,6 @@ class DefScheme
         \Praxigento\BonusHybrid\Tool\IScheme $hlpScheme,
         \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
         \Praxigento\BonusBase\Repo\Entity\Level $repoLevel,
-        \Praxigento\BonusBase\Repo\Entity\Type\Calc $repoCalcType,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon
     )
     {
@@ -55,7 +52,6 @@ class DefScheme
         $this->hlpScheme = $hlpScheme;
         $this->repoDwnl = $repoDwnl;
         $this->repoLevel = $repoLevel;
-        $this->repoCalcType = $repoCalcType;
         $this->repoDwnlBon = $repoDwnlBon;
     }
 
@@ -69,8 +65,8 @@ class DefScheme
     {
         $result = [];
         /* collect additional data */
-        $levelsPersonal = $this->getLevelsByType(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_DEF);
-        $levelsTeam = $this->getLevelsByType(Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF);
+        $levelsPersonal = $this->repoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_DEF);
+        $levelsTeam = $this->repoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF);
         $dwnlCompress = $this->getBonusDwnl($calcId);
         $dwnlCurrent = $this->repoDwnl->get();
         $pctPbMax = $this->getMaxPercentForPersonalBonus($levelsPersonal);
@@ -261,19 +257,6 @@ class DefScheme
             }
             $result = $percent;
         }
-        return $result;
-    }
-
-    /**
-     * Load bonus percents by levels for given calculation type.
-     *
-     * @param string $code
-     * @return array ordered by level asc ([$level => $percent])
-     */
-    private function getLevelsByType($code)
-    {
-        $calcTypeId = $this->repoCalcType->getIdByCode($code);
-        $result = $this->repoLevel->getByCalcTypeId($calcTypeId);
         return $result;
     }
 
