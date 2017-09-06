@@ -12,7 +12,7 @@ use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
 
 /**
- * Calculate Personal Bonus (DEFAULT scheme).
+ * Calculate Personal Bonus.
  */
 class Personal
     implements IPersonal
@@ -145,12 +145,12 @@ class Personal
         $ctx->set(self::CTX_OUT_SUCCESS, false);
         $this->logger->info("Personal bonus is started.");
         /* get dependent calculation data */
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $baseCalc */
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $depPeriod */
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $depCalc */
-        list($baseCalc, $depPeriod, $depCalc) = $this->getCalcData();
-        $baseCalcId = $baseCalc->getId();
-        $depCalcId = $depCalc->getId();
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $compressCalc */
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $persPeriod */
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $persCalc */
+        list($compressCalc, $persPeriod, $persCalc) = $this->getCalcData();
+        $baseCalcId = $compressCalc->getId();
+        $depCalcId = $persCalc->getId();
         /* load downlines (compressed for period & current) */
         $dwnlCompress = $this->getBonusDwnl($baseCalcId);
         $dwnlCurrent = $this->repoDwnl->get();
@@ -160,9 +160,9 @@ class Personal
         /* calculate bonus*/
         $bonus = $this->calcBonus($dwnlCurrent, $dwnlCompress, $levels);
         /* convert calculated bonus to transactions */
-        $trans = $this->getTransactions($bonus, $depPeriod);
+        $trans = $this->getTransactions($bonus, $persPeriod);
         /* register bonus operation */
-        $operId = $this->createOperation($trans, $depPeriod);
+        $operId = $this->createOperation($trans, $persPeriod);
         /* register operation in log */
         $this->saveLog($operId, $depCalcId);
         /* mark this calculation complete */
@@ -213,13 +213,13 @@ class Personal
         $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
         $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_DEF);
         $this->procPeriodGet->exec($ctx);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $depCalcData */
-        $baseCalcData = $ctx->get($this->procPeriodGet::CTX_OUT_BASE_CALC_DATA);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $depPeriodData */
-        $depPeriodData = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_PERIOD_DATA);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $depCalcData */
-        $depCalcData = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
-        $result = [$baseCalcData, $depPeriodData, $depCalcData];
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $compressCalc */
+        $compressCalc = $ctx->get($this->procPeriodGet::CTX_OUT_BASE_CALC_DATA);
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $persPeriod */
+        $persPeriod = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_PERIOD_DATA);
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $persCalc */
+        $persCalc = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
+        $result = [$compressCalc, $persPeriod, $persCalc];
         return $result;
     }
 

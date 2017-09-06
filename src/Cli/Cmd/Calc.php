@@ -18,6 +18,8 @@ class Calc
     private $callCalc;
     /** @var \Magento\Framework\DB\Adapter\AdapterInterface */
     private $conn;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\ICourtesy */
+    private $procBonusCourtesy;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\IPersonal */
     private $procBonusPers;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\ITeam */
@@ -38,6 +40,7 @@ class Calc
         \Praxigento\BonusHybrid\Service\Calc\ISignupDebit $callBonusSignup,
         \Praxigento\BonusHybrid\Service\Calc\ICompressPhase1 $procCompressPhase1,
         \Praxigento\BonusHybrid\Service\Calc\IPvWriteOff $procPvWriteOff,
+        \Praxigento\BonusHybrid\Service\Calc\Bonus\ICourtesy $procBonusCourtesy,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\IPersonal $procBonusPers,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\ITeam $procBonusTeam,
         \Praxigento\BonusHybrid\Service\Calc\IValueTv $procTv
@@ -53,6 +56,7 @@ class Calc
         $this->callBonusSignup = $callBonusSignup;
         $this->procCompressPhase1 = $procCompressPhase1;
         $this->procPvWriteOff = $procPvWriteOff;
+        $this->procBonusCourtesy = $procBonusCourtesy;
         $this->procBonusPers = $procBonusPers;
         $this->procBonusTeam = $procBonusTeam;
         $this->procTv = $procTv;
@@ -60,10 +64,9 @@ class Calc
 
     private function calcBonusCourtesy()
     {
-        $req = new \Praxigento\BonusHybrid\Service\Calc\Request\BonusCourtesy();
-        $req->setCourtesyBonusPercent(\Praxigento\BonusHybrid\Defaults::COURTESY_BONUS_PERCENT);
-        $resp = $this->callCalc->bonusCourtesy($req);
-        $result = $resp->isSucceed();
+        $ctx = new \Praxigento\Core\Data();
+        $this->procBonusCourtesy->exec($ctx);
+        $result = (bool)$ctx->get($this->procBonusCourtesy::CTX_OUT_SUCCESS);
         return $result;
     }
 

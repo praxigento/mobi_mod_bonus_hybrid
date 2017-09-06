@@ -37,6 +37,7 @@ class DefScheme
     private $repoDwnlBon;
     /** @var \Praxigento\BonusBase\Repo\Entity\Level */
     private $repoLevel;
+
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
         \Praxigento\Core\Tool\IFormat $hlpFormat,

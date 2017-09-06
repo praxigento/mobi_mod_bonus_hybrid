@@ -8,12 +8,6 @@ use Praxigento\BonusHybrid\Service\Calc\Request;
 use Praxigento\BonusHybrid\Service\Calc\Response;
 
 interface ICalc {
-    /**
-     * @param Request\BonusCourtesy $request
-     *
-     * @return Response\BonusCourtesy
-     */
-    public function bonusCourtesy(Request\BonusCourtesy $request);
 
     /**
      * @param Request\BonusInfinity $request
@@ -42,12 +36,5 @@ interface ICalc {
      * @return Response\ValueOv
      */
     public function valueOv(Request\ValueOv $request);
-
-    /**
-     * @param Request\ValueTv $request
-     *
-     * @return mixed
-     */
-    public function valueTv(Request\ValueTv $request);
 
 }
