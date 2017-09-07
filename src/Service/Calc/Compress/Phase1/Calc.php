@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Service\Calc\CompressPhase1;
+namespace Praxigento\BonusHybrid\Service\Calc\Compress\Phase1;
 
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnl;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;

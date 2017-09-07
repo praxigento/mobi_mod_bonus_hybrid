@@ -3,12 +3,12 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Service\Calc;
+namespace Praxigento\BonusHybrid\Service\Calc\Compress;
 
 /**
- * Phase I compression calculator.
+ * Phase I compression calculation.
  */
-interface ICompressPhase1
+interface IPhase1
     extends \Praxigento\Core\Service\IProcess
 {
 

@@ -46,8 +46,8 @@
                 type="\Praxigento\BonusHybrid\Service\Calc\Call"/>
     <preference for="\Praxigento\BonusHybrid\Service\IPeriod"
                 type="\Praxigento\BonusHybrid\Service\Period\Call"/>
-    <preference for="\Praxigento\BonusHybrid\Service\Calc\ICompressPhase1"
-            type="\Praxigento\BonusHybrid\Service\Calc\CompressPhase1"/>
+    <preference for="\Praxigento\BonusHybrid\Service\Calc\Compress\IPhase1"
+            type="\Praxigento\BonusHybrid\Service\Calc\Compress\Phase1"/>
     <preference for="\Praxigento\BonusHybrid\Service\Calc\Forecast\IPlain"
                 type="\Praxigento\BonusHybrid\Service\Calc\Forecast\Plain"/>
     <preference for="\Praxigento\BonusHybrid\Service\Calc\IForecast"

@@ -3,17 +3,17 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Service\Calc;
+namespace Praxigento\BonusHybrid\Service\Calc\Compress;
 
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonusDwnl;
 use Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder as QBldGetPv;
-use Praxigento\BonusHybrid\Service\Calc\CompressPhase1\Calc as SubCalc;
+use Praxigento\BonusHybrid\Service\Calc\Compress\Phase1\Calc as SubCalc;
 use Praxigento\Downline\Repo\Entity\Data\Snap as ESnap;
 
-class CompressPhase1
-    implements \Praxigento\BonusHybrid\Service\Calc\ICompressPhase1
+class Phase1
+    implements \Praxigento\BonusHybrid\Service\Calc\Compress\IPhase1
 {
 
     /** Add traits */
@@ -38,7 +38,7 @@ class CompressPhase1
     private $repoRank;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase1\Transfer\Pv */
     protected $repoTransPv;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\CompressPhase1\Calc */
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\Phase1\Calc */
     protected $subCalc;
 
     public function __construct(
@@ -51,7 +51,7 @@ class CompressPhase1
         \Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder $qbGetPv,
         \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder $qbSnapOnDate,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
-        CompressPhase1\Calc $subCalc
+        \Praxigento\BonusHybrid\Service\Calc\Compress\Phase1\Calc $subCalc
     )
     {
         $this->logger = $logger;
@@ -190,7 +190,7 @@ class CompressPhase1
     }
 
     /**
-     * @param array $snap snap data with PV (see \Praxigento\BonusHybrid\Service\Calc\CompressPhase1\Calc::populateCompressedSnapWithPv)
+     * @param array $snap snap data with PV (see \Praxigento\BonusHybrid\Service\Calc\Compress\Phase1\Calc::populateCompressedSnapWithPv)
      * @param int $calcId
      */
     private function saveBonusDownline($snap, $calcId)
