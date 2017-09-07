@@ -27,6 +27,8 @@ class Calc
     private $procBonusTeam;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\IPhase1 */
     private $procCompressPhase1;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\IPhase2 */
+    private $procCompressPhase2;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Value\IOv */
     private $procOv;
     /** @var \Praxigento\BonusHybrid\Service\Calc\IPvWriteOff */
@@ -42,6 +44,7 @@ class Calc
         \Praxigento\BonusHybrid\Service\ICalc $callCalc,
         \Praxigento\BonusHybrid\Service\Calc\ISignupDebit $callBonusSignup,
         \Praxigento\BonusHybrid\Service\Calc\Compress\IPhase1 $procCompressPhase1,
+        \Praxigento\BonusHybrid\Service\Calc\Compress\IPhase2 $procCompressPhase2,
         \Praxigento\BonusHybrid\Service\Calc\IPvWriteOff $procPvWriteOff,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\ICourtesy $procBonusCourtesy,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\IPersonal $procBonusPers,
@@ -59,6 +62,7 @@ class Calc
         $this->callCalc = $callCalc;
         $this->callBonusSignup = $callBonusSignup;
         $this->procCompressPhase1 = $procCompressPhase1;
+        $this->procCompressPhase2 = $procCompressPhase2;
         $this->procPvWriteOff = $procPvWriteOff;
         $this->procBonusCourtesy = $procBonusCourtesy;
         $this->procBonusPers = $procBonusPers;
@@ -139,10 +143,10 @@ class Calc
 
     private function calcCompressOiDef()
     {
-        $req = new \Praxigento\BonusHybrid\Service\Calc\Request\CompressOi();
-        $req->setScheme(\Praxigento\BonusHybrid\Defaults::SCHEMA_DEFAULT);
-        $resp = $this->callCalc->compressOi($req);
-        $result = $resp->isSucceed();
+        $ctx = new \Praxigento\Core\Data();
+        $ctx->set($this->procCompressPhase2::CTX_IN_SCHEME, Def::SCHEMA_DEFAULT);
+        $this->procCompressPhase2->exec($ctx);
+        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
         return $result;
     }
 
@@ -202,6 +206,11 @@ class Calc
         $output->writeln("<info>Start bonus calculation.<info>");
         $this->conn->beginTransaction();
         try {
+            // TODO remove it
+            $this->calcCompressOiDef();
+            $this->conn->rollBack();
+            return;
+
             $canContinue = $this->calcSignupDebit();
             if ($canContinue) {
                 $output->writeln("<info>'Sign Up Volume Debit' calculation is completed.<info>");

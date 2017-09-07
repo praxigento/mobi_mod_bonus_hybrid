@@ -10,7 +10,7 @@ use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
 
 class Ov
-    implements IOv
+    implements \Praxigento\BonusHybrid\Service\Calc\Value\IOv
 {
 
     /** @var \Praxigento\Core\Fw\Logger\App */

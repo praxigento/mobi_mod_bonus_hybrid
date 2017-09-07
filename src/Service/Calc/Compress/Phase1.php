@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Compress;
 
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonusDwnl;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
 use Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder as QBldGetPv;
 use Praxigento\BonusHybrid\Service\Calc\Compress\Phase1\Calc as SubCalc;
 use Praxigento\Downline\Repo\Entity\Data\Snap as ESnap;
@@ -97,52 +97,53 @@ class Phase1
         $ctx->set(self::CTX_OUT_SUCCESS, false);
         $this->logger->info("Phase1 compression is started.");
         /* get dependent calculation data */
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $baseCalcData */
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $depPeriodData */
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $depCalcData */
-        list($baseCalcData, $depPeriodData, $depCalcData) = $this->getCalcData();
-        $depPeriodId = $depPeriodData->getId();
-        $dsBegin = $depPeriodData->getDstampBegin();
-        $dsEnd = $depPeriodData->getDstampEnd();
-        $baseCalcId = $baseCalcData->getId();
-        $depCalcId = $depCalcData->getId();
-        $this->logger->info("Phase1 compression period #$depPeriodId ($dsBegin-$dsEnd)");
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $writeOffCalc */
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $compressPeriod */
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $compressCalc */
+        list($writeOffCalc, $compressPeriod, $compressCalc) = $this->getCalcData();
+        $compressPeriodId = $compressPeriod->getId();
+        $dsBegin = $compressPeriod->getDstampBegin();
+        $dsEnd = $compressPeriod->getDstampEnd();
+        $writeOffCalcId = $writeOffCalc->getId();
+        $compressCalcId = $compressCalc->getId();
+        $this->logger->info("Phase1 compression period #$compressPeriodId ($dsBegin-$dsEnd)");
         /* load source data for calculation */
+        /* TODO: move source data collection into sub-class */
         $dwnlSnap = $this->getDownlineSnapshot($dsEnd);
         $dwnlCurrent = $this->repoDwnl->get();
-        $dataPv = $this->getPv($baseCalcId);
+        $dataPv = $this->getPv($writeOffCalcId);
         /** @var \Praxigento\Downline\Repo\Entity\Data\Snap[] $updates */
         /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase1\Transfer\Pv[] $pvTransfers */
-        list($updates, $pvTransfers) = $this->compress($dwnlCurrent, $dwnlSnap, $dataPv, $depCalcId);
+        list($updates, $pvTransfers) = $this->compress($dwnlCurrent, $dwnlSnap, $dataPv, $compressCalcId);
         /* save compressed downline & PV transfers into DB */
-        $this->saveBonusDownline($updates, $depCalcId);
+        $this->saveBonusDownline($updates, $compressCalcId);
         $this->savePvTransfers($pvTransfers);
         /* mark this calculation complete */
-        $this->repoCalc->markComplete($depCalcId);
+        $this->repoCalc->markComplete($compressCalcId);
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);
         $this->logger->info("Phase1 compression is completed.");
     }
 
     /**
-     * Get data for dependent calculation.
+     * Get data for calculations/periods.
      *
-     * @return array [$periodData, $calcData]
+     * @return array $writeOffCalc, $compressPeriod, $compressCalc
      */
     private function getCalcData()
     {
-        /* get period & calc data */
+        /* get data for compression & PV write off calculations */
         $ctx = new \Praxigento\Core\Data();
         $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
         $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
         $this->procPeriodGet->exec($ctx);
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $compressCalc */
+        $writeOffCalc = $ctx->get($this->procPeriodGet::CTX_OUT_BASE_CALC_DATA);
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $compressPeriod */
+        $compressPeriod = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_PERIOD_DATA);
         /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $depCalcData */
-        $baseCalcData = $ctx->get($this->procPeriodGet::CTX_OUT_BASE_CALC_DATA);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $depPeriodData */
-        $depPeriodData = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_PERIOD_DATA);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $depCalcData */
-        $depCalcData = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
-        $result = [$baseCalcData, $depPeriodData, $depCalcData];
+        $compressCalc = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
+        $result = [$writeOffCalc, $compressPeriod, $compressCalc];
         return $result;
     }
 
@@ -203,9 +204,9 @@ class Phase1
             $depth = $one[ESnap::ATTR_DEPTH];
             $parentId = $one[ESnap::ATTR_PARENT_ID];
             $path = $one[ESnap::ATTR_PATH];
-            $pv = $one[EBonusDwnl::ATTR_PV];
+            $pv = $one[EDwnlBon::ATTR_PV];
             /* compose new entity to save */
-            $entity = new EBonusDwnl();
+            $entity = new EDwnlBon();
             $entity->setCalculationRef($calcId);
             $entity->setCustomerRef($custId);
             $entity->setDepth($depth);

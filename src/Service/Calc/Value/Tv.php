@@ -12,7 +12,7 @@ use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
 use Praxigento\BonusHybrid\Service\Calc\Value\ITv;
 
 class Tv
-    implements IValueTv
+    implements \Praxigento\BonusHybrid\Service\Calc\Value\ITv
 {
 
     /** @var \Praxigento\Core\Fw\Logger\App */

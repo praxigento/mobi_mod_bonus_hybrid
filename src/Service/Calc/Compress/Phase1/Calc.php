@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Compress\Phase1;
 
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnl;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
 use Praxigento\Downline\Repo\Query\Snap\OnDate\Builder as ASnap;
 
@@ -196,7 +196,7 @@ class Calc
         $result = $tree;
         foreach ($compressionData as $custId => $data) {
             /* 0 - PV, 1 - parentId */
-            $result[$custId][EDwnl::ATTR_PV] = $data[0];
+            $result[$custId][EDwnlBon::ATTR_PV] = $data[0];
         }
         return $result;
     }

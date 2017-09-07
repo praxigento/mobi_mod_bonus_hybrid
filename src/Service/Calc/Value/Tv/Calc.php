@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Value\Tv;
 
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBonus;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
 
 /**
  * Calculate TV on the compressed downline tree.
@@ -27,8 +27,8 @@ class Calc
     public function exec($dwnlBonus)
     {
         $result = [];
-        $mapById = $this->mapById($dwnlBonus, EDwnlBonus::ATTR_CUST_REF);
-        $mapTeams = $this->mapByTeams($dwnlBonus, EDwnlBonus::ATTR_CUST_REF, EDwnlBonus::ATTR_PARENT_REF);
+        $mapById = $this->mapById($dwnlBonus, EDwnlBon::ATTR_CUST_REF);
+        $mapTeams = $this->mapByTeams($dwnlBonus, EDwnlBon::ATTR_CUST_REF, EDwnlBon::ATTR_PARENT_REF);
         /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Downline $one */
         foreach ($dwnlBonus as $one) {
             $custId = $one->getCustomerRef();
