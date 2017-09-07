@@ -57,7 +57,7 @@ class ValueTv
         $compressCalcId = $compressCalc->getId();
         $tvCalcId = $tvCalc->getId();
         /* load compressed downlines for period */
-        $dwnlCompress = $this->getBonusDwnl($compressCalcId);
+        $dwnlCompress = $this->repoDwnlBon->getByCalcId($compressCalcId);
         /* populate downline with TV data */
         $dwnlUpdated = $this->subCalc->exec($dwnlCompress);
         /* save updates into repo */
@@ -67,19 +67,6 @@ class ValueTv
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);
         $this->logger->info("TV calculation is completed.");
-    }
-
-    /**
-     * Get downline for base calculation from Bonus module.
-     *
-     * @param int $calcId
-     * @return EDwnlBon[]
-     */
-    private function getBonusDwnl($calcId)
-    {
-        $where = EDwnlBon::ATTR_CALC_REF . '=' . (int)$calcId;
-        $result = $this->repoDwnlBon->get($where);
-        return $result;
     }
 
     /**

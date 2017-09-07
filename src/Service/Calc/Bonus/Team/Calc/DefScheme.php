@@ -8,8 +8,8 @@ namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Team\Calc;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
-use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
 use Praxigento\BonusHybrid\Service\Calc\Data\Bonus as DBonus;
+use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
 
 /**
  * Calculate Team bonus according to DEFAULT scheme.
@@ -68,7 +68,7 @@ class DefScheme
         /* collect additional data */
         $levelsPersonal = $this->repoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_DEF);
         $levelsTeam = $this->repoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF);
-        $dwnlCompress = $this->getBonusDwnl($calcId);
+        $dwnlCompress = $this->repoDwnlBon->getByCalcId($calcId);
         $dwnlCurrent = $this->repoDwnl->get();
         $pctPbMax = $this->getMaxPercentForPersonalBonus($levelsPersonal);
         $courtesyPct = \Praxigento\BonusHybrid\Defaults::COURTESY_BONUS_PERCENT;
@@ -225,19 +225,6 @@ class DefScheme
         unset($mapCustById);
         unset($mapTeams);
         unset($mapDwnlById);
-        return $result;
-    }
-
-    /**
-     * Get compressed downline for base calculation from Bonus module.
-     *
-     * @param int $calcId
-     * @return \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[]
-     */
-    private function getBonusDwnl($calcId)
-    {
-        $where = EDwnlBon::ATTR_CALC_REF . '=' . (int)$calcId;
-        $result = $this->repoDwnlBon->get($where);
         return $result;
     }
 

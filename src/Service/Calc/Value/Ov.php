@@ -50,25 +50,16 @@ class Ov
         $compressCalcId = $compressCalc->getId();
         $ovCalcId = $ovCalc->getId();
         /* load compressed downlines for period */
-        $dwnlCompress = $this->getBonusDwnl($compressCalcId);
+        $dwnlCompress = $this->repoDwnlBon->getByCalcId($compressCalcId);
         /* populate downline with OV data */
         $dwnlUpdated = $this->subCalc->exec($dwnlCompress);
+        /* save updates into repo */
+        $this->updateOv($dwnlUpdated);
+        /* mark this calculation complete */
+        $this->repoCalc->markComplete($ovCalcId);
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, false);
         $this->logger->info("OV calculation is completed.");
-    }
-
-    /**
-     * Get downline for base calculation from Bonus module.
-     *
-     * @param int $calcId
-     * @return EDwnlBon[]
-     */
-    private function getBonusDwnl($calcId)
-    {
-        $where = EDwnlBon::ATTR_CALC_REF . '=' . (int)$calcId;
-        $result = $this->repoDwnlBon->get($where);
-        return $result;
     }
 
     /**
@@ -91,4 +82,25 @@ class Ov
         return $result;
     }
 
+    /**
+     * Update downline tree with calculated OV values.
+     *
+     * @param EDwnlBon[] $dwnl
+     */
+    private function updateOv($dwnl)
+    {
+        $entity = new  EDwnlBon();
+        /** @var EDwnlBon $one */
+        foreach ($dwnl as $one) {
+            $ov = $one->getOv();
+            $calcId = $one->getCalculationRef();
+            $custId = $one->getCustomerRef();
+            $entity->setOv($ov);
+            $id = [
+                EDwnlBon::ATTR_CALC_REF => $calcId,
+                EDwnlBon::ATTR_CUST_REF => $custId
+            ];
+            $this->repoDwnlBon->updateById($id, $entity);
+        }
+    }
 }

@@ -8,8 +8,9 @@ namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Team\Calc;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
-use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
 use Praxigento\BonusHybrid\Service\Calc\Data\Bonus as DBonus;
+use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
+
 /**
  * Calculate Team bonus according to EU scheme.
  */
@@ -57,7 +58,7 @@ class EuScheme
         $result = [];
         /* collect additional data */
         $bonusPercent = Def::TEAM_BONUS_EU_PERCENT;
-        $dwnlCompress = $this->getBonusDwnl($calcId);
+        $dwnlCompress = $this->repoDwnlBon->getByCalcId($calcId);
         $dwnlCurrent = $this->repoDwnl->get();
         /* create maps to access data */
         $mapDwnlById = $this->mapById($dwnlCompress, EDwnlBon::ATTR_CUST_REF);
@@ -104,16 +105,4 @@ class EuScheme
         return $result;
     }
 
-    /**
-     * Get compressed downline for base calculation from Bonus module.
-     *
-     * @param int $calcId
-     * @return \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[]
-     */
-    private function getBonusDwnl($calcId)
-    {
-        $where = EDwnlBon::ATTR_CALC_REF . '=' . (int)$calcId;
-        $result = $this->repoDwnlBon->get($where);
-        return $result;
-    }
 }
