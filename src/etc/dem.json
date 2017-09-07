@@ -471,7 +471,7 @@
                     "package": {
                       "Phase1": {
                         "alias": "ph1",
-                        "comment": "Phase I related data.",
+                        "comment": "Phase I compression related data.",
                         "package": {
                           "Transfer": {
                             "alias": "trn",
@@ -591,6 +591,131 @@
                                       "update": "restrict"
                                     }
                                   }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "Phase2": {
+                        "alias": "ph2",
+                        "comment": "Phase II compression related data.",
+                        "entity": {
+                          "Legs": {
+                            "alias": "legs",
+                            "comment": "OV by legs for compressed tree",
+                            "attribute": {
+                              "CalcRef": {
+                                "alias": "calc_ref",
+                                "comment": "Reference to the related calculation.",
+                                "nullable": false,
+                                "type": {
+                                  "integer": {
+                                    "unsigned": true
+                                  }
+                                }
+                              },
+                              "CustRef": {
+                                "alias": "cust_ref",
+                                "comment": "Reference to the customer itself.",
+                                "nullable": false,
+                                "type": {
+                                  "integer": {
+                                    "unsigned": true
+                                  }
+                                }
+                              },
+                              "LegMax": {
+                                "alias": "leg_max",
+                                "comment": "OV value for the leg with maximal amount.",
+                                "nullable": false,
+                                "type": {
+                                  "numeric": {
+                                    "precision": 12,
+                                    "scale": 4
+                                  }
+                                }
+                              },
+                              "LegSecond": {
+                                "alias": "leg_second",
+                                "comment": "OV value for second leg of the customer.",
+                                "nullable": false,
+                                "type": {
+                                  "numeric": {
+                                    "precision": 12,
+                                    "scale": 4
+                                  }
+                                }
+                              },
+                              "LegOthers": {
+                                "alias": "leg_others",
+                                "comment": "OV value for the lest legs (summary for all other legs).",
+                                "nullable": false,
+                                "type": {
+                                  "numeric": {
+                                    "precision": 12,
+                                    "scale": 4
+                                  }
+                                }
+                              },
+                              "PVInfinity": {
+                                "alias": "pv_inf",
+                                "comment": "All compressed PV used in Infinity bonus.",
+                                "nullable": false,
+                                "type": {
+                                  "numeric": {
+                                    "precision": 12,
+                                    "scale": 4
+                                  }
+                                }
+                              }
+                            },
+                            "index": {
+                              "primary": {
+                                "type": "primary",
+                                "aliases": [
+                                  "calc_ref",
+                                  "cust_ref"
+                                ]
+                              }
+                            },
+                            "relation": {
+                              "toCalculation": {
+                                "own": {
+                                  "aliases": [
+                                    "calc_ref"
+                                  ]
+                                },
+                                "reference": {
+                                  "entity": {
+                                    "completeAlias": "prxgt_bon_base_calc"
+                                  },
+                                  "aliases": [
+                                    "id"
+                                  ]
+                                },
+                                "action": {
+                                  "delete": "restrict",
+                                  "update": "restrict"
+                                }
+                              },
+                              "toDownlineCustomer": {
+                                "own": {
+                                  "aliases": [
+                                    "cust_ref"
+                                  ]
+                                },
+                                "reference": {
+                                  "entity": {
+                                    "completeAlias": "prxgt_dwnl_customer"
+                                  },
+                                  "aliases": [
+                                    "customer_ref"
+                                  ]
+                                },
+                                "action": {
+                                  "delete": "restrict",
+                                  "update": "restrict"
                                 }
                               }
                             }
