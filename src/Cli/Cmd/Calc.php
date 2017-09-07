@@ -31,7 +31,7 @@ class Calc
     private $procOv;
     /** @var \Praxigento\BonusHybrid\Service\Calc\IPvWriteOff */
     private $procPvWriteOff;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\IValueTv */
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Value\ITv */
     private $procTv;
     /** @var \Magento\Framework\App\ResourceConnection */
     private $resource;
@@ -46,7 +46,7 @@ class Calc
         \Praxigento\BonusHybrid\Service\Calc\Bonus\ICourtesy $procBonusCourtesy,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\IPersonal $procBonusPers,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\ITeam $procBonusTeam,
-        \Praxigento\BonusHybrid\Service\Calc\IValueTv $procTv,
+        \Praxigento\BonusHybrid\Service\Calc\Value\ITv $procTv,
         \Praxigento\BonusHybrid\Service\Calc\Value\IOv $procOv
     ) {
         parent::__construct(

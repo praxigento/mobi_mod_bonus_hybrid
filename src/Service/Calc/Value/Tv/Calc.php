@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Service\Calc\ValueTv;
+namespace Praxigento\BonusHybrid\Service\Calc\Value\Tv;
 
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBonus;
 

@@ -3,12 +3,12 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Service\Calc;
+namespace Praxigento\BonusHybrid\Service\Calc\Value;
 
 /**
  * Process to calculate TV values.
  */
-interface IValueTv
+interface ITv
     extends \Praxigento\Core\Service\IProcess
 {
 

@@ -3,14 +3,15 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Service\Calc;
+namespace Praxigento\BonusHybrid\Service\Calc\Value;
 
 use Praxigento\BonusBase\Repo\Entity\Data\Calculation as ECalc;
 use Praxigento\BonusBase\Service\Period\Calc\Get\IDependent as PGetPeriodDep;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
+use Praxigento\BonusHybrid\Service\Calc\Value\ITv;
 
-class ValueTv
+class Tv
     implements IValueTv
 {
 
@@ -22,7 +23,7 @@ class ValueTv
     private $repoCalc;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoDwnlBon;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\ValueTv\Calc */
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Value\Tv\Calc */
     private $subCalc;
 
     public function __construct(
@@ -30,7 +31,7 @@ class ValueTv
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
-        \Praxigento\BonusHybrid\Service\Calc\ValueTv\Calc $subCalc
+        \Praxigento\BonusHybrid\Service\Calc\Value\Tv\Calc $subCalc
     )
     {
         $this->logger = $logger;

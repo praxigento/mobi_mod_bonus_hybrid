@@ -58,8 +58,8 @@
                 type="\Praxigento\BonusHybrid\Service\Calc\SignupDebit"/>
     <preference for="\Praxigento\BonusHybrid\Service\Calc\Value\IOv"
                 type="\Praxigento\BonusHybrid\Service\Calc\Value\Ov"/>
-    <preference for="\Praxigento\BonusHybrid\Service\Calc\IValueTv"
-                type="\Praxigento\BonusHybrid\Service\Calc\ValueTv"/>
+    <preference for="\Praxigento\BonusHybrid\Service\Calc\Value\ITv"
+                type="\Praxigento\BonusHybrid\Service\Calc\Value\Tv"/>
 
     <!-- ***** -->
     <!-- Tools -->
