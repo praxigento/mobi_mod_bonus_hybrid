@@ -30,11 +30,4 @@ interface ICalc {
      */
     public function compressOi(Request\CompressOi $request);
 
-    /**
-     * @param Request\ValueOv $request
-     *
-     * @return Response\ValueOv
-     */
-    public function valueOv(Request\ValueOv $request);
-
 }

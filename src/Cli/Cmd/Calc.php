@@ -202,12 +202,6 @@ class Calc
         $output->writeln("<info>Start bonus calculation.<info>");
         $this->conn->beginTransaction();
         try {
-
-            // TODO: remove it
-            $canContinue = $this->calcValueOv();
-            $this->conn->rollBack();
-            return;
-
             $canContinue = $this->calcSignupDebit();
             if ($canContinue) {
                 $output->writeln("<info>'Sign Up Volume Debit' calculation is completed.<info>");
