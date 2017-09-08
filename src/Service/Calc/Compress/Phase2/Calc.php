@@ -7,6 +7,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Compress\Phase2;
 
 use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Cfg\Param as ECfgParam;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase2\Legs as ELegs;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
 
 /**
@@ -23,6 +24,12 @@ class Calc
 
     /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\Helper */
     private $hlp;
+    /** @var \Praxigento\Downline\Tool\ITree */
+    protected $hlpDwnlTree;
+    /** @var \Praxigento\BonusHybrid\Helper\Calc\GetMaxQualifiedRankId */
+    protected $hlpGetMaxRankId;
+    /** @var \Praxigento\BonusHybrid\Helper\Calc\IsQualified */
+    protected $hlpIsQualified;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Cfg\Param */
     private $repoCfgParam;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
@@ -31,19 +38,31 @@ class Calc
     private $repoRank;
 
     public function __construct(
+        \Praxigento\Downline\Tool\ITree $hlpTree,
         \Praxigento\BonusHybrid\Service\Calc\Compress\Helper $hlp,
+        \Praxigento\BonusHybrid\Helper\Calc\GetMaxQualifiedRankId $hlpGetMaxRankId,
+        \Praxigento\BonusHybrid\Helper\Calc\IsQualified $hlpIsQualified,
         \Praxigento\BonusBase\Repo\Entity\Rank $repoRank,
         \Praxigento\BonusHybrid\Repo\Entity\Cfg\Param $repoCfgParam,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon
     )
     {
+        $this->hlpDwnlTree = $hlpTree;
         $this->hlp = $hlp;
+        $this->hlpGetMaxRankId = $hlpGetMaxRankId;
+        $this->hlpIsQualified = $hlpIsQualified;
         $this->repoRank = $repoRank;
         $this->repoCfgParam = $repoCfgParam;
         $this->repoDwnlBon = $repoDwnlBon;
     }
 
-
+    /**
+     * @param $writeOffCalcId
+     * @param $phase1CalcId
+     * @param $phase2CalcId
+     * @param $scheme
+     * @return \Praxigento\BonusHybrid\Service\Calc\Compress\Phase2\Calc\Result
+     */
     public function exec($writeOffCalcId, $phase1CalcId, $phase2CalcId, $scheme)
     {
         /* collect additional data */
@@ -53,7 +72,9 @@ class Calc
         $cfgParams = $this->getCfgParams();
 
         /* perform action */
-        $result = [];
+        $resultDownline = [];
+        $resultLegs = [];
+
 
         /* prepare source data for calculation */
         $mapByIdCompress = $this->mapById($dwnlCompress, EDwnlBon::ATTR_CUST_REF);
@@ -67,40 +88,36 @@ class Calc
         /* run though the compressed tree from bottom to top and collect OV */
         foreach ($mapByDepthCompress as $level) {
             foreach ($level as $custId) {
-                /* get compressed data and compose phase2 item */
+                /* prepare results entries */
+                $entryDwnl = new EDwnlBon();
+                $entryLegs = new ELegs();
+                /* get compressed data and compose downline item */
                 /** @var EDwnlBon $custData */
                 $custData = $mapByIdCompress[$custId];
                 $parentId = $custData->getParentRef();
                 $pvOwn = $mapPv[$custId] ?? 0;
                 $pvCompress = $custData->getPv();
                 $tvCompress = $custData->getTv();
-                $resultEntry = new EDwnlBon();
-                $resultEntry->setCalculationRef($phase2CalcId);
-                $resultEntry->setCustomerRef($custId);
-                $resultEntry->setParentRef($parentId);
-                $resultEntry->setRankRef($rankIdDistr);
-                $resultEntry->setPv($pvCompress);
-                $resultEntry->setTv($tvCompress);
-                $resultEntry = [
-                    Oi::ATTR_SCHEME => $scheme,
-                    Oi::ATTR_CUSTOMER_REF => $custId,
-                    Oi::ATTR_PARENT_REF => $parentId,
-                    Oi::ATTR_RANK_ID => $rankIdDistr,
-                    Oi::ATTR_PV => $pvCompress,
-                    Oi::ATTR_TV => $tvCompress,
-                    Oi::ATTR_OV_LEG_MAX => 0,
-                    Oi::ATTR_OV_LEG_SECOND => 0,
-                    Oi::ATTR_OV_LEG_OTHERS => 0
-                ];
-
-                /* calculate phase2 legs for qualified managers */
-                $isCustQualifiedAsMgr = $this->hlpIsQualified->exec([
-                    \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_CUST_ID => $custId,
-                    \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_PV => $pvOwn,
-                    \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_TV => $tvCompress,
-                    \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_SCHEME => $scheme,
-                    \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_CFG_PARAMS => $cfgParams
-                ]);
+                /* populate downline result entry with data */
+                $entryDwnl->setCalculationRef($phase2CalcId);
+                $entryDwnl->setCustomerRef($custId);
+                $entryDwnl->setParentRef($parentId);
+                $entryDwnl->setRankRef($rankIdDistr);
+                $entryDwnl->setPv($pvCompress);
+                $entryDwnl->setTv($tvCompress);
+                /* populate legs result entry with data */
+                $entryLegs->setCalcRef($phase2CalcId);
+                $entryLegs->setCustRef($custId);
+                /**
+                 * Calculate phase2 legs for qualified customers only (manager or higher).
+                 */
+                $ctxHlpQ = new \Praxigento\BonusHybrid\Helper\Calc\IsQualified\Context();
+                $ctxHlpQ->setCustId($custId);
+                $ctxHlpQ->setPv($pvOwn);
+                $ctxHlpQ->setTv($tvCompress);
+                $ctxHlpQ->setScheme($scheme);
+                $ctxHlpQ->setCfgParams($cfgParams);
+                $isCustQualifiedAsMgr = $this->hlpIsQualified->exec($ctxHlpQ);
 
                 if ($isCustQualifiedAsMgr) {
                     /* this is qualified manager, calculate MAX leg, second leg and summary leg */
@@ -110,7 +127,7 @@ class Calc
                         /* define legs based on plain OV */
                         if (isset($mapByTeamPlain[$custId])) {
                             $teamPlain = $mapByTeamPlain[$custId];
-                            $legs = $this->legsCalc($teamPlain, $mapByIdPlain, Pto::ATTR_OV);
+                            $legs = $this->legsCalc($teamPlain, $mapByIdPlain, EDwnlBon::ATTR_OV);
 
                         } else {
                             $legs = [0, 0, 0];
@@ -118,7 +135,7 @@ class Calc
                         list($legMaxP, $legSecondP, $legOthersP) = $legs;
                         /* define legs based on compressed OV */
                         $teamCompress = $mapByTeamCompress[$custId];
-                        $legs = $this->legsCalc($teamCompress, $mapByIdCompress, Ptc::ATTR_OV);
+                        $legs = $this->legsCalc($teamCompress, $mapByIdCompress, EDwnlBon::ATTR_OV);
                         list($legMaxC, $legSecondC, $legOthersC) = $legs;
 
                         /* get first 2 legs from plain and 'others' from compressed */
@@ -128,63 +145,63 @@ class Calc
                         list($legMax, $legSecond, $legOthers) = $legs;
 
                         /* update legs */
-                        $resultEntry[Oi::ATTR_OV_LEG_MAX] = $legMax;
-                        $resultEntry[Oi::ATTR_OV_LEG_SECOND] = $legSecond;
-                        $resultEntry[Oi::ATTR_OV_LEG_OTHERS] = $legOthers;
-                        $rankId = $this->hlpGetMaxRankId->exec([
-                            \Praxigento\BonusHybrid\Helper\Calc\GetMaxQualifiedRankId::OPT_COMPRESS_OI_ENTRY => $resultEntry,
-                            \Praxigento\BonusHybrid\Helper\Calc\GetMaxQualifiedRankId::OPT_SCHEME => $scheme,
-                            \Praxigento\BonusHybrid\Helper\Calc\GetMaxQualifiedRankId::OPT_CFG_PARAMS => $cfgParams
-                        ]);
-                        $resultEntry[Oi::ATTR_RANK_ID] = $rankId;
+                        $entryLegs->setLegMax($legMax);
+                        $entryLegs->setLegSecond($legSecond);
+                        $entryLegs->setLegOthers($legOthers);
+                        /* then calculate & update rank ID */
+                        $ctxHlpR = new \Praxigento\BonusHybrid\Helper\Calc\GetMaxQualifiedRankId\Context();
+                        $ctxHlpR->setCfgParams($cfgParams);
+                        $ctxHlpR->setScheme($scheme);
+                        $ctxHlpR->setDownlineEntry($entryDwnl);
+                        $ctxHlpR->setLegsEntry($entryLegs);
+                        $rankId = $this->hlpGetMaxRankId->exec($ctxHlpR);
+                        $entryDwnl->setRankRef($rankId);
 
                     } else {
                         /* qualified customer w/o downline is a Manager */
-                        $resultEntry[Oi::ATTR_RANK_ID] = $rankIdMgr;
+                        $entryDwnl->setRankRef($rankIdMgr);
                     }
                 }
-
-                /* check qualification for current parent */
+                /**
+                 * Check qualification for current parent
+                 */
+                /** @var EDwnlBon $parentData */
                 $parentData = $mapByIdCompress[$parentId];
                 $parentPvOwn = isset($mapPv[$parentId]) ? $mapPv[$parentId] : 0;
-                $parentTv = $parentData[Ptc::ATTR_TV];
-                $isParentQualifiedAsMgr = $this->hlpIsQualified->exec([
-                    \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_CUST_ID => $parentId,
-                    \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_PV => $parentPvOwn,
-                    \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_TV => $parentTv,
-                    \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_SCHEME => $scheme,
-                    \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_CFG_PARAMS => $cfgParams
-                ]);
+                $parentTv = $parentData->getTv();
+                /* validate parent qualification */
+                $ctxHlpQ = new \Praxigento\BonusHybrid\Helper\Calc\IsQualified\Context();
+                $ctxHlpQ->setCustId($parentId);
+                $ctxHlpQ->setPv($parentPvOwn);
+                $ctxHlpQ->setTv($parentTv);
+                $ctxHlpQ->setScheme($scheme);
+                $ctxHlpQ->setCfgParams($cfgParams);
+                $isParentQualifiedAsMgr = $this->hlpIsQualified->exec($ctxHlpQ);
 
                 /* re-link parent for all customers (qualified & distributors) */
                 if (!$isParentQualifiedAsMgr) {
                     /* parent is not qualified, move customer up to the closest parent qualified as manager or higher */
-                    $path = $custData[Ptc::ATTR_PATH];
-                    $parents = $this->toolDwnlTree->getParentsFromPathReversed($path);
+                    $path = $custData->getPath();
+                    $parents = $this->hlpDwnlTree->getParentsFromPathReversed($path);
                     $foundParentId = null;
                     $prevParentId = null;
                     $fatherIsUnqual = false; // we should not compress nodes for EU scheme where grand is qualified
-                    $isFirstGen = true; // (first gen only)
                     foreach ($parents as $newParentId) {
+                        /** @var EDwnlBon $newParentData */
                         $newParentData = $mapByIdCompress[$newParentId];
                         $newParentPvOwn = isset($mapPv[$newParentId]) ? $mapPv[$newParentId] : 0;
-                        $newParentTv = $newParentData[Ptc::ATTR_TV];
-
-                        $isNewParentQualifiedAsMgr = $this->hlpIsQualified->exec([
-                            \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_CUST_ID => $newParentId,
-                            \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_PV => $newParentPvOwn,
-                            \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_TV => $newParentTv,
-                            \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_SCHEME => $scheme,
-                            \Praxigento\BonusHybrid\Helper\Calc\IsQualified::OPT_CFG_PARAMS => $cfgParams
-                        ]);
+                        $newParentTv = $newParentData->getTv();
+                        /* validate parent qualification */
+                        $ctxHlpQ = new \Praxigento\BonusHybrid\Helper\Calc\IsQualified\Context();
+                        $ctxHlpQ->setCustId($newParentId);
+                        $ctxHlpQ->setPv($newParentPvOwn);
+                        $ctxHlpQ->setTv($newParentTv);
+                        $ctxHlpQ->setScheme($scheme);
+                        $ctxHlpQ->setCfgParams($cfgParams);
+                        $isNewParentQualifiedAsMgr = $this->hlpIsQualified->exec($ctxHlpQ);
                         if ($isNewParentQualifiedAsMgr) {
                             $foundParentId = $newParentId;
                             break;
-//                        } elseif ($isFirstGen) {
-//                            $fatherIsUnqual = true; // customer's father is distributor
-//                            $isFirstGen = false; // all next generations are not first
-//                        } elseif ($fatherIsUnqual) {
-//                            $fatherIsUnqual = false; // this is second generation or higher
                         }
                         $fatherIsUnqual = true; // customer's father or higher is distributor
                         $prevParentId = $newParentId; // save the last distributor before manager
@@ -192,31 +209,30 @@ class Calc
                     unset($parents);
                     if (is_null($foundParentId)) {
                         /* no qualified parent up to the root, make this customer as root customer  */
-                        $resultEntry[Oi::ATTR_PARENT_REF] = $custId;
+                        $entryDwnl->setParentRef($custId);
                     } elseif ($fatherIsUnqual && ($scheme == Def::SCHEMA_EU)) {
                         /* EU: there is qualified grand for unqualified father, should not compress */
-                        $resultEntry[Oi::ATTR_PARENT_REF] = $prevParentId;
+                        $entryDwnl->setParentRef($prevParentId);
                     } else {
-                        $resultEntry[Oi::ATTR_PARENT_REF] = $foundParentId;
+                        $entryDwnl->setParentRef($foundParentId);
                     }
                 }
 
                 /* add entry to results */
-                $result[$custId] = $resultEntry;
+                $resultDownline[$custId] = $entryDwnl;
+                $resultLegs[$custId] = $entryLegs;
             }
         }
-
-        $req = new \Praxigento\Downline\Service\Snap\Request\ExpandMinimal();
-        $req->setTree($result);
-        $req->setKeyCustomerId(Oi::ATTR_CUSTOMER_REF);
-        $req->setKeyParentId(Oi::ATTR_PARENT_REF);
-        $resp = $this->callDwnlSnap->expandMinimal($req);
-        $snap = $resp->getSnapData();
-        foreach ($result as $id => $one) {
+        /* get paths & depths for downline tree (is & parentId only present in results ) */
+        $snap = $this->hlpDwnlTree->expandMinimal($resultDownline, EDwnlBon::ATTR_PARENT_REF);
+        /* go through the downline snapshot and move depth & path info into results */
+        foreach ($resultDownline as $id => $one) {
             $depth = $snap[$id][\Praxigento\Downline\Repo\Entity\Data\Snap::ATTR_DEPTH];
             $path = $snap[$id][\Praxigento\Downline\Repo\Entity\Data\Snap::ATTR_PATH];
-            $result[$id][Oi::ATTR_DEPTH] = $depth;
-            $result[$id][Oi::ATTR_PATH] = $path;
+            /** @var EDwnlBon $entry */
+            $entry = $resultDownline[$id];
+            $entry->setDepth($depth);
+            $entry->setPath($path);
         }
         /* clean up memory */
         unset($mapByTeamPlain);
@@ -226,6 +242,9 @@ class Calc
         unset($mapByIdCompress);
 
         /* and return result */
+        $result = new \Praxigento\BonusHybrid\Service\Calc\Compress\Phase2\Calc\Result();
+        $result->setDownline($resultDownline);
+        $result->setLegs($resultLegs);
         return $result;
     }
 
@@ -233,6 +252,8 @@ class Calc
      * Get configuration for Override & Infinity bonuses ordered by scheme and leg max/medium/min desc.
      *
      * @return array [$scheme=>[$rankId=>[...], ...], ...]
+     *
+     * TODO: move this func closer to \Praxigento\BonusHybrid\Helper\Calc\IsQualified
      */
     private function getCfgParams()
     {
@@ -250,6 +271,73 @@ class Calc
             $rankId = $one->getRankId();
             $result[$scheme][$rankId] = $one;
         }
+        return $result;
+    }
+
+
+    /**
+     * Run though first-line team members and collect OVs (plain or compressed).
+     *
+     * @param array $team Customers IDs for first-line team.
+     * @param array $mapById OV data for members mapped by customer ID.
+     * @param string $labelOv label of the OV entry in OV data.
+     * @return array [$legMax, $legSecond, $legOthers]
+     */
+    private function legsCalc($team, $mapById, $labelOv)
+    {
+        $legMax = $legSecond = $legOthers = 0;
+        foreach ($team as $memberId) {
+            $member = $mapById[$memberId];
+            $ovMember = $member->get($labelOv); // TODO: I don't know why I don't use $member->getOv()
+            if ($ovMember > $legMax) {
+                /* update MAX leg */
+                $legOthers += $legSecond;
+                $legSecond = $legMax;
+                $legMax = $ovMember;
+            } elseif ($ovMember > $legSecond) {
+                /* update second leg */
+                $legOthers += $legSecond;
+                $legSecond = $ovMember;
+            } else {
+                $legOthers += $ovMember;
+            }
+        }
+        $result = [$legMax, $legSecond, $legOthers];
+        return $result;
+    }
+
+    /**
+     * Compare plain legs with compressed legs and combine data in results.
+     *
+     * This bull-shit is from here:
+     * https://jira.prxgt.com/browse/MOBI-629?focusedCommentId=87614&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-87614
+     *
+     *
+     * @param $maxP
+     * @param $secondP
+     * @param $othersP
+     * @param $maxC
+     * @param $secondC
+     * @param $othersC
+     * @return array [$max, $second, $others]
+     */
+    private function legsCompose($maxP, $secondP, $othersP, $maxC, $secondC, $othersC)
+    {
+        $second = $others = 0;
+        if ($maxP && !$secondP && !$othersP) {
+            /* there is one only leg, use plain data */
+            $max = $maxP;
+        } elseif ($maxP && $secondP && !$othersP) {
+            /* there are 2 legs, also use plain data */
+            $max = $maxP;
+            $second = $secondP;
+        } else {
+            /* there are 2 legs (use plain) & others (use delta) */
+            $max = $maxP;
+            $second = $secondP;
+            $others = $maxC + $secondC + $othersC - ($max + $second);
+        }
+        $result = [$max, $second, $others];
         return $result;
     }
 }

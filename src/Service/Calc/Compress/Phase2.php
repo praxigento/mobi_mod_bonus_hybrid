@@ -18,19 +18,31 @@ class Phase2
     }
 
     /** @var \Psr\Log\LoggerInterface */
-    protected $logger;
+    private $logger;
+    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
+    private $repoCalc;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
+    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
+    private $repoDwnlBon;
+    /** @var \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase2\Legs */
+    private $repoLegs;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\Phase2\Calc */
     private $subCalc;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
+        \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
+        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon,
+        \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase2\Legs $repoLegs,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\Compress\Phase2\Calc $subCalc
     )
     {
         $this->logger = $logger;
+        $this->repoCalc = $repoCalc;
+        $this->repoDwnlBon = $repoDwnlBon;
+        $this->repoLegs = $repoLegs;
         $this->procPeriodGet = $procPeriodGet;
         $this->subCalc = $subCalc;
     }
@@ -61,7 +73,12 @@ class Phase2
         $dsEnd = $phase2Period->getDstampEnd();
         $this->logger->info("Phase1 compression period #$phase2PeriodId ($dsBegin-$dsEnd)");
         /* perform calculation for given source calculations */
-        $this->subCalc->exec($writeOffCalcId, $phase1CalcId, $phase2CalcId, $scheme);
+        $updates = $this->subCalc->exec($writeOffCalcId, $phase1CalcId, $phase2CalcId, $scheme);
+        /* save calculation results */
+        $downline = $updates->getDownline();
+        $this->saveDownline($downline);
+        $legs = $updates->getLegs();
+        $this->saveLegs($legs);
         /* mark this calculation complete */
         $this->repoCalc->markComplete($phase2CalcId);
         /* mark process as successful */
@@ -108,6 +125,20 @@ class Phase2
          */
         $result = [$writeOffCalc, $phase1Calc, $phaseCalc, $phase2Period];
         return $result;
+    }
+
+    private function saveDownline($entries)
+    {
+        foreach ($entries as $entry) {
+            $this->repoDwnlBon->create($entry);
+        }
+    }
+
+    private function saveLegs($entries)
+    {
+        foreach ($entries as $entry) {
+            $this->repoLegs->create($entry);
+        }
     }
 
 }

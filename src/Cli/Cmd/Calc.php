@@ -141,28 +141,19 @@ class Calc
         return $result;
     }
 
-    private function calcCompressOiDef()
-    {
-        $ctx = new \Praxigento\Core\Data();
-        $ctx->set($this->procCompressPhase2::CTX_IN_SCHEME, Def::SCHEMA_DEFAULT);
-        $this->procCompressPhase2->exec($ctx);
-        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
-        return $result;
-    }
-
-    private function calcCompressOiEu()
-    {
-        $req = new \Praxigento\BonusHybrid\Service\Calc\Request\CompressOi();
-        $req->setScheme(\Praxigento\BonusHybrid\Defaults::SCHEMA_EU);
-        $resp = $this->callCalc->compressOi($req);
-        $result = $resp->isSucceed();
-        return $result;
-    }
-
     private function calcCompressPhase1()
     {
         $ctx = new \Praxigento\Core\Data();
         $this->procCompressPhase1->exec($ctx);
+        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
+        return $result;
+    }
+
+    private function calcCompressPhase2($schema)
+    {
+        $ctx = new \Praxigento\Core\Data();
+        $ctx->set($this->procCompressPhase2::CTX_IN_SCHEME, Def::SCHEMA_DEFAULT);
+        $this->procCompressPhase2->exec($ctx);
         $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
         return $result;
     }
@@ -206,11 +197,6 @@ class Calc
         $output->writeln("<info>Start bonus calculation.<info>");
         $this->conn->beginTransaction();
         try {
-            // TODO remove it
-            $this->calcCompressOiDef();
-            $this->conn->rollBack();
-            return;
-
             $canContinue = $this->calcSignupDebit();
             if ($canContinue) {
                 $output->writeln("<info>'Sign Up Volume Debit' calculation is completed.<info>");
@@ -246,11 +232,11 @@ class Calc
             }
             if ($canContinue) {
                 $output->writeln("<info>OV are calculated.<info>");
-                $canContinue = $this->calcCompressOiDef();
+                $canContinue = $this->calcCompressPhase2(Def::SCHEMA_DEFAULT);
             }
             if ($canContinue) {
                 $output->writeln("<info>Phase II compression (DEFAULT) is completed.<info>");
-                $canContinue = $this->calcCompressOiEu();
+                $canContinue = $this->calcCompressPhase2(Def::SCHEMA_EU);
             }
             if ($canContinue) {
                 $output->writeln("<info>Phase II compression (EU) is completed.<info>");

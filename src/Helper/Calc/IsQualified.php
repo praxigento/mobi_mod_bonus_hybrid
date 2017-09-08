@@ -8,6 +8,11 @@ namespace Praxigento\BonusHybrid\Helper\Calc;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Cfg\Param as CfgParam;
 
+/**
+ * Customer qualification verifier.
+ *
+ * TODO: should we move this helper under Services namespace?
+ */
 class IsQualified
 {
     const OPT_CFG_PARAMS = 'cfgParams';
@@ -16,22 +21,22 @@ class IsQualified
     const OPT_SCHEME = 'scheme';
     const OPT_TV = 'tv';
     /** @var  \Praxigento\BonusHybrid\Tool\IScheme */
-    protected $toolScheme;
+    protected $hlpScheme;
 
     public function __construct(
-        \Praxigento\BonusHybrid\Tool\IScheme $toolScheme
+        \Praxigento\BonusHybrid\Tool\IScheme $hlpScheme
     ) {
-        $this->toolScheme = $toolScheme;
+        $this->hlpScheme = $hlpScheme;
     }
 
-    public function exec($opts)
+    public function exec(\Praxigento\BonusHybrid\Helper\Calc\IsQualified\Context $ctx)
     {
-        /* parse options */
-        $custId = $opts[self::OPT_CUST_ID];
-        $pv = $opts[self::OPT_PV];
-        $tv = $opts[self::OPT_TV];
-        $scheme = $opts[self::OPT_SCHEME];
-        $cfgParams = $opts[self::OPT_CFG_PARAMS];
+        /* parse context vars */
+        $custId = $ctx->getCustId();
+        $pv = $ctx->getPv();
+        $tv = $ctx->getTv();
+        $scheme = $ctx->getScheme();
+        $cfgParams = $ctx->getCfgParams();
 
         /* perform action */
         $result = false;
@@ -40,9 +45,10 @@ class IsQualified
             ($tv > Cfg::DEF_ZERO)
         ) {
             $params = $cfgParams[$scheme];
+            /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Cfg\Param $param */
             foreach ($params as $param) {
-                $qpv = $param[CfgParam::ATTR_QUALIFY_PV];
-                $qtv = $param[CfgParam::ATTR_QUALIFY_TV];
+                $qpv = $param->getQualifyPv();
+                $qtv = $param->getQualifyTv();
                 if (
                     ($pv >= $qpv) &&
                     ($tv >= $qtv)
@@ -55,7 +61,7 @@ class IsQualified
         }
         if (!$result) {
             /* check forced qualification */
-            $rankId = $this->toolScheme->getForcedQualificationRank($custId, $scheme);
+            $rankId = $this->hlpScheme->getForcedQualificationRank($custId, $scheme);
             $result = ($rankId > 0);
         }
         return $result;

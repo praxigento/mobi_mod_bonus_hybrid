@@ -49,16 +49,14 @@ class Ov
         list($compressCalc, $ovCalc) = $this->getCalcData();
         $compressCalcId = $compressCalc->getId();
         $ovCalcId = $ovCalc->getId();
-        /* load compressed downlines for period */
-        $dwnlCompress = $this->repoDwnlBon->getByCalcId($compressCalcId);
-        /* populate downline with OV data */
-        $dwnlUpdated = $this->subCalc->exec($dwnlCompress);
+        /* get compressed downline & populate it with OV data */
+        $dwnl = $this->subCalc->exec($compressCalcId);
         /* save updates into repo */
-        $this->updateOv($dwnlUpdated);
+        $this->updateOv($dwnl);
         /* mark this calculation complete */
         $this->repoCalc->markComplete($ovCalcId);
         /* mark process as successful */
-        $ctx->set(self::CTX_OUT_SUCCESS, false);
+        $ctx->set(self::CTX_OUT_SUCCESS, true);
         $this->logger->info("OV calculation is completed.");
     }
 
