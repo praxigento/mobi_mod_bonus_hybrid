@@ -152,7 +152,7 @@ class Calc
     private function calcCompressPhase2($schema)
     {
         $ctx = new \Praxigento\Core\Data();
-        $ctx->set($this->procCompressPhase2::CTX_IN_SCHEME, Def::SCHEMA_DEFAULT);
+        $ctx->set($this->procCompressPhase2::CTX_IN_SCHEME, $schema);
         $this->procCompressPhase2->exec($ctx);
         $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
         return $result;
