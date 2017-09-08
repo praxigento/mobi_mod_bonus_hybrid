@@ -7,9 +7,13 @@ namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Team;
 
 use Praxigento\Accounting\Repo\Entity\Data\Transaction as ETrans;
 use Praxigento\BonusHybrid\Config as Cfg;
-use \Praxigento\BonusHybrid\Service\Calc\Data\Bonus as DBonus;
+use Praxigento\BonusHybrid\Service\Calc\Data\Bonus as DBonus;
+
 /**
  * Prepare transaction data to register "Team Bonus" operation.
+ *
+ * TODO: move this class to helpers area
+ *
  */
 class PrepareTrans
 {

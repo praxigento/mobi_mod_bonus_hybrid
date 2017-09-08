@@ -21,6 +21,8 @@ class Calc
     private $conn;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\ICourtesy */
     private $procBonusCourtesy;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\IOverride */
+    private $procBonusOvrd;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\IPersonal */
     private $procBonusPers;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\ITeam */
@@ -49,6 +51,7 @@ class Calc
         \Praxigento\BonusHybrid\Service\Calc\Bonus\ICourtesy $procBonusCourtesy,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\IPersonal $procBonusPers,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\ITeam $procBonusTeam,
+        \Praxigento\BonusHybrid\Service\Calc\Bonus\IOverride $procBonusOvrd,
         \Praxigento\BonusHybrid\Service\Calc\Value\ITv $procTv,
         \Praxigento\BonusHybrid\Service\Calc\Value\IOv $procOv
     ) {
@@ -67,6 +70,7 @@ class Calc
         $this->procBonusCourtesy = $procBonusCourtesy;
         $this->procBonusPers = $procBonusPers;
         $this->procBonusTeam = $procBonusTeam;
+        $this->procBonusOvrd = $procBonusOvrd;
         $this->procTv = $procTv;
         $this->procOv = $procOv;
     }
@@ -97,21 +101,12 @@ class Calc
         return $result;
     }
 
-    private function calcBonusOverrideDef()
+    private function calcBonusOverride($schema)
     {
-        $req = new \Praxigento\BonusHybrid\Service\Calc\Request\BonusOverride();
-        $req->setScheme(\Praxigento\BonusHybrid\Defaults::SCHEMA_DEFAULT);
-        $resp = $this->callCalc->bonusOverride($req);
-        $result = $resp->isSucceed();
-        return $result;
-    }
-
-    private function calcBonusOverrideEu()
-    {
-        $req = new \Praxigento\BonusHybrid\Service\Calc\Request\BonusOverride();
-        $req->setScheme(\Praxigento\BonusHybrid\Defaults::SCHEMA_EU);
-        $resp = $this->callCalc->bonusOverride($req);
-        $result = $resp->isSucceed();
+        $ctx = new \Praxigento\Core\Data();
+        $ctx->set($this->procBonusOvrd::CTX_IN_SCHEME, Def::SCHEMA_DEFAULT);
+        $this->procBonusOvrd->exec($ctx);
+        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
         return $result;
     }
 
@@ -240,11 +235,11 @@ class Calc
             }
             if ($canContinue) {
                 $output->writeln("<info>Phase II compression (EU) is completed.<info>");
-                $canContinue = $this->calcBonusOverrideDef();
+                $canContinue = $this->calcBonusOverride(Def::SCHEMA_DEFAULT);
             }
             if ($canContinue) {
                 $output->writeln("<info>Override bonus (DEFAULT) is calculated.<info>");
-                $canContinue = $this->calcBonusOverrideEu();
+                $canContinue = $this->calcBonusOverride(Def::SCHEMA_EU);
             }
             if ($canContinue) {
                 $output->writeln("<info>Override bonus (EU) is calculated.<info>");

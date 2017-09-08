@@ -78,7 +78,7 @@ class Downline
         return $result;
     }
 
-    public function getRankCode()
+    public function getRankRef()
     {
         $result = parent::get(self::ATTR_RANK_REF);
         return $result;

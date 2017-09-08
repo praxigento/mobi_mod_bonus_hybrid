@@ -38,6 +38,8 @@
     <!-- ******** -->
     <preference for="\Praxigento\BonusHybrid\Service\Calc\Bonus\ICourtesy"
                 type="\Praxigento\BonusHybrid\Service\Calc\Bonus\Courtesy"/>
+    <preference for="\Praxigento\BonusHybrid\Service\Calc\Bonus\IOverride"
+                type="\Praxigento\BonusHybrid\Service\Calc\Bonus\Override"/>
     <preference for="\Praxigento\BonusHybrid\Service\Calc\Bonus\IPersonal"
                 type="\Praxigento\BonusHybrid\Service\Calc\Bonus\Personal"/>
     <preference for="\Praxigento\BonusHybrid\Service\Calc\Bonus\ITeam"

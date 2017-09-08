@@ -13,7 +13,7 @@ use Praxigento\BonusHybrid\Config as Cfg;
  * Calculate Courtesy Bonus.
  */
 class Courtesy
-    implements ICourtesy
+    implements \Praxigento\BonusHybrid\Service\Calc\Bonus\ICourtesy
 {
     /** @var \Praxigento\Accounting\Service\IOperation */
     private $callOperation;

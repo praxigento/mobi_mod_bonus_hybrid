@@ -18,6 +18,7 @@ class Calc
         mapById as protected;
         mapByTeams as protected;
     }
+
     /** @var \Praxigento\Core\Tool\IFormat */
     private $hlpFormat;
     /** @var  \Praxigento\BonusHybrid\Tool\IScheme */

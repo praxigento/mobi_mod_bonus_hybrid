@@ -14,7 +14,7 @@ use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
  * Calculate Personal Bonus.
  */
 class Personal
-    implements IPersonal
+    implements \Praxigento\BonusHybrid\Service\Calc\Bonus\IPersonal
 {
 
     /** Add traits */
