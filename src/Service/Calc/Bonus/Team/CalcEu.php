@@ -3,18 +3,18 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Team\Calc;
+namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Team;
 
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
-use Praxigento\BonusHybrid\Service\Calc\Data\Bonus as DBonus;
+use Praxigento\BonusHybrid\Service\Calc\A\Data\Bonus as DBonus;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
 
 /**
  * Calculate Team bonus according to EU scheme.
  */
-class EuScheme
+class CalcEu
 {
     /** Add traits */
     use \Praxigento\BonusHybrid\Service\Calc\Traits\TMap {

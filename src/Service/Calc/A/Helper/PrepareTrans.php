@@ -3,22 +3,20 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Team;
+namespace Praxigento\BonusHybrid\Service\Calc\A\Helper;
 
 use Praxigento\Accounting\Repo\Entity\Data\Transaction as ETrans;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Service\Calc\Data\Bonus as DBonus;
+use Praxigento\BonusHybrid\Service\Calc\A\Data\Bonus as DBonus;
 
 /**
- * Prepare transaction data to register "Team Bonus" operation.
- *
- * TODO: move this class to helpers area
- *
+ * Prepare transaction data to register bonus operation.
  */
 class PrepareTrans
 {
     /**
-     * Additional field in transaction object to bind transaction ID to donator ID on operation add. This link (between transaction & donated customer) will be registered in 'prxgt_bon_base_log_cust' later.
+     * Additional field in transaction object to bind transaction ID to donator ID on operation add. This link (between
+     * transaction & donated customer) will be registered in 'prxgt_bon_base_log_cust' later.
      */
     const REF_DONATOR_ID = 'refDonatorId';
 
@@ -37,7 +35,7 @@ class PrepareTrans
     }
 
     /**
-     * @param Calc\Data[] $bonus
+     * @param DBonus[] $bonus
      * @param $dateApplied
      */
     public function exec($bonus, $dateApplied)

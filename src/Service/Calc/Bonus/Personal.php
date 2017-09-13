@@ -8,6 +8,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Bonus;
 use Praxigento\BonusBase\Repo\Entity\Data\Log\Opers as ELogOper;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
+use Praxigento\BonusHybrid\Service\Calc\A\Data\Bonus as DBonus;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
 
 /**
@@ -22,32 +23,34 @@ class Personal
         mapById as protected;
     }
 
-    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
-    private $repoCalc;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Log\Opers */
-    private $repoLogOper;
     /** @var \Praxigento\Accounting\Service\IOperation */
     private $callOperation;
     /** @var \Praxigento\BonusBase\Helper\Calc */
     private $hlpCalc;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\A\Helper\CreateOper */
+    private $hlpOper;
     /** @var \Praxigento\Core\Tool\IDate */
     private $hlpDate;
     /** @var  \Praxigento\Core\Tool\IPeriod */
     private $hlpPeriod;
+    /** @var  \Praxigento\BonusHybrid\Service\Calc\A\Helper\PrepareTrans */
+    private $hlpTrans;
     /** @var  \Praxigento\BonusHybrid\Tool\IScheme */
     private $hlpScheme;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
-    /** @var  \Praxigento\BonusHybrid\Service\Calc\Bonus\Personal\PrepareTrans */
-    private $procPrepareTrans;
+    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
+    private $repoCalc;
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
     private $repoDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoDwnlBon;
     /** @var \Praxigento\BonusBase\Repo\Entity\Level */
     private $repoLevel;
+    /** @var \Praxigento\BonusBase\Repo\Entity\Log\Opers */
+    private $repoLogOper;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
@@ -62,7 +65,8 @@ class Personal
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon,
         \Praxigento\Accounting\Service\IOperation $callOperation,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
-        \Praxigento\BonusHybrid\Service\Calc\Bonus\Personal\PrepareTrans $procPrepareTrans
+        \Praxigento\BonusHybrid\Service\Calc\A\Helper\PrepareTrans $hlpTrans,
+        \Praxigento\BonusHybrid\Service\Calc\A\Helper\CreateOper $hlpOper
     )
     {
         $this->logger = $logger;
@@ -77,7 +81,8 @@ class Personal
         $this->repoDwnlBon = $repoDwnlBon;
         $this->callOperation = $callOperation;
         $this->procPeriodGet = $procPeriodGet;
-        $this->procPrepareTrans = $procPrepareTrans;
+        $this->hlpTrans = $hlpTrans;
+        $this->hlpOper = $hlpOper;
     }
 
     /**
@@ -87,7 +92,7 @@ class Personal
      * @param \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] $dwnlCompress
      * @param array $levels percents for bonus levels ([level=>percent])
      *
-     * @return array [custId => bonusAmount]
+     * @return DBonus[]
      */
     private function calcBonus($dwnlCurrent, $dwnlCompress, $levels)
     {
@@ -102,33 +107,13 @@ class Personal
             if ($scheme == Def::SCHEMA_DEFAULT) {
                 $bonusValue = $this->hlpCalc->calcForLevelPercent($pvValue, $levels);
                 if ($bonusValue > 0) {
-                    $result[$custId] = $bonusValue;
+                    $entry = new DBonus();
+                    $entry->setCustomerRef($custId);
+                    $entry->setValue($bonusValue);
+                    $result[] = $entry;
                 }
             }
         }
-        return $result;
-    }
-
-    /**
-     * Create operations for personal bonus.
-     *
-     * @param \Praxigento\Accounting\Repo\Entity\Data\Transaction[] $trans
-     * @param \Praxigento\BonusBase\Repo\Entity\Data\Period $period
-     * @return int
-     */
-    private function createOperation($trans, $period)
-    {
-        $dsBegin = $period->getDstampBegin();
-        $dsEnd = $period->getDstampEnd();
-        $datePerformed = $this->hlpDate->getUtcNowForDb();
-        $req = new \Praxigento\Accounting\Service\Operation\Request\Add();
-        $req->setOperationTypeCode(Cfg::CODE_TYPE_OPER_BONUS_PERSONAL);
-        $req->setDatePerformed($datePerformed);
-        $req->setTransactions($trans);
-        $note = "Personal bonus ($dsBegin-$dsEnd)";
-        $req->setOperationNote($note);
-        $resp = $this->callOperation->add($req);
-        $result = $resp->getOperationId();
         return $result;
     }
 
@@ -156,7 +141,8 @@ class Personal
         /* convert calculated bonus to transactions */
         $trans = $this->getTransactions($bonus, $persPeriod);
         /* register bonus operation */
-        $operId = $this->createOperation($trans, $persPeriod);
+        $operRes = $this->hlpOper->exec(Cfg::CODE_TYPE_OPER_BONUS_PERSONAL, $trans, $persPeriod);
+        $operId = $operRes->getOperationId();
         /* register operation in log */
         $this->saveLog($operId, $depCalcId);
         /* mark this calculation complete */
@@ -164,35 +150,6 @@ class Personal
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);
         $this->logger->info("Personal bonus is completed.");
-    }
-
-
-    /**
-     * Bind operation with calculation.
-     *
-     * @param int $operId
-     * @param int $calcId
-     */
-    private function saveLog($operId, $calcId)
-    {
-        $entity = new ELogOper();
-        $entity->setOperId($operId);
-        $entity->setCalcId($calcId);
-        $this->repoLogOper->create($entity);
-    }
-
-
-    /**
-     * @param array $bonus [custId => bonusValue]
-     * @param \Praxigento\BonusBase\Repo\Entity\Data\Period $period
-     * @return \Praxigento\Accounting\Repo\Entity\Data\Transaction[]
-     */
-    private function getTransactions($bonus, $period)
-    {
-        $dsEnd = $period->getDstampEnd();
-        $dateApplied = $this->hlpPeriod->getTimestampTo($dsEnd);
-        $result = $this->procPrepareTrans->exec($bonus, $dateApplied);
-        return $result;
     }
 
     /**
@@ -215,6 +172,33 @@ class Personal
         $persCalc = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
         $result = [$compressCalc, $persPeriod, $persCalc];
         return $result;
+    }
+
+    /**
+     * @param array $bonus [custId => bonusValue]
+     * @param \Praxigento\BonusBase\Repo\Entity\Data\Period $period
+     * @return \Praxigento\Accounting\Repo\Entity\Data\Transaction[]
+     */
+    private function getTransactions($bonus, $period)
+    {
+        $dsEnd = $period->getDstampEnd();
+        $dateApplied = $this->hlpPeriod->getTimestampTo($dsEnd);
+        $result = $this->hlpTrans->exec($bonus, $dateApplied);
+        return $result;
+    }
+
+    /**
+     * Bind operation with calculation.
+     *
+     * @param int $operId
+     * @param int $calcId
+     */
+    private function saveLog($operId, $calcId)
+    {
+        $entity = new ELogOper();
+        $entity->setOperId($operId);
+        $entity->setCalcId($calcId);
+        $this->repoLogOper->create($entity);
     }
 
 }

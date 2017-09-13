@@ -33,8 +33,10 @@ class Courtesy
     private $repoLogOper;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Courtesy\Calc */
     private $subCalc;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Courtesy\PrepareTrans */
-    private $subTrans;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\A\Helper\PrepareTrans */
+    private $hlpTrans;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\A\Helper\CreateOper */
+    private $hlpOper;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
@@ -45,8 +47,9 @@ class Courtesy
         \Praxigento\BonusBase\Repo\Entity\Log\Opers $repoLogOper,
         \Praxigento\Accounting\Service\IOperation $callOperation,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
-        \Praxigento\BonusHybrid\Service\Calc\Bonus\Courtesy\Calc $subCalc,
-        \Praxigento\BonusHybrid\Service\Calc\Bonus\Courtesy\PrepareTrans $subTrans
+        \Praxigento\BonusHybrid\Service\Calc\A\Helper\PrepareTrans $hlpTrans,
+        \Praxigento\BonusHybrid\Service\Calc\A\Helper\CreateOper $hlpOper,
+        \Praxigento\BonusHybrid\Service\Calc\Bonus\Courtesy\Calc $subCalc
     )
     {
         $this->logger = $logger;
@@ -57,36 +60,12 @@ class Courtesy
         $this->repoLogOper = $repoLogOper;
         $this->callOperation = $callOperation;
         $this->procPeriodGet = $procPeriodGet;
+        $this->hlpTrans = $hlpTrans;
+        $this->hlpOper = $hlpOper;
         $this->subCalc = $subCalc;
-        $this->subTrans = $subTrans;
     }
 
-    /**
-     * Create operations for personal bonus.
-     *
-     * @param \Praxigento\Accounting\Repo\Entity\Data\Transaction[] $trans
-     * @param \Praxigento\BonusBase\Repo\Entity\Data\Period $period
-     * @return array [$operId, $transIds]
-     */
-    private function createOperation($trans, $period)
-    {
-        $dsBegin = $period->getDstampBegin();
-        $dsEnd = $period->getDstampEnd();
-        $datePerformed = $this->hlpDate->getUtcNowForDb();
-        $req = new \Praxigento\Accounting\Service\Operation\Request\Add();
-        $req->setOperationTypeCode(Cfg::CODE_TYPE_OPER_BONUS_COURTESY);
-        $req->setDatePerformed($datePerformed);
-        $req->setTransactions($trans);
-        $note = "Courtesy bonus ($dsBegin-$dsEnd)";
-        $req->setOperationNote($note);
-        /* add key to link newly created transaction IDs with donators */
-        $req->setAsTransRef($this->subTrans::REF_DONATOR_ID);
-        $resp = $this->callOperation->add($req);
-        $operId = $resp->getOperationId();
-        $transIds = $resp->getTransactionsIds();
-        $result = [$operId, $transIds];
-        return $result;
-    }
+
 
     public function exec(\Praxigento\Core\Data $ctx)
     {
@@ -110,7 +89,9 @@ class Courtesy
         /* convert calculated bonus to transactions */
         $trans = $this->getTransactions($bonus, $courtesyPeriod);
         /* register bonus operation */
-        list($operId, $transIds) = $this->createOperation($trans, $courtesyPeriod);
+        $operRes = $this->hlpOper->exec(Cfg::CODE_TYPE_OPER_BONUS_COURTESY, $trans, $courtesyPeriod);
+        $operId = $operRes->getOperationId();
+        $transIds = $operRes->getTransactionsIds();
         /* register transactions in log */
         $this->saveLogCustomers($transIds);
         /* register operation in log */
@@ -153,7 +134,7 @@ class Courtesy
     /**
      * Convert bonus data to transactions data.
      *
-     * @param \Praxigento\BonusHybrid\Service\Calc\Data\Bonus[] $bonus [custId => bonusValue]
+     * @param \Praxigento\BonusHybrid\Service\Calc\A\Data\Bonus[] $bonus [custId => bonusValue]
      * @param \Praxigento\BonusBase\Repo\Entity\Data\Period $period
      * @return \Praxigento\Accounting\Repo\Entity\Data\Transaction[]
      */
@@ -161,7 +142,7 @@ class Courtesy
     {
         $dsEnd = $period->getDstampEnd();
         $dateApplied = $this->hlpPeriod->getTimestampTo($dsEnd);
-        $result = $this->subTrans->exec($bonus, $dateApplied);
+        $result = $this->hlpTrans->exec($bonus, $dateApplied);
         return $result;
     }
 

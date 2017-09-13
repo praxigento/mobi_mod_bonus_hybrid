@@ -104,7 +104,7 @@ class Calc
     private function calcBonusOverride($schema)
     {
         $ctx = new \Praxigento\Core\Data();
-        $ctx->set($this->procBonusOvrd::CTX_IN_SCHEME, Def::SCHEMA_DEFAULT);
+        $ctx->set($this->procBonusOvrd::CTX_IN_SCHEME, $schema);
         $this->procBonusOvrd->exec($ctx);
         $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
         return $result;

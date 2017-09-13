@@ -20,9 +20,11 @@ class Override
     private $callOperation;
     /** @var \Praxigento\Core\Tool\IDate */
     private $hlpDate;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\A\Helper\CreateOper */
+    private $hlpOper;
     /** @var  \Praxigento\Core\Tool\IPeriod */
     private $hlpPeriod;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Team\PrepareTrans */
+    /** @var \Praxigento\BonusHybrid\Service\Calc\A\Helper\PrepareTrans */
     private $hlpTrans;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
@@ -46,7 +48,8 @@ class Override
         \Praxigento\BonusBase\Repo\Entity\Log\Opers $repoLogOper,
         \Praxigento\Accounting\Service\IOperation $callOperation,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
-        \Praxigento\BonusHybrid\Service\Calc\Bonus\Team\PrepareTrans $hlpTrans,
+        \Praxigento\BonusHybrid\Service\Calc\A\Helper\PrepareTrans $hlpTrans,
+        \Praxigento\BonusHybrid\Service\Calc\A\Helper\CreateOper $hlpOper,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Override\Calc $subCalc
     )
     {
@@ -59,36 +62,8 @@ class Override
         $this->callOperation = $callOperation;
         $this->procPeriodGet = $procPeriodGet;
         $this->hlpTrans = $hlpTrans;
+        $this->hlpOper = $hlpOper;
         $this->subCalc = $subCalc;
-    }
-
-
-    /**
-     * Create operations for bonus.
-     *
-     * @param \Praxigento\Accounting\Repo\Entity\Data\Transaction[] $trans
-     * @param \Praxigento\BonusBase\Repo\Entity\Data\Period $period
-     * @param string $scheme calculation scheme (DEFAULT or EU)
-     * @return array [$operId, $transIds]
-     */
-    private function createOperation($trans, $period, $scheme)
-    {
-        $dsBegin = $period->getDstampBegin();
-        $dsEnd = $period->getDstampEnd();
-        $datePerformed = $this->hlpDate->getUtcNowForDb();
-        $req = new \Praxigento\Accounting\Service\Operation\Request\Add();
-        $req->setOperationTypeCode(Cfg::CODE_TYPE_OPER_BONUS_TEAM);
-        $req->setDatePerformed($datePerformed);
-        $req->setTransactions($trans);
-        $note = "Override bonus ($dsBegin-$dsEnd)";
-        $req->setOperationNote($note);
-        /* add key to link newly created transaction IDs with donators */
-        $req->setAsTransRef($this->hlpTrans::REF_DONATOR_ID);
-        $resp = $this->callOperation->add($req);
-        $operId = $resp->getOperationId();
-        $transIds = $resp->getTransactionsIds();
-        $result = [$operId, $transIds];
-        return $result;
     }
 
     public function exec(\Praxigento\Core\Data $ctx)
@@ -115,7 +90,9 @@ class Override
         /* convert calculated bonus to transactions */
         $trans = $this->getTransactions($bonus, $ovrdPeriod);
         /* register bonus operation */
-        list($operId, $transIds) = $this->createOperation($trans, $ovrdPeriod, $scheme);
+        $operRes = $this->hlpOper->exec(Cfg::CODE_TYPE_OPER_BONUS_OVERRIDE, $trans, $ovrdPeriod);
+        $operId = $operRes->getOperationId();
+        $transIds = $operRes->getTransactionsIds();
         /* register transactions in log */
         $this->saveLogCustomers($transIds);
         /* register operation in log */

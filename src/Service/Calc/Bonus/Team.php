@@ -4,6 +4,7 @@
  */
 
 namespace Praxigento\BonusHybrid\Service\Calc\Bonus;
+
 use Praxigento\BonusBase\Repo\Entity\Data\Log\Customers as ELogCust;
 use Praxigento\BonusBase\Repo\Entity\Data\Log\Opers as ELogOper;
 use Praxigento\BonusHybrid\Config as Cfg;
@@ -19,8 +20,12 @@ class Team
     private $callOperation;
     /** @var \Praxigento\Core\Tool\IDate */
     private $hlpDate;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\A\Helper\CreateOper */
+    private $hlpOper;
     /** @var  \Praxigento\Core\Tool\IPeriod */
     private $hlpPeriod;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\A\Helper\PrepareTrans */
+    private $hlpTrans;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
@@ -31,12 +36,10 @@ class Team
     private $repoLogCust;
     /** @var \Praxigento\BonusBase\Repo\Entity\Log\Opers */
     private $repoLogOper;
-    /** @var Team\Calc\DefScheme */
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Team\CalcDef */
     private $subCalcDef;
-    /** @var Team\Calc\EuScheme */
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Team\CalcEu */
     private $subCalcEu;
-    /** @var Team\PrepareTrans */
-    private $subPrepareTrans;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
@@ -47,9 +50,10 @@ class Team
         \Praxigento\BonusBase\Repo\Entity\Log\Opers $repoLogOper,
         \Praxigento\Accounting\Service\IOperation $callOperation,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
-        Team\Calc\DefScheme $subCalcDef,
-        Team\Calc\EuScheme $subCalcEu,
-        \Praxigento\BonusHybrid\Service\Calc\Bonus\Team\PrepareTrans $subPrepareTrans
+        \Praxigento\BonusHybrid\Service\Calc\A\Helper\PrepareTrans $hlpTrans,
+        \Praxigento\BonusHybrid\Service\Calc\A\Helper\CreateOper $hlpOper,
+        \Praxigento\BonusHybrid\Service\Calc\Bonus\Team\CalcDef $subCalcDef,
+        \Praxigento\BonusHybrid\Service\Calc\Bonus\Team\CalcEu $subCalcEu
     )
     {
         $this->logger = $logger;
@@ -60,36 +64,10 @@ class Team
         $this->repoLogOper = $repoLogOper;
         $this->callOperation = $callOperation;
         $this->procPeriodGet = $procPeriodGet;
+        $this->hlpTrans = $hlpTrans;
+        $this->hlpOper = $hlpOper;
         $this->subCalcDef = $subCalcDef;
         $this->subCalcEu = $subCalcEu;
-        $this->subPrepareTrans = $subPrepareTrans;
-    }
-
-    /**
-     * Create operations for bonus.
-     *
-     * @param \Praxigento\Accounting\Repo\Entity\Data\Transaction[] $trans
-     * @param \Praxigento\BonusBase\Repo\Entity\Data\Period $period
-     * @return array [$operId, $transIds]
-     */
-    private function createOperation($trans, $period)
-    {
-        $dsBegin = $period->getDstampBegin();
-        $dsEnd = $period->getDstampEnd();
-        $datePerformed = $this->hlpDate->getUtcNowForDb();
-        $req = new \Praxigento\Accounting\Service\Operation\Request\Add();
-        $req->setOperationTypeCode(Cfg::CODE_TYPE_OPER_BONUS_TEAM);
-        $req->setDatePerformed($datePerformed);
-        $req->setTransactions($trans);
-        $note = "Team bonus ($dsBegin-$dsEnd)";
-        $req->setOperationNote($note);
-        /* add key to link newly created transaction IDs with donators */
-        $req->setAsTransRef($this->subPrepareTrans::REF_DONATOR_ID);
-        $resp = $this->callOperation->add($req);
-        $operId = $resp->getOperationId();
-        $transIds = $resp->getTransactionsIds();
-        $result = [$operId, $transIds];
-        return $result;
     }
 
     public function exec(\Praxigento\Core\Data $ctx)
@@ -120,7 +98,9 @@ class Team
         /* convert calculated bonus to transactions */
         $trans = $this->getTransactions($bonus, $teamPeriod);
         /* register bonus operation */
-        list($operId, $transIds) = $this->createOperation($trans, $teamPeriod);
+        $operRes = $this->hlpOper->exec(Cfg::CODE_TYPE_OPER_BONUS_TEAM, $trans, $teamPeriod);
+        $operId = $operRes->getOperationId();
+        $transIds = $operRes->getTransactionsIds();
         /* register transactions in log */
         $this->saveLogCustomers($transIds);
         /* register operation in log */
@@ -173,7 +153,7 @@ class Team
     {
         $dsEnd = $period->getDstampEnd();
         $dateApplied = $this->hlpPeriod->getTimestampTo($dsEnd);
-        $result = $this->subPrepareTrans->exec($bonus, $dateApplied);
+        $result = $this->hlpTrans->exec($bonus, $dateApplied);
         return $result;
     }
 

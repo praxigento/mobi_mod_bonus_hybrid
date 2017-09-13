@@ -10,7 +10,7 @@ use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Cfg\Override as ECfgOvrd;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
 use Praxigento\BonusHybrid\Service\Calc\Bonus\Override\Calc\Entry as DEntry;
-use Praxigento\BonusHybrid\Service\Calc\Data\Bonus as DBonus;
+use Praxigento\BonusHybrid\Service\Calc\A\Data\Bonus as DBonus;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
 
 class Calc
