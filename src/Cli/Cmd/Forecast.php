@@ -11,18 +11,19 @@ namespace Praxigento\BonusHybrid\Cli\Cmd;
 class Forecast
     extends \Praxigento\Core\Cli\Cmd\Base
 {
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\IPlain */
-    protected $callCalcPlain;
     /** @var \Magento\Framework\DB\Adapter\AdapterInterface */
     protected $conn;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\IPlain */
+    protected $procCalcPlain;
     /** @var \Magento\Framework\App\ResourceConnection */
     protected $resource;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Magento\Framework\App\ResourceConnection $resource,
-        \Praxigento\BonusHybrid\Service\Calc\Forecast\IPlain $callCalcPlain
-    ) {
+        \Praxigento\BonusHybrid\Service\Calc\Forecast\IPlain $procCalcPlain
+    )
+    {
         parent::__construct(
             $manObj,
             'prxgt:bonus:forecast',
@@ -30,18 +31,19 @@ class Forecast
         );
         $this->resource = $resource;
         $this->conn = $this->resource->getConnection();
-        $this->callCalcPlain = $callCalcPlain;
+        $this->procCalcPlain = $procCalcPlain;
     }
 
     protected function execute(
         \Symfony\Component\Console\Input\InputInterface $input,
         \Symfony\Component\Console\Output\OutputInterface $output
-    ) {
+    )
+    {
         $output->writeln("<info>Start forecast calculations.<info>");
         $this->conn->beginTransaction();
         try {
-            $req = new \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Request();
-            $resp = $this->callCalcPlain->exec($req);
+            $ctx = new \Praxigento\Core\Data();
+            $this->procCalcPlain->exec($ctx);
 
             $this->conn->commit();
 //            $this->conn->rollBack();

@@ -11,13 +11,14 @@ use Praxigento\BonusHybrid\Service\Calc\Forecast\CleanCalcData as ProcCleanCalcD
 use Praxigento\BonusHybrid\Service\Calc\Forecast\GetDownline as ProcGetDownline;
 
 class Plain
-    extends \Praxigento\Core\Service\Base\Call
     implements \Praxigento\BonusHybrid\Service\Calc\Forecast\IPlain
 {
     /** @var \Praxigento\Accounting\Service\Balance\Get\ITurnover */
     private $callBalanceGetTurnover;
     /** @var \Praxigento\BonusBase\Service\IPeriod */
     private $callPeriod;
+    /** @var \Psr\Log\LoggerInterface */
+    private $logger;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\CleanCalcData */
     private $procCleanCalcData;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\IAdd */
@@ -37,7 +38,6 @@ class Plain
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
-        \Magento\Framework\ObjectManagerInterface $manObj,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnl,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
@@ -50,7 +50,7 @@ class Plain
         \Praxigento\BonusHybrid\Service\Calc\Forecast\CleanCalcData $procCleanCalcData
     )
     {
-        parent::__construct($logger, $manObj);
+        $this->logger = $logger;
         $this->toolPeriod = $toolPeriod;
         $this->repoDwnl = $repoDwnl;
         $this->repoCalc = $repoCalc;
@@ -63,10 +63,11 @@ class Plain
         $this->procCleanCalcData = $procCleanCalcData;
     }
 
-    public function exec(\Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Request $req)
+    public function exec(\Praxigento\Core\Data $ctx)
     {
-        $result = new \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Response();
         $this->logger->info("'Forecast Plain' calculation is started.");
+
+        $period = $ctx->get(self::CTX_IN_PERIOD);
 
         /* clean up existing forecast calculation data */
         $ctxClean = new \Praxigento\Core\Data();
@@ -74,18 +75,18 @@ class Plain
         $this->procCleanCalcData->exec($ctxClean);
 
         /* get calculation period (begin, end dates) */
-        list($dateFrom, $dateTo) = $this->getPeriod($req);
+        list($dateFrom, $dateTo) = $this->getPeriod($period);
 
         /* register new calculation for period */
         $calcId = $this->registerNewCalc($dateFrom, $dateTo);
 
         /* get customers downline for $dateTo */
-        $ctx = new \Praxigento\Core\Data();
-        $ctx->set(ProcGetDownline::CTX_IN_CALC_ID, $calcId);
-        $ctx->set(ProcGetDownline::CTX_IN_DATE_ON, $dateTo);
-        $this->subGetDownline->exec($ctx);
+        $ctxDwnl = new \Praxigento\Core\Data();
+        $ctxDwnl->set(ProcGetDownline::CTX_IN_CALC_ID, $calcId);
+        $ctxDwnl->set(ProcGetDownline::CTX_IN_DATE_ON, $dateTo);
+        $this->subGetDownline->exec($ctxDwnl);
         /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] $dwnlTree */
-        $dwnlTree = $ctx->get(ProcGetDownline::CTX_OUT_DWNL);
+        $dwnlTree = $ctxDwnl->get(ProcGetDownline::CTX_OUT_DWNL);
 
         /* get the last ranks for customers (date before $dateFrom) */
         $ctxRanks = new \Praxigento\Core\Data();
@@ -122,22 +123,19 @@ class Plain
 
         /* finalize calculation */
         $this->repoCalc->markComplete($calcId);
-
-        $this->logMemoryUsage();
+        /* mark process as successful */
+        $ctx->set(self::CTX_OUT_SUCCESS, true);
         $this->logger->info("'Forecast Plain' calculation is completed.");
-        $result->markSucceed();
-        return $result;
     }
 
     /**
      * Return 2 dates (period being/end): first day of the month and yesterday.
      *
-     * @param \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Request $req
+     * @param string $requested 'YYYY', 'YYYYMM' or 'YYYYMMDD'
      * @return array
      */
-    private function getPeriod(\Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Request $req)
+    private function getPeriod($requested)
     {
-        $requested = $req->getPeriod();
         if ($requested) {
             /* convert $requested to MONTH period */
             $month = $this->toolPeriod->getPeriodNext($requested, \Praxigento\Core\Tool\IPeriod::TYPE_MONTH);
@@ -182,7 +180,7 @@ class Plain
         $ctx->set($this->procPeriodAdd::CTX_IN_DSTAMP_BEGIN, $from);
         $ctx->set($this->procPeriodAdd::CTX_IN_DSTAMP_END, $to);
         $ctx->set($this->procPeriodAdd::CTX_IN_CALC_TYPE_CODE, Cfg::CODE_TYPE_CALC_FORECAST_PLAIN);
-        $this->procPeriodAdd($ctx);
+        $this->procPeriodAdd->exec($ctx);
         $success = $ctx->get($this->procPeriodAdd::CTX_OUT_SUCCESS);
         if ($success) {
             $result = $ctx->get($this->procPeriodAdd::CTX_OUT_CALC_ID);

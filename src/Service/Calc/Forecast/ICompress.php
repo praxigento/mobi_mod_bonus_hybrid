@@ -5,11 +5,10 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Forecast;
 
+/**
+ * TODO: incomplete, there is no implementation yet
+ */
 interface ICompress
+    extends \Praxigento\Core\Service\IProcess
 {
-    /**
-     * @param \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\Request $req
-     * @return \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\Response
-     */
-    public function exec(\Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\Request $req);
 }

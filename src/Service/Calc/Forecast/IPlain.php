@@ -6,10 +6,8 @@
 namespace Praxigento\BonusHybrid\Service\Calc\Forecast;
 
 interface IPlain
+    extends \Praxigento\Core\Service\IProcess
 {
-    /**
-     * @param \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Request $req
-     * @return \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Response
-     */
-    public function exec(\Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Request $req);
+    /** string 'YYYY', 'YYYYMM' or 'YYYYMMDD' */
+    const CTX_IN_PERIOD = 'in.period';
 }

@@ -54,8 +54,6 @@
                 type="\Praxigento\BonusHybrid\Service\Calc\Compress\Phase2"/>
     <preference for="\Praxigento\BonusHybrid\Service\Calc\Forecast\IPlain"
                 type="\Praxigento\BonusHybrid\Service\Calc\Forecast\Plain"/>
-    <preference for="\Praxigento\BonusHybrid\Service\Calc\IForecast"
-                type="\Praxigento\BonusHybrid\Service\Calc\Forecast"/>
     <preference for="\Praxigento\BonusHybrid\Service\Calc\IPvWriteOff"
                 type="\Praxigento\BonusHybrid\Service\Calc\PvWriteOff"/>
     <preference for="\Praxigento\BonusHybrid\Service\Calc\ISignupDebit"
