@@ -14,7 +14,7 @@ use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
 class Calc
 {
     /** Add traits */
-    use \Praxigento\BonusHybrid\Service\Calc\Traits\TMap {
+    use \Praxigento\BonusHybrid\Service\Calc\A\Traits\TMap {
         mapById as protected;
         mapByTeams as protected;
     }

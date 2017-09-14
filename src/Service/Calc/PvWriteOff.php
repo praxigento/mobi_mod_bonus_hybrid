@@ -18,7 +18,7 @@ class PvWriteOff
     private $hlpDate;
     /** @var  \Praxigento\Core\Tool\IPeriod */
     private $hlpPeriod;
-    /** @var \Praxigento\Core\Fw\Logger\App */
+    /** @var \Psr\Log\LoggerInterface */
     private $logger;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
@@ -94,6 +94,7 @@ class PvWriteOff
         /**
          * perform processing
          */
+        $ctx->set(self::CTX_OUT_SUCCESS, false);
         /* get dependent calculation data */
         list($periodData, $calcData) = $this->getCalcData();
         $dsBegin = $periodData->getDstampBegin();

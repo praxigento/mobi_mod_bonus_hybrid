@@ -15,7 +15,7 @@ use Praxigento\Downline\Repo\Query\Snap\OnDate\Builder as ASnap;
 class Calc
 {
     /** Add traits */
-    use \Praxigento\BonusHybrid\Service\Calc\Traits\TMap {
+    use \Praxigento\BonusHybrid\Service\Calc\A\Traits\TMap {
         mapById as protected;
         mapByTeams as protected;
         mapByTreeDepthDesc as protected;

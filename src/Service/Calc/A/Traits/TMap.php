@@ -2,7 +2,8 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-namespace Praxigento\BonusHybrid\Service\Calc\Traits;
+
+namespace Praxigento\BonusHybrid\Service\Calc\A\Traits;
 
 
 trait TMap

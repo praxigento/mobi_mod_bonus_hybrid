@@ -46,8 +46,6 @@
                 type="\Praxigento\BonusHybrid\Service\Calc\Bonus\Personal"/>
     <preference for="\Praxigento\BonusHybrid\Service\Calc\Bonus\ITeam"
                 type="\Praxigento\BonusHybrid\Service\Calc\Bonus\Team"/>
-    <preference for="\Praxigento\BonusHybrid\Service\ICalc"
-                type="\Praxigento\BonusHybrid\Service\Calc\Call"/>
     <preference for="\Praxigento\BonusHybrid\Service\IPeriod"
                 type="\Praxigento\BonusHybrid\Service\Period\Call"/>
     <preference for="\Praxigento\BonusHybrid\Service\Calc\Compress\IPhase1"

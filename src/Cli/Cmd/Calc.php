@@ -15,8 +15,6 @@ class Calc
 {
     /** @var  \Praxigento\BonusHybrid\Service\Calc\ISignupDebit */
     private $callBonusSignup;
-    /** @var \Praxigento\BonusHybrid\Service\ICalc */
-    private $callCalc;
     /** @var \Magento\Framework\DB\Adapter\AdapterInterface */
     private $conn;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\ICourtesy */
@@ -45,7 +43,6 @@ class Calc
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Magento\Framework\App\ResourceConnection $resource,
-        \Praxigento\BonusHybrid\Service\ICalc $callCalc,
         \Praxigento\BonusHybrid\Service\Calc\ISignupDebit $callBonusSignup,
         \Praxigento\BonusHybrid\Service\Calc\Compress\IPhase1 $procCompressPhase1,
         \Praxigento\BonusHybrid\Service\Calc\Compress\IPhase2 $procCompressPhase2,
@@ -65,7 +62,6 @@ class Calc
         );
         $this->resource = $resource;
         $this->conn = $this->resource->getConnection();
-        $this->callCalc = $callCalc;
         $this->callBonusSignup = $callBonusSignup;
         $this->procCompressPhase1 = $procCompressPhase1;
         $this->procCompressPhase2 = $procCompressPhase2;
@@ -84,15 +80,6 @@ class Calc
         $ctx = new \Praxigento\Core\Data();
         $this->procBonusCourtesy->exec($ctx);
         $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
-        return $result;
-    }
-
-    private function calcBonusInfinityDef()
-    {
-        $req = new \Praxigento\BonusHybrid\Service\Calc\Request\BonusInfinity();
-        $req->setScheme(\Praxigento\BonusHybrid\Defaults::SCHEMA_DEFAULT);
-        $resp = $this->callCalc->bonusInfinity($req);
-        $result = $resp->isSucceed();
         return $result;
     }
 

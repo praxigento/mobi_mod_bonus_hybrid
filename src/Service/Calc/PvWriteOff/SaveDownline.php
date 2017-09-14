@@ -16,7 +16,7 @@ class SaveDownline
 {
 
     /** Add traits */
-    use \Praxigento\BonusHybrid\Service\Calc\Traits\TMap {
+    use \Praxigento\BonusHybrid\Service\Calc\A\Traits\TMap {
         mapByTreeDepthDesc as private;
     }
 

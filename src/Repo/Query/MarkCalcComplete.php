@@ -7,6 +7,9 @@ namespace Praxigento\BonusHybrid\Repo\Query;
 use Praxigento\BonusBase\Repo\Entity\Data\Calculation;
 use Praxigento\BonusHybrid\Config as Cfg;
 
+/**
+ * @deprecated use \Praxigento\BonusBase\Repo\Entity\Calculation::markComplete
+ */
 class MarkCalcComplete
     extends \Praxigento\Core\Repo\Def\Db
 {
