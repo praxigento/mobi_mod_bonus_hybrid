@@ -11,10 +11,10 @@ use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
 
 /**
- * Calculate Team Bonus.
+ * Calculate Infinity Bonus.
  */
-class Team
-    implements \Praxigento\BonusHybrid\Service\Calc\Bonus\ITeam
+class Infinity
+    implements \Praxigento\BonusHybrid\Service\Calc\Bonus\IInfinity
 {
     /** @var \Praxigento\Accounting\Service\IOperation */
     private $callOperation;
@@ -36,10 +36,8 @@ class Team
     private $repoLogCust;
     /** @var \Praxigento\BonusBase\Repo\Entity\Log\Opers */
     private $repoLogOper;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Team\CalcDef */
-    private $subCalcDef;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Team\CalcEu */
-    private $subCalcEu;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Infinity\Calc */
+    private $subCalc;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
@@ -52,8 +50,7 @@ class Team
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\A\Helper\PrepareTrans $hlpTrans,
         \Praxigento\BonusHybrid\Service\Calc\A\Helper\CreateOper $hlpOper,
-        \Praxigento\BonusHybrid\Service\Calc\Bonus\Team\CalcDef $subCalcDef,
-        \Praxigento\BonusHybrid\Service\Calc\Bonus\Team\CalcEu $subCalcEu
+        \Praxigento\BonusHybrid\Service\Calc\Bonus\Infinity\Calc $subCalc
     )
     {
         $this->logger = $logger;
@@ -66,8 +63,7 @@ class Team
         $this->procPeriodGet = $procPeriodGet;
         $this->hlpTrans = $hlpTrans;
         $this->hlpOper = $hlpOper;
-        $this->subCalcDef = $subCalcDef;
-        $this->subCalcEu = $subCalcEu;
+        $this->subCalc = $subCalc;
     }
 
     public function exec(\Praxigento\Core\Data $ctx)
@@ -78,69 +74,63 @@ class Team
          * perform processing
          */
         $ctx->set(self::CTX_OUT_SUCCESS, false);
-        $this->logger->info("Team bonus ('$scheme' scheme) is started.");
+        $this->logger->info("Override bonus ('$scheme' scheme) is started.");
         /**
          * get dependent calculation data
          *
          * @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $compressCalc
-         * @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $teamPeriod
-         * @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $teamCalc
+         * @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $infPeriod
+         * @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $infCalc
          */
-        list($compressCalc, $teamPeriod, $teamCalc) = $this->getCalcData($scheme);
+        list($compressCalc, $infPeriod, $infCalc) = $this->getCalcData($scheme);
         $compressCalcId = $compressCalc->getId();
-        $teamCalcId = $teamCalc->getId();
-        /* calculate bonus according to given SCHEME */
-        if ($scheme == Def::SCHEMA_EU) {
-            $bonus = $this->subCalcEu->exec($compressCalcId);
-        } else {
-            $bonus = $this->subCalcDef->exec($compressCalcId);
-        }
+        $infCalcId = $infCalc->getId();
+        /* calculate bonus */
+        $bonus = $this->subCalc->exec($compressCalcId, $infCalcId, $scheme);
         /* convert calculated bonus to transactions */
-        $trans = $this->getTransactions($bonus, $teamPeriod);
+        $trans = $this->getTransactions($bonus, $infPeriod);
         /* register bonus operation */
-        $operRes = $this->hlpOper->exec(Cfg::CODE_TYPE_OPER_BONUS_TEAM, $trans, $teamPeriod);
+        $operRes = $this->hlpOper->exec(Cfg::CODE_TYPE_OPER_BONUS_INFINITY, $trans, $infPeriod);
         $operId = $operRes->getOperationId();
         $transIds = $operRes->getTransactionsIds();
         /* register transactions in log */
         $this->saveLogCustomers($transIds);
         /* register operation in log */
-        $this->saveLogOper($operId, $teamCalcId);
+        $this->saveLogOper($operId, $infCalcId);
         /* mark this calculation complete */
-        $this->repoCalc->markComplete($teamCalcId);
+        $this->repoCalc->markComplete($infCalcId);
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);
-        $this->logger->info("Team bonus ('$scheme' scheme) is completed.");
+        $this->logger->info("Override bonus ('$scheme' scheme) is completed.");
     }
 
     /**
      * Get period and calculation data for all related calculation types.
      *
-     * @param string $scheme see \Praxigento\BonusHybrid\Defaults::SCHEMA_XXX
-     * @return array [$compressCalc, $teamPeriod, $teamCalc]
+     * @return array [$compressCalc, $infPeriod, $infCalc]
      */
     private function getCalcData($scheme)
     {
-        $calcTypeCode = ($scheme == Def::SCHEMA_EU)
-            ? Cfg::CODE_TYPE_CALC_BONUS_TEAM_EU
-            : Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF;
-        /* get period & calc data for Team bonus & TV Volumes Calculation */
+        if ($scheme == Def::SCHEMA_EU) {
+            $baseTypeCode = Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_EU;
+            $depTypeCode = Cfg::CODE_TYPE_CALC_BONUS_INFINITY_EU;
+        } else {
+            $baseTypeCode = Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_DEF;
+            $depTypeCode = Cfg::CODE_TYPE_CALC_BONUS_INFINITY_DEF;
+        }
+        /* get period & calc data for Infinity bonus based on Phase2 Compression */
         $ctx = new \Praxigento\Core\Data();
-        $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_VALUE_TV);
-        $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, $calcTypeCode);
+        $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, $baseTypeCode);
+        $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, $depTypeCode);
         $this->procPeriodGet->exec($ctx);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $teamPeriod */
-        $teamPeriod = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_PERIOD_DATA);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $teamCalc */
-        $teamCalc = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
-        /* get period and calc data for compression calc (basic for TV volumes) */
-        $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
-        $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_VALUE_TV);
-        $ctx->set($this->procPeriodGet::CTX_IN_DEP_IGNORE_COMPLETE, true);
-        $this->procPeriodGet->exec($ctx);
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $infPeriod */
+        $infPeriod = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_PERIOD_DATA);
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $infCalc */
+        $infCalc = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
         /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $compressCalc */
         $compressCalc = $ctx->get($this->procPeriodGet::CTX_OUT_BASE_CALC_DATA);
-        /* compose result */
-        $result = [$compressCalc, $teamPeriod, $teamCalc];
+        /* composer result */
+        $result = [$compressCalc, $infPeriod, $infCalc];
         return $result;
     }
 
@@ -186,4 +176,5 @@ class Team
         $entity->setCalcId($calcId);
         $this->repoLogOper->create($entity);
     }
+
 }

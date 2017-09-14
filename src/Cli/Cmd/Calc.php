@@ -21,6 +21,8 @@ class Calc
     private $conn;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\ICourtesy */
     private $procBonusCourtesy;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\IInfinity */
+    private $procBonusInfinity;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\IOverride */
     private $procBonusOvrd;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\IPersonal */
@@ -49,6 +51,7 @@ class Calc
         \Praxigento\BonusHybrid\Service\Calc\Compress\IPhase2 $procCompressPhase2,
         \Praxigento\BonusHybrid\Service\Calc\IPvWriteOff $procPvWriteOff,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\ICourtesy $procBonusCourtesy,
+        \Praxigento\BonusHybrid\Service\Calc\Bonus\IInfinity $procBonusInfinity,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\IPersonal $procBonusPers,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\ITeam $procBonusTeam,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\IOverride $procBonusOvrd,
@@ -68,6 +71,7 @@ class Calc
         $this->procCompressPhase2 = $procCompressPhase2;
         $this->procPvWriteOff = $procPvWriteOff;
         $this->procBonusCourtesy = $procBonusCourtesy;
+        $this->procBonusInfinity = $procBonusInfinity;
         $this->procBonusPers = $procBonusPers;
         $this->procBonusTeam = $procBonusTeam;
         $this->procBonusOvrd = $procBonusOvrd;
@@ -92,12 +96,12 @@ class Calc
         return $result;
     }
 
-    private function calcBonusInfinityEu()
+    private function calcBonusInfinity($schema)
     {
-        $req = new \Praxigento\BonusHybrid\Service\Calc\Request\BonusInfinity();
-        $req->setScheme(\Praxigento\BonusHybrid\Defaults::SCHEMA_EU);
-        $resp = $this->callCalc->bonusInfinity($req);
-        $result = $resp->isSucceed();
+        $ctx = new \Praxigento\Core\Data();
+        $ctx->set($this->procBonusInfinity::CTX_IN_SCHEME, $schema);
+        $this->procBonusInfinity->exec($ctx);
+        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
         return $result;
     }
 
@@ -243,11 +247,11 @@ class Calc
             }
             if ($canContinue) {
                 $output->writeln("<info>Override bonus (EU) is calculated.<info>");
-                $canContinue = $this->calcBonusInfinityDef();
+                $canContinue = $this->calcBonusInfinity(Def::SCHEMA_DEFAULT);
             }
             if ($canContinue) {
                 $output->writeln("<info>Infinity bonus (DEFAULT) is calculated.<info>");
-                $canContinue = $this->calcBonusInfinityEu();
+                $canContinue = $this->calcBonusInfinity(Def::SCHEMA_EU);
             }
             if ($canContinue) {
                 $output->writeln("<info>Infinity bonus (EU) is calculated.<info>");

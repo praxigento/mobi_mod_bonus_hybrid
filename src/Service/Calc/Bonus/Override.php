@@ -86,7 +86,7 @@ class Override
         $compressCalcId = $compressCalc->getId();
         $ovrdCalcId = $ovrdCalc->getId();
         /* calculate bonus */
-        $bonus = $this->subCalc->exec($compressCalcId, $ovrdCalcId, $scheme);
+        $bonus = $this->subCalc->exec($compressCalcId, $scheme);
         /* convert calculated bonus to transactions */
         $trans = $this->getTransactions($bonus, $ovrdPeriod);
         /* register bonus operation */
@@ -118,7 +118,7 @@ class Override
             $baseTypeCode = Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_DEF;
             $depTypeCode = Cfg::CODE_TYPE_CALC_BONUS_OVERRIDE_DEF;
         }
-        /* get period & calc data for Courtesy based on TV */
+        /* get period & calc data for Override bonus based on Phase2 Compression */
         $ctx = new \Praxigento\Core\Data();
         $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, $baseTypeCode);
         $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, $depTypeCode);

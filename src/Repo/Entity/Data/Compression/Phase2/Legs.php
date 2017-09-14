@@ -18,6 +18,7 @@ class Legs
     const ATTR_LEG_MAX = 'leg_max';
     const ATTR_LEG_OTHERS = 'leg_others';
     const ATTR_LEG_SECOND = 'leg_second';
+    /** @deprecated only <10 customers have this value */
     const ATTR_PV_INF = 'pv_inf';
     const ENTITY_NAME = 'prxgt_bon_hyb_cmprs_ph2_legs';
 
@@ -77,6 +78,7 @@ class Legs
 
     /**
      * @return integer
+     * @deprecated only <10 customers have this value
      */
     public function getPvInf()
     {
@@ -126,6 +128,7 @@ class Legs
 
     /**
      * @param integer $data
+     * @deprecated only <10 customers have this value
      */
     public function setPvInf($data)
     {

@@ -9,8 +9,8 @@ use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Cfg\Override as ECfgOvrd;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
-use Praxigento\BonusHybrid\Service\Calc\Bonus\Override\Calc\Entry as DEntry;
 use Praxigento\BonusHybrid\Service\Calc\A\Data\Bonus as DBonus;
+use Praxigento\BonusHybrid\Service\Calc\Bonus\Override\Calc\Entry as DEntry;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
 
 class Calc
@@ -30,6 +30,7 @@ class Calc
     private $hlpScheme;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
+    /** @var \Praxigento\BonusHybrid\Repo\Entity\Cfg\Override */
     private $repoCfgOvrd;
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
     private $repoDwnl;
@@ -102,7 +103,7 @@ class Calc
         return $result;
     }
 
-    public function exec($compressCalcId, $ovrdCalcId, $scheme)
+    public function exec($compressCalcId, $scheme)
     {
         $result = [];
         /* collect additional data */
