@@ -154,9 +154,9 @@ class Calc
 
     private function calcSignupDebit()
     {
-        $req = new \Praxigento\BonusHybrid\Service\Calc\SignupDebit\Request();
-        $resp = $this->callBonusSignup->exec($req);
-        $result = $resp->isSucceed();
+        $ctx = new \Praxigento\Core\Data();
+        $this->callBonusSignup->exec($ctx);
+        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
         return $result;
     }
 

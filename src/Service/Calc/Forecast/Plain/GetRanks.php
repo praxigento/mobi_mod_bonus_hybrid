@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Service\Calc\Forecast;
+namespace Praxigento\BonusHybrid\Service\Calc\Forecast\Plain;
 
 use Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder as QbldPeriodCalcLast;
 use Praxigento\BonusHybrid\Config as Cfg;

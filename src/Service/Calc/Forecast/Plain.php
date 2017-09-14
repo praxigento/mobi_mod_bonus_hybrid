@@ -6,9 +6,9 @@
 namespace Praxigento\BonusHybrid\Service\Calc\Forecast;
 
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Service\Calc\Forecast\Calc as SubCalc;
-use Praxigento\BonusHybrid\Service\Calc\Forecast\CleanCalcData as ProcCleanCalcData;
-use Praxigento\BonusHybrid\Service\Calc\Forecast\GetDownline as ProcGetDownline;
+use Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Calc as SubCalc;
+use Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\CleanCalcData as ProcCleanCalcData;
+use Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetDownline as ProcGetDownline;
 
 class Plain
     implements \Praxigento\BonusHybrid\Service\Calc\Forecast\IPlain
@@ -19,7 +19,7 @@ class Plain
     private $callPeriod;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\CleanCalcData */
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\CleanCalcData */
     private $procCleanCalcData;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\IAdd */
     private $procPeriodAdd;
@@ -27,11 +27,11 @@ class Plain
     private $repoCalc;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoDwnl;
-    /** @var  \Praxigento\BonusHybrid\Service\Calc\Forecast\Calc */
+    /** @var  \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Calc */
     private $subCalc;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\GetDownline */
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetDownline */
     private $subGetDownline;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\GetRanks */
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetRanks */
     private $subGetRanks;
     /** @var  \Praxigento\Core\Tool\IPeriod */
     private $toolPeriod;
@@ -43,11 +43,11 @@ class Plain
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\Accounting\Service\Balance\Get\ITurnover $callBalanceGetTurnover,
         \Praxigento\BonusBase\Service\IPeriod $callPeriod,
-        \Praxigento\BonusHybrid\Service\Calc\Forecast\Calc $subCalc,
-        \Praxigento\BonusHybrid\Service\Calc\Forecast\GetDownline $subGetDownline,
-        \Praxigento\BonusHybrid\Service\Calc\Forecast\GetRanks $subGetRanks,
+        \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Calc $subCalc,
+        \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetDownline $subGetDownline,
+        \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetRanks $subGetRanks,
         \Praxigento\BonusBase\Service\Period\Calc\IAdd $procPeriodAdd,
-        \Praxigento\BonusHybrid\Service\Calc\Forecast\CleanCalcData $procCleanCalcData
+        \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\CleanCalcData $procCleanCalcData
     )
     {
         $this->logger = $logger;

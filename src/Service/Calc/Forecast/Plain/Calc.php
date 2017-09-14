@@ -3,12 +3,10 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Service\Calc\Forecast;
+namespace Praxigento\BonusHybrid\Service\Calc\Forecast\Plain;
 
 /**
  * Calculate TV/OV for plain downline report.
- *
- * @deprecated see \Praxigento\BonusHybrid\Service\Calc\Forecast\IPlain
  */
 class Calc
 {

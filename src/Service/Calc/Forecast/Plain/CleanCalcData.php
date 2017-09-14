@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Service\Calc\Forecast;
+namespace Praxigento\BonusHybrid\Service\Calc\Forecast\Plain;
 
 use Praxigento\BonusBase\Repo\Entity\Data\Calculation as ECalc;
 use Praxigento\BonusBase\Repo\Entity\Data\Period as EPeriod;

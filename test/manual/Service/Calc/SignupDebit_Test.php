@@ -14,11 +14,11 @@ class SignupDebit_ManualTest extends \Praxigento\Core\Test\BaseCase\Mockery
     public function test_exec()
     {
         $obm = \Magento\Framework\App\ObjectManager::getInstance();
-        /** @var  $call \Praxigento\BonusHybrid\Service\Calc\ISignupDebit */
-        $call = $obm->get(\Praxigento\BonusHybrid\Service\Calc\ISignupDebit::class);
-        $req = new \Praxigento\BonusHybrid\Service\Calc\SignupDebit\Request();
-        $resp = $call->exec($req);
-        $this->assertTrue($resp->isSucceed());
+        /** @var  $proc \Praxigento\BonusHybrid\Service\Calc\ISignupDebit */
+        $proc = $obm->get(\Praxigento\BonusHybrid\Service\Calc\ISignupDebit::class);
+        $ctx = new \Praxigento\Core\Data();
+        $proc->exec($ctx);
+        $this->assertTrue($ctx->get($proc::CTX_OUT_SUCCESS));
     }
 
 }
