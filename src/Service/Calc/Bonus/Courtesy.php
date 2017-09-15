@@ -15,10 +15,6 @@ use Praxigento\BonusHybrid\Config as Cfg;
 class Courtesy
     implements \Praxigento\BonusHybrid\Service\Calc\Bonus\ICourtesy
 {
-    /** @var \Praxigento\Accounting\Service\IOperation */
-    private $callOperation;
-    /** @var \Praxigento\Core\Tool\IDate */
-    private $hlpDate;
     /** @var  \Praxigento\Core\Tool\IPeriod */
     private $hlpPeriod;
     /** @var \Psr\Log\LoggerInterface */
@@ -40,12 +36,10 @@ class Courtesy
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
-        \Praxigento\Core\Tool\IDate $hlpDate,
         \Praxigento\Core\Tool\IPeriod $hlpPeriod,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\BonusBase\Repo\Entity\Log\Customers $repoLogCust,
         \Praxigento\BonusBase\Repo\Entity\Log\Opers $repoLogOper,
-        \Praxigento\Accounting\Service\IOperation $callOperation,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\A\Helper\PrepareTrans $hlpTrans,
         \Praxigento\BonusHybrid\Service\Calc\A\Helper\CreateOper $hlpOper,
@@ -53,12 +47,10 @@ class Courtesy
     )
     {
         $this->logger = $logger;
-        $this->hlpDate = $hlpDate;
         $this->hlpPeriod = $hlpPeriod;
         $this->repoCalc = $repoCalc;
         $this->repoLogCust = $repoLogCust;
         $this->repoLogOper = $repoLogOper;
-        $this->callOperation = $callOperation;
         $this->procPeriodGet = $procPeriodGet;
         $this->hlpTrans = $hlpTrans;
         $this->hlpOper = $hlpOper;

@@ -30,22 +30,22 @@ class ProcessOrders
     const PREFIX_WALLET_GRAND = 'wg';
 
     /** @var \Praxigento\Accounting\Service\IAccount */
-    protected $callAccount;
+    private $callAccount;
     /** @var \Praxigento\Accounting\Service\IOperation */
-    protected $callOper;
+    private $callOper;
     /** @var \Praxigento\BonusBase\Repo\Entity\Log\Customers */
-    protected $repoLogCust;
+    private $repoLogCust;
     /** @var \Praxigento\BonusBase\Repo\Entity\Log\Opers */
-    protected $repoLogOper;
+    private $repoLogOper;
     /** @var \Praxigento\BonusBase\Repo\Entity\Log\Sales */
-    protected $repoLogSale;
+    private $repoLogSale;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Registry\SignupDebit */
-    protected $repoRegSignupDebit;
+    private $repoRegSignupDebit;
     /** @var  \Praxigento\BonusHybrid\Tool\IScheme */
-    protected $toolScheme;
+    private $hlpScheme;
 
     public function __construct(
-        \Praxigento\BonusHybrid\Tool\IScheme $toolScheme,
+        \Praxigento\BonusHybrid\Tool\IScheme $hlpScheme,
         \Praxigento\BonusBase\Repo\Entity\Log\Customers $repoLogCust,
         \Praxigento\BonusBase\Repo\Entity\Log\Opers $repoLogOper,
         \Praxigento\BonusBase\Repo\Entity\Log\Sales $repoLogSale,
@@ -54,7 +54,7 @@ class ProcessOrders
         \Praxigento\Accounting\Service\IOperation $callOper
     )
     {
-        $this->toolScheme = $toolScheme;
+        $this->hlpScheme = $hlpScheme;
         $this->repoLogCust = $repoLogCust;
         $this->repoLogOper = $repoLogOper;
         $this->repoRegSignupDebit = $repoRegSignupDebit;
@@ -87,7 +87,7 @@ class ProcessOrders
             $parentId = $one[Query::A_PARENT_ID];
             $grandId = $one[Query::A_PARENT_GRAND_ID];
             $orderId = $one[Query::A_ORDER_ID];
-            $scheme = $this->toolScheme->getSchemeByCustomer($one);
+            $scheme = $this->hlpScheme->getSchemeByCustomer($one);
             if ($scheme == Def::SCHEMA_EU) {
                 /* prepare data for transactions */
                 $accPvCust = $this->getAccCust(Cfg::CODE_TYPE_ASSET_PV, $custId);
@@ -151,7 +151,7 @@ class ProcessOrders
      * @param int $custId
      * @return int
      */
-    protected function getAccCust($assetTypeCode, $custId)
+    private function getAccCust($assetTypeCode, $custId)
     {
         $req = new \Praxigento\Accounting\Service\Account\Request\Get();
         $req->setAssetTypeCode($assetTypeCode);
@@ -168,7 +168,7 @@ class ProcessOrders
      * @param string $assetTypeCode
      * @return int
      */
-    protected function getAccRepres($assetTypeCode)
+    private function getAccRepres($assetTypeCode)
     {
         $req = new \Praxigento\Accounting\Service\Account\Request\GetRepresentative();
         $req->setAssetTypeCode($assetTypeCode);
@@ -183,7 +183,7 @@ class ProcessOrders
      * @param array $orders
      * @param array $transIds
      */
-    protected function saveTransLogs($orders, $transIds)
+    private function saveTransLogs($orders, $transIds)
     {
         foreach ($transIds as $tranId => $one) {
             $pref = substr($one, 0, 2);

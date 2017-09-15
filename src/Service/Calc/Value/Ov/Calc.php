@@ -21,7 +21,7 @@ class Calc
     }
 
     /** @var \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds */
-    protected $hlpSignupDebitCust;
+    private $hlpSignupDebitCust;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */

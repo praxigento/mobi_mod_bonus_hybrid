@@ -17,16 +17,12 @@ class CreateOper
     private $callOper;
     /** @var \Praxigento\Core\Tool\IDate */
     private $hlpDate;
-    /** @var \Psr\Log\LoggerInterface */
-    private $logger;
 
     public function __construct(
-        \Praxigento\Core\Fw\Logger\App $logger,
         \Praxigento\Core\Tool\IDate $hlpDate,
         \Praxigento\Accounting\Service\IOperation $callOper
     )
     {
-        $this->logger = $logger;
         $this->hlpDate = $hlpDate;
         $this->callOper = $callOper;
     }

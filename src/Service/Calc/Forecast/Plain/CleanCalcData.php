@@ -17,13 +17,13 @@ class CleanCalcData
     const CTX_OUT_RESULT = 'result';
 
     /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
-    protected $repoCalc;
+    private $repoCalc;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
-    protected $repoDwnl;
+    private $repoDwnl;
     /** @var \Praxigento\BonusBase\Repo\Entity\Period */
-    protected $repoPeriod;
+    private $repoPeriod;
     /** @var \Praxigento\BonusBase\Repo\Entity\Type\Calc */
-    protected $repoTypeCalc;
+    private $repoTypeCalc;
 
     public function __construct(
         \Praxigento\BonusBase\Repo\Entity\Type\Calc $repoTypeCalc,

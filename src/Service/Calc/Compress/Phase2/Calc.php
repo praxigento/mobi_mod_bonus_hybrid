@@ -25,11 +25,11 @@ class Calc
     /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\Helper */
     private $hlp;
     /** @var \Praxigento\Downline\Tool\ITree */
-    protected $hlpDwnlTree;
+    private $hlpDwnlTree;
     /** @var \Praxigento\BonusHybrid\Helper\Calc\GetMaxQualifiedRankId */
-    protected $hlpGetMaxRankId;
+    private $hlpGetMaxRankId;
     /** @var \Praxigento\BonusHybrid\Helper\Calc\IsQualified */
-    protected $hlpIsQualified;
+    private $hlpIsQualified;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Cfg\Param */
     private $repoCfgParam;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */

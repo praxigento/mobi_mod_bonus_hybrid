@@ -10,7 +10,6 @@ namespace Praxigento\BonusHybrid\Service\Calc\Forecast\Plain;
  */
 class Calc
 {
-
     /** Add traits */
     use \Praxigento\BonusHybrid\Service\Calc\A\Traits\TMap {
         mapById as protected;
@@ -22,11 +21,6 @@ class Calc
     const KEY_TREE_DEPTH = \Praxigento\BonusHybrid\Repo\Entity\Data\Downline::ATTR_DEPTH;
     const KEY_TREE_ENTITY = \Praxigento\BonusHybrid\Repo\Entity\Data\Downline::ATTR_CUST_REF;
     const KEY_TREE_PARENT = \Praxigento\BonusHybrid\Repo\Entity\Data\Downline::ATTR_PARENT_REF;
-
-    public function __construct()
-    {
-    }
-
 
     /**
      * @param \Praxigento\Core\Data $ctx

@@ -18,7 +18,7 @@ class GetDownline
     const CTX_OUT_DWNL = 'downline';
 
     /** @var \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder */
-    protected $qbldSnapOnDate;
+    private $qbldSnapOnDate;
 
     public function __construct(
         \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder $qbldSnapOnDate

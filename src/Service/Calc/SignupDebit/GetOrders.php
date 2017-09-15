@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\SignupDebit;
 class GetOrders
 {
     /** @var \Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetOrders\Builder */
-    protected $qbuildGetOrders;
+    private $qbuildGetOrders;
 
     public function __construct(
         \Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetOrders\Builder $qbuildGetOrders

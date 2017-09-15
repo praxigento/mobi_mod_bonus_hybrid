@@ -19,7 +19,7 @@ class Helper
     }
 
     /** @var \Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder */
-    protected $qbGetPv;
+    private $qbGetPv;
 
 
     public function __construct(

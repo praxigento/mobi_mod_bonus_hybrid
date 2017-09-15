@@ -21,25 +21,25 @@ class Phase1
         mapValueById as protected;
     }
     /** @var \Psr\Log\LoggerInterface */
-    protected $logger;
+    private $logger;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
     /** @var \Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder */
-    protected $qbGetPv;
+    private $qbGetPv;
     /** @var \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder */
     private $qbSnapOnDate;
     /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
     private $repoCalc;
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
-    protected $repoDwnl;
+    private $repoDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
-    protected $repoDwnlBon;
+    private $repoDwnlBon;
     /** @var \Praxigento\BonusBase\Repo\Entity\Rank */
     private $repoRank;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase1\Transfer\Pv */
-    protected $repoTransPv;
+    private $repoTransPv;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\Phase1\Calc */
-    protected $subCalc;
+    private $subCalc;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
@@ -165,7 +165,7 @@ class Phase1
      *
      * @return array|null
      */
-    protected function getDownlineSnapshot($dateOn)
+    private function getDownlineSnapshot($dateOn)
     {
         /* collect downline data to given date */
         $query = $this->qbSnapOnDate->getSelectQuery();
@@ -180,7 +180,7 @@ class Phase1
      * @param int $calcId
      * @return array
      */
-    protected function getPv($calcId)
+    private function getPv($calcId)
     {
         $query = $this->qbGetPv->getSelectQuery();
         $conn = $query->getConnection();
@@ -224,7 +224,7 @@ class Phase1
     /**
      * @param \Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase1\Transfer\Pv[] $data
      */
-    protected function savePvTransfers($data)
+    private function savePvTransfers($data)
     {
         /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase1\Transfer\Pv $one */
         foreach ($data as $one) {

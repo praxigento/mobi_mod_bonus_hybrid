@@ -35,22 +35,22 @@ class Calc
     const CTX_PV_TRANSFERS = 'pvTransfers';
 
     /** @var    \Praxigento\Downline\Service\ISnap */
-    protected $callDownlineSnap;
-    /** @var \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds */
-    protected $hlpSignupDebitCust;
+    private $callDownlineSnap;
     /** @var  \Praxigento\BonusHybrid\Tool\IScheme */
-    protected $toolScheme;
+    private $hlpScheme;
+    /** @var \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds */
+    private $hlpSignupDebitCust;
     /** @var \Praxigento\Downline\Tool\ITree */
-    protected $toolTree;
+    private $hlpTree;
 
     public function __construct(
-        \Praxigento\BonusHybrid\Tool\IScheme $toolScheme,
-        \Praxigento\Downline\Tool\ITree $toolTree,
+        \Praxigento\BonusHybrid\Tool\IScheme $hlpScheme,
+        \Praxigento\Downline\Tool\ITree $hlpTree,
         \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust,
         \Praxigento\Downline\Service\ISnap $callDownlineSnap
     ) {
-        $this->toolScheme = $toolScheme;
-        $this->toolTree = $toolTree;
+        $this->hlpScheme = $hlpScheme;
+        $this->hlpTree = $hlpTree;
         $this->hlpSignupDebitCust = $hlpSignupDebitCust;
         $this->callDownlineSnap = $callDownlineSnap;
     }
@@ -59,7 +59,7 @@ class Calc
      * @param array $compressionData array [$custId=>[$pv, $parentId], ... ] with compression data.
      * @return array
      */
-    protected function composeTree($compressionData)
+    private function composeTree($compressionData)
     {
         /* prepare request data: convert to [$customer=>parent, ... ] form */
         $converted = [];
@@ -88,8 +88,8 @@ class Calc
         $pvTransfers = [];
 
         /* perform action */
-        $qLevels = $this->toolScheme->getQualificationLevels();
-        $forcedCustomers = $this->toolScheme->getForcedQualificationCustomersIds();
+        $qLevels = $this->hlpScheme->getQualificationLevels();
+        $forcedCustomers = $this->hlpScheme->getForcedQualificationCustomersIds();
         $signupDebitCustomers = $this->hlpSignupDebitCust->exec();
 
         /* prepare intermediary structures for calculation */
@@ -107,7 +107,7 @@ class Calc
                 $pv = isset($mapPv[$custId]) ? $mapPv[$custId] : 0;
                 $parentId = $mapSnap[$custId][ASnap::A_PARENT_ID];
                 $custData = $mapCustomer[$custId];
-                $scheme = $this->toolScheme->getSchemeByCustomer($custData);
+                $scheme = $this->hlpScheme->getSchemeByCustomer($custData);
                 $level = $qLevels[$scheme]; // qualification level for current customer
                 $isForced = in_array($custId, $forcedCustomers);
                 $isSignupDebit = in_array($custId, $signupDebitCustomers);
@@ -122,11 +122,11 @@ class Calc
                 } else {
                     /* move PV up to the closest qualified parent (parent's level is used for qualification) */
                     $path = $mapSnap[$custId][ASnap::A_PATH];
-                    $parents = $this->toolTree->getParentsFromPathReversed($path);
+                    $parents = $this->hlpTree->getParentsFromPathReversed($path);
                     $foundParentId = null;
                     foreach ($parents as $newParentId) {
                         $parentData = $mapCustomer[$newParentId];
-                        $parentScheme = $this->toolScheme->getSchemeByCustomer($parentData);
+                        $parentScheme = $this->hlpScheme->getSchemeByCustomer($parentData);
                         $parentLevel = $qLevels[$parentScheme]; // qualification level for current parent
                         $pvParent = isset($mapPv[$newParentId]) ? $mapPv[$newParentId] : 0;
                         if (
@@ -191,7 +191,7 @@ class Calc
      * @param array $compressionData compression data with compressed PV
      * @return array compressed tree with PV data
      */
-    protected function populateCompressedSnapWithPv($tree, $compressionData)
+    private function populateCompressedSnapWithPv($tree, $compressionData)
     {
         $result = $tree;
         foreach ($compressionData as $custId => $data) {

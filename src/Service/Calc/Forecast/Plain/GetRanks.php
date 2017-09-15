@@ -19,25 +19,22 @@ class GetRanks
     const CTX_IN_DATE_ON = 'dateOn';
     const CTX_IO_TREE = 'dwnlTree';
 
-    /** @var \Praxigento\BonusBase\Service\IPeriod */
-    protected $callBonusPeriod;
     /** @var \Praxigento\BonusHybrid\Tool\IScheme */
-    protected $hlpScheme;
+    private $hlpScheme;
     /** @var \Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder */
-    protected $qbldPeriodCalcGetLast;
+    private $qbldPeriodCalcGetLast;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Compression\Oi */
-    protected $repoCompressOi;
+    private $repoCompressOi;
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
-    protected $repoDownline;
+    private $repoDownline;
     /** @var \Praxigento\BonusBase\Repo\Entity\Rank */
-    protected $repoRanks;
+    private $repoRanks;
 
     public function __construct(
         \Praxigento\BonusHybrid\Tool\IScheme $hlpScheme,
         \Praxigento\BonusBase\Repo\Entity\Rank $repoRanks,
         \Praxigento\BonusHybrid\Repo\Entity\Compression\Oi $repoCompressOi,
         \Praxigento\Downline\Repo\Entity\Customer $repoDownline,
-        \Praxigento\BonusBase\Service\IPeriod $callBonusPeriod,
         \Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder $qbldPeriodCalcGetLast
     )
     {
@@ -45,7 +42,6 @@ class GetRanks
         $this->repoRanks = $repoRanks;
         $this->repoCompressOi = $repoCompressOi;
         $this->repoDownline = $repoDownline;
-        $this->callBonusPeriod = $callBonusPeriod;
         $this->qbldPeriodCalcGetLast = $qbldPeriodCalcGetLast;
     }
 
@@ -100,7 +96,7 @@ class GetRanks
      * Get ID for rank with code DISTRIBUTOR.
      * @return int
      */
-    protected function getDefaultRankId()
+    private function getDefaultRankId()
     {
         $result = $this->repoRanks->getIdByCode(Def::RANK_DISTRIBUTOR);
         return $result;
@@ -113,7 +109,7 @@ class GetRanks
      * @param array $ranks ranks codes map by id
      * @return array
      */
-    protected function getOiData($calcTypeCode, $dateOn)
+    private function getOiData($calcTypeCode, $dateOn)
     {
 
         /* TODO: split code on 2 parts */

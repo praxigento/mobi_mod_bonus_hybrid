@@ -15,8 +15,6 @@ class Plain
 {
     /** @var \Praxigento\Accounting\Service\Balance\Get\ITurnover */
     private $callBalanceGetTurnover;
-    /** @var \Praxigento\BonusBase\Service\IPeriod */
-    private $callPeriod;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\CleanCalcData */
@@ -34,15 +32,14 @@ class Plain
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetRanks */
     private $subGetRanks;
     /** @var  \Praxigento\Core\Tool\IPeriod */
-    private $toolPeriod;
+    private $hlpPeriod;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
-        \Praxigento\Core\Tool\IPeriod $toolPeriod,
+        \Praxigento\Core\Tool\IPeriod $hlpPeriod,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnl,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\Accounting\Service\Balance\Get\ITurnover $callBalanceGetTurnover,
-        \Praxigento\BonusBase\Service\IPeriod $callPeriod,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Calc $subCalc,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetDownline $subGetDownline,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetRanks $subGetRanks,
@@ -51,11 +48,10 @@ class Plain
     )
     {
         $this->logger = $logger;
-        $this->toolPeriod = $toolPeriod;
+        $this->hlpPeriod = $hlpPeriod;
         $this->repoDwnl = $repoDwnl;
         $this->repoCalc = $repoCalc;
         $this->callBalanceGetTurnover = $callBalanceGetTurnover;
-        $this->callPeriod = $callPeriod;
         $this->subCalc = $subCalc;
         $this->subGetDownline = $subGetDownline;
         $this->subGetRanks = $subGetRanks;
@@ -138,18 +134,18 @@ class Plain
     {
         if ($requested) {
             /* convert $requested to MONTH period */
-            $month = $this->toolPeriod->getPeriodNext($requested, \Praxigento\Core\Tool\IPeriod::TYPE_MONTH);
-            $month = $this->toolPeriod->getPeriodPrev($month, \Praxigento\Core\Tool\IPeriod::TYPE_MONTH);
+            $month = $this->hlpPeriod->getPeriodNext($requested, \Praxigento\Core\Tool\IPeriod::TYPE_MONTH);
+            $month = $this->hlpPeriod->getPeriodPrev($month, \Praxigento\Core\Tool\IPeriod::TYPE_MONTH);
             /* get period end */
-            $end = $this->toolPeriod->getPeriodLastDate($month);
+            $end = $this->hlpPeriod->getPeriodLastDate($month);
         } else {
             /* get current month as MONTH period */
-            $month = $this->toolPeriod->getPeriodCurrent(null, 0, \Praxigento\Core\Tool\IPeriod::TYPE_MONTH);
+            $month = $this->hlpPeriod->getPeriodCurrent(null, 0, \Praxigento\Core\Tool\IPeriod::TYPE_MONTH);
             /* get current date then get yesterday date (end of period) */
-            $today = $this->toolPeriod->getPeriodCurrent();
-            $end = $this->toolPeriod->getPeriodPrev($today);
+            $today = $this->hlpPeriod->getPeriodCurrent();
+            $end = $this->hlpPeriod->getPeriodPrev($today);
         }
-        $begin = $this->toolPeriod->getPeriodFirstDate($month);
+        $begin = $this->hlpPeriod->getPeriodFirstDate($month);
         $result = [$begin, $end];
         return $result;
     }

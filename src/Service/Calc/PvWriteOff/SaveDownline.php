@@ -22,8 +22,6 @@ class SaveDownline
 
     /** @var \Praxigento\Downline\Service\ISnap */
     private $callDwnlSnap;
-    /** @var \Praxigento\Downline\Tool\ITree */
-    private $hlpDownlineTree;
     /** @var  \Praxigento\BonusHybrid\Tool\IScheme */
     private $hlpScheme;
     /** @var \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds */
@@ -37,7 +35,6 @@ class SaveDownline
 
     public function __construct(
         \Praxigento\BonusHybrid\Tool\IScheme $hlpScheme,
-        \Praxigento\Downline\Tool\ITree $hlpTree,
         \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust,
         \Praxigento\Accounting\Repo\Entity\Account $repoAcc,
         \Praxigento\BonusBase\Repo\Entity\Rank $repoRank,
@@ -46,7 +43,6 @@ class SaveDownline
     )
     {
         $this->hlpScheme = $hlpScheme;
-        $this->hlpDownlineTree = $hlpTree;
         $this->hlpSignupDebitCust = $hlpSignupDebitCust;
         $this->repoAcc = $repoAcc;
         $this->repoRank = $repoRank;

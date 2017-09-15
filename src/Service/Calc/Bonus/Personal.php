@@ -23,14 +23,10 @@ class Personal
         mapById as protected;
     }
 
-    /** @var \Praxigento\Accounting\Service\IOperation */
-    private $callOperation;
     /** @var \Praxigento\BonusBase\Helper\Calc */
     private $hlpCalc;
     /** @var \Praxigento\BonusHybrid\Service\Calc\A\Helper\CreateOper */
     private $hlpOper;
-    /** @var \Praxigento\Core\Tool\IDate */
-    private $hlpDate;
     /** @var  \Praxigento\Core\Tool\IPeriod */
     private $hlpPeriod;
     /** @var  \Praxigento\BonusHybrid\Service\Calc\A\Helper\PrepareTrans */
@@ -54,7 +50,6 @@ class Personal
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
-        \Praxigento\Core\Tool\IDate $hlpDate,
         \Praxigento\Core\Tool\IPeriod $hlpPeriod,
         \Praxigento\BonusBase\Helper\Calc $hlpCalc,
         \Praxigento\BonusHybrid\Tool\IScheme $hlpScheme,
@@ -63,14 +58,12 @@ class Personal
         \Praxigento\BonusBase\Repo\Entity\Level $repoLevel,
         \Praxigento\BonusBase\Repo\Entity\Log\Opers $repoLogOper,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon,
-        \Praxigento\Accounting\Service\IOperation $callOperation,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\A\Helper\PrepareTrans $hlpTrans,
         \Praxigento\BonusHybrid\Service\Calc\A\Helper\CreateOper $hlpOper
     )
     {
         $this->logger = $logger;
-        $this->hlpDate = $hlpDate;
         $this->hlpPeriod = $hlpPeriod;
         $this->hlpCalc = $hlpCalc;
         $this->hlpScheme = $hlpScheme;
@@ -79,7 +72,6 @@ class Personal
         $this->repoLevel = $repoLevel;
         $this->repoLogOper = $repoLogOper;
         $this->repoDwnlBon = $repoDwnlBon;
-        $this->callOperation = $callOperation;
         $this->procPeriodGet = $procPeriodGet;
         $this->hlpTrans = $hlpTrans;
         $this->hlpOper = $hlpOper;
