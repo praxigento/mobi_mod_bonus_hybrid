@@ -128,7 +128,7 @@ class Calc
             /** @var ECustomer $custPlain */
             $custPlain = $mapPlainById[$custId];
             $custRef = $custPlain->getHumanRef();
-            $custScheme = $this->hlpScheme->getSchemeByCustomer($custCompress);
+            $custScheme = $this->hlpScheme->getSchemeByCustomer($custPlain);
             if (
                 ($rankId != $defRankId) &&
                 ($custScheme == $scheme)
