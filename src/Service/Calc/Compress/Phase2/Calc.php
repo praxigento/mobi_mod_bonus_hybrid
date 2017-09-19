@@ -98,6 +98,7 @@ class Calc
                 $pvOwn = $mapPv[$custId] ?? 0;
                 $pvCompress = $custData->getPv();
                 $tvCompress = $custData->getTv();
+                $ovCompress = $custData->getOv();
                 /* populate downline result entry with data */
                 $entryDwnl->setCalculationRef($phase2CalcId);
                 $entryDwnl->setCustomerRef($custId);
@@ -105,6 +106,7 @@ class Calc
                 $entryDwnl->setRankRef($rankIdDistr);
                 $entryDwnl->setPv($pvCompress);
                 $entryDwnl->setTv($tvCompress);
+                $entryDwnl->setOv($ovCompress);
                 /* populate legs result entry with data */
                 $entryLegs->setCalcRef($phase2CalcId);
                 $entryLegs->setCustRef($custId);
