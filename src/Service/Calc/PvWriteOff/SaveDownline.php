@@ -78,6 +78,7 @@ class SaveDownline
             foreach ($customers as $custId) {
                 $custData = $tree[$custId];
                 $custParentId = $custData[\Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::A_PARENT_ID];
+                $custDepth = $custData[\Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::A_DEPTH];
                 $custPath = $custData[\Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::A_PATH];
                 $custScheme = $this->hlpScheme->getSchemeByCustomer($custData);
                 /* register current customer in the parent's team */
@@ -107,6 +108,7 @@ class SaveDownline
                 $dwnlData->setCustomerRef($custId);
                 $dwnlData->setOv(0);
                 $dwnlData->setParentRef($custParentId);
+                $dwnlData->setDepth($custDepth);
                 $dwnlData->setPath($custPath);
                 $dwnlData->setPv($custPv);
                 $dwnlData->setRankRef($defRankId);
