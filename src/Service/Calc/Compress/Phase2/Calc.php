@@ -30,6 +30,8 @@ class Calc
     private $hlpGetMaxRankId;
     /** @var \Praxigento\BonusHybrid\Helper\Calc\IsQualified */
     private $hlpIsQualified;
+    /** @var \Praxigento\BonusHybrid\Tool\IScheme */
+    private $hlpScheme;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Cfg\Param */
     private $repoCfgParam;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
@@ -39,6 +41,7 @@ class Calc
 
     public function __construct(
         \Praxigento\Downline\Tool\ITree $hlpTree,
+        \Praxigento\BonusHybrid\Tool\IScheme $hlpScheme,
         \Praxigento\BonusHybrid\Service\Calc\Compress\Helper $hlp,
         \Praxigento\BonusHybrid\Helper\Calc\GetMaxQualifiedRankId $hlpGetMaxRankId,
         \Praxigento\BonusHybrid\Helper\Calc\IsQualified $hlpIsQualified,
@@ -48,6 +51,7 @@ class Calc
     )
     {
         $this->hlpDwnlTree = $hlpTree;
+        $this->hlpScheme = $hlpScheme;
         $this->hlp = $hlp;
         $this->hlpGetMaxRankId = $hlpGetMaxRankId;
         $this->hlpIsQualified = $hlpIsQualified;
@@ -161,7 +165,9 @@ class Calc
 
                     } else {
                         /* qualified customer w/o downline is a Manager */
-                        $entryDwnl->setRankRef($rankIdMgr);
+                        $forcedRank = $this->hlpScheme->getForcedQualificationRank($custId, $scheme);
+                        $rankIdChecked = ($forcedRank) ? $forcedRank : $rankIdMgr;
+                        $entryDwnl->setRankRef($rankIdChecked);
                     }
                 }
                 /**
