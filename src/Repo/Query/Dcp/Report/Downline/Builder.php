@@ -41,6 +41,8 @@ class Builder
 
     /** Bound variables names ('camelCase' naming) */
     const BND_CALC_ID = 'calcId';
+    const BND_CUST_ID = 'custId';
+    const BND_PATH = 'path';
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resource,
@@ -108,7 +110,10 @@ class Builder
         $result->joinLeft([$as => $tbl], $cond, $cols);
 
         /* query tuning */
-        $result->where($asBonDwnl . '.' . EBonDwnl::ATTR_CALC_REF . '=:' . self::BND_CALC_ID);
+        $byCalcId = $asBonDwnl . '.' . EBonDwnl::ATTR_CALC_REF . '=:' . self::BND_CALC_ID;
+        $byPath = $asBonDwnl . '.' . EBonDwnl::ATTR_PATH . ' LIKE :' . self::BND_PATH;
+        $byCustId = $asBonDwnl . '.' . EBonDwnl::ATTR_CUST_REF . '=:' . self::BND_CUST_ID;
+        $result->where("$byCalcId AND ($byPath OR $byCustId)");
 
         return $result;
     }

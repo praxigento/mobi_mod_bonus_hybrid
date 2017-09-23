@@ -7,6 +7,9 @@ namespace Praxigento\BonusHybrid\Api\Stats;
 use Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc as QGetLastCalc;
 use Praxigento\BonusHybrid\Config as Cfg;
 
+/**
+ * @deprecated see \Praxigento\BonusHybrid\Api\Dcp\Report\Downline
+ */
 class Plain
     extends \Praxigento\BonusHybrid\Api\Stats\Base
     implements \Praxigento\BonusHybrid\Api\Stats\PlainInterface
@@ -71,10 +74,10 @@ class Plain
 
         /* filter snap data by root customer path */
         $where = \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::AS_DWNL_SNAP . '.' .
-            \Praxigento\Downline\Repo\Entity\Data\Snap::ATTR_PATH . ' LIKE :' . self::BIND_PATH;
+            \Praxigento\Downline\Repo\Entity\Data\Snap::ATTR_PATH . ' LIKE :' . self::BND_PATH;
         $path = $rootCustPath . $rootCustId . Cfg::DTPS . '%';
         $query->where($where);
-        $bind->set(self::BIND_PATH, $path);
+        $bind->set(self::BND_PATH, $path);
 
         /* filter snap data by max depth in downline tree */
         if (!is_null($maxDepth)) {

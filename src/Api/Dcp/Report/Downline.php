@@ -7,14 +7,17 @@ namespace Praxigento\BonusHybrid\Api\Dcp\Report;
 
 use Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder as QBLastCalc;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Actual\Downline\Plain as EActPlain;
+use Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Builder as QBDownline;
 use Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Retro\Plain\Builder as QBRetroPlain;
 
+/**
+ * @deprecated see \Praxigento\BonusHybrid\Api\Dcp\Report\Downline
+ */
 class Downline
     extends \Praxigento\BonusHybrid\Api\Stats\Base
     implements \Praxigento\BonusHybrid\Api\Dcp\Report\DownlineInterface
 {
-    const BIND_CALC_REF = QBRetroPlain::BIND_CALC_ID;
+    const BIND_CALC_REF = QBDownline::BND_CALC_ID;
     const BIND_CUST_ID = 'customerId';
     const BIND_ON_DATE = QBRetroPlain::BIND_DATE;
     /**
@@ -38,21 +41,15 @@ class Downline
     const VAR_QUERY_TYPE = 'queryType';
     const VAR_REPORT_TYPE = 'reportType';
 
-    protected $qbActCompressed;
-    /** @var \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Actual\Plain\Builder */
-    protected $qbActPlain;
+    /** @var \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Builder */
+    private $qbDownline;
     /** @var \Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder */
-    protected $qbLastCalc;
-    protected $qbRetroCompressed;
-    /** @var \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Retro\Plain\Builder */
-    protected $qbRetroPlain;
+    private $qbLastCalc;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
-        \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Actual\Plain\Builder $qbActPlain,
-        \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Retro\Plain\Builder $qbRetroPlain,
-        \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Retro\Compress\Builder $qbRetroCompress,
         \Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder $qbLastCalc,
+        \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Builder $qbDownline,
         \Praxigento\Core\Helper\Config $hlpCfg,
         \Praxigento\Core\Api\IAuthenticator $authenticator,
         \Praxigento\Core\Tool\IPeriod $toolPeriod,
@@ -62,10 +59,7 @@ class Downline
     {
         /* don't pass query builder to the parent - we have 4 builders in the operation, not one */
         parent::__construct($manObj, null, $hlpCfg, $authenticator, $toolPeriod, $repoSnap, $qPeriodCalc);
-        $this->qbActPlain = $qbActPlain;
-        $this->qbActCompressed = $qbActPlain;
-        $this->qbRetroPlain = $qbRetroPlain;
-        $this->qbRetroCompressed = $qbRetroCompress;
+        $this->qbDownline = $qbDownline;
         $this->qbLastCalc = $qbLastCalc;
     }
 
@@ -76,27 +70,23 @@ class Downline
         $vars = $ctx->get(self::CTX_VARS);
         $reportType = $vars->get(self::VAR_REPORT_TYPE);
         $isActualDataRequested = $vars->get(self::VAR_ACTUAL_DATA_REQUESTED);
-
+        $query = $this->qbDownline->build();
         /* put appropriate query builder into the context */
         $queryType = null;
         if ($isActualDataRequested) {
             if ($reportType == self::REPORT_TYPE_COMPRESSED) {
                 /* the last compressed tree */
-                $query = $this->qbActCompressed->build();
                 $queryType = self::QUERY_TYPE_ACT_COMPRESS;
             } else {
                 /* the last plain tree */
-                $query = $this->qbActPlain->build();
                 $queryType = self::QUERY_TYPE_ACT_PLAIN;
             }
         } else {
             if ($reportType == self::REPORT_TYPE_COMPRESSED) {
                 /* retrospective compressed tree */
-                $query = $this->qbRetroCompressed->build();
                 $queryType = self::QUERY_TYPE_RETRO_COMPRESS;
             } else {
                 /* retrospective plain tree */
-                $query = $this->qbRetroPlain->build();
                 $queryType = self::QUERY_TYPE_RETRO_PLAIN;
             }
         }
@@ -161,33 +151,23 @@ class Downline
                 break;
             case self::QUERY_TYPE_ACT_PLAIN:
                 /* TODO: should we move WHERE clause into the Query Builder? */
-                $where = '(' . $this->qbActPlain::AS_DWNL_PLAIN . '.' . EActPlain::ATTR_PATH;
-                $where .= ' LIKE :' . self::BIND_PATH . ')';
-                $where .= " OR ";
-                $where .= '(' . $this->qbActPlain::AS_DWNL_PLAIN . '.' . EActPlain::ATTR_CUSTOMER_REF;
-                $where .= '=:' . self::BIND_CUST_ID . ')';
-                $query->where($where);
-                $bind->set(self::BIND_PATH, $path);
+//                $where = '(' . $this->qbActPlain::AS_DWNL_PLAIN . '.' . EActPlain::ATTR_PATH;
+//                $where .= ' LIKE :' . self::BIND_PATH . ')';
+//                $where .= " OR ";
+//                $where .= '(' . $this->qbActPlain::AS_DWNL_PLAIN . '.' . EActPlain::ATTR_CUSTOMER_REF;
+//                $where .= '=:' . self::BIND_CUST_ID . ')';
+//                $query->where($where);
+                $bind->set(self::BND_PATH, $path);
                 $bind->set(self::BIND_CUST_ID, $rootCustId);
                 break;
             case  self::QUERY_TYPE_RETRO_COMPRESS:
-                $calcRef = $this->getCalcId(Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1, $onDate);
-                $bind->set(self::BIND_CALC_REF, $calcRef);
                 break;
             case  self::QUERY_TYPE_RETRO_PLAIN:
-                /* TODO: should we move WHERE clause into the Query Builder? */
-                $where = '(' . QBRetroPlain::AS_DWNL_SNAP . '.' . QBRetroPlain::A_PATH;
-                $where .= ' LIKE :' . self::BIND_PATH . ')';
-                $where .= " OR ";
-                $where .= '(' . QBRetroPlain::AS_DWNL_SNAP . '.' . QBRetroPlain::A_CUST_REF;
-                $where .= '=:' . self::BIND_CUST_ID . ')';
-                $query->where($where);
-                $bind->set(self::BIND_PATH, $path);
-                $bind->set(self::BIND_CUST_ID, $rootCustId);
-                $bind->set(self::BIND_ON_DATE, $onDate);
-                $bind->set(self::BIND_CALC_REF, $calcRef);
                 break;
         }
+        $bind->set(QBDownline::BND_CALC_ID, $calcRef);
+        $bind->set(QBDownline::BND_PATH, $path);
+        $bind->set(QBDownline::BND_CUST_ID, $rootCustId);
     }
 
     protected function prepareCalcRefData(\Praxigento\Core\Data $ctx)

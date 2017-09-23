@@ -8,6 +8,9 @@ namespace Praxigento\BonusHybrid\Api\Stats;
 use Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc as QGetLastCalc;
 use Praxigento\BonusHybrid\Config as Cfg;
 
+/**
+ * @deprecated see \Praxigento\BonusHybrid\Api\Dcp\Report\Downline
+ */
 class Phase1
     extends \Praxigento\BonusHybrid\Api\Stats\Base
     implements \Praxigento\BonusHybrid\Api\Stats\Phase1Interface
@@ -66,10 +69,10 @@ class Phase1
 
         /* filter data by root customer's path */
         $where = \Praxigento\BonusHybrid\Repo\Query\Stats\Phase1\Builder::AS_TREE . '.' .
-            \Praxigento\BonusHybrid\Repo\Entity\Data\Retro\Downline\Compressed\Phase1::ATTR_PATH . ' LIKE :' . self::BIND_PATH;
+            \Praxigento\BonusHybrid\Repo\Entity\Data\Retro\Downline\Compressed\Phase1::ATTR_PATH . ' LIKE :' . self::BND_PATH;
         $path = $rootCustPath . $rootCustId . Cfg::DTPS . '%';
         $query->where($where);
-        $bind->set(self::BIND_PATH, $path);
+        $bind->set(self::BND_PATH, $path);
 
         /* filter data by max depth in downline tree */
         if (!is_null($maxDepth)) {

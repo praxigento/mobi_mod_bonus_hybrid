@@ -7,6 +7,9 @@ namespace Praxigento\BonusHybrid\Api\Stats;
 
 use Praxigento\Downline\Config as Cfg;
 
+/**
+ * @deprecated see \Praxigento\BonusHybrid\Api\Dcp\Report\Downline
+ */
 abstract class Base
     extends \Praxigento\Core\Api\Processor\WithQuery
 {
