@@ -8,28 +8,5 @@
             <resource ref="anonymous"/>
         </resources>
     </route>
-    <route url="/V1/prxgt/bonhyb/stats/phase1" method="POST">
-        <!-- Get phase 1 compressed statistics (PV/TV/OV). -->
-        <service class="Praxigento\BonusHybrid\Api\Stats\Phase1Interface" method="exec"/>
-        <resources>
-            <resource ref="anonymous"/>
-        </resources>
-    </route>
-
-    <route url="/V1/prxgt/bonhyb/stats/phase2" method="POST">
-        <!-- Get phase 2 compressed statistics (PV/TV/OV/Ranks). -->
-        <service class="Praxigento\BonusHybrid\Api\Stats\Phase2Interface" method="exec"/>
-        <resources>
-            <resource ref="anonymous"/>
-        </resources>
-    </route>
-
-    <route url="/V1/prxgt/bonhyb/stats/plain" method="POST">
-        <!-- Get plain (not compressed) statistics (PV/TV/OV). -->
-        <service class="Praxigento\BonusHybrid\Api\Stats\PlainInterface" method="exec"/>
-        <resources>
-            <resource ref="anonymous"/>
-        </resources>
-    </route>
 
 </routes>

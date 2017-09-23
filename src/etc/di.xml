@@ -8,12 +8,6 @@
     <!-- *** -->
     <preference for="\Praxigento\BonusHybrid\Api\Dcp\Report\DownlineInterface"
             type="\Praxigento\BonusHybrid\Api\Dcp\Report\Downline"/>
-    <preference for="\Praxigento\BonusHybrid\Api\Stats\Phase1Interface"
-            type="\Praxigento\BonusHybrid\Api\Stats\Phase1"/>
-    <preference for="\Praxigento\BonusHybrid\Api\Stats\Phase2Interface"
-            type="\Praxigento\BonusHybrid\Api\Stats\Phase2"/>
-    <preference for="\Praxigento\BonusHybrid\Api\Stats\PlainInterface"
-            type="\Praxigento\BonusHybrid\Api\Stats\Plain"/>
 
     <!-- ********************** -->
     <!-- Console (CLI Commands) -->
