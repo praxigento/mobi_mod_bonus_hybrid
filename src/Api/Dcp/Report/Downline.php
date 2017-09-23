@@ -8,25 +8,11 @@ namespace Praxigento\BonusHybrid\Api\Dcp\Report;
 use Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder as QBLastCalc;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Builder as QBDownline;
-use Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Retro\Plain\Builder as QBRetroPlain;
 
-/**
- * @deprecated see \Praxigento\BonusHybrid\Api\Dcp\Report\Downline
- */
 class Downline
-    extends \Praxigento\BonusHybrid\Api\Stats\Base
+    extends \Praxigento\Core\Api\Processor\WithQuery
     implements \Praxigento\BonusHybrid\Api\Dcp\Report\DownlineInterface
 {
-    const BIND_CALC_REF = QBDownline::BND_CALC_ID;
-    const BIND_CUST_ID = 'customerId';
-    const BIND_ON_DATE = QBRetroPlain::BIND_DATE;
-    /**
-     * Types of the queries.
-     */
-    const QUERY_TYPE_ACT_COMPRESS = 'actual&compressed';
-    const QUERY_TYPE_ACT_PLAIN = 'actual&plain';
-    const QUERY_TYPE_RETRO_COMPRESS = 'retro&compressed';
-    const QUERY_TYPE_RETRO_PLAIN = 'retro&plain';
     /**
      * Types of the requested report.
      */
@@ -36,62 +22,70 @@ class Downline
     /**
      * Name of the local context variables.
      */
-    const VAR_ACTUAL_DATA_REQUESTED = 'isActualDataRequested';
     const VAR_CALC_ID = 'calcId';
-    const VAR_QUERY_TYPE = 'queryType';
-    const VAR_REPORT_TYPE = 'reportType';
+    const VAR_CUST_ID = 'custId';
+    const VAR_CUST_PATH = 'path';
 
+    /** @var \Praxigento\Core\Api\IAuthenticator */
+    private $authenticator;
+    /** @var \Praxigento\Core\Tool\IPeriod */
+    private $hlpPeriod;
     /** @var \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Builder */
     private $qbDownline;
     /** @var \Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder */
     private $qbLastCalc;
+    /** @var \Praxigento\Downline\Repo\Entity\Snap */
+    private $repoSnap;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
-        \Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder $qbLastCalc,
-        \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Builder $qbDownline,
-        \Praxigento\Core\Helper\Config $hlpCfg,
         \Praxigento\Core\Api\IAuthenticator $authenticator,
-        \Praxigento\Core\Tool\IPeriod $toolPeriod,
+        \Praxigento\Core\Helper\Config $hlpCfg,
+        \Praxigento\Core\Tool\IPeriod $hlpPeriod,
         \Praxigento\Downline\Repo\Entity\Snap $repoSnap,
-        \Praxigento\BonusHybrid\Api\Stats\Base\Query\GetLastCalc $qPeriodCalc
+        \Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder $qbLastCalc,
+        \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Builder $qbDownline
     )
     {
         /* don't pass query builder to the parent - we have 4 builders in the operation, not one */
-        parent::__construct($manObj, null, $hlpCfg, $authenticator, $toolPeriod, $repoSnap, $qPeriodCalc);
+        parent::__construct($manObj, null, $hlpCfg);
+        $this->authenticator = $authenticator;
+        $this->hlpPeriod = $hlpPeriod;
+        $this->repoSnap = $repoSnap;
         $this->qbDownline = $qbDownline;
         $this->qbLastCalc = $qbLastCalc;
     }
 
-    protected function createQuerySelect(\Praxigento\Core\Data $ctx)
+    protected function authorize(\Praxigento\Core\Data $ctx)
     {
         /* get working vars from context */
-        /** @var \Praxigento\Core\Data $vars */
         $vars = $ctx->get(self::CTX_VARS);
-        $reportType = $vars->get(self::VAR_REPORT_TYPE);
-        $isActualDataRequested = $vars->get(self::VAR_ACTUAL_DATA_REQUESTED);
-        $query = $this->qbDownline->build();
-        /* put appropriate query builder into the context */
-        $queryType = null;
-        if ($isActualDataRequested) {
-            if ($reportType == self::REPORT_TYPE_COMPRESSED) {
-                /* the last compressed tree */
-                $queryType = self::QUERY_TYPE_ACT_COMPRESS;
-            } else {
-                /* the last plain tree */
-                $queryType = self::QUERY_TYPE_ACT_PLAIN;
-            }
+        $rootCustId = $vars->get(self::VAR_CUST_ID);
+        $rootCustPath = $vars->get(self::VAR_CUST_PATH);
+
+        /* only currently logged in customer can get account statement */
+        $currCustData = $this->authenticator->getCurrentCustomerData();
+        $currCustId = $this->authenticator->getCurrentCustomerId();
+        /** @var \Praxigento\Downline\Repo\Entity\Data\Customer $currDwnlData */
+        $currDwnlData = $currCustData->get(\Praxigento\Downline\Infra\Api\Authenticator::A_DWNL_DATA);
+        $currCustPath = $currDwnlData->getPath() . $currDwnlData->getCustomerId() . Cfg::DTPS;
+
+        /* perform action */
+        $isTheSameCusts = ($rootCustId == $currCustId);
+        $isTheParent = !is_null($currCustId) && (substr($rootCustPath, 0, strlen($currCustPath)) == $currCustPath);
+        $isInDevMode = $this->authenticator->isEnabledDevMode();
+        if (($isTheSameCusts) || ($isTheParent) || $isInDevMode) {
+            // do nothing
         } else {
-            if ($reportType == self::REPORT_TYPE_COMPRESSED) {
-                /* retrospective compressed tree */
-                $queryType = self::QUERY_TYPE_RETRO_COMPRESS;
-            } else {
-                /* retrospective plain tree */
-                $queryType = self::QUERY_TYPE_RETRO_PLAIN;
-            }
+            $msg = __('You are not authorized to perform this operation.');
+            throw new \Magento\Framework\Exception\AuthorizationException($msg);
         }
+    }
+
+    protected function createQuerySelect(\Praxigento\Core\Data $ctx)
+    {
+        $query = $this->qbDownline->build();
         $ctx->set(self::CTX_QUERY, $query);
-        $vars->set(self::VAR_QUERY_TYPE, $queryType);
     }
 
     public function exec(\Praxigento\BonusHybrid\Api\Dcp\Report\Downline\Request $data)
@@ -107,7 +101,7 @@ class Downline
      * @param $dateEnd
      * @return mixed
      */
-    protected function getCalcId($calcTypeCode, $dateEnd)
+    private function getCalcId($calcTypeCode, $dateEnd)
     {
         $query = $this->qbLastCalc->build();
         $bind = [
@@ -130,101 +124,76 @@ class Downline
         $bind = $ctx->get(self::CTX_BIND);
         /** @var \Praxigento\Core\Data $vars */
         $vars = $ctx->get(self::CTX_VARS);
-        /** @var \Magento\Framework\DB\Select $query */
-        $query = $ctx->get(self::CTX_QUERY);
 
         /* get working vars */
-        $reportType = $vars->get(self::VAR_REPORT_TYPE);
-        $queryType = $vars->get(self::VAR_QUERY_TYPE);
         $rootCustId = $vars->get(self::VAR_CUST_ID);
         $rootPath = $vars->get(self::VAR_CUST_PATH);
-        $onDate = $vars->get(self::VAR_ON_DATE);
-        $calcRef = $vars->get(self::VAR_CALC_REF);
+        $calcRef = $vars->get(self::VAR_CALC_ID);
         $path = $rootPath . $rootCustId . Cfg::DTPS . '%';
 
-        /* add more conditions to query and bind parameters */
-        switch ($queryType) {
-            case  self::QUERY_TYPE_ACT_COMPRESS:
-                /* TODO */
-                $bind->set(self::BIND_ON_DATE, $onDate);
-                $bind->set(self::BIND_CALC_REF, $calcRef);
-                break;
-            case self::QUERY_TYPE_ACT_PLAIN:
-                /* TODO: should we move WHERE clause into the Query Builder? */
-//                $where = '(' . $this->qbActPlain::AS_DWNL_PLAIN . '.' . EActPlain::ATTR_PATH;
-//                $where .= ' LIKE :' . self::BIND_PATH . ')';
-//                $where .= " OR ";
-//                $where .= '(' . $this->qbActPlain::AS_DWNL_PLAIN . '.' . EActPlain::ATTR_CUSTOMER_REF;
-//                $where .= '=:' . self::BIND_CUST_ID . ')';
-//                $query->where($where);
-                $bind->set(self::BND_PATH, $path);
-                $bind->set(self::BIND_CUST_ID, $rootCustId);
-                break;
-            case  self::QUERY_TYPE_RETRO_COMPRESS:
-                break;
-            case  self::QUERY_TYPE_RETRO_PLAIN:
-                break;
-        }
+        /* bind values for query parameters */
         $bind->set(QBDownline::BND_CALC_ID, $calcRef);
         $bind->set(QBDownline::BND_PATH, $path);
         $bind->set(QBDownline::BND_CUST_ID, $rootCustId);
     }
 
-    protected function prepareCalcRefData(\Praxigento\Core\Data $ctx)
-    {
-        /**
-         * TODO: we need to change this method - it is legacy code from \Praxigento\BonusHybrid\Api\Stats\Base
-         */
-        /* get working vars from context */
-        /** @var \Praxigento\Core\Data $vars */
-        $vars = $ctx->get(self::CTX_VARS);
-
-        /* 'the last calc' query parameters */
-        $dateEnd = $vars->get(self::VAR_ON_DATE);
-        $calcTypeCode = Cfg::CODE_TYPE_CALC_PV_WRITE_OFF;
-
-        $calcRef = $this->getCalcId($calcTypeCode, $dateEnd);
-
-        /* save working variables into execution context */
-        $vars->set(self::VAR_CALC_REF, $calcRef);
-    }
 
     protected function prepareQueryParameters(\Praxigento\Core\Data $ctx)
     {
-        parent::prepareQueryParameters($ctx);
-
         /* get working vars from context */
         /** @var \Praxigento\Core\Data $vars */
         $vars = $ctx->get(self::CTX_VARS);
         /** @var \Praxigento\BonusHybrid\Api\Dcp\Report\Downline\Request $req */
         $req = $ctx->get(self::CTX_REQ);
 
-        /* extract WEB request parameters */
-        $reqPeriod = $req->getPeriod();
-        if ($reqPeriod) {
-            $onDate = $this->toolPeriod->getPeriodLastDate($reqPeriod);
-            $current = $this->toolPeriod->getPeriodCurrent();
-            if ($onDate >= $current) {
-                $isActualDataRequested = true;
-            } else {
-                $isActualDataRequested = false;
+        /* extract HTTP request parameters */
+        $period = $req->getPeriod();
+        $rootCustId = $req->getRootCustId();
+        $reqType = $req->getType();
+
+        /**
+         * Define period.
+         */
+        if (!$period) {
+            /* CAUTION: this code will be failed after 2999 year. Please, call to the author in this case. */
+            $period = '2999';
+        }
+        $period = $this->hlpPeriod->getPeriodLastDate($period);
+
+        /**
+         * Define root customer & path to the root customer on the date.
+         */
+        $isLiveMode = !$this->hlpCfg->getApiAuthenticationEnabledDevMode();
+        if (is_null($rootCustId) || $isLiveMode) {
+            $rootCustId = $this->authenticator->getCurrentCustomerId();
+        }
+        $customerRoot = $this->repoSnap->getByCustomerIdOnDate($rootCustId, $period);
+        $path = $customerRoot->getPath();
+
+        /**
+         * Define calculation ID to get downline data.
+         */
+        $calcTypeCode = null;
+        $onDate = $this->hlpPeriod->getPeriodLastDate($period);
+        $current = $this->hlpPeriod->getPeriodCurrent();
+        if ($onDate >= $current) {
+            /* use forecast downlines */
+            $calcTypeCode = Cfg::CODE_TYPE_CALC_FORECAST_PLAIN;
+            if ($reqType == self::REPORT_TYPE_COMPRESSED) {
+                $calcTypeCode = Cfg::CODE_TYPE_CALC_FORECAST_COMPRESS;
             }
         } else {
-            $onDate = $this->toolPeriod->getPeriodCurrent();
-            $isActualDataRequested = true;
+            /* use historical downlines */
+            $calcTypeCode = Cfg::CODE_TYPE_CALC_PV_WRITE_OFF;
+            if ($reqType == self::REPORT_TYPE_COMPRESSED) {
+                $calcTypeCode = Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1;
+            }
         }
+        $calcId = $this->getCalcId($calcTypeCode, $onDate);
 
-        $reqType = $req->getType();
-        if ($reqType == self::REPORT_TYPE_COMPRESSED) {
-            $type = self::REPORT_TYPE_COMPRESSED;
-        } else {
-            $type = self::REPORT_TYPE_COMPLETE;
-        }
-
-        /* save parsed values in context */
-        $vars->set(self::VAR_ON_DATE, $onDate);
-        $vars->set(self::VAR_ACTUAL_DATA_REQUESTED, $isActualDataRequested);
-        $vars->set(self::VAR_REPORT_TYPE, $type);
+        /* save working variables into execution context */
+        $vars->set(self::VAR_CUST_ID, $rootCustId);
+        $vars->set(self::VAR_CUST_PATH, $path);
+        $vars->set(self::VAR_CALC_ID, $calcId);
     }
-
 }
