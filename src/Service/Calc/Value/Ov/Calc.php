@@ -6,7 +6,7 @@
 namespace Praxigento\BonusHybrid\Service\Calc\Value\Ov;
 
 use Praxigento\BonusHybrid\Defaults as Def;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 
 /**
  * Calculate OV on the compressed downline tree.
@@ -42,7 +42,7 @@ class Calc
      * Calculate OV for the downline tree.
      *
      * @param int $calcId
-     * @return EDwnlBon[] updated tree (with OV)
+     * @return EBonDwnl[] updated tree (with OV)
      */
     public function exec($calcId)
     {
@@ -50,9 +50,9 @@ class Calc
         /* collect additional data */
         $dwnlCompress = $this->repoDwnlBon->getByCalcId($calcId);
         /* create maps to access data */
-        $mapById = $this->mapById($dwnlCompress, EDwnlBon::ATTR_CUST_REF);
-        $mapDepth = $this->mapByTreeDepthDesc($dwnlCompress, EDwnlBon::ATTR_CUST_REF, EDwnlBon::ATTR_DEPTH);
-        $mapTeams = $this->mapByTeams($dwnlCompress, EDwnlBon::ATTR_CUST_REF, EDwnlBon::ATTR_PARENT_REF);
+        $mapById = $this->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
+        $mapDepth = $this->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_DEPTH);
+        $mapTeams = $this->mapByTeams($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
         $signupDebitCustomers = $this->hlpSignupDebitCust->exec();
         /**
          * Scan downline by level from bottom to top
@@ -61,7 +61,7 @@ class Calc
             $this->logger->debug("Process level #$depth of the downline tree.");
             /* ... then scan customers on each level */
             foreach ($levelCustomers as $custId) {
-                /** @var EDwnlBon $entity */
+                /** @var EBonDwnl $entity */
                 $entity = $mapById[$custId];
                 $ov = $entity->getPv(); // initial OV equals to customer's own PV
                 $isSignupDebit = in_array($custId, $signupDebitCustomers);
@@ -73,7 +73,7 @@ class Calc
                     /* add OV from front team members */
                     $team = $mapTeams[$custId];
                     foreach ($team as $memberId) {
-                        /** @var EDwnlBon $member */
+                        /** @var EBonDwnl $member */
                         $member = $result[$memberId];
                         $memberOv = $member->getOv();
                         $ov += $memberOv;

@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Team;
 
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Service\Calc\A\Data\Bonus as DBonus;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
 
@@ -61,13 +61,13 @@ class CalcEu
         $dwnlCompress = $this->repoDwnlBon->getByCalcId($calcId);
         $dwnlCurrent = $this->repoDwnl->get();
         /* create maps to access data */
-        $mapDwnlById = $this->mapById($dwnlCompress, EDwnlBon::ATTR_CUST_REF);
+        $mapDwnlById = $this->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
         $mapCustById = $this->mapById($dwnlCurrent, ECustomer::ATTR_CUSTOMER_ID);
         /**
          * Go through all customers from compressed tree and calculate bonus.
          *
          * @var int $custId
-         * @var EDwnlBon $custDwnl
+         * @var EBonDwnl $custDwnl
          */
         foreach ($mapDwnlById as $custId => $custDwnl) {
             /** @var ECustomer $custData */
@@ -75,7 +75,7 @@ class CalcEu
             $custMlmId = $custData->getHumanRef();
             $pv = $custDwnl->getPv();
             $parentId = $custDwnl->getParentRef();
-            /** @var EDwnlBon $parentDwnl */
+            /** @var EBonDwnl $parentDwnl */
             $parentDwnl = $mapDwnlById[$parentId];
             /** @var ECustomer $parentData */
             $parentData = $mapCustById[$parentId];

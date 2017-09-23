@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Compress;
 
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder as QBldGetPv;
 use Praxigento\BonusHybrid\Service\Calc\Compress\Phase1\Calc as SubCalc;
 use Praxigento\Downline\Repo\Entity\Data\Snap as ESnap;
@@ -204,9 +204,9 @@ class Phase1
             $depth = $one[ESnap::ATTR_DEPTH];
             $parentId = $one[ESnap::ATTR_PARENT_ID];
             $path = $one[ESnap::ATTR_PATH];
-            $pv = $one[EDwnlBon::ATTR_PV];
+            $pv = $one[EBonDwnl::ATTR_PV];
             /* compose new entity to save */
-            $entity = new EDwnlBon();
+            $entity = new EBonDwnl();
             $entity->setCalculationRef($calcId);
             $entity->setCustomerRef($custId);
             $entity->setDepth($depth);

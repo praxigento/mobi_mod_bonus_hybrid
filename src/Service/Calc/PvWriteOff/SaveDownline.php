@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\PvWriteOff;
 
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 
 /**
  * Process PV Write Offs and calculate PV/TV/OV values for plain downline tree.
@@ -103,7 +103,7 @@ class SaveDownline
                 }
 
                 /* register customer in downline registry with initial values for TV/OV (own PV)*/
-                $dwnlData = new EDwnlBon();
+                $dwnlData = new EBonDwnl();
                 $dwnlData->setCalculationRef($calcId);
                 $dwnlData->setCustomerRef($custId);
                 $dwnlData->setOv(0);
@@ -122,7 +122,7 @@ class SaveDownline
                 $custOv = ($isCustQualified) ? $custPv : 0;  // OV = (PV.own + SUM(OV.team)
                 foreach ($team as $childId) {
                     /* all children should be registered before */
-                    /** @var EDwnlBon $childData */
+                    /** @var EBonDwnl $childData */
                     $childData = $regDwnl[$childId];
                     $childPv = $childData->getPv();
                     $childOv = $childData->getOv();
@@ -147,7 +147,7 @@ class SaveDownline
                     }
                 }
                 /* update customer TV & OV */
-                /** @var EDwnlBon $custUpdate */
+                /** @var EBonDwnl $custUpdate */
                 $custUpdate = $regDwnl[$custId];
                 $updateTv = $custUpdate->getTv();
                 $updateOv = $custUpdate->getOv();

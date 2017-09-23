@@ -8,7 +8,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Value;
 use Praxigento\BonusBase\Repo\Entity\Data\Calculation as ECalc;
 use Praxigento\BonusBase\Service\Period\Calc\Get\IDependent as PGetPeriodDep;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Service\Calc\Value\ITv;
 
 class Tv
@@ -93,20 +93,20 @@ class Tv
     /**
      * Update downline tree with calculated TV values.
      *
-     * @param EDwnlBon[] $dwnl
+     * @param EBonDwnl[] $dwnl
      */
     private function updateTv($dwnl)
     {
-        $entity = new  EDwnlBon();
-        /** @var EDwnlBon $one */
+        $entity = new  EBonDwnl();
+        /** @var EBonDwnl $one */
         foreach ($dwnl as $one) {
             $tv = $one->getTv();
             $calcId = $one->getCalculationRef();
             $custId = $one->getCustomerRef();
             $entity->setTv($tv);
             $id = [
-                EDwnlBon::ATTR_CALC_REF => $calcId,
-                EDwnlBon::ATTR_CUST_REF => $custId
+                EBonDwnl::ATTR_CALC_REF => $calcId,
+                EBonDwnl::ATTR_CUST_REF => $custId
             ];
             $this->repoDwnlBon->updateById($id, $entity);
         }

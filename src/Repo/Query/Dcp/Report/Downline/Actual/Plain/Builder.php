@@ -11,6 +11,7 @@ use Praxigento\Downline\Repo\Entity\Data\Customer as ECust;
 
 /**
  * Build query to get DCP Downline Report data for actual plain tree.
+ * @deprecated see \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Builder
  */
 class Builder
     extends \Praxigento\Core\Repo\Query\Def\Builder

@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Courtesy;
 
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Service\Calc\A\Data\Bonus as DBonus;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
 
@@ -59,13 +59,13 @@ class Calc
         $levelsPersonal = $this->repoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_DEF);
         $levelsTeam = $this->repoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF);
         /* create maps to access data */
-        $mapDataById = $this->mapById($dwnlCompress, EDwnlBon::ATTR_CUST_REF);
-        $mapTeams = $this->mapByTeams($dwnlCompress, EDwnlBon::ATTR_CUST_REF, EDwnlBon::ATTR_PARENT_REF);
+        $mapDataById = $this->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
+        $mapTeams = $this->mapByTeams($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
         $mapCustById = $this->mapById($dwnlCurrent, ECustomer::ATTR_CUSTOMER_ID);
         /**
          * Go through all customers from compressed tree and calculate bonus.
          *
-         * @var EDwnlBon $item
+         * @var EBonDwnl $item
          */
         foreach ($dwnlCompress as $item) {
             $custId = $item->getCustomerRef();
@@ -84,7 +84,7 @@ class Calc
                 /* for all front team members of the customer */
                 $team = $mapTeams[$custId];
                 foreach ($team as $memberId) {
-                    /** @var EDwnlBon $memberCompress */
+                    /** @var EBonDwnl $memberCompress */
                     $memberCompress = $mapDataById[$memberId];
                     $pv = $memberCompress->getPv();
                     if ($pv > 0) {

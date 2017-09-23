@@ -8,7 +8,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Compress\Phase2;
 use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Cfg\Param as ECfgParam;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase2\Legs as ELegs;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 
 /**
  * Compression calculation itself.
@@ -81,11 +81,11 @@ class Calc
 
 
         /* prepare source data for calculation */
-        $mapByIdCompress = $this->mapById($dwnlCompress, EDwnlBon::ATTR_CUST_REF);
-        $mapByTeamCompress = $this->mapByTeams($dwnlCompress, EDwnlBon::ATTR_CUST_REF, EDwnlBon::ATTR_PARENT_REF);
-        $mapByDepthCompress = $this->mapByTreeDepthDesc($dwnlCompress, EDwnlBon::ATTR_CUST_REF, EDwnlBon::ATTR_DEPTH);
-        $mapByIdPlain = $this->mapById($dwnlPlain, EDwnlBon::ATTR_CUST_REF);
-        $mapByTeamPlain = $this->mapByTeams($dwnlPlain, EDwnlBon::ATTR_CUST_REF, EDwnlBon::ATTR_PARENT_REF);
+        $mapByIdCompress = $this->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
+        $mapByTeamCompress = $this->mapByTeams($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
+        $mapByDepthCompress = $this->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_DEPTH);
+        $mapByIdPlain = $this->mapById($dwnlPlain, EBonDwnl::ATTR_CUST_REF);
+        $mapByTeamPlain = $this->mapByTeams($dwnlPlain, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
         $rankIdMgr = $this->repoRank->getIdByCode(Def::RANK_MANAGER);
         /* MOBI-629: add init rank for un-ranked entries */
         $rankIdDistr = $this->repoRank->getIdByCode(Def::RANK_DISTRIBUTOR);;
@@ -93,10 +93,10 @@ class Calc
         foreach ($mapByDepthCompress as $level) {
             foreach ($level as $custId) {
                 /* prepare results entries */
-                $entryDwnl = new EDwnlBon();
+                $entryDwnl = new EBonDwnl();
                 $entryLegs = new ELegs();
                 /* get compressed data and compose downline item */
-                /** @var EDwnlBon $custData */
+                /** @var EBonDwnl $custData */
                 $custData = $mapByIdCompress[$custId];
                 $parentId = $custData->getParentRef();
                 $pvOwn = $mapPv[$custId] ?? 0;
@@ -133,7 +133,7 @@ class Calc
                         /* define legs based on plain OV */
                         if (isset($mapByTeamPlain[$custId])) {
                             $teamPlain = $mapByTeamPlain[$custId];
-                            $legs = $this->legsCalc($teamPlain, $mapByIdPlain, EDwnlBon::ATTR_OV);
+                            $legs = $this->legsCalc($teamPlain, $mapByIdPlain, EBonDwnl::ATTR_OV);
 
                         } else {
                             $legs = [0, 0, 0];
@@ -141,7 +141,7 @@ class Calc
                         list($legMaxP, $legSecondP, $legOthersP) = $legs;
                         /* define legs based on compressed OV */
                         $teamCompress = $mapByTeamCompress[$custId];
-                        $legs = $this->legsCalc($teamCompress, $mapByIdCompress, EDwnlBon::ATTR_OV);
+                        $legs = $this->legsCalc($teamCompress, $mapByIdCompress, EBonDwnl::ATTR_OV);
                         list($legMaxC, $legSecondC, $legOthersC) = $legs;
 
                         /* get first 2 legs from plain and 'others' from compressed */
@@ -173,7 +173,7 @@ class Calc
                 /**
                  * Check qualification for current parent
                  */
-                /** @var EDwnlBon $parentData */
+                /** @var EBonDwnl $parentData */
                 $parentData = $mapByIdCompress[$parentId];
                 $parentPvOwn = isset($mapPv[$parentId]) ? $mapPv[$parentId] : 0;
                 $parentTv = $parentData->getTv();
@@ -195,7 +195,7 @@ class Calc
                     $prevParentId = null;
                     $fatherIsUnqual = false; // we should not compress nodes for EU scheme where grand is qualified
                     foreach ($parents as $newParentId) {
-                        /** @var EDwnlBon $newParentData */
+                        /** @var EBonDwnl $newParentData */
                         $newParentData = $mapByIdCompress[$newParentId];
                         $newParentPvOwn = isset($mapPv[$newParentId]) ? $mapPv[$newParentId] : 0;
                         $newParentTv = $newParentData->getTv();
@@ -232,12 +232,12 @@ class Calc
             }
         }
         /* get paths & depths for downline tree (is & parentId only present in results ) */
-        $snap = $this->hlpDwnlTree->expandMinimal($resultDownline, EDwnlBon::ATTR_PARENT_REF);
+        $snap = $this->hlpDwnlTree->expandMinimal($resultDownline, EBonDwnl::ATTR_PARENT_REF);
         /* go through the downline snapshot and move depth & path info into results */
         foreach ($resultDownline as $id => $one) {
             $depth = $snap[$id][\Praxigento\Downline\Repo\Entity\Data\Snap::ATTR_DEPTH];
             $path = $snap[$id][\Praxigento\Downline\Repo\Entity\Data\Snap::ATTR_PATH];
-            /** @var EDwnlBon $entry */
+            /** @var EBonDwnl $entry */
             $entry = $resultDownline[$id];
             $entry->setDepth($depth);
             $entry->setPath($path);

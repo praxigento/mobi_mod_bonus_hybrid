@@ -8,7 +8,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Override;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Cfg\Override as ECfgOvrd;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Service\Calc\A\Data\Bonus as DBonus;
 use Praxigento\BonusHybrid\Service\Calc\Bonus\Override\Calc\Entry as DEntry;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
@@ -85,7 +85,7 @@ class Calc
                         /* this generation exists for the customer */
                         $team = $mapGen[$custId][$gen];
                         foreach ($team as $childId) {
-                            /** @var EDwnlBon $childData */
+                            /** @var EBonDwnl $childData */
                             $childData = $mapById[$childId];
                             $pv = $childData->getPv();
                             $bonus = $this->hlpFormat->roundBonus($pv * $percent);
@@ -111,17 +111,17 @@ class Calc
         $dwnlPlain = $this->repoDwnl->get();
         $cfgOverride = $this->getCfgOverride();
         /* create maps to access data */
-        $mapCmprsById = $this->mapById($dwnlCompress, EDwnlBon::ATTR_CUST_REF);
+        $mapCmprsById = $this->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
         $mapPlainById = $this->mapById($dwnlPlain, ECustomer::ATTR_CUSTOMER_ID);
-        $mapTeams = $this->mapByTeams($dwnlCompress, EDwnlBon::ATTR_CUST_REF, EDwnlBon::ATTR_PARENT_REF);
+        $mapTeams = $this->mapByTeams($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
         /* populate compressed data with depth & path values */
-        $mapByDepthDesc = $this->mapByTreeDepthDesc($dwnlCompress, EDwnlBon::ATTR_CUST_REF, EDwnlBon::ATTR_DEPTH);
+        $mapByDepthDesc = $this->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_DEPTH);
         /* scan all levels starting from the bottom and collect PV by generations */
         $mapGenerations = $this->mapByGeneration($mapByDepthDesc,
             $mapCmprsById); // [ $custId=>[$genId => $totalPv, ...], ... ]
         $defRankId = $this->repoRank->getIdByCode(Def::RANK_DISTRIBUTOR);
         /* scan all customers and calculate bonus values */
-        /** @var EDwnlBon $custCompress */
+        /** @var EBonDwnl $custCompress */
         foreach ($dwnlCompress as $custCompress) {
             $custId = $custCompress->getCustomerRef();
             $rankId = $custCompress->getRankRef();
@@ -191,7 +191,7 @@ class Calc
         $result = []; // [ $custId=>[$genId => $totalPv, ...], ... ]
         foreach ($mapByDepthDesc as $depth => $ids) {
             foreach ($ids as $custId) {
-                /** @var EDwnlBon $entry */
+                /** @var EBonDwnl $entry */
                 $entry = $mapById[$custId];
                 $path = $entry->getPath();
                 $parents = $this->hlpDwnl->getParentsFromPathReversed($path);

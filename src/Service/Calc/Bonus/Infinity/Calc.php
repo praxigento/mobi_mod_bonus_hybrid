@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Infinity;
 
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Cfg\Param as ECfgParam;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
 
 class Calc
@@ -60,11 +60,11 @@ class Calc
         $cfgParams = $this->getCfgParams();
         $ibPercentMax = $this->getMaxPercentForInfinityBonus($cfgParams, $scheme);
         /* create maps to access data */
-        $mapById = $this->mapById($dwnlCompress, EDwnlBon::ATTR_CUST_REF);
+        $mapById = $this->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
         $mapPlainById = $this->mapById($dwnlPlain, ECustomer::ATTR_CUSTOMER_ID);
         /**
          * Process downline tree
-         * @var EDwnlBon $custCompress
+         * @var EBonDwnl $custCompress
          */
         foreach ($mapById as $custId => $custCompress) {
             /** @var ECustomer $custPlain */
@@ -78,7 +78,7 @@ class Calc
                 $ibPercentDelta = $ibPercentMax - $prevParentIbPercent;
                 $isFirstGen = true; // first generation customers should not have an infinity bonus
                 foreach ($parents as $parentId) {
-                    /** @var EDwnlBon $parentCompress */
+                    /** @var EBonDwnl $parentCompress */
                     $parentCompress = $mapById[$parentId];
                     /** @var ECustomer $parentPlain */
                     $parentPlain = $mapPlainById[$parentId];

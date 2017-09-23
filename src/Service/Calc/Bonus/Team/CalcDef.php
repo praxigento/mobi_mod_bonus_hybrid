@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Team;
 
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Defaults as Def;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Service\Calc\A\Data\Bonus as DBonus;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
 
@@ -73,14 +73,14 @@ class CalcDef
         $pctPbMax = $this->getMaxPercentForPersonalBonus($levelsPersonal);
         $courtesyPct = \Praxigento\BonusHybrid\Defaults::COURTESY_BONUS_PERCENT;
         /* create maps to access data */
-        $mapDwnlById = $this->mapById($dwnlCompress, EDwnlBon::ATTR_CUST_REF);
-        $mapTeams = $this->mapByTeams($dwnlCompress, EDwnlBon::ATTR_CUST_REF, EDwnlBon::ATTR_PARENT_REF);
+        $mapDwnlById = $this->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
+        $mapTeams = $this->mapByTeams($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
         $mapCustById = $this->mapById($dwnlCurrent, ECustomer::ATTR_CUSTOMER_ID);
         /**
          * Go through all customers from compressed tree and calculate bonus.
          *
          * @var int $custId
-         * @var EDwnlBon $custDwnl
+         * @var EBonDwnl $custDwnl
          */
         foreach ($mapDwnlById as $custId => $custDwnl) {
             /** @var ECustomer $custData */
@@ -113,7 +113,7 @@ class CalcDef
                     /* current customer has not MAX PB% or there is undistributed delta yet */
                     if ($pctPbLeft > Cfg::DEF_ZERO) {
                         /* get team qualification percent for parent */
-                        /** @var EDwnlBon $parentDwnl */
+                        /** @var EBonDwnl $parentDwnl */
                         $parentDwnl = $mapDwnlById[$parentId];
                         /** @var ECustomer $parentData */
                         $parentData = $mapCustById[$parentId];

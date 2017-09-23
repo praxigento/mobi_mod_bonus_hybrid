@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Value;
 
 use Praxigento\BonusBase\Service\Period\Calc\Get\IDependent as PGetPeriodDep;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EDwnlBon;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 
 class Ov
     implements \Praxigento\BonusHybrid\Service\Calc\Value\IOv
@@ -83,20 +83,20 @@ class Ov
     /**
      * Update downline tree with calculated OV values.
      *
-     * @param EDwnlBon[] $dwnl
+     * @param EBonDwnl[] $dwnl
      */
     private function updateOv($dwnl)
     {
-        $entity = new  EDwnlBon();
-        /** @var EDwnlBon $one */
+        $entity = new  EBonDwnl();
+        /** @var EBonDwnl $one */
         foreach ($dwnl as $one) {
             $ov = $one->getOv();
             $calcId = $one->getCalculationRef();
             $custId = $one->getCustomerRef();
             $entity->setOv($ov);
             $id = [
-                EDwnlBon::ATTR_CALC_REF => $calcId,
-                EDwnlBon::ATTR_CUST_REF => $custId
+                EBonDwnl::ATTR_CALC_REF => $calcId,
+                EBonDwnl::ATTR_CUST_REF => $custId
             ];
             $this->repoDwnlBon->updateById($id, $entity);
         }
