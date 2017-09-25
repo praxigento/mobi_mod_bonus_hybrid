@@ -6,7 +6,6 @@
 
 namespace Praxigento\BonusHybrid\Setup;
 
-use Praxigento\BonusHybrid\Repo\Entity\Data\Actual\Downline\Plain as ActDwnlPlain;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Cfg\Override as CfgOverride;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Cfg\Param as CfgParam;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Oi as OiCompress;
@@ -14,8 +13,6 @@ use Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase1\Transfer\Pv as Ph
 use Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase2\Legs as Phase2Legs;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as Dwnl;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Registry\SignupDebit as SignupDebit;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Retro\Downline\Compressed\Phase1 as CmprsPhase1;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Retro\Downline\Plain as RetroDwnlPlain;
 
 class InstallSchema
     extends \Praxigento\Core\Setup\Schema\Base
@@ -30,11 +27,6 @@ class InstallSchema
         /* Downline Tree (common for actual/retro & plain/compressed cases)*/
         $entityAlias = Dwnl::ENTITY_NAME;
         $demEntity = $demPackage->get('entity/Downline');
-        $this->_toolDem->createEntity($entityAlias, $demEntity);
-
-        /* Actual Downline Plain Tree */
-        $entityAlias = ActDwnlPlain::ENTITY_NAME;
-        $demEntity = $demPackage->get('package/Actual/package/Downline/entity/Plain');
         $this->_toolDem->createEntity($entityAlias, $demEntity);
 
         /* Config Override */
@@ -65,16 +57,6 @@ class InstallSchema
         /* Registry Sign Up Volume Debit */
         $entityAlias = SignupDebit::ENTITY_NAME;
         $demEntity = $demPackage->get('package/Registry/entity/SignUpVolumeDebit');
-        $this->_toolDem->createEntity($entityAlias, $demEntity);
-
-        /* Retrospective Plain Downline Tree */
-        $entityAlias = RetroDwnlPlain::ENTITY_NAME;
-        $demEntity = $demPackage->get('package/Retro/package/Downline/entity/Plain');
-        $this->_toolDem->createEntity($entityAlias, $demEntity);
-
-        /* Retrospective Downline Tree that is Compressed in Phase 1 */
-        $entityAlias = CmprsPhase1::ENTITY_NAME;
-        $demEntity = $demPackage->get('package/Retro/package/Downline/package/Compressed/entity/Phase1');
         $this->_toolDem->createEntity($entityAlias, $demEntity);
 
     }
