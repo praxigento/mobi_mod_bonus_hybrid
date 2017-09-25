@@ -101,17 +101,17 @@ class Plain
             $customerId = $entry->customerId;
             if ($turnover > Cfg::DEF_ZERO) {
                 $positiveTurnover[$customerId] = $entry;
-                /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Actual\Downline\Plain $plainDo */
-                $plainDo = $dwnlTree[$customerId];
-                $plainDo->setPv($turnover);
+                /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Downline $dwnlEntry */
+                $dwnlEntry = $dwnlTree[$customerId];
+                $dwnlEntry->setPv($turnover);
                 $rankCode = $ranks[$customerId];
-                $plainDo->setRankCode($rankCode);
+                $dwnlEntry->setRankCode($rankCode);
             }
         }
 
         /* perform calculation */
         $ctx = new \Praxigento\Core\Data();
-        $ctx->set(SubCalc::CTX_PLAIN_TREE, $dwnlTree);
+        $ctx->set(SubCalc::CTX_DWNL_TREE, $dwnlTree);
         $this->subCalc->exec($ctx);
 
         /* replace actual data in repository */

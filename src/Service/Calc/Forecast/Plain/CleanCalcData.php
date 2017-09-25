@@ -9,7 +9,7 @@ use Praxigento\BonusBase\Repo\Entity\Data\Calculation as ECalc;
 use Praxigento\BonusBase\Repo\Entity\Data\Period as EPeriod;
 
 /**
- * Internal processor to clean calculation data for forecast calculations (plain & compressed).
+ * Internal process to clean calculation data for forecast calculations (plain & compressed).
  */
 class CleanCalcData
 {
