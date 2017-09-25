@@ -8,7 +8,6 @@ namespace Praxigento\BonusHybrid\Setup;
 
 use Praxigento\BonusHybrid\Repo\Entity\Data\Cfg\Override as CfgOverride;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Cfg\Param as CfgParam;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Oi as OiCompress;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase1\Transfer\Pv as Phase1TransPv;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase2\Legs as Phase2Legs;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as Dwnl;
@@ -47,11 +46,6 @@ class InstallSchema
         /* Compression / Phase I / Transfer / PV */
         $entityAlias = Phase2Legs::ENTITY_NAME;
         $demEntity = $demPackage->get('package/Compression/package/Phase2/entity/Legs');
-        $this->_toolDem->createEntity($entityAlias, $demEntity);
-
-        /* Compression OI */
-        $entityAlias = OiCompress::ENTITY_NAME;
-        $demEntity = $demPackage->get('package/Compression/entity/OI');
         $this->_toolDem->createEntity($entityAlias, $demEntity);
 
         /* Registry Sign Up Volume Debit */
