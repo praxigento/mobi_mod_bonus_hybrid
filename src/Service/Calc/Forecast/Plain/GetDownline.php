@@ -5,10 +5,11 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Forecast\Plain;
 
+use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\Downline\Repo\Query\Snap\OnDate\Builder as QBSnapOnDate;
 
 /**
- * Processor to collect downline data and compose array of entities
+ * Process to collect downline data and compose array of entities
  * (\Praxigento\BonusHybrid\Repo\Entity\Data\Downline) to populate it with additional values and to it save in the end.
  */
 class GetDownline
@@ -18,12 +19,16 @@ class GetDownline
     const CTX_OUT_DWNL = 'downline';
 
     /** @var \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder */
-    private $qbldSnapOnDate;
+    private $qbSnapOnDate;
+    /** @var \Praxigento\BonusBase\Repo\Entity\Rank */
+    private $repoRanks;
 
     public function __construct(
-        \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder $qbldSnapOnDate
+        \Praxigento\BonusBase\Repo\Entity\Rank $repoRank,
+        \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder $qbSnapOnDate
     ) {
-        $this->qbldSnapOnDate = $qbldSnapOnDate;
+        $this->repoRanks = $repoRank;
+        $this->qbSnapOnDate = $qbSnapOnDate;
     }
 
     /**
@@ -36,10 +41,12 @@ class GetDownline
         $dateOn = $ctx->get(self::CTX_IN_DATE_ON);
 
         /* collect downline data to given date */
-        $query = $this->qbldSnapOnDate->getSelectQuery();
+        $query = $this->qbSnapOnDate->getSelectQuery();
         $conn = $query->getConnection();
         $bind = [QBSnapOnDate::BIND_ON_DATE => $dateOn];
         $rows = $conn->fetchAll($query, $bind);
+        /* ... and default rank ID */
+        $rankIdDef = $this->getDefaultRankId();
 
         /* convert downline data to the entity (prxgt_bon_hyb_dwnl) */
         $result = [];
@@ -61,12 +68,22 @@ class GetDownline
             $item->setTv(0);
             $item->setOv(0);
             /* init ranks and unqualified months count */
-            $item->setRankRef(null);
+            $item->setRankRef($rankIdDef);
             $item->setUnqMonths(0);
             $result[$customerId] = $item;
         }
 
         /* put results into context and return it (classic way) */
         $ctx->set(self::CTX_OUT_DWNL, $result);
+    }
+
+    /**
+     * Get ID for rank with code DISTRIBUTOR.
+     * @return int
+     */
+    private function getDefaultRankId()
+    {
+        $result = $this->repoRanks->getIdByCode(Def::RANK_DISTRIBUTOR);
+        return $result;
     }
 }

@@ -29,8 +29,6 @@ class Plain
     private $subCalc;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetDownline */
     private $subGetDownline;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetRanks */
-    private $subGetRanks;
     /** @var  \Praxigento\Core\Tool\IPeriod */
     private $hlpPeriod;
 
@@ -42,7 +40,6 @@ class Plain
         \Praxigento\Accounting\Service\Balance\Get\ITurnover $callBalanceGetTurnover,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Calc $subCalc,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetDownline $subGetDownline,
-        \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetRanks $subGetRanks,
         \Praxigento\BonusBase\Service\Period\Calc\IAdd $procPeriodAdd,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\CleanCalcData $procCleanCalcData
     )
@@ -54,7 +51,6 @@ class Plain
         $this->callBalanceGetTurnover = $callBalanceGetTurnover;
         $this->subCalc = $subCalc;
         $this->subGetDownline = $subGetDownline;
-        $this->subGetRanks = $subGetRanks;
         $this->procPeriodAdd = $procPeriodAdd;
         $this->procCleanCalcData = $procCleanCalcData;
     }
@@ -64,6 +60,7 @@ class Plain
         $this->logger->info("'Forecast Plain' calculation is started.");
 
         $period = $ctx->get(self::CTX_IN_PERIOD);
+        $period = '201708'; // TODO: remove tmp code
 
         /* clean up existing forecast calculation data */
         $ctxClean = new \Praxigento\Core\Data();
@@ -84,12 +81,6 @@ class Plain
         /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] $dwnlTree */
         $dwnlTree = $ctxDwnl->get(ProcGetDownline::CTX_OUT_DWNL);
 
-        /* get the last ranks for customers (date before $dateFrom) */
-        $ctxRanks = new \Praxigento\Core\Data();
-        $ctxRanks->set($this->subGetRanks::CTX_IN_DATE_ON, $dateFrom);
-        $ctxRanks->set($this->subGetRanks::CTX_IO_TREE, $dwnlTree);
-        $ranks = $this->subGetRanks->exec($ctxRanks);
-
         /* get PV turnover for period */
         $entries = $this->getPvTurnover($dateFrom, $dateTo);
 
@@ -104,8 +95,6 @@ class Plain
                 /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Downline $dwnlEntry */
                 $dwnlEntry = $dwnlTree[$customerId];
                 $dwnlEntry->setPv($turnover);
-                $rankCode = $ranks[$customerId];
-                $dwnlEntry->setRankCode($rankCode);
             }
         }
 
