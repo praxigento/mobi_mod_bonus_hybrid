@@ -13,6 +13,8 @@ class Forecast
 {
     /** @var \Magento\Framework\DB\Adapter\AdapterInterface */
     protected $conn;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\ICompress */
+    protected $procCalcCompress;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\IPlain */
     protected $procCalcPlain;
     /** @var \Magento\Framework\App\ResourceConnection */
@@ -21,7 +23,8 @@ class Forecast
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Magento\Framework\App\ResourceConnection $resource,
-        \Praxigento\BonusHybrid\Service\Calc\Forecast\IPlain $procCalcPlain
+        \Praxigento\BonusHybrid\Service\Calc\Forecast\IPlain $procCalcPlain,
+        \Praxigento\BonusHybrid\Service\Calc\Forecast\ICompress $procCalcCompress
     )
     {
         parent::__construct(
@@ -32,6 +35,7 @@ class Forecast
         $this->resource = $resource;
         $this->conn = $this->resource->getConnection();
         $this->procCalcPlain = $procCalcPlain;
+        $this->procCalcCompress = $procCalcCompress;
     }
 
     protected function execute(
@@ -44,9 +48,8 @@ class Forecast
         try {
             $ctx = new \Praxigento\Core\Data();
             $this->procCalcPlain->exec($ctx);
-
+            $this->procCalcCompress->exec($ctx);
             $this->conn->commit();
-//            $this->conn->rollBack();
         } catch (\Throwable $e) {
             $msg = $e->getMessage();
             $trace = $e->getTraceAsString();

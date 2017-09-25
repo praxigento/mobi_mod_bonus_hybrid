@@ -6,19 +6,21 @@
 namespace Praxigento\BonusHybrid\Service\Calc\Forecast;
 
 use Praxigento\BonusHybrid\Config as Cfg;
+use Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Clean as PCleanCalcData;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Calc as SubCalc;
-use Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\CleanCalcData as ProcCleanCalcData;
-use Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetDownline as ProcGetDownline;
+use Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetDownline as PGetDownline;
 
 class Plain
     implements \Praxigento\BonusHybrid\Service\Calc\Forecast\IPlain
 {
     /** @var \Praxigento\Accounting\Service\Balance\Get\ITurnover */
     private $callBalanceGetTurnover;
+    /** @var  \Praxigento\Core\Tool\IPeriod */
+    private $hlpPeriod;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\CleanCalcData */
-    private $procCleanCalcData;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Clean */
+    private $procCleanCalc;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\IAdd */
     private $procPeriodAdd;
     /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
@@ -29,8 +31,6 @@ class Plain
     private $subCalc;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetDownline */
     private $subGetDownline;
-    /** @var  \Praxigento\Core\Tool\IPeriod */
-    private $hlpPeriod;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
@@ -41,7 +41,7 @@ class Plain
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Calc $subCalc,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetDownline $subGetDownline,
         \Praxigento\BonusBase\Service\Period\Calc\IAdd $procPeriodAdd,
-        \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\CleanCalcData $procCleanCalcData
+        \Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Clean $procCleanCalc
     )
     {
         $this->logger = $logger;
@@ -52,7 +52,7 @@ class Plain
         $this->subCalc = $subCalc;
         $this->subGetDownline = $subGetDownline;
         $this->procPeriodAdd = $procPeriodAdd;
-        $this->procCleanCalcData = $procCleanCalcData;
+        $this->procCleanCalc = $procCleanCalc;
     }
 
     public function exec(\Praxigento\Core\Data $ctx)
@@ -64,8 +64,8 @@ class Plain
 
         /* clean up existing forecast calculation data */
         $ctxClean = new \Praxigento\Core\Data();
-        $ctxClean->set(ProcCleanCalcData::CTX_IN_CALC_TYPE_CODE, Cfg::CODE_TYPE_CALC_FORECAST_PLAIN);
-        $this->procCleanCalcData->exec($ctxClean);
+        $ctxClean->set(PCleanCalcData::IN_CALC_TYPE_CODE, Cfg::CODE_TYPE_CALC_FORECAST_PLAIN);
+        $this->procCleanCalc->exec($ctxClean);
 
         /* get calculation period (begin, end dates) */
         list($dateFrom, $dateTo) = $this->getPeriod($period);
@@ -75,11 +75,11 @@ class Plain
 
         /* get customers downline for $dateTo */
         $ctxDwnl = new \Praxigento\Core\Data();
-        $ctxDwnl->set(ProcGetDownline::CTX_IN_CALC_ID, $calcId);
-        $ctxDwnl->set(ProcGetDownline::CTX_IN_DATE_ON, $dateTo);
+        $ctxDwnl->set(PGetDownline::CTX_IN_CALC_ID, $calcId);
+        $ctxDwnl->set(PGetDownline::CTX_IN_DATE_ON, $dateTo);
         $this->subGetDownline->exec($ctxDwnl);
         /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] $dwnlTree */
-        $dwnlTree = $ctxDwnl->get(ProcGetDownline::CTX_OUT_DWNL);
+        $dwnlTree = $ctxDwnl->get(PGetDownline::CTX_OUT_DWNL);
 
         /* get PV turnover for period */
         $entries = $this->getPvTurnover($dateFrom, $dateTo);

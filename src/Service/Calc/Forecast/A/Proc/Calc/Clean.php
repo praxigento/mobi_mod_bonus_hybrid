@@ -3,18 +3,18 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Service\Calc\Forecast\Plain;
+namespace Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc;
 
 use Praxigento\BonusBase\Repo\Entity\Data\Calculation as ECalc;
 use Praxigento\BonusBase\Repo\Entity\Data\Period as EPeriod;
 
 /**
- * Internal process to clean calculation data for forecast calculations (plain & compressed).
+ * Local process to clean calculation data for forecast calculations (plain & compressed).
  */
-class CleanCalcData
+class Clean
+    implements \Praxigento\Core\Service\IProcess
 {
-    const CTX_IN_CALC_TYPE_CODE = 'calcTypeCode';
-    const CTX_OUT_RESULT = 'result';
+    const IN_CALC_TYPE_CODE = 'calcTypeCode';
 
     /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
     private $repoCalc;
@@ -41,7 +41,7 @@ class CleanCalcData
     public function exec(\Praxigento\Core\Data $ctx)
     {
         /* get working data from context */
-        $calcTypeCode = $ctx->get(self::CTX_IN_CALC_TYPE_CODE);
+        $calcTypeCode = $ctx->get(self::IN_CALC_TYPE_CODE);
 
         /* get calculation type ID by code */
         $calcTypeId = $this->repoTypeCalc->getIdByCode($calcTypeCode);
