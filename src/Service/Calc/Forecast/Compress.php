@@ -7,6 +7,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Forecast;
 
 
 use Praxigento\BonusHybrid\Config as Cfg;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase1 as PCpmrsPhase1;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Clean as PCalcClean;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Register as PCalcReg;
@@ -62,8 +63,15 @@ class Compress
         $ctx = new \Praxigento\Core\Data();
         $ctx->set(PCpmrsPhase1::IN_CALC_ID, $calcId);
         $ctx->set(PCpmrsPhase1::IN_PV, $pv);
-        $ctx->set(PCpmrsPhase1::IN_DWNL_SNAP, $downline);
-        $this->procCmprsPhase1->exec($ctx);
+        $ctx->set(PCpmrsPhase1::IN_DWNL_PLAIN, $downline);
+        $ctx->set(PCpmrsPhase1::IN_KEY_CUST_ID, EBonDwnl::ATTR_CUST_REF);
+        $ctx->set(PCpmrsPhase1::IN_KEY_PARENT_ID, EBonDwnl::ATTR_PARENT_REF);
+        $ctx->set(PCpmrsPhase1::IN_KEY_DEPTH, EBonDwnl::ATTR_DEPTH);
+        $ctx->set(PCpmrsPhase1::IN_KEY_PATH, EBonDwnl::ATTR_PATH);
+
+        $outPhase1 = $this->procCmprsPhase1->exec($ctx);
+        $result = $outPhase1->get(PCpmrsPhase1::OUT_COMPRESSED);
+        return $result;
     }
 
     public function exec(\Praxigento\Core\Data $ctx)
@@ -75,7 +83,7 @@ class Compress
         $calcId = $this->registerCalc();
 
         /* perform Phase1 compression */
-        $this->compressPhase1($calcId);
+        $dwnlPhase1 = $this->compressPhase1($calcId);
 
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);

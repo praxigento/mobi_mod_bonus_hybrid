@@ -7,7 +7,6 @@ namespace Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress;
 
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
-use Praxigento\Downline\Repo\Query\Snap\OnDate\Builder as ASnap;
 
 /**
  * Process to calculate phase1 compression.
@@ -23,9 +22,15 @@ class Phase1
 
     /** Calculation ID to reference in compressed PV transfers  */
     const IN_CALC_ID = 'calcId';
-    /** Customers downline tree to the end of calculation period */
-    const IN_DWNL_SNAP = 'dwnlSnap';
-    /** PV by customer id map */
+    /** Customers downline tree (plain) to the end of calculation period */
+    const IN_DWNL_PLAIN = 'dwnlPlain';
+    /**#@+ string: keys names for attributes in plain downline. */
+    const IN_KEY_CUST_ID = 'keyCustId';
+    const IN_KEY_DEPTH = 'keyDepth';
+    const IN_KEY_PARENT_ID = 'keyParentId';
+    const IN_KEY_PATH = 'keyPath';
+    /**#@-  */
+    /** PV by customer ID map */
     const IN_PV = 'pv';
     /** Calculation results, data for compression table */
     const OUT_COMPRESSED = 'compressed';
@@ -82,36 +87,39 @@ class Phase1
     {
         /* extract working variables from execution context */
         $calcId = $ctx->get(self::IN_CALC_ID);
-        $pv = $ctx->get(self::IN_PV);
-        $snap = $ctx->get(self::IN_DWNL_SNAP);
+        $mapPv = $ctx->get(self::IN_PV);
+        $snap = $ctx->get(self::IN_DWNL_PLAIN);
+        $keyCustId = $ctx->get(self::IN_KEY_CUST_ID);
+        $keyParentId = $ctx->get(self::IN_KEY_PARENT_ID);
+        $keyDepth = $ctx->get(self::IN_KEY_DEPTH);
+        $keyPath = $ctx->get(self::IN_KEY_PATH);
 
-        /* prepare results structures */
+        /* prepare result vars */
+        $result = new \Praxigento\Core\Data();
         /* array with PV compression transfers results (see \Praxigento\BonusHybrid\Repo\Data\Entity\Compression\Phase1\Transfer\Pv) */
         $pvTransfers = [];
 
-        /* compose intermediary working data */
-        /** @var \Praxigento\Downline\Repo\Entity\Data\Customer[] $customers */
-        $customers = $this->repoCustDwnl->get();
-
-        /* perform action */
+        /* define local working data */
         $qLevels = $this->hlpScheme->getQualificationLevels();
         $forcedCustomers = $this->hlpScheme->getForcedQualificationCustomersIds();
         $signupDebitCustomers = $this->hlpSignupDebitCust->exec();
 
         /* prepare intermediary structures for calculation */
-        $mapCustomer = $this->mapById($customers, ECustomer::ATTR_CUSTOMER_ID);
-        $mapSnap = $this->mapById($snap, ASnap::A_CUST_ID);
-        $mapPv = $pv;
-        $mapDepth = $this->mapByTreeDepthDesc($snap, ASnap::A_CUST_ID, ASnap::A_DEPTH);
-        $mapTeams = $this->mapByTeams($snap, ASnap::A_CUST_ID, ASnap::A_PARENT_ID);
+        $mapCustomer = $this->getCustomersMap();
+        $mapSnap = $this->mapById($snap, $keyCustId);
+        $mapDepth = $this->mapByTreeDepthDesc($snap, $keyCustId, $keyDepth);
+        $mapTeams = $this->mapByTeams($snap, $keyCustId, $keyParentId);
 
-        /* compression itself */
+        /**
+         * perform processing
+         */
         /* array for compression results: [$customerId => [$pvCompressed, $parentCompressed], ... ]*/
         $compression = [];
         foreach ($mapDepth as $depth => $levelCustomers) {
             foreach ($levelCustomers as $custId) {
                 $pv = isset($mapPv[$custId]) ? $mapPv[$custId] : 0;
-                $parentId = $mapSnap[$custId][ASnap::A_PARENT_ID];
+                $dwnlEntry = $mapSnap[$custId];
+                $parentId = is_array($dwnlEntry) ? $dwnlEntry[$keyParentId] : $dwnlEntry->get($keyParentId);
                 $custData = $mapCustomer[$custId];
                 $scheme = $this->hlpScheme->getSchemeByCustomer($custData);
                 $level = $qLevels[$scheme]; // qualification level for current customer
@@ -127,7 +135,7 @@ class Phase1
                     }
                 } else {
                     /* move PV up to the closest qualified parent (parent's level is used for qualification) */
-                    $path = $mapSnap[$custId][ASnap::A_PATH];
+                    $path = is_array($dwnlEntry) ? $dwnlEntry[$keyPath] : $dwnlEntry->get($keyPath);
                     $parents = $this->hlpTree->getParentsFromPathReversed($path);
                     $foundParentId = null;
                     foreach ($parents as $newParentId) {
@@ -185,9 +193,23 @@ class Phase1
         /* add compressed PV data */
         $compressedTree = $this->populateCompressedSnapWithPv($compressedTree, $compression);
 
-        /* place results to context */
-        $ctx->set(self::OUT_COMPRESSED, $compressedTree);
-        $ctx->set(self::OUT_PV_TRANSFERS, $pvTransfers);
+        /* put result data into output */
+        $result->set(self::OUT_COMPRESSED, $compressedTree);
+        $result->set(self::OUT_PV_TRANSFERS, $pvTransfers);
+        return $result;
+    }
+
+    /**
+     * Actual customers downline mapped by customer ID.
+     *
+     * @return \Praxigento\Downline\Repo\Entity\Data\Customer[]
+     */
+    private function getCustomersMap()
+    {
+        /** @var \Praxigento\Downline\Repo\Entity\Data\Customer[] $customers */
+        $customers = $this->repoCustDwnl->get();
+        $result = $this->mapById($customers, ECustomer::ATTR_CUSTOMER_ID);
+        return $result;
     }
 
     /**

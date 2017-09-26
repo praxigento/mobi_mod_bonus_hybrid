@@ -45,13 +45,14 @@ class GetPlainData
         /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] $downline */
         $downline = $this->repoBonDwnl->getByCalcId($calcIdPlain);
         foreach ($downline as $item) {
+            $custId = $item->getCustomerRef();
             $pv = $item->getPv();
             if (abs($pv) > Cfg::DEF_ZERO) {
-                $custId = $item->getCustomerRef();
                 $outPv[$custId] = $pv;
             }
+
         }
-        /* compose result data */
+        /* put result data into output */
         $result->set(self::OUT_PV, $outPv);
         $result->set(self::OUT_DWNL, $downline);
         return $result;
