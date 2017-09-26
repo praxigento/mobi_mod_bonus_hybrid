@@ -84,7 +84,7 @@ class SignupDebit
     {
         /* get period & calc data (first calc in the chain) */
         $ctx = new \Praxigento\Core\Data();
-        $ctx->set($this->procPeriodGetBasis::CTX_IN_CALC_CODE, Cfg::CODE_TYPE_CALC_BONUS_SIGNUP_DEBIT);
+        $ctx->set($this->procPeriodGetBasis::CTX_IN_CALC_CODE, Cfg::CODE_TYPE_CALC_BONUS_SIGN_UP_DEBIT);
         $ctx->set($this->procPeriodGetBasis::CTX_IN_ASSET_TYPE_CODE, Cfg::CODE_TYPE_ASSET_PV);
         $ctx->set($this->procPeriodGetBasis::CTX_IN_PERIOD_TYPE, \Praxigento\Core\Tool\IPeriod::TYPE_MONTH);
         $this->procPeriodGetBasis->exec($ctx);

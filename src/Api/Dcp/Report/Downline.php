@@ -180,7 +180,8 @@ class Downline
             /* use forecast downlines */
             $calcTypeCode = Cfg::CODE_TYPE_CALC_FORECAST_PLAIN;
             if ($reqType == self::REPORT_TYPE_COMPRESSED) {
-                $calcTypeCode = Cfg::CODE_TYPE_CALC_FORECAST_COMPRESS;
+                /* TODO: use compression scheme according to the current customer */
+                $calcTypeCode = Cfg::CODE_TYPE_CALC_FORECAST_PHASE2_DEF;
             }
         } else {
             /* use historical downlines */
