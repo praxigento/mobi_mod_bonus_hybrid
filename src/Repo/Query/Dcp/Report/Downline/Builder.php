@@ -44,17 +44,6 @@ class Builder
     const BND_CUST_ID = 'custId';
     const BND_PATH = 'path';
 
-    public function __construct(
-        \Magento\Framework\App\ResourceConnection $resource,
-        \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder $qbldSnapOnDate,
-        \Praxigento\Downline\Repo\Query\Snap\OnDate\ForDcp\Builder $qbldDwnlSnap
-    )
-    {
-        parent::__construct($resource);
-        $this->qbldSnapOnDate = $qbldSnapOnDate;
-        $this->qbldDwnlSnap = $qbldDwnlSnap;
-    }
-
     public function build(\Magento\Framework\DB\Select $source = null)
     {
         $result = $this->conn->select();
