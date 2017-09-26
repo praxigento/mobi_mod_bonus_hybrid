@@ -41,9 +41,10 @@ class InstallData extends \Praxigento\Core\Setup\Data\Base
             $this->_resource->getTableName(TypeCalc::ENTITY_NAME),
             [TypeCalc::ATTR_CODE, TypeCalc::ATTR_NOTE],
             [
-                [Cfg::CODE_TYPE_CALC_BONUS_SIGNUP_DEBIT, 'Sign Up Volume Debit (EU only).'],
+                [Cfg::CODE_TYPE_CALC_BONUS_SIGN_UP_DEBIT, 'Sign Up Volume Debit (EU only).'],
                 [Cfg::CODE_TYPE_CALC_BONUS_QUICK_START, 'Quick Start (EU only).'],
-                [Cfg::CODE_TYPE_CALC_FORECAST_COMPRESS, 'Daily forecast calculation (compressed).'],
+                [Cfg::CODE_TYPE_CALC_FORECAST_PHASE2_DEF, 'Daily forecast calculation (compressed, DEFAULT scheme).'],
+                [Cfg::CODE_TYPE_CALC_FORECAST_PHASE2_EU, 'Daily forecast calculation (compressed, EU scheme).'],
                 [Cfg::CODE_TYPE_CALC_FORECAST_PLAIN, 'Daily forecast calculation (plain tree).'],
                 [Cfg::CODE_TYPE_CALC_PV_WRITE_OFF, 'PV write off calculation.'],
                 [

@@ -28,10 +28,10 @@ class Compress
     private $procCmprsPhase1;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\GetPlainData */
     private $procGetPlainData;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\A\Proc\Tv */
-    private $procTv;
     /** @var \Praxigento\BonusHybrid\Service\Calc\A\Proc\Ov */
     private $procOv;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\A\Proc\Tv */
+    private $procTv;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
@@ -52,15 +52,6 @@ class Compress
         $this->procGetPlainData = $procGetPlainData;
     }
 
-    private function calcTv($dwnl)
-    {
-        $in = new \Praxigento\Core\Data();
-        $in->set(PTv::IN_DWNL, $dwnl);
-        $out = $this->procTv->exec($in);
-        $result = $out->get(PTv::OUT_DWNL);
-        return $result;
-    }
-
     private function calcOv($dwnl)
     {
         $in = new \Praxigento\Core\Data();
@@ -71,13 +62,22 @@ class Compress
         return $result;
     }
 
+    private function calcTv($dwnl)
+    {
+        $in = new \Praxigento\Core\Data();
+        $in->set(PTv::IN_DWNL, $dwnl);
+        $out = $this->procTv->exec($in);
+        $result = $out->get(PTv::OUT_DWNL);
+        return $result;
+    }
+
     /**
      * Clean up existing forecast calculation data.
      */
     private function cleanCalc()
     {
         $ctx = new \Praxigento\Core\Data();
-        $ctx->set(PCalcClean::IN_CALC_TYPE_CODE, Cfg::CODE_TYPE_CALC_FORECAST_COMPRESS);
+        $ctx->set(PCalcClean::IN_CALC_TYPE_CODE, Cfg::CODE_TYPE_CALC_FORECAST_PHASE2_DEF);
         $this->procCalcClean->exec($ctx);
     }
 
@@ -132,7 +132,7 @@ class Compress
     private function registerCalc()
     {
         $ctx = new \Praxigento\Core\Data();
-        $ctx->set(PCalcReg::IN_CALC_TYPE_CODE, Cfg::CODE_TYPE_CALC_FORECAST_COMPRESS);
+        $ctx->set(PCalcReg::IN_CALC_TYPE_CODE, Cfg::CODE_TYPE_CALC_FORECAST_PHASE2_DEF);
         /** @var \Praxigento\Core\Data $res */
         $res = $this->procCalcReg->exec($ctx);
         $result = $res->get(PCalcReg::OUT_CALC_ID);

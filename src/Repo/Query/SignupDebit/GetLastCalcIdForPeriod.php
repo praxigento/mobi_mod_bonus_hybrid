@@ -61,7 +61,7 @@ class GetLastCalcIdForPeriod
         $query->limit(1);
         /* bind vars and fetch results */
         $bind = [
-            self::BIND_CODE => Cfg::CODE_TYPE_CALC_BONUS_SIGNUP_DEBIT,
+            self::BIND_CODE => Cfg::CODE_TYPE_CALC_BONUS_SIGN_UP_DEBIT,
             self::BIND_STATE => Cfg::CALC_STATE_COMPLETE
         ];
         $result = $this->conn->fetchOne($query, $bind);
