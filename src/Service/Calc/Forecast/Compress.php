@@ -9,6 +9,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Forecast;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase1 as PCpmrsPhase1;
+use Praxigento\BonusHybrid\Service\Calc\A\Proc\Ov as POv;
 use Praxigento\BonusHybrid\Service\Calc\A\Proc\Tv as PTv;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Clean as PCalcClean;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Register as PCalcReg;
@@ -29,11 +30,14 @@ class Compress
     private $procGetPlainData;
     /** @var \Praxigento\BonusHybrid\Service\Calc\A\Proc\Tv */
     private $procTv;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\A\Proc\Ov */
+    private $procOv;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
         \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase1 $procCmprsPhase1,
         \Praxigento\BonusHybrid\Service\Calc\A\Proc\Tv $procTv,
+        \Praxigento\BonusHybrid\Service\Calc\A\Proc\Ov $procOv,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Clean $procCalcClean,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Register $procCalcReg,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\GetPlainData $procGetPlainData
@@ -42,6 +46,7 @@ class Compress
         $this->logger = $logger;
         $this->procCmprsPhase1 = $procCmprsPhase1;
         $this->procTv = $procTv;
+        $this->procOv = $procOv;
         $this->procCalcClean = $procCalcClean;
         $this->procCalcReg = $procCalcReg;
         $this->procGetPlainData = $procGetPlainData;
@@ -53,6 +58,16 @@ class Compress
         $in->set(PTv::IN_DWNL, $dwnl);
         $out = $this->procTv->exec($in);
         $result = $out->get(PTv::OUT_DWNL);
+        return $result;
+    }
+
+    private function calcOv($dwnl)
+    {
+        $in = new \Praxigento\Core\Data();
+        $in->set(POv::IN_DWNL, $dwnl);
+        $in->set(POv::IN_USE_SIGN_UP, false);
+        $out = $this->procOv->exec($in);
+        $result = $out->get(POv::OUT_DWNL);
         return $result;
     }
 
@@ -102,6 +117,7 @@ class Compress
 
         /* calculate TV & OV on compressed tree */
         $dwnlPhase1 = $this->calcTv($dwnlPhase1);
+        $dwnlPhase1 = $this->calcOv($dwnlPhase1);
 
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);

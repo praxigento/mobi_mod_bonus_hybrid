@@ -9,6 +9,8 @@ use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 
 /**
  * Calculate TV on the compressed downline tree.
+ *
+ * @deprecated use \Praxigento\BonusHybrid\Service\Calc\A\Proc\Tv
  */
 class Calc
 {

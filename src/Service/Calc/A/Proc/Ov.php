@@ -3,18 +3,25 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Service\Calc\Value\Ov;
+namespace Praxigento\BonusHybrid\Service\Calc\A\Proc;
 
 use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 
 /**
  * Calculate OV on the compressed downline tree.
- *
- * @deprecated use \Praxigento\BonusHybrid\Service\Calc\A\Proc\Ov
  */
-class Calc
+class Ov
+    implements \Praxigento\Core\Service\IProcess
 {
+    /** \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] downline with PV & TV */
+    const IN_DWNL = 'downline';
+    /** bool 'false' - don't use "Sign Up" bonus values in OV calculation */
+    const IN_USE_SIGN_UP = 'useSignUp';
+    /** \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] updated downline with OV*/
+    const OUT_DWNL = 'downline';
+
+
     /** Add traits */
     use \Praxigento\BonusHybrid\Service\Calc\A\Traits\TMap {
         mapById as protected;
@@ -26,39 +33,37 @@ class Calc
     private $hlpSignupDebitCust;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
-    private $repoDwnlBon;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
-        \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon
+        \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust
     )
     {
         $this->logger = $logger;
-        $this->repoDwnlBon = $repoDwnlBon;
         $this->hlpSignupDebitCust = $hlpSignupDebitCust;
     }
 
-    /**
-     * Calculate OV for the downline tree.
-     *
-     * @param int $calcId
-     * @return EBonDwnl[] updated tree (with OV)
-     */
-    public function exec($calcId)
+    public function exec(\Praxigento\Core\Data $ctx)
     {
-        $result = [];
-        /* collect additional data */
-        $dwnlCompress = $this->repoDwnlBon->getByCalcId($calcId);
+        /* get working data from input */
+        /** @var EBonDwnl[] $dwnlBonus */
+        $dwnlCompress = $ctx->get(self::IN_DWNL);
+        $useSignUp = (bool)$ctx->get(self::IN_DWNL);
+
+        /* define local working data */
+
         /* create maps to access data */
         $mapById = $this->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
         $mapDepth = $this->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_DEPTH);
         $mapTeams = $this->mapByTeams($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
-        $signupDebitCustomers = $this->hlpSignupDebitCust->exec();
+        $signupDebitCustomers = [];
+        if ($useSignUp) {
+            $signupDebitCustomers = $this->hlpSignupDebitCust->exec();
+        }
         /**
          * Scan downline by level from bottom to top
          */
+        $out = [];
         foreach ($mapDepth as $depth => $levelCustomers) {
             $this->logger->debug("Process level #$depth of the downline tree.");
             /* ... then scan customers on each level */
@@ -76,19 +81,22 @@ class Calc
                     $team = $mapTeams[$custId];
                     foreach ($team as $memberId) {
                         /** @var EBonDwnl $member */
-                        $member = $result[$memberId];
+                        $member = $out[$memberId];
                         $memberOv = $member->getOv();
                         $ov += $memberOv;
                     }
                 }
                 $entity->setOv($ov);
-                $result[$custId] = $entity;
+                $out[$custId] = $entity;
             }
         }
         unset($mapPv);
         unset($mapTeams);
         unset($mapDepth);
 
+        /* put result data into output */
+        $result = new \Praxigento\Core\Data();
+        $result->set(self::OUT_DWNL, $out);
         return $result;
     }
 
