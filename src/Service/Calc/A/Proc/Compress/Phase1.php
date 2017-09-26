@@ -8,7 +8,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
 
 /**
- * Process to calculate phase1 compression.
+ * Process to calculate Phase1 compression.
  */
 class Phase1
     implements \Praxigento\Core\Service\IProcess

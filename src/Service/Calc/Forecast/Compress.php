@@ -119,6 +119,9 @@ class Compress
         $dwnlPhase1 = $this->calcTv($dwnlPhase1);
         $dwnlPhase1 = $this->calcOv($dwnlPhase1);
 
+        /* calculate phase 2 compression for both schemes */
+
+
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);
         $this->logger->info("'Forecast Compress' calculation is completed.");
