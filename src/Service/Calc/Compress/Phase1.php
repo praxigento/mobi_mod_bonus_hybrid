@@ -10,7 +10,6 @@ use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder as QBldGetPv;
 use Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase1 as PPhase1;
-use Praxigento\Downline\Repo\Entity\Data\Snap as ESnap;
 use Praxigento\Downline\Repo\Query\Snap\OnDate\Builder as QBSnap;
 
 class Phase1
@@ -199,10 +198,10 @@ class Phase1
 
         foreach ($snap as $one) {
             /* get working vars */
-            $custId = $one[ESnap::ATTR_CUSTOMER_ID];
-            $depth = $one[ESnap::ATTR_DEPTH];
-            $parentId = $one[ESnap::ATTR_PARENT_ID];
-            $path = $one[ESnap::ATTR_PATH];
+            $custId = $one[QBSnap::A_CUST_ID];
+            $depth = $one[QBSnap::A_DEPTH];
+            $parentId = $one[QBSnap::A_PARENT_ID];
+            $path = $one[QBSnap::A_PATH];
             $pv = $one[EBonDwnl::ATTR_PV];
             /* compose new entity to save */
             $entity = new EBonDwnl();
