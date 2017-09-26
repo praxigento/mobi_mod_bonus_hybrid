@@ -9,6 +9,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Forecast;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase1 as PCpmrsPhase1;
+use Praxigento\BonusHybrid\Service\Calc\A\Proc\Tv as PTv;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Clean as PCalcClean;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Register as PCalcReg;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\GetPlainData as PGetPlainData;
@@ -26,10 +27,13 @@ class Compress
     private $procCmprsPhase1;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\GetPlainData */
     private $procGetPlainData;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\A\Proc\Tv */
+    private $procTv;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
         \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase1 $procCmprsPhase1,
+        \Praxigento\BonusHybrid\Service\Calc\A\Proc\Tv $procTv,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Clean $procCalcClean,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Register $procCalcReg,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\GetPlainData $procGetPlainData
@@ -37,9 +41,19 @@ class Compress
     {
         $this->logger = $logger;
         $this->procCmprsPhase1 = $procCmprsPhase1;
+        $this->procTv = $procTv;
         $this->procCalcClean = $procCalcClean;
         $this->procCalcReg = $procCalcReg;
         $this->procGetPlainData = $procGetPlainData;
+    }
+
+    private function calcTv($dwnl)
+    {
+        $in = new \Praxigento\Core\Data();
+        $in->set(PTv::IN_DWNL, $dwnl);
+        $out = $this->procTv->exec($in);
+        $result = $out->get(PTv::OUT_DWNL);
+        return $result;
     }
 
     /**
@@ -68,6 +82,7 @@ class Compress
         $ctx->set(PCpmrsPhase1::IN_KEY_PARENT_ID, EBonDwnl::ATTR_PARENT_REF);
         $ctx->set(PCpmrsPhase1::IN_KEY_DEPTH, EBonDwnl::ATTR_DEPTH);
         $ctx->set(PCpmrsPhase1::IN_KEY_PATH, EBonDwnl::ATTR_PATH);
+        $ctx->set(PCpmrsPhase1::IN_KEY_PV, EBonDwnl::ATTR_PV);
 
         $outPhase1 = $this->procCmprsPhase1->exec($ctx);
         $result = $outPhase1->get(PCpmrsPhase1::OUT_COMPRESSED);
@@ -84,6 +99,9 @@ class Compress
 
         /* perform Phase1 compression */
         $dwnlPhase1 = $this->compressPhase1($calcId);
+
+        /* calculate TV & OV on compressed tree */
+        $dwnlPhase1 = $this->calcTv($dwnlPhase1);
 
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);
@@ -104,5 +122,4 @@ class Compress
         $result = $res->get(PCalcReg::OUT_CALC_ID);
         return $result;
     }
-
 }

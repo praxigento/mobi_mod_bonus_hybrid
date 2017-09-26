@@ -5,13 +5,13 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress;
 
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
 
 /**
  * Process to calculate phase1 compression.
  */
 class Phase1
+    implements \Praxigento\Core\Service\IProcess
 {
     /** Add traits */
     use \Praxigento\BonusHybrid\Service\Calc\A\Traits\TMap {
@@ -29,6 +29,7 @@ class Phase1
     const IN_KEY_DEPTH = 'keyDepth';
     const IN_KEY_PARENT_ID = 'keyParentId';
     const IN_KEY_PATH = 'keyPath';
+    const IN_KEY_PV = 'keyPv';
     /**#@-  */
     /** PV by customer ID map */
     const IN_PV = 'pv';
@@ -65,7 +66,7 @@ class Phase1
 
     /**
      * @param array $compressionData array [$custId=>[$pv, $parentId], ... ] with compression data.
-     * @return array
+     * @return \Praxigento\Downline\Repo\Entity\Data\Snap[]
      */
     private function composeTree($compressionData)
     {
@@ -79,7 +80,13 @@ class Phase1
         $req->setTree($converted);
         $resp = $this->callDwnlSnap->expandMinimal($req);
         unset($converted);
-        $result = $resp->getSnapData();
+        $snap = $resp->getSnapData();
+        /* convert 2D array to array of entities */
+        $result = [];
+        foreach ($snap as $one) {
+            $entity = new \Praxigento\Downline\Repo\Entity\Data\Snap($one);
+            $result[] = $entity;
+        }
         return $result;
     }
 
@@ -88,11 +95,12 @@ class Phase1
         /* extract working variables from execution context */
         $calcId = $ctx->get(self::IN_CALC_ID);
         $mapPv = $ctx->get(self::IN_PV);
-        $snap = $ctx->get(self::IN_DWNL_PLAIN);
+        $plain = $ctx->get(self::IN_DWNL_PLAIN);
         $keyCustId = $ctx->get(self::IN_KEY_CUST_ID);
         $keyParentId = $ctx->get(self::IN_KEY_PARENT_ID);
         $keyDepth = $ctx->get(self::IN_KEY_DEPTH);
         $keyPath = $ctx->get(self::IN_KEY_PATH);
+        $keyPv = $ctx->get(self::IN_KEY_PV);
 
         /* prepare result vars */
         $result = new \Praxigento\Core\Data();
@@ -106,9 +114,9 @@ class Phase1
 
         /* prepare intermediary structures for calculation */
         $mapCustomer = $this->getCustomersMap();
-        $mapSnap = $this->mapById($snap, $keyCustId);
-        $mapDepth = $this->mapByTreeDepthDesc($snap, $keyCustId, $keyDepth);
-        $mapTeams = $this->mapByTeams($snap, $keyCustId, $keyParentId);
+        $mapPlain = $this->mapById($plain, $keyCustId);
+        $mapDepth = $this->mapByTreeDepthDesc($plain, $keyCustId, $keyDepth);
+        $mapTeams = $this->mapByTeams($plain, $keyCustId, $keyParentId);
 
         /**
          * perform processing
@@ -118,7 +126,7 @@ class Phase1
         foreach ($mapDepth as $depth => $levelCustomers) {
             foreach ($levelCustomers as $custId) {
                 $pv = isset($mapPv[$custId]) ? $mapPv[$custId] : 0;
-                $dwnlEntry = $mapSnap[$custId];
+                $dwnlEntry = $mapPlain[$custId];
                 $parentId = is_array($dwnlEntry) ? $dwnlEntry[$keyParentId] : $dwnlEntry->get($keyParentId);
                 $custData = $mapCustomer[$custId];
                 $scheme = $this->hlpScheme->getSchemeByCustomer($custData);
@@ -189,12 +197,17 @@ class Phase1
         unset($mapDepth);
         unset($mapTeams);
         /* compose compressed tree */
-        $compressedTree = $this->composeTree($compression);
+        /** @var \Praxigento\Downline\Repo\Entity\Data\Snap[] $cmprsSnap */
+        $cmprsSnap = $this->composeTree($compression);
+
+        /* re-build result tree (compressed) from source tree (plain) */
+        $cmprsResult = $this->rebuildTree($cmprsSnap, $mapPlain, $keyParentId, $keyDepth, $keyPath);
+
         /* add compressed PV data */
-        $compressedTree = $this->populateCompressedSnapWithPv($compressedTree, $compression);
+        $cmprsSnap = $this->populateCompressedSnapWithPv($cmprsResult, $compression, $keyPv);
 
         /* put result data into output */
-        $result->set(self::OUT_COMPRESSED, $compressedTree);
+        $result->set(self::OUT_COMPRESSED, $cmprsSnap);
         $result->set(self::OUT_PV_TRANSFERS, $pvTransfers);
         return $result;
     }
@@ -219,12 +232,53 @@ class Phase1
      * @param array $compressionData compression data with compressed PV
      * @return array compressed tree with PV data
      */
-    private function populateCompressedSnapWithPv($tree, $compressionData)
+    private function populateCompressedSnapWithPv($tree, $compressionData, $keyPv)
     {
         $result = $tree;
         foreach ($compressionData as $custId => $data) {
             /* 0 - PV, 1 - parentId */
-            $result[$custId][EBonDwnl::ATTR_PV] = $data[0];
+            $pv = $data[0];
+            $entry = $result[$custId];
+            if (is_array($entry)) {
+                $entry[$keyPv] = $pv;
+            } else {
+                $entry->set($keyPv, $pv);
+            }
+            $result[$custId] = $entry;
+        }
+        return $result;
+    }
+
+    /**
+     * Rebuild target tree from source ($mapPlain) using compressed snap data.
+     *
+     * @param \Praxigento\Downline\Repo\Entity\Data\Snap[] $compressed
+     * @param array|\Praxigento\Core\Data[] $mapPlain
+     * @param string $keyParentId
+     * @param string $keyDepth
+     * @param string $keyPath
+     * @return array|\Praxigento\Core\Data[]
+     */
+    private function rebuildTree($compressed, $mapPlain, $keyParentId, $keyDepth, $keyPath)
+    {
+        $result = [];
+        /** @var \Praxigento\Downline\Repo\Entity\Data\Snap $item */
+        foreach ($compressed as $item) {
+            $snapCustId = $item->getCustomerId();
+            $snapParentId = $item->getParentId();
+            $snapDepth = $item->getDepth();
+            $snapPath = $item->getPath();
+            $entry = $mapPlain[$snapCustId];
+            if (is_array($entry)) {
+                $entry[$keyParentId] = $snapParentId;
+                $entry[$keyDepth] = $snapDepth;
+                $entry[$keyPath] = $snapPath;
+            } else {
+                $entry->set($keyParentId, $snapParentId);
+                $entry->set($keyDepth, $snapDepth);
+                $entry->set($keyPath, $snapPath);
+            }
+            $result[$snapCustId] = $entry;
         }
         return $result;
     }

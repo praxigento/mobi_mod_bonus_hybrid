@@ -73,15 +73,16 @@ class Phase1
      */
     private function compress($dwnlSnap, $pv, $calcId)
     {
-        $ctx = new \Praxigento\Core\Data();
-        $ctx->set(PPhase1::IN_DWNL_PLAIN, $dwnlSnap);
-        $ctx->set(PPhase1::IN_PV, $pv);
-        $ctx->set(PPhase1::IN_CALC_ID, $calcId);
-        $ctx->set(PPhase1::IN_KEY_CUST_ID, QBSnap::A_CUST_ID);
-        $ctx->set(PPhase1::IN_KEY_PARENT_ID, QBSnap::A_PARENT_ID);
-        $ctx->set(PPhase1::IN_KEY_DEPTH, QBSnap::A_DEPTH);
-        $ctx->set(PPhase1::IN_KEY_PATH, QBSnap::A_PATH);
-        $out = $this->procPhase1->exec($ctx);
+        $in = new \Praxigento\Core\Data();
+        $in->set(PPhase1::IN_DWNL_PLAIN, $dwnlSnap);
+        $in->set(PPhase1::IN_PV, $pv);
+        $in->set(PPhase1::IN_CALC_ID, $calcId);
+        $in->set(PPhase1::IN_KEY_CUST_ID, QBSnap::A_CUST_ID);
+        $in->set(PPhase1::IN_KEY_PARENT_ID, QBSnap::A_PARENT_ID);
+        $in->set(PPhase1::IN_KEY_DEPTH, QBSnap::A_DEPTH);
+        $in->set(PPhase1::IN_KEY_PATH, QBSnap::A_PATH);
+        $in->set(PPhase1::IN_KEY_PV, EBonDwnl::ATTR_PV);
+        $out = $this->procPhase1->exec($in);
         $updates = $out->get(PPhase1::OUT_COMPRESSED);
         $pvTransfers = $out->get(PPhase1::OUT_PV_TRANSFERS);
         $result = [$updates, $pvTransfers];
@@ -189,7 +190,7 @@ class Phase1
     }
 
     /**
-     * @param array $snap snap data with PV (see \Praxigento\BonusHybrid\Service\Calc\Compress\Phase1\Calc::populateCompressedSnapWithPv)
+     * @param array $snap snap data with PV (see \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase1::populateCompressedSnapWithPv)
      * @param int $calcId
      */
     private function saveBonusDownline($snap, $calcId)
