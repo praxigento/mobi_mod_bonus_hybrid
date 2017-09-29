@@ -26,7 +26,7 @@ class Plain
     /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
     private $repoCalc;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
-    private $repoDwnl;
+    private $repoBonDwnl;
     /** @var  \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Calc */
     private $subCalc;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetDownline */
@@ -35,7 +35,7 @@ class Plain
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
         \Praxigento\Core\Tool\IPeriod $hlpPeriod,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnl,
+        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\Accounting\Service\Balance\Get\ITurnover $callBalanceGetTurnover,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Calc $subCalc,
@@ -46,7 +46,7 @@ class Plain
     {
         $this->logger = $logger;
         $this->hlpPeriod = $hlpPeriod;
-        $this->repoDwnl = $repoDwnl;
+        $this->repoBonDwnl = $repoBonDwnl;
         $this->repoCalc = $repoCalc;
         $this->callBalanceGetTurnover = $callBalanceGetTurnover;
         $this->subCalc = $subCalc;
@@ -176,7 +176,7 @@ class Plain
     private function saveDownline($items)
     {
         foreach ($items as $item) {
-            $this->repoDwnl->create($item);
+            $this->repoBonDwnl->create($item);
         }
     }
 }

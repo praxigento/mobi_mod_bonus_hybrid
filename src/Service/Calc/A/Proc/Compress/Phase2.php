@@ -18,9 +18,9 @@ class Phase2
 {
     /** Add traits */
     use \Praxigento\BonusHybrid\Service\Calc\A\Traits\TMap {
-        mapById as protected;
-        mapByTeams as protected;
-        mapByTreeDepthDesc as protected;
+        mapById as private;
+        mapByTeams as private;
+        mapByTreeDepthDesc as private;
     }
 
     /** int */
@@ -29,8 +29,14 @@ class Phase2
     const IN_DWNL_PHASE1 = 'dwnlPhase1';
     /** Plain downline */
     const IN_DWNL_PLAIN = 'dwnlPlain';
+    /** array none-compressed PV by customer ID */
+    const IN_MAP_PV = 'mapPV';
     /** string Scheme code (see \Praxigento\BonusHybrid\Defaults::SCHEMA_XXX) */
     const IN_SCHEME = 'scheme';
+    /** \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] */
+    const OUT_DWNL_PHASE2 = 'dwnlPhase2';
+    /** \Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase2\Legs[] */
+    const OUT_LEGS = 'legs';
 
     /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\Helper */
     private $hlp;
@@ -73,23 +79,22 @@ class Phase2
     public function exec(\Praxigento\Core\Data $ctx)
     {
         /* get working data from input */
-        $dwnlPlain = $ctx->get(self::IN_DWNL_PLAIN);
-        $dwnlCompress = $ctx->get(self::IN_DWNL_PHASE1);
-        $scheme = $ctx->get(self::IN_SCHEME);
         $phase2CalcId = $ctx->get(self::IN_CALC_ID_PHASE2);
+        $dwnlCompress = $ctx->get(self::IN_DWNL_PHASE1);
+        $dwnlPlain = $ctx->get(self::IN_DWNL_PLAIN);
+        $mapPv = $ctx->get(self::IN_MAP_PV);
+        $scheme = $ctx->get(self::IN_SCHEME);
 
-        /* collect additional data */
-//        $mapPv = $this->hlp->getPv($writeOffCalcId);
-//        $dwnlPlain = $this->repoDwnlBon->getByCalcId($writeOffCalcId);
-//        $dwnlCompress = $this->repoDwnlBon->getByCalcId($phase1CalcId);
+        /* define local working data */
         $cfgParams = $this->getCfgParams();
 
-        /* perform action */
-        $resultDownline = [];
-        $resultLegs = [];
+        /* prepare output vars */
+        $outDownline = [];
+        $outLegs = [];
 
-
-        /* prepare source data for calculation */
+        /**
+         * perform processing
+         */
         $mapByIdCompress = $this->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
         $mapByTeamCompress = $this->mapByTeams($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
         $mapByDepthCompress = $this->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_DEPTH);
@@ -236,18 +241,18 @@ class Phase2
                 }
 
                 /* add entry to results */
-                $resultDownline[$custId] = $entryDwnl;
-                $resultLegs[$custId] = $entryLegs;
+                $outDownline[$custId] = $entryDwnl;
+                $outLegs[$custId] = $entryLegs;
             }
         }
         /* get paths & depths for downline tree (is & parentId only present in results ) */
-        $snap = $this->hlpDwnlTree->expandMinimal($resultDownline, EBonDwnl::ATTR_PARENT_REF);
+        $snap = $this->hlpDwnlTree->expandMinimal($outDownline, EBonDwnl::ATTR_PARENT_REF);
         /* go through the downline snapshot and move depth & path info into results */
-        foreach ($resultDownline as $id => $one) {
+        foreach ($outDownline as $id => $one) {
             $depth = $snap[$id][\Praxigento\Downline\Repo\Entity\Data\Snap::ATTR_DEPTH];
             $path = $snap[$id][\Praxigento\Downline\Repo\Entity\Data\Snap::ATTR_PATH];
             /** @var EBonDwnl $entry */
-            $entry = $resultDownline[$id];
+            $entry = $outDownline[$id];
             $entry->setDepth($depth);
             $entry->setPath($path);
         }
@@ -258,10 +263,10 @@ class Phase2
         unset($mapByTeamCompress);
         unset($mapByIdCompress);
 
-        /* and return result */
-        $result = new \Praxigento\BonusHybrid\Service\Calc\Compress\Phase2\Calc\Result();
-        $result->setDownline($resultDownline);
-        $result->setLegs($resultLegs);
+        /* put result data into output */
+        $result = new \Praxigento\Core\Data();
+        $result->set(self::OUT_DWNL_PHASE2, $outDownline);
+        $result->set(self::OUT_LEGS, $outLegs);
         return $result;
     }
 

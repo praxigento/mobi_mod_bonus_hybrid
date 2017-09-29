@@ -29,8 +29,6 @@ class Builder
      */
     const A_CUST_ID = EAcc::ATTR_CUST_ID;
     const A_PV = ETrans::ATTR_VALUE;
-//    const A_CUST_ID = 'custId';
-//    const A_PV = 'pv';
 
     /**
      * Bound variables names

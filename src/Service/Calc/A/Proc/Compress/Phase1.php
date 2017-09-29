@@ -25,6 +25,7 @@ class Phase1
     /** Customers downline tree (plain) to the end of calculation period */
     const IN_DWNL_PLAIN = 'dwnlPlain';
     /**#@+ string: keys names for attributes in plain downline. */
+    const IN_KEY_CALC_ID = 'keyCalcId';
     const IN_KEY_CUST_ID = 'keyCustId';
     const IN_KEY_DEPTH = 'keyDepth';
     const IN_KEY_PARENT_ID = 'keyParentId';
@@ -96,6 +97,7 @@ class Phase1
         $calcId = $ctx->get(self::IN_CALC_ID);
         $mapPv = $ctx->get(self::IN_PV);
         $plain = $ctx->get(self::IN_DWNL_PLAIN);
+        $keyCalcId = $ctx->get(self::IN_KEY_CALC_ID);
         $keyCustId = $ctx->get(self::IN_KEY_CUST_ID);
         $keyParentId = $ctx->get(self::IN_KEY_PARENT_ID);
         $keyDepth = $ctx->get(self::IN_KEY_DEPTH);
@@ -201,7 +203,7 @@ class Phase1
         $cmprsSnap = $this->composeTree($compression);
 
         /* re-build result tree (compressed) from source tree (plain) */
-        $cmprsResult = $this->rebuildTree($cmprsSnap, $mapPlain, $keyParentId, $keyDepth, $keyPath);
+        $cmprsResult = $this->rebuildTree($calcId, $cmprsSnap, $mapPlain, $keyCalcId, $keyParentId, $keyDepth, $keyPath);
 
         /* add compressed PV data */
         $cmprsSnap = $this->populateCompressedSnapWithPv($cmprsResult, $compression, $keyPv);
@@ -252,14 +254,16 @@ class Phase1
     /**
      * Rebuild target tree from source ($mapPlain) using compressed snap data.
      *
+     * @param int $calcId phase1 compression calculation ID
      * @param \Praxigento\Downline\Repo\Entity\Data\Snap[] $compressed
      * @param array|\Praxigento\Core\Data[] $mapPlain
+     * @param string $keyCalcId
      * @param string $keyParentId
      * @param string $keyDepth
      * @param string $keyPath
      * @return array|\Praxigento\Core\Data[]
      */
-    private function rebuildTree($compressed, $mapPlain, $keyParentId, $keyDepth, $keyPath)
+    private function rebuildTree($calcId, $compressed, $mapPlain, $keyCalcId, $keyParentId, $keyDepth, $keyPath)
     {
         $result = [];
         /** @var \Praxigento\Downline\Repo\Entity\Data\Snap $item */
@@ -270,10 +274,12 @@ class Phase1
             $snapPath = $item->getPath();
             $entry = $mapPlain[$snapCustId];
             if (is_array($entry)) {
+                $entry[$keyCalcId] = $calcId;
                 $entry[$keyParentId] = $snapParentId;
                 $entry[$keyDepth] = $snapDepth;
                 $entry[$keyPath] = $snapPath;
             } else {
+                $entry->set($keyCalcId, $calcId);
                 $entry->set($keyParentId, $snapParentId);
                 $entry->set($keyDepth, $snapDepth);
                 $entry->set($keyPath, $snapPath);
