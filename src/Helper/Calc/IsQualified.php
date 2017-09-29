@@ -6,7 +6,6 @@ namespace Praxigento\BonusHybrid\Helper\Calc;
 
 
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Cfg\Param as CfgParam;
 
 /**
  * Customer qualification verifier.
