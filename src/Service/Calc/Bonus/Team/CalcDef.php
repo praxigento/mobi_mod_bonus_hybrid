@@ -6,7 +6,6 @@
 namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Team;
 
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Service\Calc\A\Data\Bonus as DBonus;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
@@ -71,7 +70,7 @@ class CalcDef
         $dwnlCompress = $this->repoDwnlBon->getByCalcId($calcId);
         $dwnlCurrent = $this->repoDwnl->get();
         $pctPbMax = $this->getMaxPercentForPersonalBonus($levelsPersonal);
-        $courtesyPct = \Praxigento\BonusHybrid\Defaults::COURTESY_BONUS_PERCENT;
+        $courtesyPct = \Praxigento\BonusHybrid\Config::COURTESY_BONUS_PERCENT;
         /* create maps to access data */
         $mapDwnlById = $this->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
         $mapTeams = $this->mapByTeams($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
@@ -132,7 +131,7 @@ class CalcDef
                             /* parent's TV % should be more then customer's PV % */
 
                             /* EU parent should not get more then courtesy % */
-                            if ($parentScheme != Def::SCHEMA_DEFAULT) {
+                            if ($parentScheme != Cfg::SCHEMA_DEFAULT) {
                                 if ($isFather) {
                                     /* Courtesy bonus will calculate in other process, just decrease % left */
                                     $pctPbLeft = number_format($pctPbLeft - $courtesyPct, 2);
@@ -149,7 +148,7 @@ class CalcDef
                             ) {
                                 /* there is undistributed PB% */
                                 /* parent's TV allows him to get all team bonus from this customer */
-                                if ($parentScheme == Def::SCHEMA_DEFAULT) {
+                                if ($parentScheme == Cfg::SCHEMA_DEFAULT) {
                                     $bonus = $this->hlpFormat->roundBonus($pv * $pctPbLeft);
                                     $entry = new DBonus();
                                     $entry->setCustomerRef($parentId);
@@ -172,7 +171,7 @@ class CalcDef
                                 break;
                             } else {
                                 /* parent's TV allows him to get only part of the team bonus from this customer */
-                                if ($parentScheme == Def::SCHEMA_DEFAULT) {
+                                if ($parentScheme == Cfg::SCHEMA_DEFAULT) {
                                     $bonus = $this->hlpFormat->roundBonus($pv * $pctTbAvlbDelta);
                                     $entry = new DBonus();
                                     $entry->setCustomerRef($parentId);

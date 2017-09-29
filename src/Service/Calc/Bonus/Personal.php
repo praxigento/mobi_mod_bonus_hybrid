@@ -7,7 +7,6 @@ namespace Praxigento\BonusHybrid\Service\Calc\Bonus;
 
 use Praxigento\BonusBase\Repo\Entity\Data\Log\Opers as ELogOper;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Service\Calc\A\Data\Bonus as DBonus;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
 
@@ -96,7 +95,7 @@ class Personal
             $pvValue = $one->getPv();
             $customer = $mapCustomer[$custId];
             $scheme = $this->hlpScheme->getSchemeByCustomer($customer);
-            if ($scheme == Def::SCHEMA_DEFAULT) {
+            if ($scheme == Cfg::SCHEMA_DEFAULT) {
                 $bonusValue = $this->hlpCalc->calcForLevelPercent($pvValue, $levels);
                 if ($bonusValue > 0) {
                     $entry = new DBonus();

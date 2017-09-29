@@ -9,7 +9,6 @@ use Praxigento\BonusBase\Repo\Entity\Data\Log\Customers as LogCust;
 use Praxigento\BonusBase\Repo\Entity\Data\Log\Opers as LogOpers;
 use Praxigento\BonusBase\Repo\Entity\Data\Log\Sales as LogSales;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Registry\SignupDebit as RegSignup;
 use Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetOrders\Builder as Query;
 
@@ -88,7 +87,7 @@ class ProcessOrders
             $grandId = $one[Query::A_PARENT_GRAND_ID];
             $orderId = $one[Query::A_ORDER_ID];
             $scheme = $this->hlpScheme->getSchemeByCustomer($one);
-            if ($scheme == Def::SCHEMA_EU) {
+            if ($scheme == Cfg::SCHEMA_EU) {
                 /* prepare data for transactions */
                 $accPvCust = $this->getAccCust(Cfg::CODE_TYPE_ASSET_PV, $custId);
                 $accWalletParent = $this->getAccCust(Cfg::CODE_TYPE_ASSET_WALLET_ACTIVE, $parentId);
@@ -98,7 +97,7 @@ class ProcessOrders
                     Trans::ATTR_DEBIT_ACC_ID => $accPvCust,
                     Trans::ATTR_CREDIT_ACC_ID => $accPvRepres,
                     Trans::ATTR_DATE_APPLIED => $dateApplied,
-                    Trans::ATTR_VALUE => Def::SIGNUP_DEBIT_PV,
+                    Trans::ATTR_VALUE => Cfg::SIGNUP_DEBIT_PV,
                     $transRef => self::PREFIX_PV . $orderId
                 ];
                 $trans[] = $tranPvOff;
@@ -107,7 +106,7 @@ class ProcessOrders
                     Trans::ATTR_DEBIT_ACC_ID => $accWalletRepres,
                     Trans::ATTR_CREDIT_ACC_ID => $accWalletParent,
                     Trans::ATTR_DATE_APPLIED => $dateApplied,
-                    Trans::ATTR_VALUE => Def::SIGNUP_DEBIT_WALLET_FATHER,
+                    Trans::ATTR_VALUE => Cfg::SIGNUP_DEBIT_WALLET_FATHER,
                     $transRef => self::PREFIX_WALLET_FATHER . $orderId
                 ];
                 $trans[] = $tranWalletFatherOn;
@@ -116,7 +115,7 @@ class ProcessOrders
                     Trans::ATTR_DEBIT_ACC_ID => $accWalletRepres,
                     Trans::ATTR_CREDIT_ACC_ID => $accWalletGrand,
                     Trans::ATTR_DATE_APPLIED => $dateApplied,
-                    Trans::ATTR_VALUE => Def::SIGNUP_DEBIT_WALLET_GRAND,
+                    Trans::ATTR_VALUE => Cfg::SIGNUP_DEBIT_WALLET_GRAND,
                     $transRef => self::PREFIX_WALLET_GRAND . $orderId
                 ];
                 $trans[] = $tranWalletFatherOn;

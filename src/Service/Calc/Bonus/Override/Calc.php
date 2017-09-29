@@ -6,7 +6,6 @@
 namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Override;
 
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Cfg\Override as ECfgOvrd;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Service\Calc\A\Data\Bonus as DBonus;
@@ -119,7 +118,7 @@ class Calc
         /* scan all levels starting from the bottom and collect PV by generations */
         $mapGenerations = $this->mapByGeneration($mapByDepthDesc,
             $mapCmprsById); // [ $custId=>[$genId => $totalPv, ...], ... ]
-        $defRankId = $this->repoRank->getIdByCode(Def::RANK_DISTRIBUTOR);
+        $defRankId = $this->repoRank->getIdByCode(Cfg::RANK_DISTRIBUTOR);
         /* scan all customers and calculate bonus values */
         /** @var EBonDwnl $custCompress */
         foreach ($dwnlCompress as $custCompress) {

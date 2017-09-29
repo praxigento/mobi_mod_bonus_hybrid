@@ -4,7 +4,7 @@
  */
 namespace Praxigento\BonusHybrid\Cli\Cmd;
 
-use Praxigento\BonusHybrid\Defaults as Def;
+use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\Core\Service\IProcess as PBase;
 
 /**
@@ -112,7 +112,7 @@ class Calc
     private function calcBonusTeamDef()
     {
         $ctx = new \Praxigento\Core\Data();
-        $ctx->set($this->procBonusTeam::CTX_IN_SCHEME, Def::SCHEMA_DEFAULT);
+        $ctx->set($this->procBonusTeam::CTX_IN_SCHEME, Cfg::SCHEMA_DEFAULT);
         $this->procBonusTeam->exec($ctx);
         $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
         return $result;
@@ -121,7 +121,7 @@ class Calc
     private function calcBonusTeamEu()
     {
         $ctx = new \Praxigento\Core\Data();
-        $ctx->set($this->procBonusTeam::CTX_IN_SCHEME, Def::SCHEMA_EU);
+        $ctx->set($this->procBonusTeam::CTX_IN_SCHEME, Cfg::SCHEMA_EU);
         $this->procBonusTeam->exec($ctx);
         $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
         return $result;
@@ -218,27 +218,27 @@ class Calc
             }
             if ($canContinue) {
                 $output->writeln("<info>OV are calculated.<info>");
-                $canContinue = $this->calcCompressPhase2(Def::SCHEMA_DEFAULT);
+                $canContinue = $this->calcCompressPhase2(Cfg::SCHEMA_DEFAULT);
             }
             if ($canContinue) {
                 $output->writeln("<info>Phase II compression (DEFAULT) is completed.<info>");
-                $canContinue = $this->calcCompressPhase2(Def::SCHEMA_EU);
+                $canContinue = $this->calcCompressPhase2(Cfg::SCHEMA_EU);
             }
             if ($canContinue) {
                 $output->writeln("<info>Phase II compression (EU) is completed.<info>");
-                $canContinue = $this->calcBonusOverride(Def::SCHEMA_DEFAULT);
+                $canContinue = $this->calcBonusOverride(Cfg::SCHEMA_DEFAULT);
             }
             if ($canContinue) {
                 $output->writeln("<info>Override bonus (DEFAULT) is calculated.<info>");
-                $canContinue = $this->calcBonusOverride(Def::SCHEMA_EU);
+                $canContinue = $this->calcBonusOverride(Cfg::SCHEMA_EU);
             }
             if ($canContinue) {
                 $output->writeln("<info>Override bonus (EU) is calculated.<info>");
-                $canContinue = $this->calcBonusInfinity(Def::SCHEMA_DEFAULT);
+                $canContinue = $this->calcBonusInfinity(Cfg::SCHEMA_DEFAULT);
             }
             if ($canContinue) {
                 $output->writeln("<info>Infinity bonus (DEFAULT) is calculated.<info>");
-                $canContinue = $this->calcBonusInfinity(Def::SCHEMA_EU);
+                $canContinue = $this->calcBonusInfinity(Cfg::SCHEMA_EU);
             }
             if ($canContinue) {
                 $output->writeln("<info>Infinity bonus (EU) is calculated.<info>");

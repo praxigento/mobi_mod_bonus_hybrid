@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Forecast\Plain;
 
-use Praxigento\BonusHybrid\Defaults as Def;
+use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\Downline\Repo\Query\Snap\OnDate\Builder as QBSnapOnDate;
 
 /**
@@ -83,7 +83,7 @@ class GetDownline
      */
     private function getDefaultRankId()
     {
-        $result = $this->repoRanks->getIdByCode(Def::RANK_DISTRIBUTOR);
+        $result = $this->repoRanks->getIdByCode(Cfg::RANK_DISTRIBUTOR);
         return $result;
     }
 }

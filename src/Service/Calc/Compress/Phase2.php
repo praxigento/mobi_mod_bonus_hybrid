@@ -6,7 +6,6 @@
 namespace Praxigento\BonusHybrid\Service\Calc\Compress;
 
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Defaults as Def;
 
 class Phase2
     implements \Praxigento\BonusHybrid\Service\Calc\Compress\IPhase2
@@ -50,7 +49,7 @@ class Phase2
     public function exec(\Praxigento\Core\Data $ctx)
     {
         /* get working data from context */
-        $scheme = $ctx->get(self::CTX_IN_SCHEME) ?? Def::SCHEMA_DEFAULT;
+        $scheme = $ctx->get(self::CTX_IN_SCHEME) ?? Cfg::SCHEMA_DEFAULT;
         /**
          * perform processing
          */
@@ -89,12 +88,12 @@ class Phase2
     /**
      * Get calculation/period data related to current calculation.
      *
-     * @param string $scheme see \Praxigento\BonusHybrid\Defaults::SCHEMA_XXX
+     * @param string $scheme see \Praxigento\BonusHybrid\Config::SCHEMA_XXX
      * @return array [$writeOffCalc, $phase1Calc, $phaseCalc, $phase2Period]
      */
     private function getCalcData($scheme)
     {
-        $calcTypeCode = ($scheme == Def::SCHEMA_EU)
+        $calcTypeCode = ($scheme == Cfg::SCHEMA_EU)
             ? Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_EU
             : Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_DEF;
         /**

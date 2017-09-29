@@ -6,7 +6,6 @@
 namespace Praxigento\BonusHybrid\Service\Calc\PvWriteOff;
 
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 
 /**
@@ -88,10 +87,10 @@ class SaveDownline
                 /* TODO: should we add 'Sign Up Debit' PV here ??? */
                 $custPv = $this->getPv($custId, $mapAccs, $updates, $signupDebitCustomers);
                 /* get customer qualification */
-                $isQualifedByPvDef = ($custScheme == Def::SCHEMA_DEFAULT)
-                    && ($custPv > (Def::PV_QUALIFICATION_LEVEL_DEF - Cfg::DEF_ZERO));
-                $isQualifedByPvEu = ($custScheme == Def::SCHEMA_EU)
-                    && ($custPv > (Def::PV_QUALIFICATION_LEVEL_EU - Cfg::DEF_ZERO));
+                $isQualifedByPvDef = ($custScheme == Cfg::SCHEMA_DEFAULT)
+                    && ($custPv > (Cfg::PV_QUALIFICATION_LEVEL_DEF - Cfg::DEF_ZERO));
+                $isQualifedByPvEu = ($custScheme == Cfg::SCHEMA_EU)
+                    && ($custPv > (Cfg::PV_QUALIFICATION_LEVEL_EU - Cfg::DEF_ZERO));
                 $isForced = isset($forcedQualCustomers[$custScheme][$custId]);
                 $isCustQualified = $isQualifedByPvDef || $isQualifedByPvEu || $isForced;
                 $reqQual[$custId] = $isCustQualified;
@@ -175,7 +174,7 @@ class SaveDownline
      */
     private function getDefaultRankId()
     {
-        $result = $this->repoRank->getIdByCode(Def::RANK_DISTRIBUTOR);
+        $result = $this->repoRank->getIdByCode(Cfg::RANK_DISTRIBUTOR);
         return $result;
     }
 
@@ -193,7 +192,7 @@ class SaveDownline
         /* correct PV for 'Sign Up Debit' customers */
         $isSignupDebit = in_array($custId, $signupDebitCustomers);
         if ($isSignupDebit) {
-            $result += \Praxigento\BonusHybrid\Defaults::SIGNUP_DEBIT_PV;
+            $result += \Praxigento\BonusHybrid\Config::SIGNUP_DEBIT_PV;
         }
         return $result;
     }
@@ -230,13 +229,13 @@ class SaveDownline
     private function prepareForcedQualification()
     {
         $result = [
-            Def::SCHEMA_DEFAULT => [],
-            Def::SCHEMA_EU => []
+            Cfg::SCHEMA_DEFAULT => [],
+            Cfg::SCHEMA_EU => []
         ];
         $customers = $this->hlpScheme->getForcedQualificationCustomers();
         foreach ($customers as $custId => $item) {
-            if (isset($item[Def::SCHEMA_DEFAULT])) $result[Def::SCHEMA_DEFAULT][] = $custId;
-            if (isset($item[Def::SCHEMA_EU])) $result[Def::SCHEMA_EU][] = $custId;
+            if (isset($item[Cfg::SCHEMA_DEFAULT])) $result[Cfg::SCHEMA_DEFAULT][] = $custId;
+            if (isset($item[Cfg::SCHEMA_EU])) $result[Cfg::SCHEMA_EU][] = $custId;
         }
         return $result;
     }

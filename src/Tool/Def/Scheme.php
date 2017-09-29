@@ -6,7 +6,7 @@
 namespace Praxigento\BonusHybrid\Tool\Def;
 
 use Praxigento\BonusBase\Repo\Entity\Data\Rank;
-use Praxigento\BonusHybrid\Defaults as Def;
+use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Cfg\Param as CfgParam;
 use Praxigento\Downline\Repo\Entity\Data\Customer;
 
@@ -27,9 +27,9 @@ class Scheme
      * @var array [$mlmId=>[$schema, $rankCode], ...]
      */
     private $QUALIFIED_CUSTOMERS = [
-        '770000001' => [Def::SCHEMA_DEFAULT, Def::RANK_PRESIDENT],
-        '777163048' => [Def::SCHEMA_DEFAULT, Def::RANK_EXEC_DIRECTOR],
-        '777017725' => [Def::SCHEMA_DEFAULT, Def::RANK_PRESIDENT]
+        '770000001' => [Cfg::SCHEMA_DEFAULT, Cfg::RANK_PRESIDENT],
+        '777163048' => [Cfg::SCHEMA_DEFAULT, Cfg::RANK_EXEC_DIRECTOR],
+        '777017725' => [Cfg::SCHEMA_DEFAULT, Cfg::RANK_PRESIDENT]
     ];
     /**
      * @var array of the customers with forced qualification.
@@ -223,15 +223,15 @@ class Scheme
     public function getQualificationLevels()
     {
         $result = [
-            Def::SCHEMA_DEFAULT => Def::PV_QUALIFICATION_LEVEL_DEF,
-            Def::SCHEMA_EU => Def::PV_QUALIFICATION_LEVEL_EU
+            Cfg::SCHEMA_DEFAULT => Cfg::PV_QUALIFICATION_LEVEL_DEF,
+            Cfg::SCHEMA_EU => Cfg::PV_QUALIFICATION_LEVEL_EU
         ];
         return $result;
     }
 
     public function getSchemeByCustomer($data)
     {
-        $result = Def::SCHEMA_DEFAULT;
+        $result = Cfg::SCHEMA_DEFAULT;
         if (is_array($data)) {
             $countryCode = $data[Customer::ATTR_COUNTRY_CODE];
         } elseif ($data instanceof \Praxigento\Core\Data) {
@@ -243,7 +243,7 @@ class Scheme
             ($code == 'DE') ||
             ($code == 'ES')
         ) {
-            $result = Def::SCHEMA_EU;
+            $result = Cfg::SCHEMA_EU;
         }
         return $result;
     }

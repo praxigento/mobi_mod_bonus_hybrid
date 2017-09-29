@@ -8,7 +8,6 @@ namespace Praxigento\BonusHybrid\Service\Calc\Bonus;
 use Praxigento\BonusBase\Repo\Entity\Data\Log\Customers as ELogCust;
 use Praxigento\BonusBase\Repo\Entity\Data\Log\Opers as ELogOper;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Defaults as Def;
 
 /**
  * Calculate Team Bonus.
@@ -65,7 +64,7 @@ class Team
     public function exec(\Praxigento\Core\Data $ctx)
     {
         /* get working data from context */
-        $scheme = $ctx->get(self::CTX_IN_SCHEME) ?? Def::SCHEMA_DEFAULT;
+        $scheme = $ctx->get(self::CTX_IN_SCHEME) ?? Cfg::SCHEMA_DEFAULT;
         /**
          * perform processing
          */
@@ -82,7 +81,7 @@ class Team
         $compressCalcId = $compressCalc->getId();
         $teamCalcId = $teamCalc->getId();
         /* calculate bonus according to given SCHEME */
-        if ($scheme == Def::SCHEMA_EU) {
+        if ($scheme == Cfg::SCHEMA_EU) {
             $bonus = $this->subCalcEu->exec($compressCalcId);
         } else {
             $bonus = $this->subCalcDef->exec($compressCalcId);
@@ -107,12 +106,12 @@ class Team
     /**
      * Get period and calculation data for all related calculation types.
      *
-     * @param string $scheme see \Praxigento\BonusHybrid\Defaults::SCHEMA_XXX
+     * @param string $scheme see \Praxigento\BonusHybrid\Config::SCHEMA_XXX
      * @return array [$compressCalc, $teamPeriod, $teamCalc]
      */
     private function getCalcData($scheme)
     {
-        $calcTypeCode = ($scheme == Def::SCHEMA_EU)
+        $calcTypeCode = ($scheme == Cfg::SCHEMA_EU)
             ? Cfg::CODE_TYPE_CALC_BONUS_TEAM_EU
             : Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF;
         /* get period & calc data for Team bonus & TV Volumes Calculation */

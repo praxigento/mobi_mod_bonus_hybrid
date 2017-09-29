@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress;
 
-use Praxigento\BonusHybrid\Defaults as Def;
+use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Cfg\Param as ECfgParam;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase2\Legs as ELegs;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
@@ -31,7 +31,7 @@ class Phase2
     const IN_DWNL_PLAIN = 'dwnlPlain';
     /** array none-compressed PV by customer ID */
     const IN_MAP_PV = 'mapPV';
-    /** string Scheme code (see \Praxigento\BonusHybrid\Defaults::SCHEMA_XXX) */
+    /** string Scheme code (see \Praxigento\BonusHybrid\Config::SCHEMA_XXX) */
     const IN_SCHEME = 'scheme';
     /** \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] */
     const OUT_DWNL_PHASE2 = 'dwnlPhase2';
@@ -100,9 +100,9 @@ class Phase2
         $mapByDepthCompress = $this->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_DEPTH);
         $mapByIdPlain = $this->mapById($dwnlPlain, EBonDwnl::ATTR_CUST_REF);
         $mapByTeamPlain = $this->mapByTeams($dwnlPlain, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
-        $rankIdMgr = $this->repoRank->getIdByCode(Def::RANK_MANAGER);
+        $rankIdMgr = $this->repoRank->getIdByCode(Cfg::RANK_MANAGER);
         /* MOBI-629: add init rank for un-ranked entries */
-        $rankIdDistr = $this->repoRank->getIdByCode(Def::RANK_DISTRIBUTOR);;
+        $rankIdDistr = $this->repoRank->getIdByCode(Cfg::RANK_DISTRIBUTOR);;
         /* run though the compressed tree from bottom to top and collect OV */
         foreach ($mapByDepthCompress as $level) {
             foreach ($level as $custId) {
@@ -232,7 +232,7 @@ class Phase2
                     if (is_null($foundParentId)) {
                         /* no qualified parent up to the root, make this customer as root customer  */
                         $entryDwnl->setParentRef($custId);
-                    } elseif ($fatherIsUnqual && ($scheme == Def::SCHEMA_EU)) {
+                    } elseif ($fatherIsUnqual && ($scheme == Cfg::SCHEMA_EU)) {
                         /* EU: there is qualified grand for unqualified father, should not compress */
                         $entryDwnl->setParentRef($prevParentId);
                     } else {

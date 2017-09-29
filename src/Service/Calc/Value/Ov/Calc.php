@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Value\Ov;
 
-use Praxigento\BonusHybrid\Defaults as Def;
+use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 
 /**
@@ -69,7 +69,7 @@ class Calc
                 $isSignupDebit = in_array($custId, $signupDebitCustomers);
                 if ($isSignupDebit) {
                     /* add written-off PV if customer was qualified to Sign Up Debit bonus */
-                    $ov += Def::SIGNUP_DEBIT_PV;
+                    $ov += Cfg::SIGNUP_DEBIT_PV;
                 }
                 if (isset($mapTeams[$custId])) {
                     /* add OV from front team members */

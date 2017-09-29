@@ -6,7 +6,6 @@
 namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Team;
 
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Service\Calc\A\Data\Bonus as DBonus;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
@@ -57,7 +56,7 @@ class CalcEu
     {
         $result = [];
         /* collect additional data */
-        $bonusPercent = Def::TEAM_BONUS_EU_PERCENT;
+        $bonusPercent = Cfg::TEAM_BONUS_EU_PERCENT;
         $dwnlCompress = $this->repoDwnlBon->getByCalcId($calcId);
         $dwnlCurrent = $this->repoDwnl->get();
         /* create maps to access data */
@@ -81,9 +80,9 @@ class CalcEu
             $parentData = $mapCustById[$parentId];
             $parentMlmId = $parentData->getHumanRef();
             $scheme = $this->hlpScheme->getSchemeByCustomer($parentData);
-            if ($scheme == Def::SCHEMA_EU) {
+            if ($scheme == Cfg::SCHEMA_EU) {
                 $pvParent = $parentDwnl->getPv();
-                if ($pvParent > (Def::PV_QUALIFICATION_LEVEL_EU - Cfg::DEF_ZERO)) {
+                if ($pvParent > (Cfg::PV_QUALIFICATION_LEVEL_EU - Cfg::DEF_ZERO)) {
                     $bonus = $this->hlpFormat->roundBonus($pv * $bonusPercent);
                     if ($bonus > Cfg::DEF_ZERO) {
                         $entry = new DBonus();

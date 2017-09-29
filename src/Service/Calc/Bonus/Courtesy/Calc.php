@@ -6,7 +6,6 @@
 namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Courtesy;
 
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Service\Calc\A\Data\Bonus as DBonus;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
@@ -53,7 +52,7 @@ class Calc
     {
         $result = [];
         /* collect additional data */
-        $percentCourtesy = Def::COURTESY_BONUS_PERCENT;
+        $percentCourtesy = Cfg::COURTESY_BONUS_PERCENT;
         $dwnlCompress = $this->repoDwnlBon->getByCalcId($calcId);
         $dwnlCurrent = $this->repoDwnl->get();
         $levelsPersonal = $this->repoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_DEF);
@@ -74,7 +73,7 @@ class Calc
             $custScheme = $this->hlpScheme->getSchemeByCustomer($custData);
             if (
                 isset($mapTeams[$custId]) &&
-                ($custScheme == Def::SCHEMA_DEFAULT)
+                ($custScheme == Cfg::SCHEMA_DEFAULT)
             ) {
                 $custMlmId = $custData->getHumanRef();
                 $tv = $item->getTv();

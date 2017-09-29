@@ -6,7 +6,6 @@
 namespace Praxigento\BonusHybrid\Service\Calc\Forecast;
 
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase1 as PCpmrsPhase1;
 use Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2 as PCpmrsPhase2;
@@ -161,8 +160,8 @@ class Compress
         $dwnlPhase1 = $this->calcOv($dwnlPhase1);
 
         /* calculate phase 2 compression for both schemes */
-        $dwnlPhase2Def = $this->compressPhase2($calcId, Def::SCHEMA_DEFAULT, $dwnlPhase1);
-        $dwnlPhase2Eu = $this->compressPhase2($calcId, Def::SCHEMA_EU, $dwnlPhase1);
+        $dwnlPhase2Def = $this->compressPhase2($calcId, Cfg::SCHEMA_DEFAULT, $dwnlPhase1);
+        $dwnlPhase2Eu = $this->compressPhase2($calcId, Cfg::SCHEMA_EU, $dwnlPhase1);
 
         /* ... then populate Phase1 downline with ranks from Phase2 downlines */
         $dwnlPhase1 = $this->updateDwnl($dwnlPhase1, $dwnlPhase2Def, $dwnlPhase2Eu);

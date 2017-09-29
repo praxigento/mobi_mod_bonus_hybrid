@@ -8,7 +8,6 @@ namespace Praxigento\BonusHybrid\Service\Calc\Bonus;
 use Praxigento\BonusBase\Repo\Entity\Data\Log\Customers as ELogCust;
 use Praxigento\BonusBase\Repo\Entity\Data\Log\Opers as ELogOper;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Defaults as Def;
 
 /**
  * Calculate Infinity Bonus.
@@ -61,7 +60,7 @@ class Infinity
     public function exec(\Praxigento\Core\Data $ctx)
     {
         /* get working data from context */
-        $scheme = $ctx->get(self::CTX_IN_SCHEME) ?? Def::SCHEMA_DEFAULT;
+        $scheme = $ctx->get(self::CTX_IN_SCHEME) ?? Cfg::SCHEMA_DEFAULT;
         /**
          * perform processing
          */
@@ -103,7 +102,7 @@ class Infinity
      */
     private function getCalcData($scheme)
     {
-        if ($scheme == Def::SCHEMA_EU) {
+        if ($scheme == Cfg::SCHEMA_EU) {
             $baseTypeCode = Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_EU;
             $depTypeCode = Cfg::CODE_TYPE_CALC_BONUS_INFINITY_EU;
         } else {

@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Forecast\Compress;
 
-use Praxigento\BonusHybrid\Defaults as Def;
+use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECustDwnl;
 
@@ -68,7 +68,7 @@ class UpdateDwnl
             $custData = $mapCust[$custRef];
             $scheme = $this->hlpScheme->getSchemeByCustomer($custData);
             /** @var EBonDwnl $ph2Item */
-            if ($scheme == Def::SCHEMA_EU) {
+            if ($scheme == Cfg::SCHEMA_EU) {
                 $ph2Item = $mapByIdEu[$custRef] ?? null;
             } else {
                 $ph2Item = $mapByIdDef[$custRef] ?? null;

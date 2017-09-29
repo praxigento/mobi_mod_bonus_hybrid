@@ -6,7 +6,6 @@
 namespace Praxigento\BonusHybrid\Service\Calc\Compress;
 
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Defaults as Def;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder as QBldGetPv;
 use Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase1 as PPhase1;
@@ -152,7 +151,7 @@ class Phase1
      */
     private function getDefaultRankId()
     {
-        $result = $this->repoRank->getIdByCode(Def::RANK_DISTRIBUTOR);
+        $result = $this->repoRank->getIdByCode(Cfg::RANK_DISTRIBUTOR);
         return $result;
     }
 
