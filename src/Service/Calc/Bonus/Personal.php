@@ -30,7 +30,7 @@ class Personal
     private $hlpPeriod;
     /** @var  \Praxigento\BonusHybrid\Service\Calc\A\Helper\PrepareTrans */
     private $hlpTrans;
-    /** @var  \Praxigento\BonusHybrid\Tool\IScheme */
+    /** @var  \Praxigento\BonusHybrid\Helper\IScheme */
     private $hlpScheme;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
@@ -51,7 +51,7 @@ class Personal
         \Praxigento\Core\Fw\Logger\App $logger,
         \Praxigento\Core\Tool\IPeriod $hlpPeriod,
         \Praxigento\BonusBase\Helper\Calc $hlpCalc,
-        \Praxigento\BonusHybrid\Tool\IScheme $hlpScheme,
+        \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\BonusBase\Repo\Entity\Level $repoLevel,

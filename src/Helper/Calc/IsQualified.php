@@ -20,11 +20,11 @@ class IsQualified
     const OPT_PV = 'pv';
     const OPT_SCHEME = 'scheme';
     const OPT_TV = 'tv';
-    /** @var  \Praxigento\BonusHybrid\Tool\IScheme */
+    /** @var  \Praxigento\BonusHybrid\Helper\IScheme */
     protected $hlpScheme;
 
     public function __construct(
-        \Praxigento\BonusHybrid\Tool\IScheme $hlpScheme
+        \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme
     ) {
         $this->hlpScheme = $hlpScheme;
     }

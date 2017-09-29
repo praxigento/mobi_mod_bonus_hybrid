@@ -62,7 +62,7 @@
     <!-- ***** -->
     <!-- Tools -->
     <!-- ***** -->
-    <preference for="Praxigento\BonusHybrid\Tool\IScheme"
-            type="Praxigento\BonusHybrid\Tool\Def\Scheme"/>
+    <preference for="Praxigento\BonusHybrid\Helper\IScheme"
+            type="Praxigento\BonusHybrid\Helper\Scheme"/>
 
 </config>

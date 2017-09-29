@@ -28,13 +28,13 @@ class UpdateDwnl
     const IN_DWNL_PHASE2_EU = 'dwnlPhase2Eu';
     /** \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] */
     const OUT_DWNL_PHASE1 = 'dwnlPhase1';
-    /** @var \Praxigento\BonusHybrid\Tool\IScheme */
+    /** @var \Praxigento\BonusHybrid\Helper\IScheme */
     private $hlpScheme;
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
     private $repoCustDwnl;
 
     public function __construct(
-        \Praxigento\BonusHybrid\Tool\IScheme $hlpScheme,
+        \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\Downline\Repo\Entity\Customer $repoCustDwnl
     )
     {

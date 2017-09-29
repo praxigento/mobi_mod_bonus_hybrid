@@ -25,7 +25,7 @@ class Calc
     private $hlpDwnl;
     /** @var \Praxigento\Core\Tool\IFormat */
     private $hlpFormat;
-    /** @var  \Praxigento\BonusHybrid\Tool\IScheme */
+    /** @var  \Praxigento\BonusHybrid\Helper\IScheme */
     private $hlpScheme;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
@@ -42,7 +42,7 @@ class Calc
         \Praxigento\Core\Fw\Logger\App $logger,
         \Praxigento\Core\Tool\IFormat $hlpFormat,
         \Praxigento\Downline\Tool\ITree $hlpDwnl,
-        \Praxigento\BonusHybrid\Tool\IScheme $hlpScheme,
+        \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
         \Praxigento\BonusBase\Repo\Entity\Rank $repoRank,
         \Praxigento\BonusHybrid\Repo\Entity\Cfg\Override $repoCfgOvrd,

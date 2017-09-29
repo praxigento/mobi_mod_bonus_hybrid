@@ -12,11 +12,11 @@ class GetMaxQualifiedRankId
     const OPT_COMPRESS_OI_ENTRY = 'compressOiEntry';
     const OPT_SCHEME = 'scheme';
 
-    /** @var  \Praxigento\BonusHybrid\Tool\IScheme */
+    /** @var  \Praxigento\BonusHybrid\Helper\IScheme */
     protected $hlpScheme;
 
     public function __construct(
-        \Praxigento\BonusHybrid\Tool\IScheme $hlpScheme
+        \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme
     ) {
         $this->hlpScheme = $hlpScheme;
     }

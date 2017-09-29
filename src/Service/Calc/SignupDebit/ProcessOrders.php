@@ -40,11 +40,11 @@ class ProcessOrders
     private $repoLogSale;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Registry\SignupDebit */
     private $repoRegSignupDebit;
-    /** @var  \Praxigento\BonusHybrid\Tool\IScheme */
+    /** @var  \Praxigento\BonusHybrid\Helper\IScheme */
     private $hlpScheme;
 
     public function __construct(
-        \Praxigento\BonusHybrid\Tool\IScheme $hlpScheme,
+        \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\BonusBase\Repo\Entity\Log\Customers $repoLogCust,
         \Praxigento\BonusBase\Repo\Entity\Log\Opers $repoLogOper,
         \Praxigento\BonusBase\Repo\Entity\Log\Sales $repoLogSale,

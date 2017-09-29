@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Tool\Def;
+namespace Praxigento\BonusHybrid\Helper;
 
 use Praxigento\BonusBase\Repo\Entity\Data\Rank;
 use Praxigento\BonusHybrid\Config as Cfg;
@@ -15,7 +15,7 @@ use Praxigento\Downline\Repo\Entity\Data\Customer;
  */
 class Scheme
     extends \Praxigento\Core\Repo\Def\Db
-    implements \Praxigento\BonusHybrid\Tool\IScheme
+    implements \Praxigento\BonusHybrid\Helper\IScheme
 {
     const A_RANK_ID = 'RankId';
     const A_SCHEME = 'Scheme';

@@ -46,7 +46,7 @@ class Phase2
     private $hlpGetMaxRankId;
     /** @var \Praxigento\BonusHybrid\Helper\Calc\IsQualified */
     private $hlpIsQualified;
-    /** @var \Praxigento\BonusHybrid\Tool\IScheme */
+    /** @var \Praxigento\BonusHybrid\Helper\IScheme */
     private $hlpScheme;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Cfg\Param */
     private $repoCfgParam;
@@ -57,7 +57,7 @@ class Phase2
 
     public function __construct(
         \Praxigento\Downline\Tool\ITree $hlpTree,
-        \Praxigento\BonusHybrid\Tool\IScheme $hlpScheme,
+        \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\BonusHybrid\Service\Calc\Compress\Helper $hlp,
         \Praxigento\BonusHybrid\Helper\Calc\GetMaxQualifiedRankId $hlpGetMaxRankId,
         \Praxigento\BonusHybrid\Helper\Calc\IsQualified $hlpIsQualified,

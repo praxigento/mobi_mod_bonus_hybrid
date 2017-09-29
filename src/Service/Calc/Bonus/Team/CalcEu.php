@@ -22,7 +22,7 @@ class CalcEu
 
     /** @var \Praxigento\Core\Tool\IFormat */
     private $hlpFormat;
-    /** @var  \Praxigento\BonusHybrid\Tool\IScheme */
+    /** @var  \Praxigento\BonusHybrid\Helper\IScheme */
     private $hlpScheme;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
@@ -34,7 +34,7 @@ class CalcEu
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
         \Praxigento\Core\Tool\IFormat $hlpFormat,
-        \Praxigento\BonusHybrid\Tool\IScheme $hlpScheme,
+        \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon
     )

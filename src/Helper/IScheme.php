@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Tool;
+namespace Praxigento\BonusHybrid\Helper;
 
 
 interface IScheme {
@@ -11,11 +11,11 @@ interface IScheme {
      * Check $custId against list of the customers with forced qualification and return the same PV or
      * qualification PV for forced customers.
      *
-     * @param $custId int
-     * @param $scheme stirng
-     * @param $pv number
+     * @param int $custId
+     * @param string $scheme
+     * @param float $pv
      *
-     * @return number
+     * @return float
      */
     public function getForcedPv($custId, $scheme, $pv);
 
@@ -33,8 +33,8 @@ interface IScheme {
     /**
      * Return Rank ID for customers with forced qualification.
      *
-     * @param $custId
-     * @param $scheme
+     * @param int $custId
+     * @param string $scheme
      *
      * @return null|int
      */
@@ -44,11 +44,11 @@ interface IScheme {
      * Check $custId against list of the customers with forced qualification and return the same TV or
      * qualification TV for forced customers.
      *
-     * @param $custId int
-     * @param $scheme string
-     * @param $tv number
+     * @param int $custId
+     * @param string $scheme
+     * @param float $tv
      *
-     * @return number
+     * @return float
      */
     public function getForcedTv($custId, $scheme, $tv);
 
@@ -62,7 +62,7 @@ interface IScheme {
     /**
      * Analyze customer data and return code of the calculation scheme used for this customer.
      *
-     * @param $data
+     * @param array|\Praxigento\Core\Data $data
      *
      * @return string
      */

@@ -41,7 +41,7 @@ class Phase1
 
     /** @var    \Praxigento\Downline\Service\ISnap */
     private $callDwnlSnap;
-    /** @var  \Praxigento\BonusHybrid\Tool\IScheme */
+    /** @var  \Praxigento\BonusHybrid\Helper\IScheme */
     private $hlpScheme;
     /** @var \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds */
     private $hlpSignupDebitCust;
@@ -51,7 +51,7 @@ class Phase1
     private $repoCustDwnl;
 
     public function __construct(
-        \Praxigento\BonusHybrid\Tool\IScheme $hlpScheme,
+        \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\Downline\Tool\ITree $hlpTree,
         \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust,
         \Praxigento\Downline\Repo\Entity\Customer $repoCustDwnl,
