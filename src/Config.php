@@ -36,8 +36,7 @@ class Config extends BonusBaseCfg
     const CODE_TYPE_CALC_COMPRESS_PHASE1 = 'HYBRID_COMPRESS_PHASE1';
     const CODE_TYPE_CALC_COMPRESS_PHASE2_DEF = 'HYBRID_COMPRESS_PHASE2_DEF'; // Override & Infinity (DEFAULT scheme)
     const CODE_TYPE_CALC_COMPRESS_PHASE2_EU = 'HYBRID_COMPRESS_PHASE2_EU'; // Override & Infinity (EU scheme)
-    const CODE_TYPE_CALC_FORECAST_PHASE2_DEF = 'HYBRID_FORECAST_PHASE2_DEF'; // Daily forecast compressed (DEFAULT)
-    const CODE_TYPE_CALC_FORECAST_PHASE2_EU = 'HYBRID_FORECAST_PHASE2_EU'; // Daily forecast compressed (EU)
+    const CODE_TYPE_CALC_FORECAST_PHASE1 = 'HYBRID_FORECAST_PHASE1'; // Daily forecast compressed (Phase1)
     const CODE_TYPE_CALC_FORECAST_PLAIN = 'HYBRID_FORECAST_PLAIN'; // Daily forecast calculation (plain tree)
     const CODE_TYPE_CALC_PV_WRITE_OFF = 'HYBRID_PV_WRITE_OFF';
     const CODE_TYPE_CALC_VALUE_OV = 'HYBRID_VALUE_OV';

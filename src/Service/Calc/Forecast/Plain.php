@@ -60,7 +60,6 @@ class Plain
         $this->logger->info("'Forecast Plain' calculation is started.");
 
         $period = $ctx->get(self::CTX_IN_PERIOD);
-        $period = '201708'; // TODO: remove tmp code
 
         /* clean up existing forecast calculation data */
         $ctxClean = new \Praxigento\Core\Data();

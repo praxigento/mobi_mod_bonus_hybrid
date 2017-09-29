@@ -103,7 +103,7 @@ class Compress
     private function cleanCalc()
     {
         $ctx = new \Praxigento\Core\Data();
-        $ctx->set(PCalcClean::IN_CALC_TYPE_CODE, Cfg::CODE_TYPE_CALC_FORECAST_PHASE2_DEF);
+        $ctx->set(PCalcClean::IN_CALC_TYPE_CODE, Cfg::CODE_TYPE_CALC_FORECAST_PHASE1);
         $this->procCalcClean->exec($ctx);
     }
 
@@ -197,7 +197,7 @@ class Compress
     private function registerCalc()
     {
         $ctx = new \Praxigento\Core\Data();
-        $ctx->set(PCalcReg::IN_CALC_TYPE_CODE, Cfg::CODE_TYPE_CALC_FORECAST_PHASE2_DEF);
+        $ctx->set(PCalcReg::IN_CALC_TYPE_CODE, Cfg::CODE_TYPE_CALC_FORECAST_PHASE1);
         /** @var \Praxigento\Core\Data $res */
         $res = $this->procCalcReg->exec($ctx);
         $result = $res->get(PCalcReg::OUT_CALC_ID);
