@@ -11,7 +11,7 @@ use Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase2\Legs as ELegs;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 
 /**
- * Process to calculate Phase1 compression.
+ * Process to calculate Phase2 compression.
  */
 class Phase2
     implements \Praxigento\Core\Service\IProcess

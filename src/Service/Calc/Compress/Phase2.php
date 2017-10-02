@@ -6,6 +6,7 @@
 namespace Praxigento\BonusHybrid\Service\Calc\Compress;
 
 use Praxigento\BonusHybrid\Config as Cfg;
+use Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2 as PCpmrsPhase2;
 
 class Phase2
     implements \Praxigento\BonusHybrid\Service\Calc\Compress\IPhase2
@@ -16,12 +17,15 @@ class Phase2
         mapValueById as protected;
     }
 
+    private $hlp;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
-    private $repoCalc;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2 */
+    private $procCmprsPhase2;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
+    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
+    private $repoCalc;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoDwnlBon;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase2\Legs */
@@ -31,19 +35,41 @@ class Phase2
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
+        \Praxigento\BonusHybrid\Service\Calc\Compress\Helper $hlp,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon,
         \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase2\Legs $repoLegs,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
+        \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2 $procCmprsPhase2,
         \Praxigento\BonusHybrid\Service\Calc\Compress\Phase2\Calc $subCalc
     )
     {
         $this->logger = $logger;
+        $this->hlp = $hlp;
         $this->repoCalc = $repoCalc;
         $this->repoDwnlBon = $repoDwnlBon;
         $this->repoLegs = $repoLegs;
         $this->procPeriodGet = $procPeriodGet;
+        $this->procCmprsPhase2 = $procCmprsPhase2;
         $this->subCalc = $subCalc;
+    }
+
+    private function compressPhase2($calcIdWriteOff, $calcIdPhase1, $calcIdPhase2, $scheme)
+    {
+        $pv = $this->hlp->getPv($calcIdWriteOff);
+        $dwnlPlain = $this->repoDwnlBon->getByCalcId($calcIdWriteOff);
+        $dwnlPhase1 = $this->repoDwnlBon->getByCalcId($calcIdPhase1);
+        $ctx = new \Praxigento\Core\Data();
+        $ctx->set(PCpmrsPhase2::IN_CALC_ID_PHASE2, $calcIdPhase2);
+        $ctx->set(PCpmrsPhase2::IN_SCHEME, $scheme);
+        $ctx->set(PCpmrsPhase2::IN_DWNL_PLAIN, $dwnlPlain);
+        $ctx->set(PCpmrsPhase2::IN_DWNL_PHASE1, $dwnlPhase1);
+        $ctx->set(PCpmrsPhase2::IN_MAP_PV, $pv);
+        $out = $this->procCmprsPhase2->exec($ctx);
+        $dwnlPhase2 = $out->get(PCpmrsPhase2::OUT_DWNL_PHASE2);
+        $legs = $out->get(PCpmrsPhase2::OUT_LEGS);
+        $result = [$dwnlPhase2, $legs];
+        return $result;
     }
 
     public function exec(\Praxigento\Core\Data $ctx)
@@ -72,11 +98,10 @@ class Phase2
         $dsEnd = $phase2Period->getDstampEnd();
         $this->logger->info("Phase1 compression period #$phase2PeriodId ($dsBegin-$dsEnd)");
         /* perform calculation for given source calculations */
-        $updates = $this->subCalc->exec($writeOffCalcId, $phase1CalcId, $phase2CalcId, $scheme);
+        list($downline, $legs) = $this->compressPhase2($writeOffCalcId, $phase1CalcId, $phase2CalcId, $scheme);
+        // $updates = $this->subCalc->exec($writeOffCalcId, $phase1CalcId, $phase2CalcId, $scheme);
         /* save calculation results */
-        $downline = $updates->getDownline();
         $this->saveDownline($downline);
-        $legs = $updates->getLegs();
         $this->saveLegs($legs);
         /* mark this calculation complete */
         $this->repoCalc->markComplete($phase2CalcId);
