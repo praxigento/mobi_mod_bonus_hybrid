@@ -30,8 +30,6 @@ class Phase2
     private $repoDwnlBon;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase2\Legs */
     private $repoLegs;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\Phase2\Calc */
-    private $subCalc;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
@@ -40,8 +38,7 @@ class Phase2
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon,
         \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase2\Legs $repoLegs,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
-        \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2 $procCmprsPhase2,
-        \Praxigento\BonusHybrid\Service\Calc\Compress\Phase2\Calc $subCalc
+        \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2 $procCmprsPhase2
     )
     {
         $this->logger = $logger;
@@ -51,9 +48,17 @@ class Phase2
         $this->repoLegs = $repoLegs;
         $this->procPeriodGet = $procPeriodGet;
         $this->procCmprsPhase2 = $procCmprsPhase2;
-        $this->subCalc = $subCalc;
     }
 
+    /**
+     * Collect data for Phase2 compression and call process common for general & forecast calculations.
+     *
+     * @param $calcIdWriteOff
+     * @param $calcIdPhase1
+     * @param $calcIdPhase2
+     * @param $scheme
+     * @return array
+     */
     private function compressPhase2($calcIdWriteOff, $calcIdPhase1, $calcIdPhase2, $scheme)
     {
         $pv = $this->hlp->getPv($calcIdWriteOff);
@@ -96,10 +101,9 @@ class Phase2
         $phase2PeriodId = $phase2Period->getId();
         $dsBegin = $phase2Period->getDstampBegin();
         $dsEnd = $phase2Period->getDstampEnd();
-        $this->logger->info("Phase1 compression period #$phase2PeriodId ($dsBegin-$dsEnd)");
+        $this->logger->info("Phase2 compression period #$phase2PeriodId ($dsBegin-$dsEnd)");
         /* perform calculation for given source calculations */
         list($downline, $legs) = $this->compressPhase2($writeOffCalcId, $phase1CalcId, $phase2CalcId, $scheme);
-        // $updates = $this->subCalc->exec($writeOffCalcId, $phase1CalcId, $phase2CalcId, $scheme);
         /* save calculation results */
         $this->saveDownline($downline);
         $this->saveLegs($legs);
