@@ -6,8 +6,10 @@
     <!-- *** -->
     <!-- API -->
     <!-- *** -->
+    <preference for="\Praxigento\BonusHybrid\Api\Dcp\Report\AccountingInterface"
+                type="\Praxigento\BonusHybrid\Api\Dcp\Report\Accounting"/>
     <preference for="\Praxigento\BonusHybrid\Api\Dcp\Report\DownlineInterface"
-            type="\Praxigento\BonusHybrid\Api\Dcp\Report\Downline"/>
+                type="\Praxigento\BonusHybrid\Api\Dcp\Report\Downline"/>
 
     <!-- ********************** -->
     <!-- Console (CLI Commands) -->
