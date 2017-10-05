@@ -15,7 +15,7 @@ class Accounting
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
-        \Praxigento\Accounting\Repo\Query\Trans\Get\Builder $qbld,
+        \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Accounting\Builder $qbld,
         \Praxigento\Core\Helper\Config $hlpCfg,
         \Praxigento\Core\Api\IAuthenticator $authenticator
     )
