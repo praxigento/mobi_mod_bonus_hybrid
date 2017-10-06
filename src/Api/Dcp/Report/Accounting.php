@@ -6,8 +6,10 @@
 namespace Praxigento\BonusHybrid\Api\Dcp\Report;
 
 use Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Repo\Query\GetBalance\Builder as QBBal;
+use Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Repo\Query\GetCustomer\Builder as QBCust;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Data as DRespData;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Data\Balance as DRespBalance;
+use Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Data\Customer as DRespCust;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Data\Trans as DRespTrans;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Accounting\Trans\Builder as QBAccTrans;
@@ -22,6 +24,7 @@ class Accounting
      */
     const BND_CUST_ID = 'custId'; // to get asset balances
     const CTX_QUERY_BAL = 'queryBalance';
+    const CTX_QUERY_CUST = 'queryCustomer';
     /**
      * Name of the local context variables.
      */
@@ -40,6 +43,8 @@ class Accounting
     private $qbBalance;
     /** @var \Praxigento\Downline\Repo\Entity\Snap */
     private $repoSnap;
+    /** @var \Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Repo\Query\GetCustomer\Builder */
+    private $qbCust;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
@@ -48,7 +53,8 @@ class Accounting
         \Praxigento\Core\Api\IAuthenticator $authenticator,
         \Praxigento\Downline\Repo\Entity\Snap $repoSnap,
         \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Accounting\Trans\Builder $qbDcpTrans,
-        \Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Repo\Query\GetBalance\Builder $qbBalance
+        \Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Repo\Query\GetBalance\Builder $qbBalance,
+        \Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Repo\Query\GetCustomer\Builder $qbCust
     )
     {
         parent::__construct($manObj, $qbDcpTrans, $hlpCfg);
@@ -56,6 +62,7 @@ class Accounting
         $this->hlpPeriod = $hlpPeriod;
         $this->repoSnap = $repoSnap;
         $this->qbBalance = $qbBalance;
+        $this->qbCust = $qbCust;
     }
 
     protected function authorize(\Praxigento\Core\Data $ctx)
@@ -69,6 +76,8 @@ class Accounting
         /* add more query builders */
         $query = $this->qbBalance->build();
         $ctx->set(self::CTX_QUERY_BAL, $query);
+        $query = $this->qbCust->build();
+        $ctx->set(self::CTX_QUERY_CUST, $query);
 
     }
 
@@ -80,14 +89,16 @@ class Accounting
 
     protected function performQuery(\Praxigento\Core\Data $ctx)
     {
-        /* re-assemble result data (there are more than 1 query in operation) */
-        $trans = $this->queryTrans($ctx); // this is primary query (sorted, filtered, etc.)
-
         /* get working vars from context */
         $var = $ctx->get(self::CTX_VARS);
         $custId = $var->get(self::VAR_CUST_ID);
         $dsOpen = $var->get(self::VAR_DATE_OPEN);
         $dsClose = $var->get(self::VAR_DATE_CLOSE);
+
+        /* get transactions as primary query (sorted, filtered, etc.)*/
+        $trans = $this->queryTrans($ctx);
+
+        /** get balances */
         /** @var \Magento\Framework\DB\Select $queryBal */
         $queryBal = $ctx->get(self::CTX_QUERY_BAL);
         $bindBal = [
@@ -98,11 +109,19 @@ class Accounting
         $bindBal [QBBal::BIND_MAX_DATE] = $dsClose;
         $balClose = $this->queryBalances($queryBal, $bindBal);
 
+        /** @var \Magento\Framework\DB\Select $queryCust */
+        $queryCust = $ctx->get(self::CTX_QUERY_CUST);
+        $bindCust = [
+            self::BND_CUST_ID => $custId
+        ];
+        $cust = $this->queryCustomer($queryCust, $bindCust);
 
+        /* re-assemble result data (there are more than 1 query in operation) */
         $result = new DRespData();
         $result->setTrans($trans);
         $result->setBalanceOpen($balOpen);
         $result->setBalanceClose($balClose);
+        $result->setCustomer($cust);
 
         $ctx->set(self::CTX_RESULT, $result);
     }
@@ -197,6 +216,25 @@ class Accounting
             $item->setValue($value);
             $result[] = $item;
         }
+        return $result;
+    }
+
+    private function queryCustomer(\Magento\Framework\DB\Select $query, $bind)
+    {
+        /* perform query and collect data */
+        $conn = $query->getConnection();
+        $rs = $conn->fetchRow($query, $bind);
+        $id = $rs[QBCust::A_ID];
+        $mlmId = $rs[QBCust::A_MLM_ID];
+        $nameFirst = $rs[QBCust::A_NAME_FIRST];
+        $nameLast = $rs[QBCust::A_NAME_LAST];
+
+        /* assemble result */
+        $result = new DRespCust();
+        $result->setId($id);
+        $result->setMlmId($mlmId);
+        $result->setNameFirst($nameFirst);
+        $result->setNameLast($nameLast);
         return $result;
     }
 
