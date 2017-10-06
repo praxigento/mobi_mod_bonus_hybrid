@@ -58,28 +58,7 @@ class Downline
 
     protected function authorize(\Praxigento\Core\Data $ctx)
     {
-        /* get working vars from context */
-        $vars = $ctx->get(self::CTX_VARS);
-        $rootCustId = $vars->get(self::VAR_CUST_ID);
-        $rootCustPath = $vars->get(self::VAR_CUST_PATH);
-
-        /* only currently logged in customer can get account statement */
-        $currCustData = $this->authenticator->getCurrentCustomerData();
-        $currCustId = $this->authenticator->getCurrentCustomerId();
-        /** @var \Praxigento\Downline\Repo\Entity\Data\Customer $currDwnlData */
-        $currDwnlData = $currCustData->get(\Praxigento\Downline\Infra\Api\Authenticator::A_DWNL_DATA);
-        $currCustPath = $currDwnlData->getPath() . $currDwnlData->getCustomerId() . Cfg::DTPS;
-
-        /* perform action */
-        $isTheSameCusts = ($rootCustId == $currCustId);
-        $isTheParent = !is_null($currCustId) && (substr($rootCustPath, 0, strlen($currCustPath)) == $currCustPath);
-        $isInDevMode = $this->authenticator->isEnabledDevMode();
-        if (($isTheSameCusts) || ($isTheParent) || $isInDevMode) {
-            // do nothing
-        } else {
-            $msg = __('You are not authorized to perform this operation.');
-            throw new \Magento\Framework\Exception\AuthorizationException($msg);
-        }
+        /* do nothing - in Production Mode current customer's ID is used as root customer ID */
     }
 
     protected function createQuerySelect(\Praxigento\Core\Data $ctx)

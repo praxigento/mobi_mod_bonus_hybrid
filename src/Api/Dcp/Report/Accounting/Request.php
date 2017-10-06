@@ -17,9 +17,9 @@ class Request
 {
 
     /**
-     * End of the calculation period.
+     * Reporting period.
      *
-     * @return string|null 'YYYY', 'YYYYMM', 'YYYYMMDD'
+     * @return string|null 'YYYYMM'
      */
     public function getPeriod()
     {
@@ -28,31 +28,20 @@ class Request
     }
 
     /**
-     * Root Customer ID for development purposes.
+     * Customer ID for whom to get report.
      *
      * @return int|null
      */
-    public function getRootCustId()
+    public function getCustomerId()
     {
-        $result = parent::getRootCustId();
+        $result = parent::getCustomerId();
         return $result;
     }
 
     /**
-     * Type of the requested report (complete|compressed).
+     * Reporting period.
      *
-     * @return string|null
-     */
-    public function getType()
-    {
-        $result = parent::getType();
-        return $result;
-    }
-
-    /**
-     * End of the calculation period.
-     *
-     * @param string $data 'YYYY', 'YYYYMM', 'YYYYMMDD'
+     * @param string $data 'YYYYMM'
      */
     public function setPeriod($data)
     {
@@ -60,24 +49,12 @@ class Request
     }
 
     /**
-     * Root Customer ID for development purposes.
+     * Customer ID for whom to get report.
      *
      * @param int $data
      */
-    public function setRootCustId($data)
+    public function setCustomerId($data)
     {
-        parent::setRootCustId($data);
+        parent::setCustomerId($data);
     }
-
-    /**
-     * Type of the requested report (complete|compressed).
-     *
-     * @param string $data
-     */
-    public function setType($data)
-    {
-        parent::setType($data);
-    }
-
-
 }
