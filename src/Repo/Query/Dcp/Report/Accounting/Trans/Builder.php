@@ -112,7 +112,7 @@ class Builder
         $tbl = $this->resource->getTableName(ELogCust::ENTITY_NAME);
         $as = $asLogCust;
         $cols = [
-            self::AS_LOG_CUST => ELogCust::ATTR_CUSTOMER_ID
+            self::A_OTHER_CUST_ID => ELogCust::ATTR_CUSTOMER_ID
         ];
         $cond = $as . '.' . ELogCust::ATTR_TRANS_ID . '=' . $asTrans . '.' . ETran::ATTR_ID;
         $result->joinLeft([$as => $tbl], $cond, $cols);

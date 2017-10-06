@@ -15,7 +15,7 @@ class Response
     extends \Praxigento\Core\Api\Response
 {
     /**
-     * @return \Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Entry[]
+     * @return \Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Data
      */
     public function getData()
     {
@@ -24,7 +24,7 @@ class Response
     }
 
     /**
-     * @param \Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Entry[] $data
+     * @param \Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Data $data
      */
     public function setData($data)
     {
