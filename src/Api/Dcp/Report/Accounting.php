@@ -259,7 +259,7 @@ class Accounting
             $item->setCustomerId($otherCustId);
             $item->setDate($date);
             $item->setDetails($details);
-            $item->setItemId($itemId);
+            $item->setTransId($itemId);
             $item->setType($type);
             $item->setValue($value);
             $result[] = $item;

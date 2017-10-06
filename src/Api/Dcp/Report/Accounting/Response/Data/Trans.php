@@ -18,8 +18,8 @@ namespace Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Data;
  * @method void setDate(string $data)
  * @method string getDetails()
  * @method void setDetails(string $data)
- * @method int getItemId()
- * @method void setItemId(int $data)
+ * @method int getTransId()
+ * @method void setTransId(int $data)
  * @method string getType()
  * @method void setType(string $data)
  * @method float getValue()
@@ -32,7 +32,7 @@ class Trans
     const A_CUSTOMER_ID = 'customer_id';
     const A_DATE = 'date';
     const A_DETAILS = 'details';
-    const A_ITEM_ID = 'item_id';
+    const A_TRANS_ID = 'trans_id';
     const A_TYPE = 'type';
     const A_VALUE = 'value';
 
