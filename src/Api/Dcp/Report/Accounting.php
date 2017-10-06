@@ -164,8 +164,7 @@ class Accounting
          * Define period.
          */
         if (!$period) {
-            /* CAUTION: this code will be failed after 2999 year. Please, call to the author in this case. */
-            $period = '2999';
+            $period = $this->hlpPeriod->getPeriodCurrent(null, 0, HPeriod::TYPE_MONTH);
         }
         /* apply dates for transactions */
         $dateFrom = $this->hlpPeriod->getTimestampFrom($period, HPeriod::TYPE_MONTH);
