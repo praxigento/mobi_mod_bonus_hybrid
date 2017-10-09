@@ -56,7 +56,7 @@ class SignupDebit
         $calcState = $calcData->getState();
         $this->logger->info("Processing period #$periodId ($periodBegin-$periodEnd), Sign Up Volume Debit calculation #$calcId ($calcState).");
         if ($calcState != Cfg::CALC_STATE_COMPLETE) {
-            $dateApplied = $this->hlpPeriod->getTimestampTo($periodEnd);
+            $dateApplied = $this->hlpPeriod->getTimestampUpTo($periodEnd);
             /* get first orders for just signed up customers */
             $reqGetOrders = new \Praxigento\BonusHybrid\Service\Calc\SignupDebit\GetOrders\Request();
             $reqGetOrders->dateFrom = $this->hlpPeriod->getTimestampFrom($periodBegin);

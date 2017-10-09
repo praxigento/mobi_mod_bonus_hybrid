@@ -148,7 +148,7 @@ class PvWriteOff
      */
     private function getTransactions($turnover, $dsEnd)
     {
-        $dateApplied = $this->hlpPeriod->getTimestampTo($dsEnd);
+        $dateApplied = $this->hlpPeriod->getTimestampUpTo($dsEnd);
         $result = $this->subPrepareTrans->exec($turnover, $dateApplied);
         return $result;
     }

@@ -133,7 +133,7 @@ class Infinity
     private function getTransactions($bonus, $period)
     {
         $dsEnd = $period->getDstampEnd();
-        $dateApplied = $this->hlpPeriod->getTimestampTo($dsEnd);
+        $dateApplied = $this->hlpPeriod->getTimestampUpTo($dsEnd);
         $result = $this->hlpTrans->exec($bonus, $dateApplied);
         return $result;
     }

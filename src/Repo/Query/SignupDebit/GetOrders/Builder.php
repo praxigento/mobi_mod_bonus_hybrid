@@ -77,7 +77,7 @@ class Builder
         $result->joinLeft([$asParent => $tbl], $on, $cols);
         /* WHERE */
         $where = $asCust . '.' . Cfg::E_CUSTOMER_A_CREATED_AT . '>=:' . self::BIND_DATE_FROM;
-        $where .= ' AND ' . $asCust . '.' . Cfg::E_CUSTOMER_A_CREATED_AT . '<=:' . self::BIND_DATE_TO;
+        $where .= ' AND ' . $asCust . '.' . Cfg::E_CUSTOMER_A_CREATED_AT . '<:' . self::BIND_DATE_TO;
         $where .= ' AND ' . $asPv . '.' . Pv::ATTR_TOTAL . ' IS NOT NULL';
         $result->where($where);
         /* ORDER */
