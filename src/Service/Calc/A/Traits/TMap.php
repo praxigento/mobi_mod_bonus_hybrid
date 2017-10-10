@@ -5,7 +5,9 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\A\Traits;
 
-
+/**
+ * @deprecated see \Praxigento\Downline\Helper\Tree
+ */
 trait TMap
 {
     /**
