@@ -151,40 +151,38 @@ class Phase1
                     foreach ($parents as $newParentId) {
                         $parentData = $mapCustomer[$newParentId];
                         $parentParentId = $parentData->getParentId();
-                        /* MOBI-942: use customer scheme to qualify parents */
-                        // $parentScheme = $this->hlpScheme->getSchemeByCustomer($parentData);
-                        $parentLevel = $qLevels[$scheme]; // qualification level for current parent
+                        /* MOBI-942: use parent scheme to qualify parents */
+                        $parentScheme = $this->hlpScheme->getSchemeByCustomer($parentData);
+                        $parentLevel = $qLevels[$parentScheme]; // qualification level for current parent
                         $pvParent = isset($mapPv[$newParentId]) ? $mapPv[$newParentId] : 0;
                         if (
                             ($pvParent >= $parentLevel) ||
                             (in_array($newParentId, $forcedCustomers))
                         ) {
                             $foundParentId = $newParentId;
+                            /* add PV to the closest qualified parent */
+                            if ($pv > 0) {
+                                if (isset($compression[$foundParentId])) {
+                                    $pvExist = $compression[$foundParentId][0];
+                                    $pvNew = $pv + $pvExist;
+                                    $compression[$foundParentId][0] = $pvNew;
+                                } else {
+                                    $compression[$foundParentId] [0] = $pv;
+                                    $compression[$foundParentId] [1] = $parentParentId;
+                                }
+                                // $pv PV are transferred from customer #$custId to his qualified parent #$foundParentId
+                                $pvTransferItem = new \Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase1\Transfer\Pv();
+                                $pvTransferItem->setCalcRef($calcId);
+                                $pvTransferItem->setCustFromRef($custId);
+                                $pvTransferItem->setCustToRef($foundParentId);
+                                $pvTransferItem->setPv($pv);
+                                $pvTransfers[] = $pvTransferItem;
+                            }
                             break;
                         }
                     }
                     unset($parents);
-                    /* add PV to the closest qualified parent */
-                    if (
-                        !is_null($foundParentId) &&
-                        ($pv > 0)
-                    ) {
-                        if (isset($compression[$foundParentId])) {
-                            $pvExist = $compression[$foundParentId][0];
-                            $pvNew = $pv + $pvExist;
-                            $compression[$foundParentId][0] = $pvNew;
-                        } else {
-                            $compression[$foundParentId] [0] = $pv;
-                            $compression[$foundParentId] [1] = $parentParentId;
-                        }
-                        // $pv PV are transferred from customer #$custId to his qualified parent #$foundParentId
-                        $pvTransferItem = new \Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase1\Transfer\Pv();
-                        $pvTransferItem->setCalcRef($calcId);
-                        $pvTransferItem->setCustFromRef($custId);
-                        $pvTransferItem->setCustToRef($foundParentId);
-                        $pvTransferItem->setPv($pv);
-                        $pvTransfers[] = $pvTransferItem;
-                    }
+
                     /* change parent for all siblings of the unqualified customer */
                     if (isset($mapTeams[$custId])) {
                         $team = $mapTeams[$custId];

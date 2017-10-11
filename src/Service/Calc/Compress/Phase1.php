@@ -75,6 +75,7 @@ class Phase1
         $in->set(PPhase1::IN_DWNL_PLAIN, $dwnlSnap);
         $in->set(PPhase1::IN_PV, $pv);
         $in->set(PPhase1::IN_CALC_ID, $calcId);
+        $in->set(PPhase1::IN_KEY_CALC_ID, EBonDwnl::ATTR_CALC_REF);
         $in->set(PPhase1::IN_KEY_CUST_ID, QBSnap::A_CUST_ID);
         $in->set(PPhase1::IN_KEY_PARENT_ID, QBSnap::A_PARENT_ID);
         $in->set(PPhase1::IN_KEY_DEPTH, QBSnap::A_DEPTH);
