@@ -150,8 +150,10 @@ class Phase1
                     $foundParentId = null;
                     foreach ($parents as $newParentId) {
                         $parentData = $mapCustomer[$newParentId];
-                        $parentScheme = $this->hlpScheme->getSchemeByCustomer($parentData);
-                        $parentLevel = $qLevels[$parentScheme]; // qualification level for current parent
+                        $parentParentId = $parentData->getParentId();
+                        /* MOBI-942: use customer scheme to qualify parents */
+                        // $parentScheme = $this->hlpScheme->getSchemeByCustomer($parentData);
+                        $parentLevel = $qLevels[$scheme]; // qualification level for current parent
                         $pvParent = isset($mapPv[$newParentId]) ? $mapPv[$newParentId] : 0;
                         if (
                             ($pvParent >= $parentLevel) ||
@@ -173,6 +175,7 @@ class Phase1
                             $compression[$foundParentId][0] = $pvNew;
                         } else {
                             $compression[$foundParentId] [0] = $pv;
+                            $compression[$foundParentId] [1] = $parentParentId;
                         }
                         // $pv PV are transferred from customer #$custId to his qualified parent #$foundParentId
                         $pvTransferItem = new \Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase1\Transfer\Pv();
