@@ -11,7 +11,6 @@ use Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Data as DRespData;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Data\Balance as DRespBalance;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Data\Customer as DRespCust;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Data\Trans as DRespTrans;
-use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Accounting\Trans\Builder as QBAccTrans;
 use Praxigento\Core\Tool\IPeriod as HPeriod;
 
@@ -41,8 +40,6 @@ class Accounting
     private $hlpPeriod;
     /** @var \Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Repo\Query\GetBalance\Builder */
     private $qbBalance;
-    /** @var \Praxigento\Downline\Repo\Entity\Snap */
-    private $repoSnap;
     /** @var \Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Repo\Query\GetCustomer\Builder */
     private $qbCust;
 
@@ -51,7 +48,6 @@ class Accounting
         \Praxigento\Core\Tool\IPeriod $hlpPeriod,
         \Praxigento\Core\Helper\Config $hlpCfg,
         \Praxigento\Core\Api\IAuthenticator $authenticator,
-        \Praxigento\Downline\Repo\Entity\Snap $repoSnap,
         \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Accounting\Trans\Builder $qbDcpTrans,
         \Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Repo\Query\GetBalance\Builder $qbBalance,
         \Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Repo\Query\GetCustomer\Builder $qbCust
@@ -60,7 +56,6 @@ class Accounting
         parent::__construct($manObj, $qbDcpTrans, $hlpCfg);
         $this->authenticator = $authenticator;
         $this->hlpPeriod = $hlpPeriod;
-        $this->repoSnap = $repoSnap;
         $this->qbBalance = $qbBalance;
         $this->qbCust = $qbCust;
     }
@@ -136,10 +131,8 @@ class Accounting
 
         /* get working vars */
         $custId = $vars->get(self::VAR_CUST_ID);
-        $rootPath = $vars->get(self::VAR_CUST_PATH);
         $dateFrom = $vars->get(self::VAR_DATE_FROM);
         $dateTo = $vars->get(self::VAR_DATE_TO);
-        $path = $rootPath . $custId . Cfg::DTPS . '%';
 
         /* bind values for query parameters */
         $bind->set(QBAccTrans::BND_CUST_ID, $custId);
@@ -182,13 +175,9 @@ class Accounting
         if (is_null($custId) || $isLiveMode) {
             $custId = $this->authenticator->getCurrentCustomerId();
         }
-        $customerRoot = $this->repoSnap->getByCustomerIdOnDate($custId, $period);
-        $path = $customerRoot->getPath();
-
 
         /* save working variables into execution context */
         $vars->set(self::VAR_CUST_ID, $custId);
-        $vars->set(self::VAR_CUST_PATH, $path);
         $vars->set(self::VAR_DATE_FROM, $dateFrom);
         $vars->set(self::VAR_DATE_TO, $dateTo);
         $vars->set(self::VAR_DATE_OPEN, $dsOpen);
@@ -218,6 +207,11 @@ class Accounting
         return $result;
     }
 
+    /**
+     * @param \Magento\Framework\DB\Select $query
+     * @param $bind
+     * @return \Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Data\Customer
+     */
     private function queryCustomer(\Magento\Framework\DB\Select $query, $bind)
     {
         /* perform query and collect data */
@@ -237,7 +231,10 @@ class Accounting
         return $result;
     }
 
-
+    /**
+     * @param \Praxigento\Core\Data $ctx
+     * @return DRespTrans[]
+     */
     private function queryTrans(\Praxigento\Core\Data $ctx)
     {
         $result = [];

@@ -11,13 +11,13 @@ namespace Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response;
  * 'snake_case' property if 'CamelCase' will not be found.
  *
  * @method \Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Data\Balance[] getBalanceClose()
- * @method void setBalanceClose(\Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Data\Balance [] $data)
+ * @method void setBalanceClose(\Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Data\Balance[] $data)
  * @method \Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Data\Balance[] getBalanceOpen()
- * @method void setBalanceOpen(\Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Data\Balance [] $data)
+ * @method void setBalanceOpen(\Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Data\Balance[] $data)
  * @method \Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Data\Trans[] getTrans()
- * @method void setTrans(\Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Data\Trans [] $data)
- * * @method \Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Data\Customer[] getCustomer()
- * @method void setCustomer(\Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Data\Customer [] $data)
+ * @method void setTrans(\Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Data\Trans[] $data)
+ * * @method \Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Data\Customer getCustomer()
+ * @method void setCustomer(\Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Data\Customer $data)
  */
 class Data
     extends \Praxigento\Core\Data
