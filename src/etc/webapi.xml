@@ -10,6 +10,14 @@
         </resources>
     </route>
 
+    <route url="/V1/prxgt/bonhyb/dcp/report/check" method="POST">
+        <!-- Get data for DCP Downline Reports. -->
+        <service class="Praxigento\BonusHybrid\Api\Dcp\Report\CheckInterface" method="exec"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+
     <route url="/V1/prxgt/bonhyb/dcp/report/downline" method="POST">
         <!-- Get data for DCP Downline Reports. -->
         <service class="Praxigento\BonusHybrid\Api\Dcp\Report\DownlineInterface" method="exec"/>

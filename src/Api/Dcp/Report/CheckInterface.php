@@ -13,5 +13,9 @@ use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response as Response;
  */
 interface CheckInterface
 {
+    /**
+     * @param \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Request $data
+     * @return \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response
+     */
     public function exec(Request $data): Response;
 }

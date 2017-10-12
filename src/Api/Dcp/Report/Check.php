@@ -41,8 +41,8 @@ class Check
 
     public function exec(Request $data): Response
     {
-        $result = parent::process($data);
-        assert($result instanceof Response);
+        $res = parent::process($data);
+        $result = new Response($res->getData());
         return $result;
     }
 
