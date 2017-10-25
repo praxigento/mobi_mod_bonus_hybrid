@@ -113,7 +113,7 @@ class Plain
     }
 
     /**
-     * Return 2 dates (period being/end): first day of the month and yesterday.
+     * Return 2 dates (period being/end): first day of the month and today.
      *
      * @param string $requested 'YYYY', 'YYYYMM' or 'YYYYMMDD'
      * @return array
@@ -131,7 +131,8 @@ class Plain
             $month = $this->hlpPeriod->getPeriodCurrent(null, 0, \Praxigento\Core\Tool\IPeriod::TYPE_MONTH);
             /* get current date then get yesterday date (end of period) */
             $today = $this->hlpPeriod->getPeriodCurrent();
-            $end = $this->hlpPeriod->getPeriodPrev($today);
+//            $end = $this->hlpPeriod->getPeriodPrev($today);
+            $end = $today;
         }
         $begin = $this->hlpPeriod->getPeriodFirstDate($month);
         $result = [$begin, $end];
