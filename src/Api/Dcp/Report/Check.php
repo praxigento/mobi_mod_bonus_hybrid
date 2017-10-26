@@ -18,16 +18,24 @@ class Check
     private $procBuildQueries;
     /** @var \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Proc\ParseRequest */
     private $procParseRequest;
+    /** @var \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Proc\PerformQueries */
+    private $procPerformQueries;
+    /** @var \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Proc\PopulateQueries */
+    private $procPopulateQueries;
 
     public function __construct(
         \Praxigento\Core\Api\IAuthenticator $authenticator,
         \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Proc\ParseRequest $procParseRequest,
-        \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Proc\BuildQueries $procBuildQueries
+        \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Proc\BuildQueries $procBuildQueries,
+        \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Proc\PerformQueries $procPerformQueries,
+        \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Proc\PopulateQueries $procPopulateQueries
     )
     {
         $this->authenticator = $authenticator;
         $this->procParseRequest = $procParseRequest;
         $this->procBuildQueries = $procBuildQueries;
+        $this->procPopulateQueries = $procPopulateQueries;
+        $this->procPerformQueries = $procPerformQueries;
     }
 
     public function exec(Request $data): Response
@@ -40,6 +48,8 @@ class Check
         /* perform processing: step by step */
         $ctx = $this->procParseRequest->exec($ctx);
         $ctx = $this->procBuildQueries->exec($ctx);
+        $ctx = $this->procPopulateQueries->exec($ctx);
+        $ctx = $this->procPerformQueries->exec($ctx);
 
         /* get result from context */
         $result = $ctx->getWebResponse();

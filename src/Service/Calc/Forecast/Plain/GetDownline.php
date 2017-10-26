@@ -41,9 +41,9 @@ class GetDownline
         $dateOn = $ctx->get(self::CTX_IN_DATE_ON);
 
         /* collect downline data to given date */
-        $query = $this->qbSnapOnDate->getSelectQuery();
+        $query = $this->qbSnapOnDate->build();
         $conn = $query->getConnection();
-        $bind = [QBSnapOnDate::BIND_ON_DATE => $dateOn];
+        $bind = [QBSnapOnDate::BND_ON_DATE => $dateOn];
         $rows = $conn->fetchAll($query, $bind);
         /* ... and default rank ID */
         $rankIdDef = $this->getDefaultRankId();

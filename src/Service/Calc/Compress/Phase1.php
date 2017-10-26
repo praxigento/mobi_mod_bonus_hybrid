@@ -166,9 +166,9 @@ class Phase1
     private function getDownlineSnapshot($dateOn)
     {
         /* collect downline data to given date */
-        $query = $this->qbSnapOnDate->getSelectQuery();
+        $query = $this->qbSnapOnDate->build();
         $conn = $query->getConnection();
-        $bind = [$this->qbSnapOnDate::BIND_ON_DATE => $dateOn];
+        $bind = [$this->qbSnapOnDate::BND_ON_DATE => $dateOn];
         $result = $conn->fetchAll($query, $bind);
         return $result;
     }

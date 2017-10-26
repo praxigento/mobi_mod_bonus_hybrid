@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response;
+namespace Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body;
 
 class Customer
     extends \Praxigento\Core\Data

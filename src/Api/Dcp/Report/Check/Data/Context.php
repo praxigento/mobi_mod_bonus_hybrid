@@ -13,8 +13,12 @@ class Context
 {
     const CUSTOMER_ID = 'customerId';
     const PERIOD = 'period';
+    const QUERY_CUSTOMER = 'queryCustomer';
     const WEB_REQUEST = 'webRequest';
     const WEB_RESPONSE = 'webResponse';
+
+    /** @var  \Praxigento\Core\Repo\Query\Def\Select */
+    public $queryCustomer;
 
     public function getCustomerId(): int
     {
@@ -40,12 +44,13 @@ class Context
         return $result;
     }
 
-    public function setCustomerId(int $data)
+
+    public function setCustomerId($data)
     {
         $this->set(self::CUSTOMER_ID, $data);
     }
 
-    public function setPeriod(string $data)
+    public function setPeriod($data)
     {
         $this->set(self::PERIOD, $data);
     }

@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Api\Dcp\Report\Check\Proc;
 
-use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Context as Context;
+use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Context as Ctx;
 
 /**
  * Process to build queries to get data from DB.
@@ -23,10 +23,9 @@ class BuildQueries
         $this->qbGetCustomer = $qbGetCustomer;
     }
 
-    public function exec(Context $ctx): Context
+    public function exec(Ctx $ctx): Ctx
     {
-        $query = $this->qbGetCustomer->build();
-
+        $ctx->queryCustomer = $this->qbGetCustomer->build();
         return $ctx;
     }
 
