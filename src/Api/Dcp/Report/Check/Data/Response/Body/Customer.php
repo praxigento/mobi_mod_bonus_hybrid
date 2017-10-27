@@ -8,12 +8,17 @@ namespace Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body;
 class Customer
     extends \Praxigento\Core\Data
 {
+    const A_ID = 'id';
+    const A_LEVEL = 'level';
+    const A_MLM_ID = 'mlm_id';
+    const A_NAME = 'name';
+
     /**
      * @return int
      */
     public function getId(): int
     {
-        $result = parent::getId();
+        $result = parent::get(self::A_ID);
         return $result;
     }
 
@@ -24,7 +29,7 @@ class Customer
      */
     public function getLevel(): int
     {
-        $result = parent::getLevel();
+        $result = parent::get(self::A_LEVEL);
         return $result;
     }
 
@@ -33,7 +38,7 @@ class Customer
      */
     public function getMlmId(): string
     {
-        $result = parent::getMlmId();
+        $result = parent::get(self::A_MLM_ID);
         return $result;
     }
 
@@ -42,13 +47,13 @@ class Customer
      */
     public function getName(): string
     {
-        $result = parent::getName();
+        $result = parent::get(self::A_MLM_ID);
         return $result;
     }
 
     public function setId(int $data)
     {
-        parent::setId($data);
+        parent::set(self::A_ID, $data);
     }
 
     /**
@@ -58,16 +63,16 @@ class Customer
      */
     public function setLevel(int $data)
     {
-        parent::setLevel($data);
+        parent::set(self::A_LEVEL, $data);
     }
 
     public function setMlmId(string $data)
     {
-        parent::setMlmId($data);
+        parent::set(self::A_MLM_ID, $data);
     }
 
     public function setName(string $data)
     {
-        parent::setName($data);
+        parent::set(self::A_NAME, $data);
     }
 }

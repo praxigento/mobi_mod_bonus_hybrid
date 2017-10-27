@@ -13,6 +13,7 @@ class Body
 {
     const A_CUSTOMER = 'customer';
     const A_PERIOD = 'period';
+    const A_SECTIONS = 'sections';
 
     /**
      * @return \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Customer
@@ -29,6 +30,15 @@ class Body
     public function getPeriod(): string
     {
         $result = parent::get(self::A_PERIOD);
+        return $result;
+    }
+
+    /**
+     * @return \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections
+     */
+    public function getSections(): \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections
+    {
+        $result = parent::get(self::A_SECTIONS);
         return $result;
     }
 
