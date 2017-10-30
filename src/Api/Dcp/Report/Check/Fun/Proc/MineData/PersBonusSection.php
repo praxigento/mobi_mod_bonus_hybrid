@@ -9,8 +9,6 @@ use Praxigento\BonusBase\Repo\Query\Period\Calcs\Get\Builder as QBGetPeriodCalcs
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Customer as DCustomer;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\PersonalBonus as DPersonalBonus;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\PersonalBonus\Item as DItem;
-use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\PersBonusSection\Data\Request as ARequest;
-use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\PersBonusSection\Data\Response as AResponse;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\PersBonusSection\Db\Query\GetItems as QBGetItems;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
@@ -42,16 +40,13 @@ class PersBonusSection
         $this->qbGetItems = $qbGetItems;
     }
 
-    public function exec(ARequest $req): AResponse
+    public function exec($custId, $period): DPersonalBonus
     {
-        $result = new AResponse();
         /* get input and prepare working data */
-        $custId = $req->getCustomerId();
-        $period = $req->getPeriod();
-
         $dsBegin = $this->hlpPeriod->getPeriodFirstDate($period);
         $dsEnd = $this->hlpPeriod->getPeriodLastDate($period);
 
+        /* perform processing */
         $calcs = $this->getCalcs($dsBegin, $dsEnd);
         $calcPvWriteOff = $calcs[Cfg::CODE_TYPE_CALC_PV_WRITE_OFF];
         $calcCompress = $calcs[Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1];
@@ -60,13 +55,13 @@ class PersBonusSection
         $pvCompress = $this->getPv($calcCompress, $custId);
         $items = $this->getItems($calcPvWriteOff, $calcCompress, $custId);
 
-        $section = new DPersonalBonus();
-        $section->setCompressedVolume($pvCompress);
-        $section->setItems($items);
-        $section->setOwnVolume($pvOwn);
+        /* compose result */
+        $result = new DPersonalBonus();
+        $result->setCompressedVolume($pvCompress);
+        $result->setItems($items);
+        $result->setOwnVolume($pvOwn);
         /** TODO: calc value or remove attr */
-        $section->setPercent(0);
-        $result->setSectionData($section);
+        $result->setPercent(0);
         return $result;
     }
 

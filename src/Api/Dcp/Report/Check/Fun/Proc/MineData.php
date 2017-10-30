@@ -13,17 +13,18 @@ use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections as D
  */
 class MineData
 {
-    /** @var \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\PersBonusSection */
-    private $actBuildPersBonus;
+    /** @var \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\Customer */
     private $subCustomer;
+    /** @var \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\PersBonusSection */
+    private $subPersBonus;
 
     public function __construct(
-        \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\PersBonusSection $actBuildPersBonus,
-        \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\Customer $subCustomer
+        \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\Customer $subCustomer,
+        \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\PersBonusSection $subPersBonus
     )
     {
-        $this->actBuildPersBonus = $actBuildPersBonus;
         $this->subCustomer = $subCustomer;
+        $this->subPersBonus = $subPersBonus;
     }
 
     public function exec(AContext $ctx): AContext
@@ -36,7 +37,7 @@ class MineData
 
             /* perform processing */
             $customer = $this->subCustomer->exec($custId, $period);
-            $persBonus = $this->sectionPersonalBonus($custId, $period);
+            $persBonus = $this->subPersBonus->exec($custId, $period);
 
             /* put result data into context */
             $ctx->respCustomer = $customer;
@@ -45,20 +46,5 @@ class MineData
             $ctx->respSections = $sections;
         }
         return $ctx;
-    }
-
-    /**
-     * @param int $custId
-     * @param string $period
-     * @return \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\PersonalBonus
-     */
-    private function sectionPersonalBonus(int $custId, string $period)
-    {
-        $req = new \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\PersBonusSection\Data\Request();
-        $req->setCustomerId($custId);
-        $req->setPeriod($period);
-        $resp = $this->actBuildPersBonus->exec($req);
-        $result = $resp->getSectionData();
-        return $result;
     }
 }
