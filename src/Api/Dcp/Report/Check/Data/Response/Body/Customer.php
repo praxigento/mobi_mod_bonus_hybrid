@@ -47,7 +47,7 @@ class Customer
      */
     public function getName(): string
     {
-        $result = parent::get(self::A_MLM_ID);
+        $result = parent::get(self::A_NAME);
         return $result;
     }
 

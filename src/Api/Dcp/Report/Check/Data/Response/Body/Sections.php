@@ -6,6 +6,7 @@
 namespace Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body;
 
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\PersonalBonus as DPersonal;
+use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\TeamBonus as DTeam;
 
 class Sections
     extends \Praxigento\Core\Data
@@ -28,10 +29,27 @@ class Sections
     }
 
     /**
+     * @return \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\TeamBonus
+     */
+    public function getTeamBonus(): DTeam
+    {
+        $result = parent::get(self::A_TEAM_BONUS);
+        return $result;
+    }
+
+    /**
      * @param DPersonal $data
      */
     public function setPersonalBonus(DPersonal $data)
     {
         parent::set(self::A_PERSONAL_BONUS, $data);
+    }
+
+    /**
+     * @param DTeam $data
+     */
+    public function setTeamBonus(DTeam $data)
+    {
+        parent::set(self::A_TEAM_BONUS, $data);
     }
 }

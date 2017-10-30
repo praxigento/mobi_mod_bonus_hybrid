@@ -7,24 +7,31 @@ namespace Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc;
 
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Context as AContext;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections as DSections;
+use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\Customer as SubCustomer;
+use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\PersBonusSection as SubPersBonus;
+use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\TeamBonusSection as SubTeamBonus;
 
 /**
  * Process step to mine requested data from DB.
  */
 class MineData
 {
-    /** @var \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\Customer */
+    /** @var SubCustomer */
     private $subCustomer;
-    /** @var \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\PersBonusSection */
+    /** @var SubPersBonus */
     private $subPersBonus;
+    /** @var SubTeamBonus */
+    private $subTeamBonus;
 
     public function __construct(
-        \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\Customer $subCustomer,
-        \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\PersBonusSection $subPersBonus
+        SubCustomer $subCustomer,
+        SubPersBonus $subPersBonus,
+        SubTeamBonus $subTeamBonus
     )
     {
         $this->subCustomer = $subCustomer;
         $this->subPersBonus = $subPersBonus;
+        $this->subTeamBonus = $subTeamBonus;
     }
 
     public function exec(AContext $ctx): AContext
@@ -38,11 +45,13 @@ class MineData
             /* perform processing */
             $customer = $this->subCustomer->exec($custId, $period);
             $persBonus = $this->subPersBonus->exec($custId, $period);
+            $teamBonus = $this->subTeamBonus->exec($custId, $period);
 
             /* put result data into context */
             $ctx->respCustomer = $customer;
             $sections = new DSections();
             $sections->setPersonalBonus($persBonus);
+            $sections->setTeamBonus($teamBonus);
             $ctx->respSections = $sections;
         }
         return $ctx;
