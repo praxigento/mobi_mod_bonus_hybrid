@@ -54,4 +54,12 @@ class Body
     {
         parent::set(self::A_PERIOD, $data);
     }
+
+    /**
+     * @param  \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections $data
+     */
+    public function setSections($data)
+    {
+        parent::set(self::A_SECTIONS, $data);
+    }
 }

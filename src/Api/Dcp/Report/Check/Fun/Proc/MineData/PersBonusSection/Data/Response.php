@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Act\BuildPersBonusSection\Data;
+namespace Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\PersBonusSection\Data;
 
 class Response
     extends \Praxigento\Core\Data

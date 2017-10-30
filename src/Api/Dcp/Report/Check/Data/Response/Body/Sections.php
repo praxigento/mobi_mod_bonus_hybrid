@@ -5,6 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body;
 
+use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\PersonalBonus as DPersonal;
 
 class Sections
     extends \Praxigento\Core\Data
@@ -18,15 +19,18 @@ class Sections
     const A_TOTALS = 'totals';
 
     /**
-     * @return int
+     * @return \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\PersonalBonus
      */
-    public function getPersonalBonus(): int
+    public function getPersonalBonus(): DPersonal
     {
         $result = parent::get(self::A_PERSONAL_BONUS);
         return $result;
     }
 
-    public function setPersonalBonus($data)
+    /**
+     * @param DPersonal $data
+     */
+    public function setPersonalBonus(DPersonal $data)
     {
         parent::set(self::A_PERSONAL_BONUS, $data);
     }

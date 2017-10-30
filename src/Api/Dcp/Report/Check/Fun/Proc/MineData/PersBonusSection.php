@@ -3,26 +3,26 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Act;
+namespace Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData;
 
 use Praxigento\BonusBase\Repo\Query\Period\Calcs\Get\Builder as QBGetPeriodCalcs;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Customer as DCustomer;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\PersonalBonus as DPersonalBonus;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\PersonalBonus\Item as DItem;
-use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Act\BuildPersBonusSection\Data\Request as ARequest;
-use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Act\BuildPersBonusSection\Data\Response as AResponse;
-use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Act\BuildPersBonusSection\Db\Query\GetItems as QBGetItems;
+use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\PersBonusSection\Data\Request as ARequest;
+use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\PersBonusSection\Data\Response as AResponse;
+use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\PersBonusSection\Db\Query\GetItems as QBGetItems;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 
 /**
  * Action to build "Personal Bonus" section of the DCP's "Check" report.
  */
-class BuildPersBonusSection
+class PersBonusSection
 {
     /** @var \Praxigento\Core\Tool\IPeriod */
     private $hlpPeriod;
-    /** @var \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Act\BuildPersBonusSection\Db\Query\GetItems */
+    /** @var \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\PersBonusSection\Db\Query\GetItems */
     private $qbGetItems;
     /** @var \Praxigento\BonusBase\Repo\Query\Period\Calcs\Get\Builder */
     private $qbGetPeriodCalcs;
@@ -33,7 +33,7 @@ class BuildPersBonusSection
         \Praxigento\Core\Tool\IPeriod $hlpPeriod,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwn,
         \Praxigento\BonusBase\Repo\Query\Period\Calcs\Get\Builder $qbGetPeriodCalcs,
-        \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Act\BuildPersBonusSection\Db\Query\GetItems $qbGetItems
+        \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\PersBonusSection\Db\Query\GetItems $qbGetItems
     )
     {
         $this->hlpPeriod = $hlpPeriod;
@@ -64,7 +64,8 @@ class BuildPersBonusSection
         $section->setCompressedVolume($pvCompress);
         $section->setItems($items);
         $section->setOwnVolume($pvOwn);
-        $section->setPercent('N/A');
+        /** TODO: calc value or remove attr */
+        $section->setPercent(0);
         $result->setSectionData($section);
         return $result;
     }
@@ -138,6 +139,8 @@ class BuildPersBonusSection
             $item = new DItem();
             $item->setCustomer($customer);
             $item->setVolume($pv);
+            /** TODO calculate amount or remove attribute  */
+            $item->setAmount(0);
 
             $result[] = $item;
         }

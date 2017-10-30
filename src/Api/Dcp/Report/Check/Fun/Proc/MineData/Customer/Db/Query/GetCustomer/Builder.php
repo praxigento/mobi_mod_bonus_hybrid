@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Api\Dcp\Report\Check\Db\Query\GetCustomer;
+namespace Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\Customer\Db\Query\GetCustomer;
 
 use Praxigento\Downline\Config as Cfg;
 use Praxigento\Downline\Repo\Entity\Data\Customer as EDwnlCust;
