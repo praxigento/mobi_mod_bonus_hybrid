@@ -209,7 +209,7 @@
                               "CustMaxRef": {
                                 "alias": "cust_max_ref",
                                 "comment": "Reference to the customer related to the Max leg.",
-                                "nullable": false,
+                                "nullable": true,
                                 "type": {
                                   "integer": {
                                     "unsigned": true
