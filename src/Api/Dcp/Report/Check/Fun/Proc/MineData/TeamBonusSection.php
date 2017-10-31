@@ -4,13 +4,13 @@
  */
 
 namespace Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData;
-
 use Praxigento\BonusBase\Repo\Query\Period\Calcs\Get\Builder as QBGetPeriodCalcs;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Customer as DCustomer;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\TeamBonus as DTeamBonus;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\TeamBonus\Item as DItem;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\TeamBonusSection\Db\Query\GetItems as QBGetItems;
 use Praxigento\BonusHybrid\Config as Cfg;
+use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 
 /**
  * Action to build "Team Bonus" section of the DCP's "Check" report.
@@ -23,14 +23,18 @@ class TeamBonusSection
     private $qbGetItems;
     /** @var \Praxigento\BonusBase\Repo\Query\Period\Calcs\Get\Builder */
     private $qbGetPeriodCalcs;
+    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
+    private $repoBonDwn;
 
     public function __construct(
         \Praxigento\Core\Tool\IPeriod $hlpPeriod,
+        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwn,
         QBGetPeriodCalcs $qbGetPeriodCalcs,
         QBGetItems $qbGetItems
     )
     {
         $this->hlpPeriod = $hlpPeriod;
+        $this->repoBonDwn = $repoBonDwn;
         $this->qbGetPeriodCalcs = $qbGetPeriodCalcs;
         $this->qbGetItems = $qbGetItems;
     }
@@ -47,8 +51,7 @@ class TeamBonusSection
         $calcDef = $calcs[Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF];
         $calcEu = $calcs[Cfg::CODE_TYPE_CALC_BONUS_TEAM_EU];
 
-
-        $pv = 21;
+        $pv = $this->getPv($calcPvWriteOff, $custId);
         $items = $this->getItems($calcPvWriteOff, $calcDef, $calcEu, $custId);
 
         /* compose result */
@@ -139,4 +142,23 @@ class TeamBonusSection
         return $result;
     }
 
+    /**
+     * Get PV (& RankID ???) for given calculation & customer.
+     *
+     * @param $calcId
+     * @param $custId
+     * @return float
+     */
+    private function getPv($calcId, $custId)
+    {
+        $byCalcId = EBonDwnl::ATTR_CALC_REF . '=' . (int)$calcId;
+        $byCustId = EBonDwnl::ATTR_CUST_REF . '=' . (int)$custId;
+        $where = "($byCalcId) AND ($byCustId)";
+        $rs = $this->repoBonDwn->get($where);
+        $row = reset($rs);
+        $pv = $row->get(EBonDwnl::ATTR_PV);
+//        $rankId = $row->get(EBonDwnl::ATTR_RANK_REF);
+//        return [$pv, $rankId];
+        return $pv;
+    }
 }
