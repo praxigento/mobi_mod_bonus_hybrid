@@ -4,42 +4,39 @@
  */
 
 namespace Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData;
-use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Customer as DCustomer;
-use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\TeamBonus as DTeamBonus;
-use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\TeamBonus\Item as DItem;
+
+use Praxigento\BonusBase\Repo\Query\Period\Calcs\Get\Builder as QBGetPeriodCalcs;
+use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\QualificationLegs as DQualLegs;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\GetCalcs as RouGetCalcs;
-use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\TeamBonusSection\Db\Query\GetItems as QBGetItems;
+use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\QualificationLegs\Db\Query\GetItems as QBGetItems;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 
 /**
- * Action to build "Team Bonus" section of the DCP's "Check" report.
+ * Action to build "QualificationLegs" section of the DCP's "Check" report.
  */
-class TeamBonusSection
+class QualificationLegs
 {
     /** @var \Praxigento\Core\Tool\IPeriod */
     private $hlpPeriod;
-    /** @var \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\TeamBonusSection\Db\Query\GetItems */
+    /** @var \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\QualificationLegs\Db\Query\GetItems */
     private $qbGetItems;
+    /** @var \Praxigento\BonusBase\Repo\Query\Period\Calcs\Get\Builder */
+    private $qbGetPeriodCalcs;
     /** @var \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\GetCalcs */
     private $rouGetCalcs;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
-    private $repoBonDwn;
 
     public function __construct(
         \Praxigento\Core\Tool\IPeriod $hlpPeriod,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwn,
         QBGetItems $qbGetItems,
         RouGetCalcs $rouGetCalcs
     )
     {
         $this->hlpPeriod = $hlpPeriod;
-        $this->repoBonDwn = $repoBonDwn;
         $this->qbGetItems = $qbGetItems;
         $this->rouGetCalcs = $rouGetCalcs;
     }
 
-    public function exec($custId, $period): DTeamBonus
+    public function exec($custId, $period): DQualLegs
     {
         /* get input and prepare working data */
         $dsBegin = $this->hlpPeriod->getPeriodFirstDate($period);
@@ -51,27 +48,38 @@ class TeamBonusSection
         $calcDef = $calcs[Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF];
         $calcEu = $calcs[Cfg::CODE_TYPE_CALC_BONUS_TEAM_EU];
 
-        $pv = $this->getPv($calcPvWriteOff, $custId);
-        $items = $this->getItems($calcPvWriteOff, $calcDef, $calcEu, $custId);
-
-        /* compose result */
-        $result = new DTeamBonus();
-        $result->setItems($items);
-        $result->setTotalVolume($pv);
-        /** TODO: calc value or remove attr */
-        $result->setPercent(0);
+        $result = new DQualLegs();
         return $result;
     }
 
     /**
-     * Get DB data and compose API data.
+     * Get calculations IDs by calc type code for given period bounds.
      *
-     * @param $calcPvWriteOff
-     * @param $calcDef
-     * @param $calcEu
-     * @param $custId
-     * @return array
+     * @param $dsBegin
+     * @param $dsEnd
+     * @return array [$calcTypeCode => $calcId]
      */
+    private function getCalcs($dsBegin, $dsEnd)
+    {
+        $query = $this->qbGetPeriodCalcs->build();
+        $bind = [
+            QBGetPeriodCalcs::BND_DATE_BEGIN => $dsBegin,
+            QBGetPeriodCalcs::BND_DATE_END => $dsEnd,
+            QBGetPeriodCalcs::BND_STATE => Cfg::CALC_STATE_COMPLETE,
+        ];
+
+        $conn = $query->getConnection();
+        $rs = $conn->fetchAll($query, $bind);
+
+        $result = [];
+        foreach ($rs as $one) {
+            $calcType = $one[QBGetPeriodCalcs::A_CALC_TYPE_CODE];
+            $calcId = $one[QBGetPeriodCalcs::A_CALC_ID];
+            $result[$calcType] = $calcId;
+        }
+        return $result;
+    }
+
     private function getItems($calcPvWriteOff, $calcDef, $calcEu, $custId)
     {
         $query = $this->qbGetItems->build();
@@ -114,23 +122,4 @@ class TeamBonusSection
         return $result;
     }
 
-    /**
-     * Get PV (& RankID ???) for given calculation & customer.
-     *
-     * @param $calcId
-     * @param $custId
-     * @return float
-     */
-    private function getPv($calcId, $custId)
-    {
-        $byCalcId = EBonDwnl::ATTR_CALC_REF . '=' . (int)$calcId;
-        $byCustId = EBonDwnl::ATTR_CUST_REF . '=' . (int)$custId;
-        $where = "($byCalcId) AND ($byCustId)";
-        $rs = $this->repoBonDwn->get($where);
-        $row = reset($rs);
-        $pv = $row->get(EBonDwnl::ATTR_PV);
-//        $rankId = $row->get(EBonDwnl::ATTR_RANK_REF);
-//        return [$pv, $rankId];
-        return $pv;
-    }
 }

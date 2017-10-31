@@ -5,10 +5,10 @@
 
 namespace Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData;
 
-use Praxigento\BonusBase\Repo\Query\Period\Calcs\Get\Builder as QBGetPeriodCalcs;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Customer as DCustomer;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\PersonalBonus as DPersonalBonus;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\PersonalBonus\Item as DItem;
+use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\GetCalcs as RouGetCalcs;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\PersBonusSection\Db\Query\GetItems as QBGetItems;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
@@ -26,18 +26,19 @@ class PersBonusSection
     private $qbGetPeriodCalcs;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoBonDwn;
-
+    /** @var \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\GetCalcs */
+    private $rouGetCalcs;
     public function __construct(
         \Praxigento\Core\Tool\IPeriod $hlpPeriod,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwn,
-        \Praxigento\BonusBase\Repo\Query\Period\Calcs\Get\Builder $qbGetPeriodCalcs,
-        \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\PersBonusSection\Db\Query\GetItems $qbGetItems
+        \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\PersBonusSection\Db\Query\GetItems $qbGetItems,
+        RouGetCalcs $rouGetCalcs
     )
     {
         $this->hlpPeriod = $hlpPeriod;
         $this->repoBonDwn = $repoBonDwn;
-        $this->qbGetPeriodCalcs = $qbGetPeriodCalcs;
         $this->qbGetItems = $qbGetItems;
+        $this->rouGetCalcs = $rouGetCalcs;
     }
 
     public function exec($custId, $period): DPersonalBonus
@@ -47,7 +48,7 @@ class PersBonusSection
         $dsEnd = $this->hlpPeriod->getPeriodLastDate($period);
 
         /* perform processing */
-        $calcs = $this->getCalcs($dsBegin, $dsEnd);
+        $calcs = $this->rouGetCalcs->exec($dsBegin, $dsEnd);
         $calcPvWriteOff = $calcs[Cfg::CODE_TYPE_CALC_PV_WRITE_OFF];
         $calcCompress = $calcs[Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1];
 
@@ -62,34 +63,6 @@ class PersBonusSection
         $result->setOwnVolume($pvOwn);
         /** TODO: calc value or remove attr */
         $result->setPercent(0);
-        return $result;
-    }
-
-    /**
-     * Get calculations IDs by calc type code for given period bounds.
-     *
-     * @param $dsBegin
-     * @param $dsEnd
-     * @return array [$calcTypeCode => $calcId]
-     */
-    private function getCalcs($dsBegin, $dsEnd)
-    {
-        $query = $this->qbGetPeriodCalcs->build();
-        $bind = [
-            QBGetPeriodCalcs::BND_DATE_BEGIN => $dsBegin,
-            QBGetPeriodCalcs::BND_DATE_END => $dsEnd,
-            QBGetPeriodCalcs::BND_STATE => Cfg::CALC_STATE_COMPLETE,
-        ];
-
-        $conn = $query->getConnection();
-        $rs = $conn->fetchAll($query, $bind);
-
-        $result = [];
-        foreach ($rs as $one) {
-            $calcType = $one[QBGetPeriodCalcs::A_CALC_TYPE_CODE];
-            $calcId = $one[QBGetPeriodCalcs::A_CALC_ID];
-            $result[$calcType] = $calcId;
-        }
         return $result;
     }
 

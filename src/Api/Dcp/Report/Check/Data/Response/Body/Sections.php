@@ -6,6 +6,7 @@
 namespace Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body;
 
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\PersonalBonus as DPersonal;
+use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\QualificationLegs as DQualLegs;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\TeamBonus as DTeam;
 
 class Sections
@@ -29,6 +30,15 @@ class Sections
     }
 
     /**
+     * @return \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\QualificationLegs
+     */
+    public function getQualLegs(): DQualLegs
+    {
+        $result = parent::get(self::A_QUAL_LEGS);
+        return $result;
+    }
+
+    /**
      * @return \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\TeamBonus
      */
     public function getTeamBonus(): DTeam
@@ -43,6 +53,14 @@ class Sections
     public function setPersonalBonus(DPersonal $data)
     {
         parent::set(self::A_PERSONAL_BONUS, $data);
+    }
+
+    /**
+     * @param DTeam $data
+     */
+    public function setQualLegs(DQualLegs $data)
+    {
+        parent::set(self::A_QUAL_LEGS, $data);
     }
 
     /**
