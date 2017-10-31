@@ -10,6 +10,7 @@ use Praxigento\BonusHybrid\Repo\Entity\Data\Cfg\Param as ECfgParam;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase2\Legs as ELegs;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Data\Legs as DLegs;
+use Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Fun\Act\Qualify as ActQualify;
 use Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Fun\Rou\CalcLegs as RouCalcLegs;
 use Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Fun\Rou\ComposeLegs as RouComposeLegs;
 
@@ -45,7 +46,7 @@ class Phase2
     private $hlp;
     /** @var \Praxigento\Downline\Tool\ITree */
     private $hlpDwnlTree;
-    /** @var \Praxigento\BonusHybrid\Helper\Calc\GetMaxQualifiedRankId */
+    /** @var \Praxigento\BonusHybrid\Helper\Calc\Qualify */
     private $hlpGetMaxRankId;
     /** @var \Praxigento\BonusHybrid\Helper\Calc\IsQualified */
     private $hlpIsQualified;
@@ -61,16 +62,17 @@ class Phase2
     private $rouCalcLegs;
     /** @var \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Fun\Rou\ComposeLegs */
     private $rouComposeLegs;
-
+    /** @var \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Fun\Act\Qualify */
+    private $actQualify;
     public function __construct(
         \Praxigento\Downline\Tool\ITree $hlpTree,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\BonusHybrid\Service\Calc\Compress\Helper $hlp,
-        \Praxigento\BonusHybrid\Helper\Calc\GetMaxQualifiedRankId $hlpGetMaxRankId,
         \Praxigento\BonusHybrid\Helper\Calc\IsQualified $hlpIsQualified,
         \Praxigento\BonusBase\Repo\Entity\Rank $repoRank,
         \Praxigento\BonusHybrid\Repo\Entity\Cfg\Param $repoCfgParam,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon,
+        ActQualify $actQualify,
         RouCalcLegs $rouCalcLegs,
         RouComposeLegs $rouComposeLegs
     )
@@ -78,11 +80,11 @@ class Phase2
         $this->hlpDwnlTree = $hlpTree;
         $this->hlpScheme = $hlpScheme;
         $this->hlp = $hlp;
-        $this->hlpGetMaxRankId = $hlpGetMaxRankId;
         $this->hlpIsQualified = $hlpIsQualified;
         $this->repoRank = $repoRank;
         $this->repoCfgParam = $repoCfgParam;
         $this->repoDwnlBon = $repoDwnlBon;
+        $this->actQualify = $actQualify;
         $this->rouCalcLegs = $rouCalcLegs;
         $this->rouComposeLegs = $rouComposeLegs;
     }
@@ -177,15 +179,17 @@ class Phase2
                         $entryLegs->setCustMaxRef($legs->getMaxCustId());
                         $entryLegs->setCustSecondRef($legs->getSecondCustId());
                         /* then calculate & update rank ID */
-                        $ctxHlpR = new \Praxigento\BonusHybrid\Helper\Calc\GetMaxQualifiedRankId\Context();
-                        $ctxHlpR->setCfgParams($cfgParams);
-                        $ctxHlpR->setScheme($scheme);
-                        $ctxHlpR->setDownlineEntry($entryDwnl);
-                        $ctxHlpR->setLegsEntry($entryLegs);
-                        $rankId = $this->hlpGetMaxRankId->exec($ctxHlpR);
-                        $entryDwnl->setRankRef($rankId);
+                        $reqQual = new \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Fun\Act\Qualify\Data\Request();
+                        $reqQual->setCfgParams($cfgParams);
+                        $reqQual->setScheme($scheme);
+                        $reqQual->setDownlineEntry($entryDwnl);
+                        $reqQual->setLegsEntry($entryLegs);
+                        $respQual = $this->actQualify->exec($reqQual);
+                        $rankId = $respQual->getRankId();
+                        $entryLegs = $respQual->getLegsEntry();
 
-                        /* add legs entry to results */
+                        /* save rankId & add legs entry to results */
+                        $entryDwnl->setRankRef($rankId);
                         $outLegs[$custId] = $entryLegs;
 
                     } else {

@@ -2,16 +2,15 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-namespace Praxigento\BonusHybrid\Helper\Calc;
+
+namespace Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Fun\Act;
 
 use Praxigento\BonusHybrid\Config as Cfg;
+use Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Fun\Act\Qualify\Data\Request as ARequest;
+use Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Fun\Act\Qualify\Data\Response as AResponse;
 
-class GetMaxQualifiedRankId
+class Qualify
 {
-    const OPT_CFG_PARAMS = 'cfgParams';
-    const OPT_COMPRESS_OI_ENTRY = 'compressOiEntry';
-    const OPT_SCHEME = 'scheme';
-
     /** @var  \Praxigento\BonusHybrid\Helper\IScheme */
     protected $hlpScheme;
 
@@ -21,19 +20,22 @@ class GetMaxQualifiedRankId
         $this->hlpScheme = $hlpScheme;
     }
 
-    public function exec(\Praxigento\BonusHybrid\Helper\Calc\GetMaxQualifiedRankId\Context $ctx)
+    public function exec(ARequest $req): AResponse
     {
         /* parse options */
-        $dwnlEntry = $ctx->getDownlineEntry();
-        $legsEntry = $ctx->getLegsEntry();
-        $cfgParam = $ctx->getCfgParams(); // TODO: array ATTENTION: $cfgParam must be ordered by scheme then by rank DESC!!!
-        $scheme = $ctx->getScheme();
+        $dwnlEntry = $req->getDownlineEntry();
+        $legsEntry = $req->getLegsEntry();
+        $cfgParam = $req->getCfgParams(); // TODO: array ATTENTION: $cfgParam must be ordered by scheme then by rank DESC!!!
+        $scheme = $req->getScheme();
 
         /* perform action */
-        $result = null;
+        $rankId = null;
         $custId = $dwnlEntry->getCustomerRef();
-        $forcedRankId = $this->hlpScheme->getForcedQualificationRank($custId, $scheme);
-        if (is_null($forcedRankId)) {
+        $rankId = $this->hlpScheme->getForcedQualificationRank($custId, $scheme);
+        $ovMax = 0;
+        $ovMedium = 0;
+        $ovMin = 0;
+        if (is_null($rankId)) {
             /* qualification params: PV & TV */
             $pv = $dwnlEntry->getPv();
             $tv = $dwnlEntry->getTv();
@@ -65,19 +67,19 @@ class GetMaxQualifiedRankId
                     if (($ovMax > Cfg::DEF_ZERO) && ($ovMedium > Cfg::DEF_ZERO) && ($ovMin > Cfg::DEF_ZERO)) {
                         /* use all 3 legs to qualification, compare sorted data */
                         if (($sortedMax >= $ovMax) && ($sortedMedium >= $ovMedium) && ($sortedMin >= $ovMin)) {
-                            $result = $rank->getRankId();
+                            $rankId = $rank->getRankId();
                             break;
                         }
                     } elseif (($ovMax > Cfg::DEF_ZERO) && ($ovMedium > Cfg::DEF_ZERO)) {
                         /* use 2 legs to qualification, compare original data */
                         if (($legMax >= $ovMax) && ($legSecond >= $ovMedium)) {
-                            $result = $rank->getRankId();
+                            $rankId = $rank->getRankId();
                             break;
                         }
                     } elseif ($ovMax > Cfg::DEF_ZERO) {
                         /* use 1 leg to qualification, compare original data */
                         if ($legMax >= $ovMax) {
-                            $result = $rank->getRankId();
+                            $rankId = $rank->getRankId();
                             break;
                         }
                     } elseif (
@@ -86,14 +88,21 @@ class GetMaxQualifiedRankId
                         ($ovMin <= Cfg::DEF_ZERO)
                     ) {
                         /* is qualified by TV & PV only */
-                        $result = $rank->getRankId();
+                        $rankId = $rank->getRankId();
                         break;
                     }
                 }
             }
-        } else {
-            $result = $forcedRankId;
         }
+
+        /* compose results */
+        $result = new AResponse();
+        $result->setRankId($rankId);
+        $legsOut = clone $legsEntry;
+        $legsOut->setPvQualMax($ovMax);
+        $legsOut->setPvQualSecond($ovMedium);
+        $legsOut->setPvQualOther($ovMin);
+        $result->setLegsEntry($legsOut);
         return $result;
     }
 }
