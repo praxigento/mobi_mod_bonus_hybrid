@@ -219,7 +219,7 @@
                               "CustSecondRef": {
                                 "alias": "cust_second_ref",
                                 "comment": "Reference to the customer related to the Second leg.",
-                                "nullable": false,
+                                "nullable": true,
                                 "type": {
                                   "integer": {
                                     "unsigned": true
@@ -241,6 +241,7 @@
                                 "alias": "pv_qual_second",
                                 "comment": "Qualified PV volume from Second leg (according to customer rank).",
                                 "nullable": false,
+                                "default": 0,
                                 "type": {
                                   "numeric": {
                                     "precision": 12,
@@ -252,6 +253,7 @@
                                 "alias": "pv_qual_other",
                                 "comment": "Qualified PV volume from other legs (according to customer rank).",
                                 "nullable": false,
+                                "default": 0,
                                 "type": {
                                   "numeric": {
                                     "precision": 12,

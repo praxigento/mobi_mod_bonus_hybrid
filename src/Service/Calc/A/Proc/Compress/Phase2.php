@@ -9,6 +9,9 @@ use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Cfg\Param as ECfgParam;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase2\Legs as ELegs;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
+use Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Data\Legs as DLegs;
+use Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Fun\Rou\CalcLegs as RouCalcLegs;
+use Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Fun\Rou\ComposeLegs as RouComposeLegs;
 
 /**
  * Process to calculate Phase2 compression.
@@ -54,6 +57,10 @@ class Phase2
     private $repoDwnlBon;
     /** @var \Praxigento\BonusBase\Repo\Entity\Rank */
     private $repoRank;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Fun\Rou\CalcLegs */
+    private $rouCalcLegs;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Fun\Rou\ComposeLegs */
+    private $rouComposeLegs;
 
     public function __construct(
         \Praxigento\Downline\Tool\ITree $hlpTree,
@@ -63,7 +70,9 @@ class Phase2
         \Praxigento\BonusHybrid\Helper\Calc\IsQualified $hlpIsQualified,
         \Praxigento\BonusBase\Repo\Entity\Rank $repoRank,
         \Praxigento\BonusHybrid\Repo\Entity\Cfg\Param $repoCfgParam,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon
+        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon,
+        RouCalcLegs $rouCalcLegs,
+        RouComposeLegs $rouComposeLegs
     )
     {
         $this->hlpDwnlTree = $hlpTree;
@@ -74,6 +83,8 @@ class Phase2
         $this->repoRank = $repoRank;
         $this->repoCfgParam = $repoCfgParam;
         $this->repoDwnlBon = $repoDwnlBon;
+        $this->rouCalcLegs = $rouCalcLegs;
+        $this->rouComposeLegs = $rouComposeLegs;
     }
 
     public function exec(\Praxigento\Core\Data $ctx)
@@ -108,7 +119,6 @@ class Phase2
             foreach ($level as $custId) {
                 /* prepare results entries */
                 $entryDwnl = new EBonDwnl();
-                $entryLegs = new ELegs();
                 /* get compressed data and compose downline item */
                 /** @var EBonDwnl $custData */
                 $custData = $mapByIdCompress[$custId];
@@ -125,9 +135,7 @@ class Phase2
                 $entryDwnl->setPv($pvCompress);
                 $entryDwnl->setTv($tvCompress);
                 $entryDwnl->setOv($ovCompress);
-                /* populate legs result entry with data */
-                $entryLegs->setCalcRef($phase2CalcId);
-                $entryLegs->setCustRef($custId);
+
                 /**
                  * Calculate phase2 legs for qualified customers only (manager or higher).
                  */
@@ -143,31 +151,31 @@ class Phase2
                     /* this is qualified manager, calculate MAX leg, second leg and summary leg */
                     if (isset($mapByTeamCompress[$custId])) {
                         /* this customer has downline subtrees in compressed and plain trees */
+                        /* populate legs result entry with data */
+                        $entryLegs = new ELegs();
+                        $entryLegs->setCalcRef($phase2CalcId);
+                        $entryLegs->setCustRef($custId);
 
                         /* define legs based on plain OV */
                         if (isset($mapByTeamPlain[$custId])) {
                             $teamPlain = $mapByTeamPlain[$custId];
-                            $legs = $this->legsCalc($teamPlain, $mapByIdPlain, EBonDwnl::ATTR_OV);
-
+                            $legsPlain = $this->rouCalcLegs->exec($teamPlain, $mapByIdPlain);
                         } else {
-                            $legs = [0, 0, 0];
+                            $legsPlain = new DLegs();
                         }
-                        list($legMaxP, $legSecondP, $legOthersP) = $legs;
                         /* define legs based on compressed OV */
                         $teamCompress = $mapByTeamCompress[$custId];
-                        $legs = $this->legsCalc($teamCompress, $mapByIdCompress, EBonDwnl::ATTR_OV);
-                        list($legMaxC, $legSecondC, $legOthersC) = $legs;
+                        $legsCompress = $this->rouCalcLegs->exec($teamCompress, $mapByIdCompress);
 
                         /* get first 2 legs from plain and 'others' from compressed */
-                        $legs = $this->legsCompose(
-                            $legMaxP, $legSecondP, $legOthersP, $legMaxC, $legSecondC, $legOthersC
-                        );
-                        list($legMax, $legSecond, $legOthers) = $legs;
+                        $legs = $this->rouComposeLegs->exec($legsPlain, $legsCompress);
 
                         /* update legs */
-                        $entryLegs->setLegMax($legMax);
-                        $entryLegs->setLegSecond($legSecond);
-                        $entryLegs->setLegOthers($legOthers);
+                        $entryLegs->setLegMax($legs->getMaxOv());
+                        $entryLegs->setLegSecond($legs->getSecondOv());
+                        $entryLegs->setLegOthers($legs->getOthersOv());
+                        $entryLegs->setCustMaxRef($legs->getMaxCustId());
+                        $entryLegs->setCustSecondRef($legs->getSecondCustId());
                         /* then calculate & update rank ID */
                         $ctxHlpR = new \Praxigento\BonusHybrid\Helper\Calc\GetMaxQualifiedRankId\Context();
                         $ctxHlpR->setCfgParams($cfgParams);
@@ -176,6 +184,9 @@ class Phase2
                         $ctxHlpR->setLegsEntry($entryLegs);
                         $rankId = $this->hlpGetMaxRankId->exec($ctxHlpR);
                         $entryDwnl->setRankRef($rankId);
+
+                        /* add legs entry to results */
+                        $outLegs[$custId] = $entryLegs;
 
                     } else {
                         /* qualified customer w/o downline is a Manager */
@@ -242,7 +253,6 @@ class Phase2
 
                 /* add entry to results */
                 $outDownline[$custId] = $entryDwnl;
-                $outLegs[$custId] = $entryLegs;
             }
         }
         /* get paths & depths for downline tree (is & parentId only present in results ) */
