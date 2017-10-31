@@ -43,7 +43,7 @@ class InstallSchema
         $demEntity = $demPackage->get('package/Compression/package/Phase1/package/Transfer/entity/Pv');
         $this->_toolDem->createEntity($entityAlias, $demEntity);
 
-        /* Compression / Phase I / Transfer / PV */
+        /* Compression / Phase II / Legs */
         $entityAlias = Phase2Legs::ENTITY_NAME;
         $demEntity = $demPackage->get('package/Compression/package/Phase2/entity/Legs');
         $this->_toolDem->createEntity($entityAlias, $demEntity);
