@@ -311,17 +311,15 @@
                               "toHybDwnlAsCustMax": {
                                 "own": {
                                   "aliases": [
-                                    "cust_ref",
                                     "cust_max_ref"
                                   ]
                                 },
                                 "reference": {
                                   "entity": {
-                                    "completeAlias": "prxgt_bon_hyb_dwnl"
+                                    "completeAlias": "prxgt_dwnl_customer"
                                   },
                                   "aliases": [
-                                    "calc_ref",
-                                    "cust_ref"
+                                    "customer_ref"
                                   ]
                                 },
                                 "action": {
@@ -332,17 +330,15 @@
                               "toHybDwnlAsCustSecond": {
                                 "own": {
                                   "aliases": [
-                                    "cust_ref",
                                     "cust_second_ref"
                                   ]
                                 },
                                 "reference": {
                                   "entity": {
-                                    "completeAlias": "prxgt_bon_hyb_dwnl"
+                                    "completeAlias": "prxgt_dwnl_customer"
                                   },
                                   "aliases": [
-                                    "calc_ref",
-                                    "cust_ref"
+                                    "customer_ref"
                                   ]
                                 },
                                 "action": {
