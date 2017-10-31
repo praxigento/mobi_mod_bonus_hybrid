@@ -258,7 +258,8 @@
                                     "scale": 4
                                   }
                                 }
-                              },
+                              }
+                            },
                             "index": {
                               "primary": {
                                 "type": "primary",
