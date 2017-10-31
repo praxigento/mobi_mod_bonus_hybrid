@@ -206,9 +206,29 @@
                                   }
                                 }
                               },
-                              "PVInfinity": {
-                                "alias": "pv_inf",
-                                "comment": "All compressed PV used in Infinity bonus.",
+                              "CustMaxRef": {
+                                "alias": "cust_max_ref",
+                                "comment": "Reference to the customer related to the Max leg.",
+                                "nullable": false,
+                                "type": {
+                                  "integer": {
+                                    "unsigned": true
+                                  }
+                                }
+                              },
+                              "CustSecondRef": {
+                                "alias": "cust_second_ref",
+                                "comment": "Reference to the customer related to the Second leg.",
+                                "nullable": false,
+                                "type": {
+                                  "integer": {
+                                    "unsigned": true
+                                  }
+                                }
+                              },
+                              "PvQualMax": {
+                                "alias": "pv_qual_max",
+                                "comment": "Qualified PV volume from Max leg (according to customer rank).",
                                 "nullable": false,
                                 "type": {
                                   "numeric": {
@@ -216,8 +236,29 @@
                                     "scale": 4
                                   }
                                 }
-                              }
-                            },
+                              },
+                              "PvQualSecond": {
+                                "alias": "pv_qual_second",
+                                "comment": "Qualified PV volume from Second leg (according to customer rank).",
+                                "nullable": false,
+                                "type": {
+                                  "numeric": {
+                                    "precision": 12,
+                                    "scale": 4
+                                  }
+                                }
+                              },
+                              "PvQualOther": {
+                                "alias": "pv_qual_other",
+                                "comment": "Qualified PV volume from other legs (according to customer rank).",
+                                "nullable": false,
+                                "type": {
+                                  "numeric": {
+                                    "precision": 12,
+                                    "scale": 4
+                                  }
+                                }
+                              },
                             "index": {
                               "primary": {
                                 "type": "primary",
@@ -259,6 +300,48 @@
                                   },
                                   "aliases": [
                                     "customer_ref"
+                                  ]
+                                },
+                                "action": {
+                                  "delete": "restrict",
+                                  "update": "restrict"
+                                }
+                              },
+                              "toHybDwnlAsCustMax": {
+                                "own": {
+                                  "aliases": [
+                                    "cust_ref",
+                                    "cust_max_ref"
+                                  ]
+                                },
+                                "reference": {
+                                  "entity": {
+                                    "completeAlias": "prxgt_bon_hyb_dwnl"
+                                  },
+                                  "aliases": [
+                                    "calc_ref",
+                                    "cust_ref"
+                                  ]
+                                },
+                                "action": {
+                                  "delete": "restrict",
+                                  "update": "restrict"
+                                }
+                              },
+                              "toHybDwnlAsCustSecond": {
+                                "own": {
+                                  "aliases": [
+                                    "cust_ref",
+                                    "cust_second_ref"
+                                  ]
+                                },
+                                "reference": {
+                                  "entity": {
+                                    "completeAlias": "prxgt_bon_hyb_dwnl"
+                                  },
+                                  "aliases": [
+                                    "calc_ref",
+                                    "cust_ref"
                                   ]
                                 },
                                 "action": {
