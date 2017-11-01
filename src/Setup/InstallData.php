@@ -50,8 +50,7 @@ class InstallData extends \Praxigento\Core\Setup\Data\Base
                     Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1,
                     'Compression calculation for Personal, Team & Courtesy bonuses).'
                 ],
-                [Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_DEF, 'Personal bonus calculation (DEFAULT scheme).'],
-                [Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_EU, 'Personal bonus calculation (EU scheme).'],
+                [Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_DEF, 'Personal bonus calculation.'],
                 [Cfg::CODE_TYPE_CALC_VALUE_TV, 'Team Volumes calculation.'],
                 [Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF, 'Team bonus calculation (DEFAULT scheme).'],
                 [Cfg::CODE_TYPE_CALC_BONUS_TEAM_EU, 'Team bonus calculation (EU scheme).'],
