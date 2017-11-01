@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\QualificationLegs;
+namespace Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\QualLegs;
 
 
 class Item
@@ -11,7 +11,6 @@ class Item
 {
     const A_CUSTOMER = 'customer';
     const A_VOLUME = 'volume';
-    const A_VOLUME_QUALIFIED = 'volume_qualified';
 
     /**
      * @return \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Customer
@@ -31,15 +30,6 @@ class Item
         return $result;
     }
 
-    /**
-     * @return float
-     */
-    public function getVolumeQualified(): float
-    {
-        $result = parent::get(self::A_VOLUME_QUALIFIED);
-        return $result;
-    }
-
     public function setCustomer($data)
     {
         parent::set(self::A_CUSTOMER, $data);
@@ -50,8 +40,4 @@ class Item
         parent::set(self::A_VOLUME, $data);
     }
 
-    public function setVolumeQualified($data)
-    {
-        parent::set(self::A_VOLUME_QUALIFIED, $data);
-    }
 }

@@ -6,7 +6,7 @@
 namespace Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body;
 
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\PersonalBonus as DPersonal;
-use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\QualificationLegs as DQualLegs;
+use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\QualLegs as DQualLegs;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\TeamBonus as DTeam;
 
 class Sections
@@ -30,7 +30,7 @@ class Sections
     }
 
     /**
-     * @return \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\QualificationLegs
+     * @return \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\QualLegs
      */
     public function getQualLegs(): DQualLegs
     {

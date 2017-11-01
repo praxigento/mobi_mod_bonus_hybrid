@@ -36,8 +36,9 @@ class GetItems
     const A_NAME_FIRST = 'nameFirst';
     const A_NAME_LAST = 'nameLast';
     const A_PV = 'pv';
-    const BND_CALC_ID_PV_WRITE_OFF = 'calcIdPvWriteOff';
+
     /** Bound variables names ('camelCase' naming) */
+    const BND_CALC_ID_PV_WRITE_OFF = 'calcIdPvWriteOff';
     const BND_CALC_ID_TEAM_DEF = 'calcIdTeamDef';
     const BND_CALC_ID_TEAM_EU = 'calcIdTeamEu';
     const BND_CUST_ID = 'custId';

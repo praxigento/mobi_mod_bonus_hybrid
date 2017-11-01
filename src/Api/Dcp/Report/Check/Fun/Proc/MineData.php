@@ -9,7 +9,7 @@ use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Context as AContext;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections as DSections;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\Customer as SubCustomer;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\PersBonusSection as SubPersBonus;
-use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\QualificationLegs as SubQualLegs;
+use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\QualLegs as SubQualLegs;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\TeamBonusSection as SubTeamBonus;
 
 /**
@@ -23,7 +23,7 @@ class MineData
     private $subPersBonus;
     /** @var \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\TeamBonusSection */
     private $subTeamBonus;
-    /** @var \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\QualificationLegs */
+    /** @var \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Proc\MineData\QualLegs */
     private $subQualLegs;
 
     public function __construct(
