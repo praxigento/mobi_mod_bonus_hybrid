@@ -10,6 +10,7 @@ use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\Over
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\PersonalBonus as DPersonal;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\QualLegs as DQualLegs;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\TeamBonus as DTeam;
+use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\Totals as DTotals;
 
 class Sections
     extends \Praxigento\Core\Data
@@ -67,6 +68,12 @@ class Sections
         return $result;
     }
 
+    public function getTotals(): DTotals
+    {
+        $result = parent::get(self::A_TOTALS);
+        return $result;
+    }
+
     public function setInfBonus(DInf $data)
     {
         parent::set(self::A_INFINITY_BONUS, $data);
@@ -90,5 +97,10 @@ class Sections
     public function setTeamBonus(DTeam $data)
     {
         parent::set(self::A_TEAM_BONUS, $data);
+    }
+
+    public function setTotals(DTotals $data)
+    {
+        parent::set(self::A_TOTALS, $data);
     }
 }
