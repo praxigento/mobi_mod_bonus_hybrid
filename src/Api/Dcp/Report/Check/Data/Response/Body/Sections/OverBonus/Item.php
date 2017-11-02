@@ -9,10 +9,21 @@ namespace Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Section
 class Item
     extends \Praxigento\Core\Data
 {
+
+    const A_AMOUNT = 'amount';
     const A_CUSTOMER = 'customer';
     const A_PERCENT = 'percent';
     const A_RANK = 'rank';
     const A_VOLUME = 'volume';
+
+    /**
+     * @return float
+     */
+    public function getAmount()
+    {
+        $result = parent::get(self::A_AMOUNT);
+        return $result;
+    }
 
     /**
      * @return \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Customer
@@ -48,6 +59,11 @@ class Item
     {
         $result = parent::get(self::A_VOLUME);
         return $result;
+    }
+
+    public function setAmount($data)
+    {
+        parent::set(self::A_AMOUNT, $data);
     }
 
     public function setCustomer($data)

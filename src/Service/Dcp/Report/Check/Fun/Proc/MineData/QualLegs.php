@@ -12,6 +12,7 @@ use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\Qual
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase2\Legs as ELegs;
 use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\GetCalcs as RouGetCalcs;
+use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\IsSchemeEu as RouIsSchemeEu;
 use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\QualLegs\Db\Query\GetItems as QBGetItems;
 
 /**
@@ -31,22 +32,22 @@ class QualLegs
     private $repoLegs;
     /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\GetCalcs */
     private $rouGetCalcs;
+    /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\IsSchemeEu */
+    private $rouIsSchemeEu;
 
     public function __construct(
         \Praxigento\Core\Tool\IPeriod $hlpPeriod,
-        \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
-        \Praxigento\Downline\Repo\Entity\Customer $repoDwnlCust,
         \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase2\Legs $repoLegs,
         QBGetItems $qbGetItems,
-        RouGetCalcs $rouGetCalcs
+        RouGetCalcs $rouGetCalcs,
+        RouIsSchemeEu $rouIsSchemeEu
     )
     {
         $this->hlpPeriod = $hlpPeriod;
-        $this->hlpScheme = $hlpScheme;
-        $this->repoDwnlCust = $repoDwnlCust;
         $this->repoLegs = $repoLegs;
         $this->qbGetItems = $qbGetItems;
         $this->rouGetCalcs = $rouGetCalcs;
+        $this->rouIsSchemeEu = $rouIsSchemeEu;
     }
 
     public function exec($custId, $period): DQualLegs
@@ -57,38 +58,22 @@ class QualLegs
 
         /* perform processing */
         $calcs = $this->rouGetCalcs->exec($dsBegin, $dsEnd);
-        $calcDef = $calcs[Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_DEF];
-        $calcEu = $calcs[Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_EU];
-
-        $calcId = $this->getCalcIdByScheme($calcDef, $calcEu, $custId);
-
+        $isSchemeEu = $this->rouIsSchemeEu->exec($custId);
+        if ($isSchemeEu) {
+            $calcId = $calcs[Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_EU];
+        } else {
+            $calcId = $calcs[Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_DEF];
+        }
         $items = $this->getItems($calcId, $custId);
         $qual = $this->getQualData($calcId, $custId);
 
+        /* compose result */
         $result = new DQualLegs();
         $result->setItems($items);
         $result->setQualification($qual);
         return $result;
     }
 
-    /**
-     * Load customer data by customer ID, define schema for customer and return appropriate calculation ID.
-     * @param int $calcDef
-     * @param int $calcEu
-     * @param int $custId
-     * @return int
-     */
-    private function getCalcIdByScheme($calcDef, $calcEu, $custId)
-    {
-        $custData = $this->repoDwnlCust->getById($custId);
-        $scheme = $this->hlpScheme->getSchemeByCustomer($custData);
-        if ($scheme == Cfg::SCHEMA_EU) {
-            $result = $calcEu;
-        } else {
-            $result = $calcDef;
-        }
-        return $result;
-    }
     /**
      * @param int $calcId
      * @param int $custId

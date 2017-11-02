@@ -11,7 +11,8 @@ use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\Over
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\GetCalcs as RouGetCalcs;
-use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\TeamBonusSection\Db\Query\GetItems as QBGetItems;
+use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\IsSchemeEu as RouIsSchemeEu;
+use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\OverrideBonus\Db\Query\GetItems as QBGetItems;
 
 /**
  * Action to build "Override Bonus" section of the DCP's "Check" report.
@@ -26,18 +27,22 @@ class OverrideBonus
     private $repoBonDwn;
     /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\GetCalcs */
     private $rouGetCalcs;
+    /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\IsSchemeEu */
+    private $rouIsSchemeEu;
 
     public function __construct(
         \Praxigento\Core\Tool\IPeriod $hlpPeriod,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwn,
         QBGetItems $qbGetItems,
-        RouGetCalcs $rouGetCalcs
+        RouGetCalcs $rouGetCalcs,
+        RouIsSchemeEu $rouIsSchemeEu
     )
     {
         $this->hlpPeriod = $hlpPeriod;
         $this->repoBonDwn = $repoBonDwn;
         $this->qbGetItems = $qbGetItems;
         $this->rouGetCalcs = $rouGetCalcs;
+        $this->rouIsSchemeEu = $rouIsSchemeEu;
     }
 
     public function exec($custId, $period): DOverBonus
@@ -48,39 +53,38 @@ class OverrideBonus
 
         /* perform processing */
         $calcs = $this->rouGetCalcs->exec($dsBegin, $dsEnd);
-        $calcPvWriteOff = $calcs[Cfg::CODE_TYPE_CALC_PV_WRITE_OFF];
-        $calcDef = $calcs[Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF];
-        $calcEu = $calcs[Cfg::CODE_TYPE_CALC_BONUS_TEAM_EU];
+        $isSchemeEu = $this->rouIsSchemeEu->exec($custId);
+        if ($isSchemeEu) {
+            $calcCompress = $calcs[Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_EU];
+            $calcBonus = $calcs[Cfg::CODE_TYPE_CALC_BONUS_OVERRIDE_EU];
+        } else {
+            $calcCompress = $calcs[Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_DEF];
+            $calcBonus = $calcs[Cfg::CODE_TYPE_CALC_BONUS_OVERRIDE_DEF];
+        }
 
-        $pv = $this->getPv($calcPvWriteOff, $custId);
-        $items = $this->getItems($calcPvWriteOff, $calcDef, $calcEu, $custId);
+        $items = $this->getItems($calcCompress, $calcBonus, $custId);
 
         /* compose result */
-        $result = new DTeamBonus();
+        $result = new DOverBonus();
         $result->setItems($items);
-        $result->setTotalVolume($pv);
-        /** TODO: calc value or remove attr */
-        $result->setPercent(0);
         return $result;
     }
 
     /**
      * Get DB data and compose API data.
      *
-     * @param $calcPvWriteOff
-     * @param $calcDef
-     * @param $calcEu
+     * @param $calcCompress
+     * @param $calcBonus
      * @param $custId
      * @return array
      */
-    private function getItems($calcPvWriteOff, $calcDef, $calcEu, $custId)
+    private function getItems($calcCompress, $calcBonus, $custId)
     {
         $query = $this->qbGetItems->build();
         $conn = $query->getConnection();
         $bind = [
-            QBGetItems::BND_CALC_ID_PV_WRITE_OFF => $calcPvWriteOff,
-            QBGetItems::BND_CALC_ID_TEAM_DEF => $calcDef,
-            QBGetItems::BND_CALC_ID_TEAM_EU => $calcEu,
+            QBGetItems::BND_CALC_ID_COMPRESS => $calcCompress,
+            QBGetItems::BND_CALC_ID_BONUS => $calcBonus,
             QBGetItems::BND_CUST_ID => $custId
         ];
         $rs = $conn->fetchAll($query, $bind);
@@ -88,26 +92,31 @@ class OverrideBonus
         $result = [];
         foreach ($rs as $one) {
             /* get DB data */
+            $amount = $one[QBGetItems::A_AMOUNT];
             $custId = $one[QBGetItems::A_CUST_ID];
             $depth = $one[QBGetItems::A_DEPTH];
             $mlmId = $one[QBGetItems::A_MLM_ID];
             $nameFirst = $one[QBGetItems::A_NAME_FIRST];
             $nameLast = $one[QBGetItems::A_NAME_LAST];
             $pv = $one[QBGetItems::A_PV];
-            $amount = $one[QBGetItems::A_AMOUNT];
+            $rankCode = $one[QBGetItems::A_RANK_CODE];
 
             /* composite values */
             $name = "$nameFirst $nameLast";
+            $percent = $amount / $pv;
+            $percent = round($percent, 2);
 
             /* compose API data */
             $customer = new DCustomer();
             $customer->setId($custId);
+            $customer->setLevel($depth);
             $customer->setMlmId($mlmId);
             $customer->setName($name);
-            $customer->setLevel($depth);
             $item = new DItem();
-            $item->setCustomer($customer);
             $item->setAmount($amount);
+            $item->setCustomer($customer);
+            $item->setPercent($percent);
+            $item->setRank($rankCode);
             $item->setVolume($pv);
 
             $result[] = $item;

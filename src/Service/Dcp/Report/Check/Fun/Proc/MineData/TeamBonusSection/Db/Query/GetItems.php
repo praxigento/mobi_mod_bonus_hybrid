@@ -6,7 +6,6 @@
 namespace Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\TeamBonusSection\Db\Query;
 
 use Praxigento\Accounting\Repo\Entity\Data\Account as EAcc;
-use Praxigento\Accounting\Repo\Entity\Data\Operation as EOper;
 use Praxigento\Accounting\Repo\Entity\Data\Transaction as ETrans;
 use Praxigento\BonusBase\Repo\Entity\Data\Log\Customers as ELogCust;
 use Praxigento\BonusBase\Repo\Entity\Data\Log\Opers as ELogOper;
@@ -25,7 +24,6 @@ class GetItems
     const AS_DWNL_CUST = 'dwnCust';
     const AS_LOG_CUST = 'logCust';
     const AS_LOG_OPER = 'logOper';
-    const AS_OPER = 'oper';
     const AS_TRANS = 'trans';
 
     /** Columns/expressions aliases for external usage ('camelCase' naming) */
@@ -50,7 +48,6 @@ class GetItems
     const E_DWNL_CUST = EDwnCust::ENTITY_NAME;
     const E_LOG_CUST = ELogCust::ENTITY_NAME;
     const E_LOG_OPER = ELogOper::ENTITY_NAME;
-    const E_OPER = EOper::ENTITY_NAME;
     const E_TRANS = ETrans::ENTITY_NAME;
 
 
@@ -66,7 +63,6 @@ class GetItems
         $asDwnlCust = self::AS_DWNL_CUST;
         $asLogCust = self::AS_LOG_CUST;
         $asLogOper = self::AS_LOG_OPER;
-        $asOper = self::AS_OPER;
         $asTrans = self::AS_TRANS;
 
         /* FROM prxgt_bon_base_log_opers  */
@@ -75,20 +71,13 @@ class GetItems
         $cols = [];
         $result->from([$as => $tbl], $cols);
 
-        /* JOIN prxgt_acc_operation to get link to transactions */
-        $tbl = $this->resource->getTableName(EOper::ENTITY_NAME);
-        $as = $asOper;
-        $cols = [];
-        $cond = $as . '.' . EOper::ATTR_ID . '=' . $asLogOper . '.' . ELogOper::ATTR_OPER_ID;
-        $result->joinLeft([$as => $tbl], $cond, $cols);
-
         /* JOIN prxgt_acc_transaction to get amount & link to accounts */
         $tbl = $this->resource->getTableName(ETrans::ENTITY_NAME);
         $as = $asTrans;
         $cols = [
             self::A_AMOUNT => ETrans::ATTR_VALUE
         ];
-        $cond = $as . '.' . ETrans::ATTR_OPERATION_ID . '=' . $asOper . '.' . EOper::ATTR_ID;
+        $cond = $as . '.' . ETrans::ATTR_OPERATION_ID . '=' . $asLogOper . '.' . ELogOper::ATTR_OPER_ID;
         $result->joinLeft([$as => $tbl], $cond, $cols);
 
         /* JOIN prxgt_acc_account to get link to the customer */
