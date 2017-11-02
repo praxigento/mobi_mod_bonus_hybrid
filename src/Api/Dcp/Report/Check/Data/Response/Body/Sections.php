@@ -5,6 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body;
 
+use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\InfBonus as DInf;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\OverBonus as DOver;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\PersonalBonus as DPersonal;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\QualLegs as DQualLegs;
@@ -20,6 +21,15 @@ class Sections
     const A_QUAL_LEGS = 'qual_legs';
     const A_TEAM_BONUS = 'team_bonus';
     const A_TOTALS = 'totals';
+
+    /**
+     * @return \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\InfBonus
+     */
+    public function getInfBonus(): DInf
+    {
+        $result = parent::get(self::A_INFINITY_BONUS);
+        return $result;
+    }
 
     /**
      * @return \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\OverBonus
@@ -55,6 +65,11 @@ class Sections
     {
         $result = parent::get(self::A_TEAM_BONUS);
         return $result;
+    }
+
+    public function setInfBonus(DInf $data)
+    {
+        parent::set(self::A_INFINITY_BONUS, $data);
     }
 
     public function setOverBonus(DOver $data)

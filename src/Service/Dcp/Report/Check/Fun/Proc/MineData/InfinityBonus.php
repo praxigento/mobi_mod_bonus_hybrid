@@ -6,21 +6,21 @@
 namespace Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData;
 
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Customer as DCustomer;
-use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\OverBonus as DOverBonus;
-use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\OverBonus\Item as DItem;
+use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\InfBonus as DInfBonus;
+use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\InfBonus\Item as DItem;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\GetCalcs as RouGetCalcs;
 use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\IsSchemeEu as RouIsSchemeEu;
 use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\OverrideBonus\Db\Query\GetItems as QBGetItems;
 
 /**
- * Action to build "Override Bonus" section of the DCP's "Check" report.
+ * Action to build "Infinity Bonus" section of the DCP's "Check" report.
  */
-class OverrideBonus
+class InfinityBonus
 {
     /** @var \Praxigento\Core\Tool\IPeriod */
     private $hlpPeriod;
-    /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\OverrideBonus\Db\Query\GetItems */
+    /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\InfinityBonus\Db\Query\GetItems */
     private $qbGetItems;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoBonDwn;
@@ -44,7 +44,7 @@ class OverrideBonus
         $this->rouIsSchemeEu = $rouIsSchemeEu;
     }
 
-    public function exec($custId, $period): DOverBonus
+    public function exec($custId, $period): DInfBonus
     {
         /* get input and prepare working data */
         $dsBegin = $this->hlpPeriod->getPeriodFirstDate($period);
@@ -55,16 +55,16 @@ class OverrideBonus
         $isSchemeEu = $this->rouIsSchemeEu->exec($custId);
         if ($isSchemeEu) {
             $calcCompress = $calcs[Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_EU];
-            $calcBonus = $calcs[Cfg::CODE_TYPE_CALC_BONUS_OVERRIDE_EU];
+            $calcBonus = $calcs[Cfg::CODE_TYPE_CALC_BONUS_INFINITY_EU];
         } else {
             $calcCompress = $calcs[Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_DEF];
-            $calcBonus = $calcs[Cfg::CODE_TYPE_CALC_BONUS_OVERRIDE_DEF];
+            $calcBonus = $calcs[Cfg::CODE_TYPE_CALC_BONUS_INFINITY_DEF];
         }
 
         $items = $this->getItems($calcCompress, $calcBonus, $custId);
 
         /* compose result */
-        $result = new DOverBonus();
+        $result = new DInfBonus();
         $result->setItems($items);
         return $result;
     }
