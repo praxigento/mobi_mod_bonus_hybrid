@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\TeamBonusSection\Db\Query;
+namespace Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\TeamBonus\Db\Query;
 
 use Praxigento\Accounting\Repo\Entity\Data\Account as EAcc;
 use Praxigento\Accounting\Repo\Entity\Data\Transaction as ETrans;

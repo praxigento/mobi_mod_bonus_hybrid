@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\PersBonusSection\Db\Query;
+namespace Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\PersBonus\Db\Query;
 
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase1\Transfer\Pv as EPhase1Transfer;

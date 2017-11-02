@@ -9,9 +9,9 @@ use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Context as AContext;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections as DSections;
 use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\Customer as SubCustomer;
 use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\OverrideBonus as SubOverBonus;
-use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\PersBonusSection as SubPersBonus;
+use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\PersBonus as SubPersBonus;
 use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\QualLegs as SubQualLegs;
-use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\TeamBonusSection as SubTeamBonus;
+use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\TeamBonus as SubTeamBonus;
 
 /**
  * Process step to mine requested data from DB.
@@ -22,11 +22,11 @@ class MineData
     private $subCustomer;
     /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\OverrideBonus */
     private $subOverBonus;
-    /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\PersBonusSection */
+    /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\PersBonus */
     private $subPersBonus;
     /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\QualLegs */
     private $subQualLegs;
-    /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\TeamBonusSection */
+    /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\TeamBonus */
     private $subTeamBonus;
 
     public function __construct(

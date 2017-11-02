@@ -8,18 +8,18 @@ use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Customer as D
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\TeamBonus as DTeamBonus;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\TeamBonus\Item as DItem;
 use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\GetCalcs as RouGetCalcs;
-use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\TeamBonusSection\Db\Query\GetItems as QBGetItems;
+use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\TeamBonus\Db\Query\GetItems as QBGetItems;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 
 /**
  * Action to build "Team Bonus" section of the DCP's "Check" report.
  */
-class TeamBonusSection
+class TeamBonus
 {
     /** @var \Praxigento\Core\Tool\IPeriod */
     private $hlpPeriod;
-    /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\TeamBonusSection\Db\Query\GetItems */
+    /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\TeamBonus\Db\Query\GetItems */
     private $qbGetItems;
     /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\GetCalcs */
     private $rouGetCalcs;

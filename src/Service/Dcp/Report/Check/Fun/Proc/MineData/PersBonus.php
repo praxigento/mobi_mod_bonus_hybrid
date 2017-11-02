@@ -9,21 +9,19 @@ use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Customer as D
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\PersonalBonus as DPersonalBonus;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\PersonalBonus\Item as DItem;
 use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\GetCalcs as RouGetCalcs;
-use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\PersBonusSection\Db\Query\GetItems as QBGetItems;
+use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\PersBonus\Db\Query\GetItems as QBGetItems;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 
 /**
  * Action to build "Personal Bonus" section of the DCP's "Check" report.
  */
-class PersBonusSection
+class PersBonus
 {
     /** @var \Praxigento\Core\Tool\IPeriod */
     private $hlpPeriod;
-    /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\PersBonusSection\Db\Query\GetItems */
+    /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\PersBonus\Db\Query\GetItems */
     private $qbGetItems;
-    /** @var \Praxigento\BonusBase\Repo\Query\Period\Calcs\Get\Builder */
-    private $qbGetPeriodCalcs;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoBonDwn;
     /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\GetCalcs */
@@ -31,7 +29,7 @@ class PersBonusSection
     public function __construct(
         \Praxigento\Core\Tool\IPeriod $hlpPeriod,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwn,
-        \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\PersBonusSection\Db\Query\GetItems $qbGetItems,
+        \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\PersBonus\Db\Query\GetItems $qbGetItems,
         RouGetCalcs $rouGetCalcs
     )
     {
