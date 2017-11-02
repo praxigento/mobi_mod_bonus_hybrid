@@ -9,10 +9,10 @@ use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Customer as D
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\QualLegs as DQualLegs;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\QualLegs\Item as DItem;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\QualLegs\Qualification as DQual;
-use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\GetCalcs as RouGetCalcs;
-use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\QualLegs\Db\Query\GetItems as QBGetItems;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase2\Legs as ELegs;
+use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\GetCalcs as RouGetCalcs;
+use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\QualLegs\Db\Query\GetItems as QBGetItems;
 
 /**
  * Action to build "QualificationLegs" section of the DCP's "Check" report.
@@ -21,8 +21,12 @@ class QualLegs
 {
     /** @var \Praxigento\Core\Tool\IPeriod */
     private $hlpPeriod;
+    /** @var \Praxigento\BonusHybrid\Helper\IScheme */
+    private $hlpScheme;
     /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\QualLegs\Db\Query\GetItems */
     private $qbGetItems;
+    /** @var \Praxigento\Downline\Repo\Entity\Customer */
+    private $repoDwnlCust;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase2\Legs */
     private $repoLegs;
     /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\GetCalcs */
@@ -30,12 +34,16 @@ class QualLegs
 
     public function __construct(
         \Praxigento\Core\Tool\IPeriod $hlpPeriod,
+        \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
+        \Praxigento\Downline\Repo\Entity\Customer $repoDwnlCust,
         \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase2\Legs $repoLegs,
         QBGetItems $qbGetItems,
         RouGetCalcs $rouGetCalcs
     )
     {
         $this->hlpPeriod = $hlpPeriod;
+        $this->hlpScheme = $hlpScheme;
+        $this->repoDwnlCust = $repoDwnlCust;
         $this->repoLegs = $repoLegs;
         $this->qbGetItems = $qbGetItems;
         $this->rouGetCalcs = $rouGetCalcs;
@@ -52,7 +60,7 @@ class QualLegs
         $calcDef = $calcs[Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_DEF];
         $calcEu = $calcs[Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_EU];
 
-        $calcId = $calcDef;
+        $calcId = $this->getCalcIdByScheme($calcDef, $calcEu, $custId);
 
         $items = $this->getItems($calcId, $custId);
         $qual = $this->getQualData($calcId, $custId);
@@ -63,6 +71,24 @@ class QualLegs
         return $result;
     }
 
+    /**
+     * Load customer data by customer ID, define schema for customer and return appropriate calculation ID.
+     * @param int $calcDef
+     * @param int $calcEu
+     * @param int $custId
+     * @return int
+     */
+    private function getCalcIdByScheme($calcDef, $calcEu, $custId)
+    {
+        $custData = $this->repoDwnlCust->getById($custId);
+        $scheme = $this->hlpScheme->getSchemeByCustomer($custData);
+        if ($scheme == Cfg::SCHEMA_EU) {
+            $result = $calcEu;
+        } else {
+            $result = $calcDef;
+        }
+        return $result;
+    }
     /**
      * @param int $calcId
      * @param int $custId
