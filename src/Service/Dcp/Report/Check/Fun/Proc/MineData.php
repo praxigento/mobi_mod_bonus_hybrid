@@ -8,6 +8,7 @@ namespace Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Context as AContext;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections as DSections;
 use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\Customer as SubCustomer;
+use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\OverrideBonus as SubOverBonus;
 use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\PersBonusSection as SubPersBonus;
 use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\QualLegs as SubQualLegs;
 use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\TeamBonusSection as SubTeamBonus;
@@ -19,24 +20,28 @@ class MineData
 {
     /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\Customer */
     private $subCustomer;
+    /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\OverrideBonus */
+    private $subOverBonus;
     /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\PersBonusSection */
     private $subPersBonus;
-    /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\TeamBonusSection */
-    private $subTeamBonus;
     /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\QualLegs */
     private $subQualLegs;
+    /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\TeamBonusSection */
+    private $subTeamBonus;
 
     public function __construct(
         SubCustomer $subCustomer,
+        SubOverBonus $subOverBonus,
         SubPersBonus $subPersBonus,
-        SubTeamBonus $subTeamBonus,
-        SubQualLegs $subQualLegs
+        SubQualLegs $subQualLegs,
+        SubTeamBonus $subTeamBonus
     )
     {
         $this->subCustomer = $subCustomer;
+        $this->subOverBonus = $subOverBonus;
         $this->subPersBonus = $subPersBonus;
-        $this->subTeamBonus = $subTeamBonus;
         $this->subQualLegs = $subQualLegs;
+        $this->subTeamBonus = $subTeamBonus;
     }
 
     public function exec(AContext $ctx): AContext
@@ -52,6 +57,7 @@ class MineData
             $persBonus = $this->subPersBonus->exec($custId, $period);
             $teamBonus = $this->subTeamBonus->exec($custId, $period);
             $qualLegs = $this->subQualLegs->exec($custId, $period);
+            $overBonus = $this->subOverBonus->exec($custId, $period);
 
             /* put result data into context */
             $ctx->respCustomer = $customer;
@@ -59,6 +65,7 @@ class MineData
             $sections->setPersonalBonus($persBonus);
             $sections->setTeamBonus($teamBonus);
             $sections->setQualLegs($qualLegs);
+            $sections->setOverBonus($overBonus);
             $ctx->respSections = $sections;
         }
         return $ctx;

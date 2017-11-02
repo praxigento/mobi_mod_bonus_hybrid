@@ -5,6 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body;
 
+use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\OverBonus as DOver;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\PersonalBonus as DPersonal;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\QualLegs as DQualLegs;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\TeamBonus as DTeam;
@@ -19,6 +20,15 @@ class Sections
     const A_QUAL_LEGS = 'qual_legs';
     const A_TEAM_BONUS = 'team_bonus';
     const A_TOTALS = 'totals';
+
+    /**
+     * @return \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\OverBonus
+     */
+    public function getOverBonus(): DOver
+    {
+        $result = parent::get(self::A_OVERRIDE_BONUS);
+        return $result;
+    }
 
     /**
      * @return \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\PersonalBonus
@@ -47,25 +57,21 @@ class Sections
         return $result;
     }
 
-    /**
-     * @param DPersonal $data
-     */
+    public function setOverBonus(DOver $data)
+    {
+        parent::set(self::A_OVERRIDE_BONUS, $data);
+    }
+
     public function setPersonalBonus(DPersonal $data)
     {
         parent::set(self::A_PERSONAL_BONUS, $data);
     }
 
-    /**
-     * @param DTeam $data
-     */
     public function setQualLegs(DQualLegs $data)
     {
         parent::set(self::A_QUAL_LEGS, $data);
     }
 
-    /**
-     * @param DTeam $data
-     */
     public function setTeamBonus(DTeam $data)
     {
         parent::set(self::A_TEAM_BONUS, $data);
