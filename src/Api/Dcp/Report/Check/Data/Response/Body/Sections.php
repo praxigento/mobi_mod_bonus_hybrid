@@ -68,6 +68,9 @@ class Sections
         return $result;
     }
 
+    /**
+     * @return \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\Totals
+     */
     public function getTotals(): DTotals
     {
         $result = parent::get(self::A_TOTALS);

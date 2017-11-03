@@ -22,12 +22,8 @@ class QualLegs
 {
     /** @var \Praxigento\Core\Tool\IPeriod */
     private $hlpPeriod;
-    /** @var \Praxigento\BonusHybrid\Helper\IScheme */
-    private $hlpScheme;
     /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\QualLegs\Db\Query\GetItems */
     private $qbGetItems;
-    /** @var \Praxigento\Downline\Repo\Entity\Customer */
-    private $repoDwnlCust;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase2\Legs */
     private $repoLegs;
     /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\GetCalcs */

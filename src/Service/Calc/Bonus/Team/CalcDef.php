@@ -65,7 +65,7 @@ class CalcDef
     {
         $result = [];
         /* collect additional data */
-        $levelsPersonal = $this->repoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_DEF);
+        $levelsPersonal = $this->repoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL);
         $levelsTeam = $this->repoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF);
         $dwnlCompress = $this->repoDwnlBon->getByCalcId($calcId);
         $dwnlCurrent = $this->repoDwnl->get();

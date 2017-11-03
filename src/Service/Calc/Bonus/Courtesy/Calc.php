@@ -55,7 +55,7 @@ class Calc
         $percentCourtesy = Cfg::COURTESY_BONUS_PERCENT;
         $dwnlCompress = $this->repoDwnlBon->getByCalcId($calcId);
         $dwnlCurrent = $this->repoDwnl->get();
-        $levelsPersonal = $this->repoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_DEF);
+        $levelsPersonal = $this->repoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL);
         $levelsTeam = $this->repoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF);
         /* create maps to access data */
         $mapDataById = $this->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);

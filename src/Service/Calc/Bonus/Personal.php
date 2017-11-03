@@ -126,7 +126,7 @@ class Personal
         $dwnlCompress = $this->repoDwnlBon->getByCalcId($baseCalcId);
         $dwnlCurrent = $this->repoDwnl->get();
         /* get levels to calculate Personal bonus */
-        $levels = $this->repoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_DEF);
+        $levels = $this->repoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL);
         /* calculate bonus*/
         $bonus = $this->calcBonus($dwnlCurrent, $dwnlCompress, $levels);
         /* convert calculated bonus to transactions */
@@ -153,7 +153,7 @@ class Personal
         /* get period & calc data */
         $ctx = new \Praxigento\Core\Data();
         $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
-        $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_BONUS_PERSONAL_DEF);
+        $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_BONUS_PERSONAL);
         $this->procPeriodGet->exec($ctx);
         /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $compressCalc */
         $compressCalc = $ctx->get($this->procPeriodGet::CTX_OUT_BASE_CALC_DATA);

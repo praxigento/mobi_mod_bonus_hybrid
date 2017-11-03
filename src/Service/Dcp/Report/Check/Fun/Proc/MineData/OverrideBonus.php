@@ -22,8 +22,6 @@ class OverrideBonus
     private $hlpPeriod;
     /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\OverrideBonus\Db\Query\GetItems */
     private $qbGetItems;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
-    private $repoBonDwn;
     /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\GetCalcs */
     private $rouGetCalcs;
     /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\IsSchemeEu */
@@ -31,14 +29,12 @@ class OverrideBonus
 
     public function __construct(
         \Praxigento\Core\Tool\IPeriod $hlpPeriod,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwn,
         QBGetItems $qbGetItems,
         RouGetCalcs $rouGetCalcs,
         RouIsSchemeEu $rouIsSchemeEu
     )
     {
         $this->hlpPeriod = $hlpPeriod;
-        $this->repoBonDwn = $repoBonDwn;
         $this->qbGetItems = $qbGetItems;
         $this->rouGetCalcs = $rouGetCalcs;
         $this->rouIsSchemeEu = $rouIsSchemeEu;

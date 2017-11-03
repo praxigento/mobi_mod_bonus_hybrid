@@ -13,6 +13,7 @@ use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\OverrideBo
 use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\PersBonus as SubPersBonus;
 use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\QualLegs as SubQualLegs;
 use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\TeamBonus as SubTeamBonus;
+use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\Totals as SubTotals;
 
 /**
  * Process step to mine requested data from DB.
@@ -21,6 +22,8 @@ class MineData
 {
     /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\Customer */
     private $subCustomer;
+    /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\InfinityBonus */
+    private $subInfBonus;
     /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\OverrideBonus */
     private $subOverBonus;
     /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\PersBonus */
@@ -29,14 +32,17 @@ class MineData
     private $subQualLegs;
     /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\TeamBonus */
     private $subTeamBonus;
-    private $subInfBonus;
+    /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\Totals */
+    private $subTotals;
+
     public function __construct(
         SubCustomer $subCustomer,
         SubInfBonus $subInfBonus,
         SubOverBonus $subOverBonus,
         SubPersBonus $subPersBonus,
         SubQualLegs $subQualLegs,
-        SubTeamBonus $subTeamBonus
+        SubTeamBonus $subTeamBonus,
+        SubTotals $subTotals
     )
     {
         $this->subCustomer = $subCustomer;
@@ -45,6 +51,7 @@ class MineData
         $this->subPersBonus = $subPersBonus;
         $this->subQualLegs = $subQualLegs;
         $this->subTeamBonus = $subTeamBonus;
+        $this->subTotals = $subTotals;
     }
 
     public function exec(AContext $ctx): AContext
@@ -62,6 +69,7 @@ class MineData
             $qualLegs = $this->subQualLegs->exec($custId, $period);
             $overBonus = $this->subOverBonus->exec($custId, $period);
             $infBonus = $this->subInfBonus->exec($custId, $period);
+            $totals = $this->subTotals->exec($custId, $period);
 
             /* put result data into context */
             $ctx->respCustomer = $customer;
@@ -71,6 +79,7 @@ class MineData
             $sections->setQualLegs($qualLegs);
             $sections->setOverBonus($overBonus);
             $sections->setInfBonus($infBonus);
+            $sections->setTotals($totals);
             $ctx->respSections = $sections;
         }
         return $ctx;
