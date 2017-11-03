@@ -10,9 +10,9 @@ use Praxigento\Accounting\Repo\Entity\Data\Transaction as ETrans;
 use Praxigento\BonusBase\Repo\Entity\Data\Log\Opers as ELogOper;
 
 /**
- * Build query to get personal bonus value.
+ * Build query to get summary for amounts of many transactional bonus (team, for example).
  */
-class GetPersonal
+class GetSum
     extends \Praxigento\Core\Repo\Query\Builder
 {
     /** Tables aliases for external usage ('camelCase' naming) */
@@ -50,8 +50,10 @@ class GetPersonal
         /* LEFT JOIN prxgt_acc_transaction to get link to accounts */
         $tbl = $this->resource->getTableName(ETrans::ENTITY_NAME);
         $as = $asTrans;
+        $source = 'SUM(' . ETrans::ATTR_VALUE . ')';
+        $exp = new \Praxigento\Core\Repo\Query\Expression($source);
         $cols = [
-            self::A_AMOUNT => ETrans::ATTR_VALUE
+            self::A_AMOUNT => $exp
         ];
         $cond = $as . '.' . ETrans::ATTR_OPERATION_ID . '=' . $asLog . '.' . ELogOper::ATTR_OPER_ID;
         $result->joinLeft([$as => $tbl], $cond, $cols);
@@ -67,7 +69,6 @@ class GetPersonal
         $byCalcId = "$asLog." . ELogOper::ATTR_CALC_ID . "=:" . self::BND_CALC_ID;
         $byCustId = "$asAcc." . EAcc::ATTR_CUST_ID . "=:" . self::BND_CUST_ID;
         $result->where("($byCalcId) AND ($byCustId)");
-
 
         return $result;
     }
