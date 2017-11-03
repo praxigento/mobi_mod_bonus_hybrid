@@ -570,15 +570,15 @@
                   },
                   "Downline": {
                     "alias": "dwnl",
-                    "comment": "Downline trees (plain & compressed)",
+                    "comment": "Downline trees related data",
                     "entity": {
-                      "Calculation": {
-                        "alias": "calc",
-                        "comment": "Relation between downline tree and calculation.",
+                      "Qualification": {
+                        "alias": "qual",
+                        "comment": "Qualification data (ranks, etc.).",
                         "attribute": {
-                          "TreeRef": {
-                            "alias": "tree_ref",
-                            "comment": "Reference to downline tree.",
+                          "TreeEntryRef": {
+                            "alias": "tree_entry_ref",
+                            "comment": "Reference to the entry in downline tree.",
                             "nullable": false,
                             "type": {
                               "integer": {
@@ -586,9 +586,19 @@
                               }
                             }
                           },
-                          "CalculationRef": {
-                            "alias": "calc_ref",
-                            "comment": "Reference to calculation.",
+                          "RankRef": {
+                            "alias": "rank_ref",
+                            "comment": "Reference to qualification rank ID.",
+                            "nullable": false,
+                            "type": {
+                              "integer": {
+                                "unsigned": true
+                              }
+                            }
+                          },
+                          "UnqualifiedMonths": {
+                            "alias": "unq_months",
+                            "comment": "Number of the last sequentially unqualified months.",
                             "nullable": false,
                             "type": {
                               "integer": {
@@ -601,16 +611,15 @@
                           "primary": {
                             "type": "primary",
                             "aliases": [
-                              "tree_ref",
-                              "calc_ref"
+                              "tree_entry_ref"
                             ]
                           }
                         },
                         "relation": {
-                          "toTree": {
+                          "toTreeEntry": {
                             "own": {
                               "aliases": [
-                                "tree_ref"
+                                "tree_entry_ref"
                               ]
                             },
                             "reference": {
@@ -622,26 +631,26 @@
                               ]
                             },
                             "action": {
-                              "delete": "cascade",
+                              "delete": "restrict",
                               "update": "restrict"
                             }
                           },
-                          "toCalc": {
+                          "toBonusRank": {
                             "own": {
                               "aliases": [
-                                "calc_ref"
+                                "rank_ref"
                               ]
                             },
                             "reference": {
                               "entity": {
-                                "completeAlias": "prxgt_bon_base_calc"
+                                "completeAlias": "prxgt_bon_base_rank"
                               },
                               "aliases": [
                                 "id"
                               ]
                             },
                             "action": {
-                              "delete": "cascade",
+                              "delete": "restrict",
                               "update": "restrict"
                             }
                           }
@@ -765,6 +774,17 @@
                     "alias": "dwnl",
                     "comment": "Downline tree data (plain/compressed & retro/actual).",
                     "attribute": {
+                      "Id": {
+                        "alias": "id",
+                        "comment": "Instance ID.",
+                        "nullable": false,
+                        "type": {
+                          "integer": {
+                            "unsigned": true,
+                            "autoincrement": true
+                          }
+                        }
+                      },
                       "CalculationRef": {
                         "alias": "calc_ref",
                         "comment": "Reference to the related calculation.",
@@ -873,6 +893,12 @@
                     "index": {
                       "primary": {
                         "type": "primary",
+                        "aliases": [
+                          "id"
+                        ]
+                      },
+                      "unique": {
+                        "type": "unique",
                         "aliases": [
                           "calc_ref",
                           "cust_ref"
