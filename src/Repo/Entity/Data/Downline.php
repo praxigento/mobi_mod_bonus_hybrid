@@ -16,6 +16,7 @@ class Downline
     const ATTR_CALC_REF = 'calc_ref';
     const ATTR_CUST_REF = 'cust_ref';
     const ATTR_DEPTH = 'depth';
+    const ATTR_ID = 'id';
     const ATTR_OV = 'ov';
     const ATTR_PARENT_REF = 'parent_ref';
     const ATTR_PATH = 'path';
@@ -41,6 +42,12 @@ class Downline
     public function getDepth()
     {
         $result = parent::get(self::ATTR_DEPTH);
+        return $result;
+    }
+
+    public function getId()
+    {
+        $result = parent::get(self::ATTR_ID);
         return $result;
     }
 
@@ -109,6 +116,11 @@ class Downline
     public function setDepth($data)
     {
         parent::set(self::ATTR_DEPTH, $data);
+    }
+
+    public function setId($data)
+    {
+        parent::set(self::ATTR_ID, $data);
     }
 
     public function setOv($data)
