@@ -12,7 +12,7 @@ class Qualification
     extends \Praxigento\Core\Data\Entity\Base
 {
     /* names of the entity attributes (table columns) */
-    const ATTR_ID = 'id';
+    const ATTR_TREE_ENTRY_REF = 'tree_entry_ref';
     const ATTR_RANK_REF = 'rank_ref';
     const ATTR_UNQ_MONTHS = 'unq_months';
 
@@ -20,15 +20,15 @@ class Qualification
     const ENTITY_NAME = 'prxgt_bon_hyb_dwnl_qual';
 
 
-    public function getId()
+    public function getTreeEntryRef()
     {
-        $result = parent::get(self::ATTR_ID);
+        $result = parent::get(self::ATTR_TREE_ENTRY_REF);
         return $result;
     }
 
     public static function getPrimaryKeyAttrs()
     {
-        return [self::ATTR_ID];
+        return [self::ATTR_TREE_ENTRY_REF];
     }
 
     public function getRankRef()
@@ -43,9 +43,9 @@ class Qualification
         return $result;
     }
 
-    public function setId($data)
+    public function setTreeEntryRef($data)
     {
-        parent::set(self::ATTR_ID, $data);
+        parent::set(self::ATTR_TREE_ENTRY_REF, $data);
     }
 
 

@@ -3,29 +3,26 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Service\Calc\Compress;
+namespace Praxigento\BonusHybrid\Service\Calc\Compress\Phase2;
 
 use Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder as QBldGetPv;
 
 /**
- * Helper for compressions calculations.
+ * Get PV that are debited inside 'PV Write Off' operation related for the $calcId.
  */
-class Helper
+class GetPv
 {
-
-    /** Add traits */
-    use \Praxigento\BonusHybrid\Service\Calc\A\Traits\TMap {
-        mapValueById as private;
-    }
-
+    /** @var \Praxigento\Downline\Helper\Tree */
+    private $hlpTree;
     /** @var \Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder */
     private $qbGetPv;
 
-
     public function __construct(
+        \Praxigento\Downline\Helper\Tree $hlpTree,
         \Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder $qbGetPv
     )
     {
+        $this->hlpTree = $hlpTree;
         $this->qbGetPv = $qbGetPv;
     }
 
@@ -33,15 +30,15 @@ class Helper
      * Get PV that are debited inside 'PV Write Off' operation related for the $calcId.
      *
      * @param int $calcId
-     * @return array [custId => PV]
+     * @return array [$customer_id=>$pv, ...]
      */
-    public function getPv($calcId)
+    public function exec($calcId)
     {
         $query = $this->qbGetPv->getSelectQuery();
         $conn = $query->getConnection();
         $bind = [QBldGetPv::BIND_CALC_ID => $calcId];
         $data = $conn->fetchAll($query, $bind);
-        $result = $this->mapValueById($data, QBldGetPv::A_CUST_ID, QBldGetPv::A_PV);
+        $result = $this->hlpTree->mapValueById($data, QBldGetPv::A_CUST_ID, QBldGetPv::A_PV);
         return $result;
     }
 }
