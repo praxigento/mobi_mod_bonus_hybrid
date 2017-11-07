@@ -6,6 +6,7 @@
 namespace Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body;
 
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\InfBonus as DInf;
+use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\OrgProfile as DOrgProfile;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\OverBonus as DOver;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\PersonalBonus as DPersonal;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\QualLegs as DQualLegs;
@@ -26,16 +27,25 @@ class Sections
     /**
      * @return \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\InfBonus
      */
-    public function getInfBonus(): DInf
+    public function getInfBonus()
     {
         $result = parent::get(self::A_INFINITY_BONUS);
         return $result;
     }
 
     /**
+     * @return \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\OrgProfile
+     */
+    public function getOrgProfile()
+    {
+        $result = parent::get(self::A_ORG_PROFILE);
+        return $result;
+    }
+
+    /**
      * @return \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\OverBonus
      */
-    public function getOverBonus(): DOver
+    public function getOverBonus()
     {
         $result = parent::get(self::A_OVERRIDE_BONUS);
         return $result;
@@ -44,7 +54,7 @@ class Sections
     /**
      * @return \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\PersonalBonus
      */
-    public function getPersonalBonus(): DPersonal
+    public function getPersonalBonus()
     {
         $result = parent::get(self::A_PERSONAL_BONUS);
         return $result;
@@ -53,7 +63,7 @@ class Sections
     /**
      * @return \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\QualLegs
      */
-    public function getQualLegs(): DQualLegs
+    public function getQualLegs()
     {
         $result = parent::get(self::A_QUAL_LEGS);
         return $result;
@@ -62,7 +72,7 @@ class Sections
     /**
      * @return \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\TeamBonus
      */
-    public function getTeamBonus(): DTeam
+    public function getTeamBonus()
     {
         $result = parent::get(self::A_TEAM_BONUS);
         return $result;
@@ -71,7 +81,7 @@ class Sections
     /**
      * @return \Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections\Totals
      */
-    public function getTotals(): DTotals
+    public function getTotals()
     {
         $result = parent::get(self::A_TOTALS);
         return $result;
@@ -80,6 +90,11 @@ class Sections
     public function setInfBonus(DInf $data)
     {
         parent::set(self::A_INFINITY_BONUS, $data);
+    }
+
+    public function setOrgProfile(DOrgProfile $data)
+    {
+        parent::set(self::A_ORG_PROFILE, $data);
     }
 
     public function setOverBonus(DOver $data)

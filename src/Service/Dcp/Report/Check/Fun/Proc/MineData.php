@@ -9,6 +9,7 @@ use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Context as AContext;
 use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Response\Body\Sections as DSections;
 use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\Customer as SubCustomer;
 use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\InfinityBonus as SubInfBonus;
+use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\OrgProfile as SubOrgProfile;
 use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\OverrideBonus as SubOverBonus;
 use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\PersBonus as SubPersBonus;
 use Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\QualLegs as SubQualLegs;
@@ -24,6 +25,8 @@ class MineData
     private $subCustomer;
     /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\InfinityBonus */
     private $subInfBonus;
+    /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\OrgProfile */
+    private $subOrgProfile;
     /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\OverrideBonus */
     private $subOverBonus;
     /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\PersBonus */
@@ -38,6 +41,7 @@ class MineData
     public function __construct(
         SubCustomer $subCustomer,
         SubInfBonus $subInfBonus,
+        SubOrgProfile $subOrgProfile,
         SubOverBonus $subOverBonus,
         SubPersBonus $subPersBonus,
         SubQualLegs $subQualLegs,
@@ -47,6 +51,7 @@ class MineData
     {
         $this->subCustomer = $subCustomer;
         $this->subInfBonus = $subInfBonus;
+        $this->subOrgProfile = $subOrgProfile;
         $this->subOverBonus = $subOverBonus;
         $this->subPersBonus = $subPersBonus;
         $this->subQualLegs = $subQualLegs;
@@ -70,6 +75,7 @@ class MineData
             $overBonus = $this->subOverBonus->exec($custId, $period);
             $infBonus = $this->subInfBonus->exec($custId, $period);
             $totals = $this->subTotals->exec($custId, $period);
+            $orgProfile = $this->subOrgProfile->exec($custId, $period);
 
             /* put result data into context */
             $ctx->respCustomer = $customer;
@@ -80,6 +86,7 @@ class MineData
             $sections->setOverBonus($overBonus);
             $sections->setInfBonus($infBonus);
             $sections->setTotals($totals);
+            $sections->setOrgProfile($orgProfile);
             $ctx->respSections = $sections;
         }
         return $ctx;
