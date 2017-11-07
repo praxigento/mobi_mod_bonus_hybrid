@@ -87,6 +87,7 @@ class OrgProfile
             $depth = $one[QBGetGen::A_DEPTH];
             $count = $one[QBGetGen::A_COUNT];
             $volume = $one[QBGetGen::A_VOLUME];
+            $qual = $one[QBGetGen::A_QUAL];
 
             /* composite values */
             $generation = $depth - $depthCust;
@@ -97,6 +98,11 @@ class OrgProfile
             $item->setGeneration($generation);
             $item->setTotal($count);
             $item->setVolume($volume);
+            $item->setQual($qual);
+            $item->setActive(0);
+            $item->setInactive(0);
+            $item->setMgr(0);
+            $item->setMgrAvg(0);
 
             $result[$generation] = $item;
         }
