@@ -5,6 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Forecast;
 
+use Praxigento\Accounting\Repo\Entity\Account as RAccount;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Clean as PCleanCalcData;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Calc as SubCalc;
@@ -23,10 +24,12 @@ class Plain
     private $procCleanCalc;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\IAdd */
     private $procPeriodAdd;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
-    private $repoCalc;
+    /** @var \Praxigento\Accounting\Repo\Entity\Account */
+    private $repoAcc;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoBonDwnl;
+    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
+    private $repoCalc;
     /** @var  \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Calc */
     private $subCalc;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetDownline */
@@ -35,6 +38,7 @@ class Plain
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
         \Praxigento\Core\Tool\IPeriod $hlpPeriod,
+        RAccount $repoAcc,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\Accounting\Service\Balance\Get\ITurnover $callBalanceGetTurnover,
@@ -46,6 +50,7 @@ class Plain
     {
         $this->logger = $logger;
         $this->hlpPeriod = $hlpPeriod;
+        $this->repoAcc = $repoAcc;
         $this->repoBonDwnl = $repoBonDwnl;
         $this->repoCalc = $repoCalc;
         $this->callBalanceGetTurnover = $callBalanceGetTurnover;
@@ -80,6 +85,9 @@ class Plain
         /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] $dwnlTree */
         $dwnlTree = $ctxDwnl->get(PGetDownline::CTX_OUT_DWNL);
 
+        /* get representative customer */
+        $custRepresId = $this->repoAcc->getRepresentativeCustomerId();
+
         /* get PV turnover for period */
         $entries = $this->getPvTurnover($dateFrom, $dateTo);
 
@@ -89,7 +97,10 @@ class Plain
         foreach ($entries as $entry) {
             $turnover = $entry->turnover;
             $customerId = $entry->customerId;
-            if ($turnover > Cfg::DEF_ZERO) {
+            if (
+                ($turnover > Cfg::DEF_ZERO) &&
+                ($customerId != $custRepresId)
+            ) {
                 $positiveTurnover[$customerId] = $entry;
                 /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Downline $dwnlEntry */
                 $dwnlEntry = $dwnlTree[$customerId];

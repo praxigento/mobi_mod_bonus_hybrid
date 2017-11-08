@@ -76,7 +76,7 @@ class Downline
      */
     public static function getPrimaryKeyAttrs()
     {
-        return [self::ATTR_CALC_REF, self::ATTR_CUST_REF];
+        return [self::ATTR_ID];
     }
 
     public function getPv()

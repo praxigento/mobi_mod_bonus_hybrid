@@ -206,7 +206,13 @@ class Compress
     private function saveDownline($items)
     {
         foreach ($items as $item) {
-            $this->repoBonDwnl->create($item);
+            $entryId = $item->getId();
+            $found = $this->repoBonDwnl->getById($entryId);
+            if ($found) {
+                $this->repoBonDwnl->updateById($entryId, $item);
+            } else {
+                $this->repoBonDwnl->create($item);
+            }
         }
     }
 
