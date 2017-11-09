@@ -15,7 +15,7 @@ use Praxigento\BonusHybrid\Config as Cfg;
  * Build query to get PV data for phase 1 compression.
  */
 class Builder
-    extends \Praxigento\Core\Repo\Query\Def\Builder
+    extends \Praxigento\Core\Repo\Query\Builder
 {
     /**
      * Tables aliases.
@@ -36,29 +36,20 @@ class Builder
     const BIND_CALC_ID = 'calcId';
 
     /** @var  \Praxigento\Accounting\Repo\Entity\Type\Operation */
-    protected $repoTypeOper;
+    private $repoTypeOper;
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resource,
         \Praxigento\Accounting\Repo\Entity\Type\Operation $repoTypeOper
-    ) {
+    )
+    {
         parent::__construct($resource);
         $this->repoTypeOper = $repoTypeOper;
     }
 
-    /**
-     * Get operation type id for PV Write Off operation.
-     *
-     * @return int
-     */
-    protected function getPvWriteOffOperTypeId()
+    public function build(\Magento\Framework\DB\Select $source = null)
     {
-        $result = $this->repoTypeOper->getIdByCode(Cfg::CODE_TYPE_OPER_PV_WRITE_OFF);
-        return $result;
-    }
 
-    public function getSelectQuery(\Praxigento\Core\Repo\Query\IBuilder $qbuild = null)
-    {
         $result = $this->conn->select(); // this is root builder
 
         /* define tables aliases */
@@ -104,6 +95,17 @@ class Builder
         $whereByOperType = "($asOper." . EOper::ATTR_TYPE_ID . "=$operTypeId)";
         $result->where("$whereByOperType AND $whereByCalcId");
 
+        return $result;
+    }
+
+    /**
+     * Get operation type id for PV Write Off operation.
+     *
+     * @return int
+     */
+    private function getPvWriteOffOperTypeId()
+    {
+        $result = $this->repoTypeOper->getIdByCode(Cfg::CODE_TYPE_OPER_PV_WRITE_OFF);
         return $result;
     }
 }

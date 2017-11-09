@@ -25,7 +25,7 @@ class GetOrders
         $dateFrom = $opts->dateFrom;
         $dateTo = $opts->dateTo;
         /** @var  $query */
-        $query = $this->qbuildGetOrders->getSelectQuery();
+        $query = $this->qbuildGetOrders->build();
         $conn = $query->getConnection();
         $rs = $conn->fetchAll($query, [
             \Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetOrders\Builder::BIND_DATE_FROM => $dateFrom,

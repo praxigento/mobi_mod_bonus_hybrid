@@ -2,6 +2,7 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
+
 namespace Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetOrders;
 
 use Praxigento\BonusHybrid\Config as Cfg;
@@ -12,7 +13,7 @@ use Praxigento\Pv\Repo\Entity\Data\Sale as Pv;
  * Build query to get data to process 'Sign Up Volume Debit' bonus (signed customers with first order more then 100 PV).
  */
 class Builder
-    extends \Praxigento\Core\Repo\Query\Def\Builder
+    extends \Praxigento\Core\Repo\Query\Builder
 {
     /**
      * Tables aliases.
@@ -38,7 +39,7 @@ class Builder
     const BIND_DATE_FROM = 'date_from';
     const BIND_DATE_TO = 'date_to';
 
-    public function getSelectQuery(\Praxigento\Core\Repo\Query\IBuilder $qbuild = null)
+    public function build(\Magento\Framework\DB\Select $source = null)
     {
         $asCust = self::AS_TBL_CUSTOMER;
         $asDwnl = self::AS_TBL_DOWNLINE;
@@ -85,5 +86,4 @@ class Builder
         $result->order($order);
         return $result;
     }
-
 }

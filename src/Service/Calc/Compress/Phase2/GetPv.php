@@ -34,7 +34,7 @@ class GetPv
      */
     public function exec($calcId)
     {
-        $query = $this->qbGetPv->getSelectQuery();
+        $query = $this->qbGetPv->build();
         $conn = $query->getConnection();
         $bind = [QBldGetPv::BIND_CALC_ID => $calcId];
         $data = $conn->fetchAll($query, $bind);
