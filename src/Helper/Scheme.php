@@ -120,9 +120,9 @@ class Scheme
                 $where .= ' OR ';
             }
             $quoted = $this->conn->quote($one);
-            $where .= Customer::ATTR_HUMAN_REF . "=\"$quoted\"";
+            $where .= Customer::ATTR_MLM_ID . "=\"$quoted\"";
         }
-        $cols = [Customer::ATTR_CUSTOMER_ID, Customer::ATTR_HUMAN_REF];
+        $cols = [Customer::ATTR_CUSTOMER_ID, Customer::ATTR_MLM_ID];
         $result = $this->_repoBasic->getEntities(Customer::ENTITY_NAME, $cols, $where);
         return $result;
     }
@@ -157,7 +157,7 @@ class Scheme
             $this->_cachedForcedRanks = [];
             foreach ($custIds as $item) {
                 $custId = $item[Customer::ATTR_CUSTOMER_ID];
-                $ref = $item[Customer::ATTR_HUMAN_REF];
+                $ref = $item[Customer::ATTR_MLM_ID];
                 $rankCode = $this->QUALIFIED_CUSTOMERS[$ref][1];
                 $cfgParamsWithSchemes = $ranks[$rankCode];
                 $this->_cachedForcedRanks[$custId] = $cfgParamsWithSchemes;

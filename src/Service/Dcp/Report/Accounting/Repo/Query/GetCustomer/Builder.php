@@ -46,7 +46,7 @@ class Builder
         $tbl = $this->resource->getTableName(EDwnlCust::ENTITY_NAME);
         $as = $asDwnl;
         $cols = [
-            self::A_MLM_ID => EDwnlCust::ATTR_HUMAN_REF
+            self::A_MLM_ID => EDwnlCust::ATTR_MLM_ID
         ];
         $cond = $as . '.' . EDwnlCust::ATTR_CUSTOMER_ID . '=' . $asCust . '.' . Cfg::E_CUSTOMER_A_ENTITY_ID;
         $result->joinLeft([$as => $tbl], $cond, $cols);

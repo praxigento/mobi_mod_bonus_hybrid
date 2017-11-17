@@ -100,7 +100,7 @@ class GetItems
         $tbl = $this->resource->getTableName(EDwnCust::ENTITY_NAME);
         $as = $asDwnlCust;
         $cols = [
-            self::A_MLM_ID => EDwnCust::ATTR_HUMAN_REF
+            self::A_MLM_ID => EDwnCust::ATTR_MLM_ID
         ];
         $cond = $as . '.' . EDwnCust::ATTR_CUSTOMER_ID . '=' . $asLogCust . '.' . ELogCust::ATTR_CUSTOMER_ID;
         $result->joinLeft([$as => $tbl], $cond, $cols);

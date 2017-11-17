@@ -19,9 +19,8 @@ class Builder
 {
     /** Tables aliases for external usage ('camelCase' naming) */
     const AS_DWNL_CUST = 'dwnlCust';
-    const AS_SNAP = QBBase::AS_DWNL_SNAP;
     const AS_MAGE_CUST = 'mageCust';
-
+    const AS_SNAP = QBBase::AS_DWNL_SNAP;
     /** Columns/expressions aliases for external usage ('camelCase' naming) */
     const A_CUST_ID = QBBase::A_CUST_ID;
     const A_DEPTH = QBBase::A_DEPTH;
@@ -62,7 +61,7 @@ class Builder
         $tbl = $this->resource->getTableName(EDwnlCust::ENTITY_NAME);
         $as = $asDwnlCust;
         $cols = [
-            self::A_MLM_ID => EDwnlCust::ATTR_HUMAN_REF
+            self::A_MLM_ID => EDwnlCust::ATTR_MLM_ID
         ];
         $cond = "$as." . EDwnlCust::ATTR_CUSTOMER_ID . "=$asSnap." . EDwnlSnap::ATTR_CUSTOMER_ID;
         $result->join([$as => $tbl], $cond, $cols);

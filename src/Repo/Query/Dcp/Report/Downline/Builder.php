@@ -73,7 +73,7 @@ class Builder
         $as = $asDwnlCust;
         $cols = [
             self::A_COUNTRY => EDwnlCust::ATTR_COUNTRY_CODE,
-            self::A_MLM_ID => EDwnlCust::ATTR_HUMAN_REF
+            self::A_MLM_ID => EDwnlCust::ATTR_MLM_ID
         ];
         $cond = $as . '.' . EDwnlCust::ATTR_CUSTOMER_ID . '=' . $asBonDwnl . '.' . EBonDwnl::ATTR_CUST_REF;
         $result->joinLeft([$as => $tbl], $cond, $cols);
