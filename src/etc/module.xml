@@ -4,6 +4,8 @@
     <module name="Praxigento_BonusHybrid" setup_version="0.1.0">
         <sequence>
             <module name="Praxigento_BonusBase"/>
+            <!-- Use \Praxigento\Downline\Repo\Query\Customer\Get as Customer Query Builder -->
+            <module name="Praxigento_Downline"/>
         </sequence>
     </module>
 </config>

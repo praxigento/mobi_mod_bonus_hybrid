@@ -11,8 +11,8 @@ use Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Data\Customer as D
 use Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Data\Trans as DRespTrans;
 use Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Accounting\Trans\Builder as QBAccTrans;
 use Praxigento\BonusHybrid\Service\Dcp\Report\Accounting\Repo\Query\GetBalance\Builder as QBBal;
-use Praxigento\BonusHybrid\Service\Dcp\Report\Accounting\Repo\Query\GetCustomer\Builder as QBCust;
 use Praxigento\Core\Tool\IPeriod as HPeriod;
+use Praxigento\Downline\Repo\Query\Customer\Get as QBCust;
 
 class Accounting
     extends \Praxigento\Core\Api\Processor\WithQuery
@@ -40,7 +40,7 @@ class Accounting
     private $hlpPeriod;
     /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Accounting\Repo\Query\GetBalance\Builder */
     private $qbBalance;
-    /** @var \Praxigento\BonusHybrid\Service\Dcp\Report\Accounting\Repo\Query\GetCustomer\Builder */
+    /** @var \Praxigento\Downline\Repo\Query\Customer\Get */
     private $qbCust;
 
     public function __construct(
@@ -50,7 +50,7 @@ class Accounting
         \Praxigento\Core\Api\IAuthenticator $authenticator,
         \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Accounting\Trans\Builder $qbDcpTrans,
         \Praxigento\BonusHybrid\Service\Dcp\Report\Accounting\Repo\Query\GetBalance\Builder $qbBalance,
-        \Praxigento\BonusHybrid\Service\Dcp\Report\Accounting\Repo\Query\GetCustomer\Builder $qbCust
+        \Praxigento\Downline\Repo\Query\Customer\Get $qbCust
     )
     {
         parent::__construct($manObj, $qbDcpTrans, $hlpCfg);
