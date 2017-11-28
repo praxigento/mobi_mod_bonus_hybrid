@@ -10,7 +10,7 @@ use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Builder as QBDownline;
 
 class Downline
-    extends \Praxigento\Core\Api\Processor\WithQuery
+    extends \Praxigento\Core\App\WebApi\Processor\WithQuery
     implements \Praxigento\BonusHybrid\Api\Dcp\Report\DownlineInterface
 {
     /**
@@ -26,7 +26,7 @@ class Downline
     const VAR_CUST_ID = 'custId';
     const VAR_CUST_PATH = 'path';
 
-    /** @var \Praxigento\Core\Api\IAuthenticator */
+    /** @var \Praxigento\Core\App\WebApi\IAuthenticator */
     private $authenticator;
     /** @var \Praxigento\Core\Tool\IPeriod */
     private $hlpPeriod;
@@ -39,7 +39,7 @@ class Downline
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
-        \Praxigento\Core\Api\IAuthenticator $authenticator,
+        \Praxigento\Core\App\WebApi\IAuthenticator $authenticator,
         \Praxigento\Core\Helper\Config $hlpCfg,
         \Praxigento\Core\Tool\IPeriod $hlpPeriod,
         \Praxigento\Downline\Repo\Entity\Snap $repoSnap,
