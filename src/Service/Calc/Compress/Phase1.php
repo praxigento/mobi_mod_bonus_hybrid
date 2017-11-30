@@ -32,7 +32,7 @@ class Phase1
     /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
     private $repoCalc;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
-    private $repoDwnlBon;
+    private $repoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Entity\Rank */
     private $repoRank;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase1\Transfer\Pv */
@@ -42,7 +42,7 @@ class Phase1
         \Praxigento\Core\Fw\Logger\App $logger,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\BonusBase\Repo\Entity\Rank $repoRank,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon,
+        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
         \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase1\Transfer\Pv $repoTransPv,
         \Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder $qbGetPv,
         \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder $qbSnapOnDate,
@@ -53,7 +53,7 @@ class Phase1
         $this->logger = $logger;
         $this->repoCalc = $repoCalc;
         $this->repoRank = $repoRank;
-        $this->repoDwnlBon = $repoDwnlBon;
+        $this->repoBonDwnl = $repoBonDwnl;
         $this->repoTransPv = $repoTransPv;
         $this->qbGetPv = $qbGetPv;
         $this->qbSnapOnDate = $qbSnapOnDate;
@@ -215,7 +215,7 @@ class Phase1
             $entity->setRankRef($rankId);
             $entity->setTv(0);
             $entity->setUnqMonths(0);
-            $this->repoDwnlBon->create($entity);
+            $this->repoBonDwnl->create($entity);
         }
     }
 

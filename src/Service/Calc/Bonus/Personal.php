@@ -41,7 +41,7 @@ class Personal
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
     private $repoDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
-    private $repoDwnlBon;
+    private $repoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Entity\Level */
     private $repoLevel;
     /** @var \Praxigento\BonusBase\Repo\Entity\Log\Opers */
@@ -56,7 +56,7 @@ class Personal
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\BonusBase\Repo\Entity\Level $repoLevel,
         \Praxigento\BonusBase\Repo\Entity\Log\Opers $repoLogOper,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon,
+        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\A\Helper\PrepareTrans $hlpTrans,
         \Praxigento\BonusHybrid\Service\Calc\A\Helper\CreateOper $hlpOper
@@ -70,7 +70,7 @@ class Personal
         $this->repoCalc = $repoCalc;
         $this->repoLevel = $repoLevel;
         $this->repoLogOper = $repoLogOper;
-        $this->repoDwnlBon = $repoDwnlBon;
+        $this->repoBonDwnl = $repoBonDwnl;
         $this->procPeriodGet = $procPeriodGet;
         $this->hlpTrans = $hlpTrans;
         $this->hlpOper = $hlpOper;
@@ -123,7 +123,7 @@ class Personal
         $baseCalcId = $compressCalc->getId();
         $depCalcId = $persCalc->getId();
         /* load downlines (compressed for period & current) */
-        $dwnlCompress = $this->repoDwnlBon->getByCalcId($baseCalcId);
+        $dwnlCompress = $this->repoBonDwnl->getByCalcId($baseCalcId);
         $dwnlCurrent = $this->repoDwnl->get();
         /* get levels to calculate Personal bonus */
         $levels = $this->repoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL);

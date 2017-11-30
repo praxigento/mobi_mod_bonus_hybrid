@@ -22,21 +22,21 @@ class Tv
     /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
     private $repoCalc;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
-    private $repoDwnlBon;
+    private $repoBonDwnl;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Value\Tv\Calc */
     private $subCalc;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon,
+        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\Value\Tv\Calc $subCalc
     )
     {
         $this->logger = $logger;
         $this->repoCalc = $repoCalc;
-        $this->repoDwnlBon = $repoDwnlBon;
+        $this->repoBonDwnl = $repoBonDwnl;
         $this->procPeriodGet = $procPeriodGet;
         $this->subCalc = $subCalc;
     }
@@ -58,7 +58,7 @@ class Tv
         $compressCalcId = $compressCalc->getId();
         $tvCalcId = $tvCalc->getId();
         /* load compressed downlines for period */
-        $dwnlCompress = $this->repoDwnlBon->getByCalcId($compressCalcId);
+        $dwnlCompress = $this->repoBonDwnl->getByCalcId($compressCalcId);
         /* populate downline with TV data */
         $dwnlUpdated = $this->subCalc->exec($dwnlCompress);
         /* save updates into repo */
@@ -108,7 +108,7 @@ class Tv
                 EBonDwnl::ATTR_CALC_REF => $calcId,
                 EBonDwnl::ATTR_CUST_REF => $custId
             ];
-            $this->repoDwnlBon->updateById($id, $entity);
+            $this->repoBonDwnl->updateById($id, $entity);
         }
     }
 

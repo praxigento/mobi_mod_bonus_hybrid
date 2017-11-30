@@ -22,7 +22,7 @@ class Phase2
     /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
     private $repoCalc;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
-    private $repoDwnlBon;
+    private $repoBonDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline\Qualification */
     private $repoDwnlQual;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\Phase2\GetPv */
@@ -33,7 +33,7 @@ class Phase2
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon,
+        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
         \Praxigento\BonusHybrid\Repo\Entity\Downline\Qualification $repoDwnlQual,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2 $procCmprsPhase2,
@@ -43,7 +43,7 @@ class Phase2
     {
         $this->logger = $logger;
         $this->repoCalc = $repoCalc;
-        $this->repoDwnlBon = $repoDwnlBon;
+        $this->repoBonDwnl = $repoBonDwnl;
         $this->repoDwnlQual = $repoDwnlQual;
         $this->procPeriodGet = $procPeriodGet;
         $this->procCmprsPhase2 = $procCmprsPhase2;
@@ -63,8 +63,8 @@ class Phase2
     private function compressPhase2($calcIdWriteOff, $calcIdPhase1, $calcIdPhase2, $scheme)
     {
         $pv = $this->rouGetPv->exec($calcIdWriteOff);
-        $dwnlPlain = $this->repoDwnlBon->getByCalcId($calcIdWriteOff);
-        $dwnlPhase1 = $this->repoDwnlBon->getByCalcId($calcIdPhase1);
+        $dwnlPlain = $this->repoBonDwnl->getByCalcId($calcIdWriteOff);
+        $dwnlPhase1 = $this->repoBonDwnl->getByCalcId($calcIdPhase1);
         $ctx = new \Praxigento\Core\Data();
         $ctx->set(PCpmrsPhase2::IN_CALC_ID_PHASE2, $calcIdPhase2);
         $ctx->set(PCpmrsPhase2::IN_SCHEME, $scheme);

@@ -29,21 +29,21 @@ class CalcEu
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
     private $repoDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
-    private $repoDwnlBon;
+    private $repoBonDwnl;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
         \Praxigento\Core\Tool\IFormat $hlpFormat,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon
+        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl
     )
     {
         $this->logger = $logger;
         $this->hlpFormat = $hlpFormat;
         $this->hlpScheme = $hlpScheme;
         $this->repoDwnl = $repoDwnl;
-        $this->repoDwnlBon = $repoDwnlBon;
+        $this->repoBonDwnl = $repoBonDwnl;
     }
 
     /**
@@ -57,7 +57,7 @@ class CalcEu
         $result = [];
         /* collect additional data */
         $bonusPercent = Cfg::TEAM_BONUS_EU_PERCENT;
-        $dwnlCompress = $this->repoDwnlBon->getByCalcId($calcId);
+        $dwnlCompress = $this->repoBonDwnl->getByCalcId($calcId);
         $dwnlCurrent = $this->repoDwnl->get();
         /* create maps to access data */
         $mapDwnlById = $this->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);

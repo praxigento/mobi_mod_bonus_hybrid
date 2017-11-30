@@ -27,16 +27,16 @@ class Calc
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
-    private $repoDwnlBon;
+    private $repoBonDwnl;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
         \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon
+        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl
     )
     {
         $this->logger = $logger;
-        $this->repoDwnlBon = $repoDwnlBon;
+        $this->repoBonDwnl = $repoBonDwnl;
         $this->hlpSignupDebitCust = $hlpSignupDebitCust;
     }
 
@@ -50,7 +50,7 @@ class Calc
     {
         $result = [];
         /* collect additional data */
-        $dwnlCompress = $this->repoDwnlBon->getByCalcId($calcId);
+        $dwnlCompress = $this->repoBonDwnl->getByCalcId($calcId);
         /* create maps to access data */
         $mapById = $this->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
         $mapDepth = $this->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_DEPTH);

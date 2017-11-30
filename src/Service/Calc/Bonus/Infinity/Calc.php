@@ -28,7 +28,7 @@ class Calc
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
     private $repoDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
-    private $repoDwnlBon;
+    private $repoBonDwnl;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
@@ -37,7 +37,7 @@ class Calc
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
         \Praxigento\BonusHybrid\Repo\Entity\Cfg\Param $repoCfgParams,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon
+        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl
     )
     {
         $this->logger = $logger;
@@ -46,7 +46,7 @@ class Calc
         $this->hlpScheme = $hlpScheme;
         $this->repoDwnl = $repoDwnl;
         $this->repoCfgParams = $repoCfgParams;
-        $this->repoDwnlBon = $repoDwnlBon;
+        $this->repoBonDwnl = $repoBonDwnl;
     }
 
     public function exec($compressCalcId, $ovrdCalcId, $scheme)
@@ -55,7 +55,7 @@ class Calc
         $result = [];
 
         /* collect additional data */
-        $dwnlCompress = $this->repoDwnlBon->getByCalcId($compressCalcId);
+        $dwnlCompress = $this->repoBonDwnl->getByCalcId($compressCalcId);
         $dwnlPlain = $this->repoDwnl->get();
         $cfgParams = $this->getCfgParams();
         $ibPercentMax = $this->getMaxPercentForInfinityBonus($cfgParams, $scheme);

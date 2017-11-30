@@ -32,7 +32,7 @@ class CalcDef
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
     private $repoDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
-    private $repoDwnlBon;
+    private $repoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Entity\Level */
     private $repoLevel;
 
@@ -43,7 +43,7 @@ class CalcDef
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
         \Praxigento\BonusBase\Repo\Entity\Level $repoLevel,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon
+        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl
     )
     {
         $this->logger = $logger;
@@ -52,7 +52,7 @@ class CalcDef
         $this->hlpScheme = $hlpScheme;
         $this->repoDwnl = $repoDwnl;
         $this->repoLevel = $repoLevel;
-        $this->repoDwnlBon = $repoDwnlBon;
+        $this->repoBonDwnl = $repoBonDwnl;
     }
 
     /**
@@ -67,7 +67,7 @@ class CalcDef
         /* collect additional data */
         $levelsPersonal = $this->repoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL);
         $levelsTeam = $this->repoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF);
-        $dwnlCompress = $this->repoDwnlBon->getByCalcId($calcId);
+        $dwnlCompress = $this->repoBonDwnl->getByCalcId($calcId);
         $dwnlCurrent = $this->repoDwnl->get();
         $pctPbMax = $this->getMaxPercentForPersonalBonus($levelsPersonal);
         $courtesyPct = \Praxigento\BonusHybrid\Config::COURTESY_BONUS_PERCENT;

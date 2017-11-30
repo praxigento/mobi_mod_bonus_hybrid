@@ -34,7 +34,7 @@ class Calc
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
     private $repoDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
-    private $repoDwnlBon;
+    private $repoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Entity\Rank */
     private $repoRank;
 
@@ -46,7 +46,7 @@ class Calc
         \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
         \Praxigento\BonusBase\Repo\Entity\Rank $repoRank,
         \Praxigento\BonusHybrid\Repo\Entity\Cfg\Override $repoCfgOvrd,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon
+        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl
     )
     {
         $this->logger = $logger;
@@ -56,7 +56,7 @@ class Calc
         $this->repoDwnl = $repoDwnl;
         $this->repoRank = $repoRank;
         $this->repoCfgOvrd = $repoCfgOvrd;
-        $this->repoDwnlBon = $repoDwnlBon;
+        $this->repoBonDwnl = $repoBonDwnl;
     }
 
     /**
@@ -106,7 +106,7 @@ class Calc
     {
         $result = [];
         /* collect additional data */
-        $dwnlCompress = $this->repoDwnlBon->getByCalcId($compressCalcId);
+        $dwnlCompress = $this->repoBonDwnl->getByCalcId($compressCalcId);
         $dwnlPlain = $this->repoDwnl->get();
         $cfgOverride = $this->getCfgOverride();
         /* create maps to access data */

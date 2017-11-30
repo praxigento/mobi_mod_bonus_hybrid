@@ -51,7 +51,7 @@ class Phase2
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Cfg\Param */
     private $repoCfgParam;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
-    private $repoDwnlBon;
+    private $repoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Entity\Rank */
     private $repoRank;
     /** @var \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Fun\Rou\CalcLegs */
@@ -67,7 +67,7 @@ class Phase2
         \Praxigento\BonusHybrid\Helper\Calc\IsQualified $hlpIsQualified,
         \Praxigento\BonusBase\Repo\Entity\Rank $repoRank,
         \Praxigento\BonusHybrid\Repo\Entity\Cfg\Param $repoCfgParam,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnlBon,
+        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
         ActQualify $actQualify,
         RouCalcLegs $rouCalcLegs,
         RouComposeLegs $rouComposeLegs
@@ -78,7 +78,7 @@ class Phase2
         $this->hlpIsQualified = $hlpIsQualified;
         $this->repoRank = $repoRank;
         $this->repoCfgParam = $repoCfgParam;
-        $this->repoDwnlBon = $repoDwnlBon;
+        $this->repoBonDwnl = $repoBonDwnl;
         $this->actQualify = $actQualify;
         $this->rouCalcLegs = $rouCalcLegs;
         $this->rouComposeLegs = $rouComposeLegs;
