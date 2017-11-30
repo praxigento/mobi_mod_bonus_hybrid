@@ -2,6 +2,7 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
+
 namespace Praxigento\BonusHybrid\Cli\Cmd;
 
 use Praxigento\BonusHybrid\Config as Cfg;
@@ -31,6 +32,8 @@ class Calc
     private $procCompressPhase1;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\IPhase2 */
     private $procCompressPhase2;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Inactive\Collect */
+    private $procInactCollect;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Value\IOv */
     private $procOv;
     /** @var \Praxigento\BonusHybrid\Service\Calc\IPvWriteOff */
@@ -52,9 +55,11 @@ class Calc
         \Praxigento\BonusHybrid\Service\Calc\Bonus\IPersonal $procBonusPers,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\ITeam $procBonusTeam,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\IOverride $procBonusOvrd,
+        \Praxigento\BonusHybrid\Service\Calc\Inactive\Collect $procInactCollect,
         \Praxigento\BonusHybrid\Service\Calc\Value\ITv $procTv,
         \Praxigento\BonusHybrid\Service\Calc\Value\IOv $procOv
-    ) {
+    )
+    {
         parent::__construct(
             $manObj,
             'prxgt:bonus:calc',
@@ -71,6 +76,7 @@ class Calc
         $this->procBonusPers = $procBonusPers;
         $this->procBonusTeam = $procBonusTeam;
         $this->procBonusOvrd = $procBonusOvrd;
+        $this->procInactCollect = $procInactCollect;
         $this->procTv = $procTv;
         $this->procOv = $procOv;
     }
@@ -144,6 +150,14 @@ class Calc
         return $result;
     }
 
+    private function calcInactCollect()
+    {
+        $ctx = new \Praxigento\Core\Data();
+        $this->procInactCollect->exec($ctx);
+        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
+        return $result;
+    }
+
     private function calcPvWriteOff()
     {
         $ctx = new \Praxigento\Core\Data();
@@ -179,7 +193,8 @@ class Calc
     protected function execute(
         \Symfony\Component\Console\Input\InputInterface $input,
         \Symfony\Component\Console\Output\OutputInterface $output
-    ) {
+    )
+    {
         $output->writeln("<info>Start bonus calculation.<info>");
         $this->conn->beginTransaction();
         try {
@@ -190,6 +205,10 @@ class Calc
             }
             if ($canContinue) {
                 $output->writeln("<info>'PV Write Off' calculation is completed.<info>");
+                $canContinue = $this->calcInactCollect();
+            }
+            if ($canContinue) {
+                $output->writeln("<info>'Inactive Stats Collection' calculation is completed.<info>");
                 $canContinue = $this->calcCompressPhase1();
             }
             if ($canContinue) {
