@@ -67,7 +67,9 @@ class InstallData extends \Praxigento\Core\Setup\Data\Base
                 [Cfg::CODE_TYPE_CALC_BONUS_OVERRIDE_DEF, 'Override bonus calculation (DEFAULT scheme).'],
                 [Cfg::CODE_TYPE_CALC_BONUS_OVERRIDE_EU, 'Override bonus calculation (EU scheme).'],
                 [Cfg::CODE_TYPE_CALC_BONUS_INFINITY_DEF, 'Infinity bonus calculation (DEFAULT scheme).'],
-                [Cfg::CODE_TYPE_CALC_BONUS_INFINITY_EU, 'Infinity bonus calculation (EU scheme).']
+                [Cfg::CODE_TYPE_CALC_BONUS_INFINITY_EU, 'Infinity bonus calculation (EU scheme).'],
+                [Cfg::CODE_TYPE_CALC_INACTIVE_COLLECT, 'Inactive customers stats collection.'],
+                [Cfg::CODE_TYPE_CALC_INACTIVE_PROCESS, 'Inactive customers stats processing.']
             ]
         );
     }

@@ -18,7 +18,7 @@ class Config extends BonusBaseCfg
      * Asset types.
      */
     const CODE_TYPE_ASSET_PV = PvCfg::CODE_TYPE_ASSET_PV;
-    
+
     /**
      * Calculation types. Suffix DEF & EU are for DEFAULT & EU1 calculations schemas.
      */
@@ -37,6 +37,8 @@ class Config extends BonusBaseCfg
     const CODE_TYPE_CALC_COMPRESS_PHASE2_EU = 'HYBRID_COMPRESS_PHASE2_EU'; // Override & Infinity (EU scheme)
     const CODE_TYPE_CALC_FORECAST_PHASE1 = 'HYBRID_FORECAST_PHASE1'; // Daily forecast compressed (Phase1)
     const CODE_TYPE_CALC_FORECAST_PLAIN = 'HYBRID_FORECAST_PLAIN'; // Daily forecast calculation (plain tree)
+    const CODE_TYPE_CALC_INACTIVE_COLLECT = 'HYBRID_INACTIVE_COLLECT';
+    const CODE_TYPE_CALC_INACTIVE_PROCESS = 'HYBRID_INACTIVE_PROCESS';
     const CODE_TYPE_CALC_PV_WRITE_OFF = 'HYBRID_PV_WRITE_OFF';
     const CODE_TYPE_CALC_VALUE_OV = 'HYBRID_VALUE_OV';
     const CODE_TYPE_CALC_VALUE_TV = 'HYBRID_VALUE_TV';
@@ -54,20 +56,13 @@ class Config extends BonusBaseCfg
     const CODE_TYPE_OPER_PV_FORWARD = 'HYBRID_PV_FWRD';
     const CODE_TYPE_OPER_PV_WRITE_OFF = 'HYBRID_PV_WRITE_OFF';
     const CODE_TYPE_OPER_WALLET_TRANSFER = WalletCfg::CODE_TYPE_OPER_WALLET_TRANSFER;
-
+    const COURTESY_BONUS_PERCENT = 0.05;
     /**
      * Other hardcode.
      */
     const DTPS = DownlineCfg::DTPS;
     const DT_DEPTH_INIT = DownlineCfg::INIT_DEPTH;
     const MODULE = 'Praxigento_BonusHybrid';
-
-
-
-
-
-
-    const COURTESY_BONUS_PERCENT = 0.05;
     /**
      * Default qualification levels to compress downline tree in Santegra project.
      */
@@ -103,8 +98,6 @@ class Config extends BonusBaseCfg
     const SIGNUP_DEBIT_WALLET_GRAND = 18;
 
     const TEAM_BONUS_EU_PERCENT = 0.05;
-
-
 
 
 }
