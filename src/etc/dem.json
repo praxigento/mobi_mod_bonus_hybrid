@@ -572,6 +572,61 @@
                     "alias": "dwnl",
                     "comment": "Downline trees related data",
                     "entity": {
+                      "Inactive": {
+                        "alias": "inact",
+                        "comment": "Customer's inactivity data.",
+                        "attribute": {
+                          "TreeEntryRef": {
+                            "alias": "tree_entry_ref",
+                            "comment": "Reference to the entry in downline tree.",
+                            "nullable": false,
+                            "type": {
+                              "integer": {
+                                "unsigned": true
+                              }
+                            }
+                          },
+                          "InactiveMonths": {
+                            "alias": "inact_months",
+                            "comment": "Number of the last sequentially inactive months (w/o PV at all).",
+                            "nullable": false,
+                            "type": {
+                              "integer": {
+                                "unsigned": true
+                              }
+                            }
+                          }
+                        },
+                        "index": {
+                          "primary": {
+                            "type": "primary",
+                            "aliases": [
+                              "tree_entry_ref"
+                            ]
+                          }
+                        },
+                        "relation": {
+                          "toTreeEntry": {
+                            "own": {
+                              "aliases": [
+                                "tree_entry_ref"
+                              ]
+                            },
+                            "reference": {
+                              "entity": {
+                                "completeAlias": "prxgt_bon_hyb_dwnl"
+                              },
+                              "aliases": [
+                                "id"
+                              ]
+                            },
+                            "action": {
+                              "delete": "restrict",
+                              "update": "restrict"
+                            }
+                          }
+                        }
+                      },
                       "Qualification": {
                         "alias": "qual",
                         "comment": "Qualification data (ranks, etc.).",
@@ -589,16 +644,6 @@
                           "RankRef": {
                             "alias": "rank_ref",
                             "comment": "Reference to qualification rank ID.",
-                            "nullable": false,
-                            "type": {
-                              "integer": {
-                                "unsigned": true
-                              }
-                            }
-                          },
-                          "UnqualifiedMonths": {
-                            "alias": "unq_months",
-                            "comment": "Number of the last sequentially unqualified months.",
                             "nullable": false,
                             "type": {
                               "integer": {
