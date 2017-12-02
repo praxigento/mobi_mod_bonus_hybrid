@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Service\Calc\Inactive;
+namespace Praxigento\BonusHybrid\Service\Calc\Unqualified;
 
 use Praxigento\BonusBase\Service\Period\Calc\Get\IDependent as SPeriodGetDep;
 use Praxigento\BonusHybrid\Config as Cfg;
@@ -12,14 +12,14 @@ use Praxigento\BonusHybrid\Repo\Entity\Data\Downline\Inactive as EInact;
 use \Praxigento\BonusHybrid\Service\Calc\Inactive\Collect\Repo\Query\GetInactiveStats as QBGetStats;
 
 /**
- * Collect customer inactivity stats.
+ * Collect stats for unqualified customers.
  *
  * This is internal service (for this module only), so it has no own interface.
  */
 class Collect
     implements \Praxigento\Core\Service\IProcess
 {
-    /** Maximal end of base period to get data for (TODO: not used in regular activity, just for development/phpUnits) */
+    /** Maximal end of base period to get data for */
     const CTX_IN_PERIOD_END = 'in.periodEnd';
 
     /** @var \Psr\Log\LoggerInterface */

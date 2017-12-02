@@ -42,22 +42,24 @@ class Calc
     private $procTv;
     /** @var \Magento\Framework\App\ResourceConnection */
     private $resource;
+    private $procUnqualCollect;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Magento\Framework\App\ResourceConnection $resource,
         \Praxigento\BonusHybrid\Service\Calc\ISignupDebit $callBonusSignup,
-        \Praxigento\BonusHybrid\Service\Calc\Compress\IPhase1 $procCompressPhase1,
-        \Praxigento\BonusHybrid\Service\Calc\Compress\IPhase2 $procCompressPhase2,
-        \Praxigento\BonusHybrid\Service\Calc\IPvWriteOff $procPvWriteOff,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\ICourtesy $procBonusCourtesy,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\IInfinity $procBonusInfinity,
+        \Praxigento\BonusHybrid\Service\Calc\Bonus\IOverride $procBonusOvrd,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\IPersonal $procBonusPers,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\ITeam $procBonusTeam,
-        \Praxigento\BonusHybrid\Service\Calc\Bonus\IOverride $procBonusOvrd,
+        \Praxigento\BonusHybrid\Service\Calc\Compress\IPhase1 $procCompressPhase1,
+        \Praxigento\BonusHybrid\Service\Calc\Compress\IPhase2 $procCompressPhase2,
         \Praxigento\BonusHybrid\Service\Calc\Inactive\Collect $procInactCollect,
-        \Praxigento\BonusHybrid\Service\Calc\Value\ITv $procTv,
-        \Praxigento\BonusHybrid\Service\Calc\Value\IOv $procOv
+        \Praxigento\BonusHybrid\Service\Calc\IPvWriteOff $procPvWriteOff,
+        \Praxigento\BonusHybrid\Service\Calc\Unqualified\Collect $procUnqualCollect,
+        \Praxigento\BonusHybrid\Service\Calc\Value\IOv $procOv,
+        \Praxigento\BonusHybrid\Service\Calc\Value\ITv $procTv
     )
     {
         parent::__construct(
@@ -68,17 +70,18 @@ class Calc
         $this->resource = $resource;
         $this->conn = $this->resource->getConnection();
         $this->callBonusSignup = $callBonusSignup;
-        $this->procCompressPhase1 = $procCompressPhase1;
-        $this->procCompressPhase2 = $procCompressPhase2;
-        $this->procPvWriteOff = $procPvWriteOff;
         $this->procBonusCourtesy = $procBonusCourtesy;
         $this->procBonusInfinity = $procBonusInfinity;
+        $this->procBonusOvrd = $procBonusOvrd;
         $this->procBonusPers = $procBonusPers;
         $this->procBonusTeam = $procBonusTeam;
-        $this->procBonusOvrd = $procBonusOvrd;
+        $this->procCompressPhase1 = $procCompressPhase1;
+        $this->procCompressPhase2 = $procCompressPhase2;
         $this->procInactCollect = $procInactCollect;
-        $this->procTv = $procTv;
         $this->procOv = $procOv;
+        $this->procPvWriteOff = $procPvWriteOff;
+        $this->procTv = $procTv;
+        $this->procUnqualCollect = $procUnqualCollect;
     }
 
     private function calcBonusCourtesy()
@@ -158,6 +161,14 @@ class Calc
         return $result;
     }
 
+    private function calcUnqualCollect()
+    {
+        $ctx = new \Praxigento\Core\Data();
+        $this->procUnqualCollect->exec($ctx);
+        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
+        return $result;
+    }
+
     private function calcPvWriteOff()
     {
         $ctx = new \Praxigento\Core\Data();
@@ -212,11 +223,15 @@ class Calc
                 $canContinue = $this->calcCompressPhase1();
             }
             if ($canContinue) {
-                $output->writeln("<info>Phase I compression is completed.<info>");
+                $output->writeln("<info>'Phase I' compression is completed.<info>");
+                $canContinue = $this->calcUnqualCollect();
+            }
+            if ($canContinue) {
+                $output->writeln("<info>'Unqualified Stats Collection' calculation is completed.<info>");
                 $canContinue = $this->calcBonusPersonal();
             }
             if ($canContinue) {
-                $output->writeln("<info>Personal bonus (DEFAULT) is calculated.<info>");
+                $output->writeln("<info>Personal bonus is calculated.<info>");
                 $canContinue = $this->calcValueTv();
             }
             if ($canContinue) {
