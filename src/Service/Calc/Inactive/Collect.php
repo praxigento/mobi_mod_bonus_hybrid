@@ -93,9 +93,12 @@ class Collect
         /* get dependent calculation data */
         list($writeOffPeriod, $writeOffCalc, $writeOffCalcPrev, $collectCalc) = $this->getCalcData($periodEnd);
         $writeOffCalcId = $writeOffCalc->getId();
-        $writeOffCalcIdPrev = $writeOffCalcPrev->getId();
         $tree = $this->repoBonDwnl->getByCalcId($writeOffCalcId);
-        $prevStat = $this->getPreviousStats($writeOffCalcIdPrev);
+        $prevStat = [];
+        if ($writeOffCalcPrev) {
+            $writeOffCalcIdPrev = $writeOffCalcPrev->getId();
+            $prevStat = $this->getPreviousStats($writeOffCalcIdPrev);
+        }
         $stats = $this->calc($tree, $prevStat);
         $this->saveStats($stats);
         /* mark process as successful */
