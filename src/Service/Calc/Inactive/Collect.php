@@ -9,6 +9,7 @@ use Praxigento\BonusBase\Service\Period\Calc\Get\IDependent as SPeriodGetDep;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline\Inactive as EInact;
+use \Praxigento\BonusHybrid\Service\Calc\Inactive\Collect\Repo\Query\GetInactiveStats as QBGetStats;
 
 /**
  * Collect customer inactivity stats.
@@ -29,18 +30,25 @@ class Collect
     private $repoBonDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline\Inactive */
     private $repoInact;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Inactive\Collect\Repo\Query\GetInactiveStats */
+    private $qbGetStats;
+    private $hlpTree;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
+        \Praxigento\Downline\Helper\Tree $hlpTree,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
         \Praxigento\BonusHybrid\Repo\Entity\Downline\Inactive $repoInact,
-        \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet
+        \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
+        QBGetStats $qbGetStats
     )
     {
         $this->logger = $logger;
+        $this->hlpTree = $hlpTree;
         $this->repoBonDwnl = $repoBonDwnl;
         $this->repoInact = $repoInact;
         $this->procPeriodGet = $procPeriodGet;
+        $this->qbGetStats = $qbGetStats;
     }
 
     /**
@@ -51,17 +59,19 @@ class Collect
     private function calc($tree, $prevStat)
     {
         $result = [];
-        /* TODO: map previous stats by customer ID */
+        /* map inactive statistics by customer ID */
+        $mapMonths = $this->hlpTree->mapValueById($prevStat, QBGetStats::A_CUST_REF, QBGetStats::A_MONTHS_INACT);
         foreach ($tree as $item) {
             $pv = $item->getPv();
             if ($pv < Cfg::DEF_ZERO) {
                 /* this customer is inactive in this period */
                 $custId = $item->getCustomerRef();
                 $treeEntryId = $item->getId();
-                $months = 1;
-                if (isset($prevStat[$custId])) {
-                    $prevItem = $prevStat[$custId];
-                    $months = $prevItem['months'] + 1;
+                if (isset($mapMonths[$custId])) {
+                    $prevMonths = $mapMonths[$custId];
+                    $months = $prevMonths + 1;
+                } else {
+                    $months = 1;
                 }
                 $inactItem = new EInact();
                 $inactItem->setTreeEntryRef($treeEntryId);
@@ -85,13 +95,27 @@ class Collect
         $writeOffCalcId = $writeOffCalc->getId();
         $writeOffCalcIdPrev = $writeOffCalcPrev->getId();
         $tree = $this->repoBonDwnl->getByCalcId($writeOffCalcId);
-        /** TODO: create query & get stats for the previous period */
-        $prevStat = [];
+        $prevStat = $this->getPreviousStats($writeOffCalcIdPrev);
         $stats = $this->calc($tree, $prevStat);
         $this->saveStats($stats);
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);
         $this->logger->info("Inactive Stats Collection calculation is completed.");
+    }
+
+    /**
+     * @param int $calcId previous Write Off Calculation ID
+     * @return array
+     */
+    private function getPreviousStats($calcId)
+    {
+        $query = $this->qbGetStats->build();
+        $conn = $query->getConnection();
+        $bind = [
+            QBGetStats::BND_CALC_REF => $calcId
+        ];
+        $result = $conn->fetchAll($query, $bind);
+        return $result;
     }
 
     /**
