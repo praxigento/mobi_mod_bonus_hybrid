@@ -52,11 +52,12 @@ class Collect
     }
 
     /**
-     * @param EBonDwnl[] $tree
-     * @param $prevStat
+     * @param EBonDwnl[] $treePlain
+     * @param EBonDwnl[] $treePlainPrev
+     * @param EBonDwnl[] $treePhase1
      * @return array
      */
-    private function calc($tree, $prevStat)
+    private function calc($treePlain, $treePlainPrev, $treePhase1)
     {
         $result = [];
         /* map inactive statistics by customer ID */
@@ -84,26 +85,27 @@ class Collect
 
     public function exec(\Praxigento\Core\Data $ctx)
     {
-        $this->logger->info("Inactive Stats Collection calculation is started.");
-        $periodEnd = $ctx->get(self::CTX_IN_PERIOD_END);
+        $this->logger->info("'Unqualified Stats Collection' calculation is started.");
         /**
          * perform processing
          */
         $ctx->set(self::CTX_OUT_SUCCESS, false);
         /* get dependent calculation data */
-        list($writeOffPeriod, $writeOffCalc, $writeOffCalcPrev, $collectCalc) = $this->getCalcData($periodEnd);
+        list($writeOffCalc, $writeOffCalcPrev, $phase1Calc, $unqCollCalc) = $this->getCalcData();
         $writeOffCalcId = $writeOffCalc->getId();
-        $tree = $this->repoBonDwnl->getByCalcId($writeOffCalcId);
-        $prevStat = [];
+        $phase1CalcId = $phase1Calc->getId();
+        $treePlain = $this->repoBonDwnl->getByCalcId($writeOffCalcId);
+        $treePhase1 = $this->repoBonDwnl->getByCalcId($phase1CalcId);
+        $treePlainPrev = [];
         if ($writeOffCalcPrev) {
             $writeOffCalcIdPrev = $writeOffCalcPrev->getId();
-            $prevStat = $this->getPreviousStats($writeOffCalcIdPrev);
+            $treePlainPrev = $this->getPreviousStats($writeOffCalcIdPrev);
         }
-        $stats = $this->calc($tree, $prevStat);
+        $stats = $this->calc($treePlain, $treePlainPrev, $treePhase1);
         $this->saveStats($stats);
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);
-        $this->logger->info("Inactive Stats Collection calculation is completed.");
+        $this->logger->info("'Unqualified Stats Collection' calculation is completed.");
     }
 
     /**
@@ -122,40 +124,49 @@ class Collect
     }
 
     /**
-     * Get data for dependent calculation.
+     * Get data for periods & calculations.
      *
      * @return array [$periodData, $calcData]
      */
-    private function getCalcData($maxPeriodEnd)
+    private function getCalcData()
     {
-        /* get period & calc data */
+        /**
+         * Get PW Write Off data & Phase1 Compression data - to access plain tree & qualified customers data.
+         */
         $ctx = new \Praxigento\Core\Data();
         $ctx->set(SPeriodGetDep::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
-        $ctx->set(SPeriodGetDep::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_INACTIVE_COLLECT);
-        $ctx->set(SPeriodGetDep::CTX_IN_PERIOD_END, $maxPeriodEnd);
+        $ctx->set(SPeriodGetDep::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
+        $ctx->set(SPeriodGetDep::CTX_IN_DEP_IGNORE_COMPLETE, true);
         $this->procPeriodGet->exec($ctx);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $writeOffPeriod */
-        $writeOffPeriod = $ctx->get(SPeriodGetDep::CTX_OUT_BASE_PERIOD_DATA);
         /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $writeOffCalc */
         $writeOffCalc = $ctx->get(SPeriodGetDep::CTX_OUT_BASE_CALC_DATA);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $collectCalc */
-        $collectCalc = $ctx->get(SPeriodGetDep::CTX_OUT_DEP_CALC_DATA);
+        $pwWriteOffPeriod = $ctx->get(SPeriodGetDep::CTX_OUT_BASE_PERIOD_DATA);
+        $phase1Calc = $ctx->get(SPeriodGetDep::CTX_OUT_DEP_CALC_DATA);
         /**
-         * Get previous write off period to access inactive stats history.
+         * Create Unqualified Collection calculation.
          */
-        $periodPrev = $writeOffPeriod->getDstampBegin();
+        $ctx = new \Praxigento\Core\Data();
+        $ctx->set(SPeriodGetDep::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
+        $ctx->set(SPeriodGetDep::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_UNQUALIFIED_COLLECT);
+        $this->procPeriodGet->exec($ctx);
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $pwWriteOffCalc */
+        $unqCollCalc = $ctx->get(SPeriodGetDep::CTX_OUT_DEP_CALC_DATA);
+        /**
+         * Get previous PV Write Off data to access stats history.
+         */
+        $periodPrev = $pwWriteOffPeriod->getDstampBegin();
         $ctx = new \Praxigento\Core\Data();
         $ctx->set(SPeriodGetDep::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
-        $ctx->set(SPeriodGetDep::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_INACTIVE_COLLECT);
+        $ctx->set(SPeriodGetDep::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
         $ctx->set(SPeriodGetDep::CTX_IN_PERIOD_END, $periodPrev);
         $ctx->set(SPeriodGetDep::CTX_IN_DEP_IGNORE_COMPLETE, true);
         $this->procPeriodGet->exec($ctx);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $writeOffCalcPrev */
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $phase1CalcPrev */
         $writeOffCalcPrev = $ctx->get(SPeriodGetDep::CTX_OUT_BASE_CALC_DATA);
         /**
          * Compose result.
          */
-        $result = [$writeOffPeriod, $writeOffCalc, $writeOffCalcPrev, $collectCalc];
+        $result = [$writeOffCalc, $writeOffCalcPrev, $phase1Calc, $unqCollCalc];
         return $result;
     }
 
