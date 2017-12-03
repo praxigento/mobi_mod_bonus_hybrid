@@ -139,7 +139,8 @@ class Collect
                 $item->setUnqMonths(0);
             } else {
                 /* increment unqualified months counter */
-                $months = $mapMonths[$custId] ?? 1;
+                $months = $mapMonths[$custId] ?? 0;
+                $months++;
                 $item->setUnqMonths($months);
             }
         }
