@@ -17,8 +17,6 @@ class Collect_Test
         /** @var  $proc \Praxigento\BonusHybrid\Service\Calc\Inactive\Collect */
         $proc = $this->manObj->get(\Praxigento\BonusHybrid\Service\Calc\Inactive\Collect::class);
         $ctx = new \Praxigento\Core\Data();
-        $period = '20170430';
-        $ctx->set(\Praxigento\BonusHybrid\Service\Calc\Inactive\Collect::CTX_IN_PERIOD_END, $period);
         $proc->exec($ctx);
         $this->manTrans->rollback($def);
         $this->assertTrue(true); // to prevent console warnings

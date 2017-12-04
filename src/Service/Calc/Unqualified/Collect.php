@@ -17,8 +17,7 @@ use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 class Collect
     implements \Praxigento\Core\Service\IProcess
 {
-    /** Maximal end of base period to get data for */
-    const CTX_IN_PERIOD_END = 'in.periodEnd';
+    /** @var \Praxigento\Downline\Helper\Tree */
     private $hlpTree;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
@@ -42,6 +41,32 @@ class Collect
         $this->repoBonDwnl = $repoBonDwnl;
         $this->repoCalc = $repoCalc;
         $this->procPeriodGet = $procPeriodGet;
+    }
+
+    /**
+     * Collect unqualified statistics and update current plain tree (corresponds to PV Write Off calculation).
+     *
+     * @param EBonDwnl[] $treePlain this data will be updated with new values for unqualified months.
+     * @param EBonDwnl[] $treePlainPrev
+     * @param EBonDwnl[] $treePhase1
+     */
+    private function calc(&$treePlain, $treePlainPrev, $treePhase1)
+    {
+        /* map inactive statistics by customer ID */
+        $mapMonths = $this->hlpTree->mapValueById($treePlainPrev, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_UNQ_MONTHS);
+        $mapQual = $this->hlpTree->mapValueById($treePhase1, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_RANK_REF);
+        foreach ($treePlain as $item) {
+            $custId = $item->getCustomerRef();
+            if (isset($mapQual[$custId])) {
+                /* this customer is qualified in this period, reset counter */
+                $item->setUnqMonths(0);
+            } else {
+                /* increment unqualified months counter */
+                $months = $mapMonths[$custId] ?? 0;
+                $months++;
+                $item->setUnqMonths($months);
+            }
+        }
     }
 
     public function exec(\Praxigento\Core\Data $ctx)
@@ -76,7 +101,7 @@ class Collect
     /**
      * Get data for periods & calculations.
      *
-     * @return array [$periodData, $calcData]
+     * @return array [$writeOffCalc, $writeOffCalcPrev, $phase1Calc, $unqCollCalc]
      */
     private function getCalcData()
     {
@@ -118,32 +143,6 @@ class Collect
          */
         $result = [$writeOffCalc, $writeOffCalcPrev, $phase1Calc, $unqCollCalc];
         return $result;
-    }
-
-    /**
-     * Collect unqualified statistics and update current plain tree (corresponds to PV Write Off calculation).
-     *
-     * @param EBonDwnl[] $treePlain this data will be updated with new values for unqualified months.
-     * @param EBonDwnl[] $treePlainPrev
-     * @param EBonDwnl[] $treePhase1
-     */
-    private function calc(&$treePlain, $treePlainPrev, $treePhase1)
-    {
-        /* map inactive statistics by customer ID */
-        $mapMonths = $this->hlpTree->mapValueById($treePlainPrev, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_UNQ_MONTHS);
-        $mapQual = $this->hlpTree->mapValueById($treePhase1, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_RANK_REF);
-        foreach ($treePlain as $item) {
-            $custId = $item->getCustomerRef();
-            if (isset($mapQual[$custId])) {
-                /* this customer is qualified in this period, reset counter */
-                $item->setUnqMonths(0);
-            } else {
-                /* increment unqualified months counter */
-                $months = $mapMonths[$custId] ?? 0;
-                $months++;
-                $item->setUnqMonths($months);
-            }
-        }
     }
 
     /**

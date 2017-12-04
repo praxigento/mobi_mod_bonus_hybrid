@@ -6,7 +6,7 @@
 namespace Praxigento\BonusHybrid\Service\Calc\Inactive;
 
 /**
- * Change status for inactive customers and change downline tree.
+ * Change status for inactive customers.
  *
  * This is internal service (for this module only), so it has no own interface.
  */

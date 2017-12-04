@@ -40,9 +40,12 @@ class Calc
     private $procPvWriteOff;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Value\ITv */
     private $procTv;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Unqualified\Collect */
+    private $procUnqualCollect;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Unqualified\Process */
+    private $procUnqualProcess;
     /** @var \Magento\Framework\App\ResourceConnection */
     private $resource;
-    private $procUnqualCollect;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
@@ -58,6 +61,7 @@ class Calc
         \Praxigento\BonusHybrid\Service\Calc\Inactive\Collect $procInactCollect,
         \Praxigento\BonusHybrid\Service\Calc\IPvWriteOff $procPvWriteOff,
         \Praxigento\BonusHybrid\Service\Calc\Unqualified\Collect $procUnqualCollect,
+        \Praxigento\BonusHybrid\Service\Calc\Unqualified\Process $procUnqualProcess,
         \Praxigento\BonusHybrid\Service\Calc\Value\IOv $procOv,
         \Praxigento\BonusHybrid\Service\Calc\Value\ITv $procTv
     )
@@ -82,6 +86,7 @@ class Calc
         $this->procPvWriteOff = $procPvWriteOff;
         $this->procTv = $procTv;
         $this->procUnqualCollect = $procUnqualCollect;
+        $this->procUnqualProcess = $procUnqualProcess;
     }
 
     private function calcBonusCourtesy()
@@ -161,14 +166,6 @@ class Calc
         return $result;
     }
 
-    private function calcUnqualCollect()
-    {
-        $ctx = new \Praxigento\Core\Data();
-        $this->procUnqualCollect->exec($ctx);
-        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
-        return $result;
-    }
-
     private function calcPvWriteOff()
     {
         $ctx = new \Praxigento\Core\Data();
@@ -181,6 +178,22 @@ class Calc
     {
         $ctx = new \Praxigento\Core\Data();
         $this->callBonusSignup->exec($ctx);
+        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
+        return $result;
+    }
+
+    private function calcUnqualCollect()
+    {
+        $ctx = new \Praxigento\Core\Data();
+        $this->procUnqualCollect->exec($ctx);
+        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
+        return $result;
+    }
+
+    private function calcUnqualProcess()
+    {
+        $ctx = new \Praxigento\Core\Data();
+        $this->procUnqualProcess->exec($ctx);
         $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
         return $result;
     }
@@ -228,6 +241,10 @@ class Calc
             }
             if ($canContinue) {
                 $output->writeln("<info>'Unqualified Stats Collection' calculation is completed.<info>");
+                $canContinue = $this->calcUnqualProcess();
+            }
+            if ($canContinue) {
+                $output->writeln("<info>'Unqualified Process' calculation is completed.<info>");
                 $canContinue = $this->calcBonusPersonal();
             }
             if ($canContinue) {

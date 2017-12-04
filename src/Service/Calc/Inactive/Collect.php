@@ -58,13 +58,12 @@ class Collect
     public function exec(\Praxigento\Core\Data $ctx)
     {
         $this->logger->info("Inactive Stats Collection calculation is started.");
-        $periodEnd = $ctx->get(self::CTX_IN_PERIOD_END);
         /**
          * perform processing
          */
         $ctx->set(self::CTX_OUT_SUCCESS, false);
         /* get dependent calculation data */
-        list($writeOffCalc, $writeOffCalcPrev, $collectCalc) = $this->getCalcData($periodEnd);
+        list($writeOffCalc, $writeOffCalcPrev, $collectCalc) = $this->getCalcData();
         $writeOffCalcId = $writeOffCalc->getId();
         $tree = $this->repoBonDwnl->getByCalcId($writeOffCalcId);
         $prevStat = [];
@@ -87,13 +86,12 @@ class Collect
      *
      * @return array [$writeOffCalc, $writeOffCalcPrev, $collectCalc]
      */
-    private function getCalcData($maxPeriodEnd)
+    private function getCalcData()
     {
         /* get period & calc data */
         $ctx = new \Praxigento\Core\Data();
         $ctx->set(SPeriodGetDep::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
         $ctx->set(SPeriodGetDep::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_INACTIVE_COLLECT);
-        $ctx->set(SPeriodGetDep::CTX_IN_PERIOD_END, $maxPeriodEnd);
         $this->procPeriodGet->exec($ctx);
         /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $writeOffPeriod */
         $writeOffPeriod = $ctx->get(SPeriodGetDep::CTX_OUT_BASE_PERIOD_DATA);
