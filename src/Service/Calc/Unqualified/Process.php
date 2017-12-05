@@ -50,10 +50,16 @@ class Process
          */
         $ctx->set(self::CTX_OUT_SUCCESS, false);
         /* get dependent calculation data */
-        list($writeOffCalc, $collectCalc, $processCalc) = $this->getCalcData();
+        /**
+         * @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $writeOffCalc
+         * @var \Praxigento\BonusBase\Repo\Entity\Data\Period $writeOffPeriod
+         * @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $processCalc
+         */
+        list($writeOffCalc, $writeOffPeriod, $processCalc) = $this->getCalcData();
         $writeOffCalcId = $writeOffCalc->getId();
+        $periodEnd = $writeOffPeriod->getDstampEnd();
         $treePlain = $this->repoBonDwnl->getByCalcId($writeOffCalcId);
-        $this->rouCalc->exec($treePlain);
+        $this->rouCalc->exec($treePlain, $periodEnd);
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);
         $this->logger->info("'Unqualified Process' calculation is completed.");
@@ -62,7 +68,7 @@ class Process
     /**
      * Get data for periods & calculations.
      *
-     * @return array [$writeOffCalc, $collectCalc, $processCalc]
+     * @return array [$writeOffCalc, $writeOffPeriod, $processCalc]
      */
     private function getCalcData()
     {
@@ -76,7 +82,8 @@ class Process
         $this->procPeriodGet->exec($ctx);
         /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $writeOffCalc */
         $writeOffCalc = $ctx->get(SPeriodGetDep::CTX_OUT_BASE_CALC_DATA);
-        $collectCalc = $ctx->get(SPeriodGetDep::CTX_OUT_DEP_CALC_DATA);
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $writeOffPeriod */
+        $writeOffPeriod = $ctx->get(SPeriodGetDep::CTX_OUT_BASE_PERIOD_DATA);
         /**
          * Create Unqualified Process calculation.
          */
@@ -89,7 +96,7 @@ class Process
         /**
          * Compose result.
          */
-        $result = [$writeOffCalc, $collectCalc, $processCalc];
+        $result = [$writeOffCalc, $writeOffPeriod, $processCalc];
         return $result;
     }
 
