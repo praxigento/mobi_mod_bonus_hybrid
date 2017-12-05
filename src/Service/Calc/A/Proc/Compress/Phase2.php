@@ -20,13 +20,6 @@ use Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Fun\Rou\ComposeLe
 class Phase2
     implements \Praxigento\Core\Service\IProcess
 {
-    /** Add traits */
-    use \Praxigento\BonusHybrid\Service\Calc\A\Traits\TMap {
-        mapById as private;
-        mapByTeams as private;
-        mapByTreeDepthDesc as private;
-    }
-
     /** int */
     const IN_CALC_ID_PHASE2 = 'calcIdPhase2';
     /** Phase1 compressed downline  */
@@ -41,28 +34,30 @@ class Phase2
     const OUT_DWNL_PHASE2 = 'dwnlPhase2';
     /** \Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase2\Legs[] */
     const OUT_LEGS = 'legs';
-
-    /** @var \Praxigento\Downline\Tool\ITree */
+    /** @var \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Fun\Act\Qualify */
+    private $actQualify;
+    /** @var \Praxigento\Downline\Helper\Tree */
     private $hlpDwnlTree;
     /** @var \Praxigento\BonusHybrid\Helper\Calc\IsQualified */
     private $hlpIsQualified;
     /** @var \Praxigento\BonusHybrid\Helper\IScheme */
     private $hlpScheme;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Cfg\Param */
-    private $repoCfgParam;
+    /** @var \Praxigento\Downline\Tool\ITree */
+    private $hlpTree;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoBonDwnl;
+    /** @var \Praxigento\BonusHybrid\Repo\Entity\Cfg\Param */
+    private $repoCfgParam;
     /** @var \Praxigento\BonusBase\Repo\Entity\Rank */
     private $repoRank;
     /** @var \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Fun\Rou\CalcLegs */
     private $rouCalcLegs;
     /** @var \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Fun\Rou\ComposeLegs */
     private $rouComposeLegs;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Fun\Act\Qualify */
-    private $actQualify;
 
     public function __construct(
         \Praxigento\Downline\Tool\ITree $hlpTree,
+        \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\BonusHybrid\Helper\Calc\IsQualified $hlpIsQualified,
         \Praxigento\BonusBase\Repo\Entity\Rank $repoRank,
@@ -73,7 +68,8 @@ class Phase2
         RouComposeLegs $rouComposeLegs
     )
     {
-        $this->hlpDwnlTree = $hlpTree;
+        $this->hlpTree = $hlpTree;
+        $this->hlpDwnlTree = $hlpDwnlTree;
         $this->hlpScheme = $hlpScheme;
         $this->hlpIsQualified = $hlpIsQualified;
         $this->repoRank = $repoRank;
@@ -103,11 +99,11 @@ class Phase2
         /**
          * perform processing
          */
-        $mapByIdCompress = $this->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
-        $mapByTeamCompress = $this->mapByTeams($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
-        $mapByDepthCompress = $this->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_DEPTH);
-        $mapByIdPlain = $this->mapById($dwnlPlain, EBonDwnl::ATTR_CUST_REF);
-        $mapByTeamPlain = $this->mapByTeams($dwnlPlain, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
+        $mapByIdCompress = $this->hlpDwnlTree->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
+        $mapByTeamCompress = $this->hlpDwnlTree->mapByTeams($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
+        $mapByDepthCompress = $this->hlpDwnlTree->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_DEPTH);
+        $mapByIdPlain = $this->hlpDwnlTree->mapById($dwnlPlain, EBonDwnl::ATTR_CUST_REF);
+        $mapByTeamPlain = $this->hlpDwnlTree->mapByTeams($dwnlPlain, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
         $rankIdMgr = $this->repoRank->getIdByCode(Cfg::RANK_MANAGER);
         /* MOBI-629: add init rank for un-ranked entries */
         $rankIdDistr = $this->repoRank->getIdByCode(Cfg::RANK_DISTRIBUTOR);;
@@ -214,7 +210,7 @@ class Phase2
                 if (!$isParentQualifiedAsMgr) {
                     /* parent is not qualified, move customer up to the closest parent qualified as manager or higher */
                     $path = $custData->getPath();
-                    $parents = $this->hlpDwnlTree->getParentsFromPathReversed($path);
+                    $parents = $this->hlpTree->getParentsFromPathReversed($path);
                     $foundParentId = null;
                     $prevParentId = null;
                     $fatherIsUnqual = false; // we should not compress nodes for EU scheme where grand is qualified
@@ -255,7 +251,7 @@ class Phase2
             }
         }
         /* get paths & depths for downline tree (is & parentId only present in results ) */
-        $snap = $this->hlpDwnlTree->expandMinimal($outDownline, EBonDwnl::ATTR_PARENT_REF);
+        $snap = $this->hlpTree->expandMinimal($outDownline, EBonDwnl::ATTR_PARENT_REF);
         /* go through the downline snapshot and move depth & path info into results */
         foreach ($outDownline as $id => $one) {
             $depth = $snap[$id][\Praxigento\Downline\Repo\Entity\Data\Snap::ATTR_DEPTH];

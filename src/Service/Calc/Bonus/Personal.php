@@ -16,32 +16,28 @@ use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
 class Personal
     implements \Praxigento\BonusHybrid\Service\Calc\Bonus\IPersonal
 {
-
-    /** Add traits */
-    use \Praxigento\BonusHybrid\Service\Calc\A\Traits\TMap {
-        mapById as protected;
-    }
-
     /** @var \Praxigento\BonusBase\Helper\Calc */
     private $hlpCalc;
+    /** @var \Praxigento\Downline\Helper\Tree */
+    private $hlpDwnlTree;
     /** @var \Praxigento\BonusHybrid\Service\Calc\A\Helper\CreateOper */
     private $hlpOper;
     /** @var  \Praxigento\Core\Tool\IPeriod */
     private $hlpPeriod;
-    /** @var  \Praxigento\BonusHybrid\Service\Calc\A\Helper\PrepareTrans */
-    private $hlpTrans;
     /** @var  \Praxigento\BonusHybrid\Helper\IScheme */
     private $hlpScheme;
+    /** @var  \Praxigento\BonusHybrid\Service\Calc\A\Helper\PrepareTrans */
+    private $hlpTrans;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
+    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
+    private $repoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
     private $repoCalc;
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
     private $repoDwnl;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
-    private $repoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Entity\Level */
     private $repoLevel;
     /** @var \Praxigento\BonusBase\Repo\Entity\Log\Opers */
@@ -52,6 +48,7 @@ class Personal
         \Praxigento\Core\Tool\IPeriod $hlpPeriod,
         \Praxigento\BonusBase\Helper\Calc $hlpCalc,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
+        \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\BonusBase\Repo\Entity\Level $repoLevel,
@@ -66,6 +63,7 @@ class Personal
         $this->hlpPeriod = $hlpPeriod;
         $this->hlpCalc = $hlpCalc;
         $this->hlpScheme = $hlpScheme;
+        $this->hlpDwnlTree = $hlpDwnlTree;
         $this->repoDwnl = $repoDwnl;
         $this->repoCalc = $repoCalc;
         $this->repoLevel = $repoLevel;
@@ -88,7 +86,7 @@ class Personal
     private function calcBonus($dwnlCurrent, $dwnlCompress, $levels)
     {
         $result = [];
-        $mapCustomer = $this->mapById($dwnlCurrent, ECustomer::ATTR_CUSTOMER_ID);
+        $mapCustomer = $this->hlpDwnlTree->mapById($dwnlCurrent, ECustomer::ATTR_CUSTOMER_ID);
         /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Downline $one */
         foreach ($dwnlCompress as $one) {
             $custId = $one->getCustomerRef();

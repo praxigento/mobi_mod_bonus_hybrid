@@ -13,14 +13,10 @@ use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
  */
 class SaveDownline
 {
-
-    /** Add traits */
-    use \Praxigento\BonusHybrid\Service\Calc\A\Traits\TMap {
-        mapByTreeDepthDesc as private;
-    }
-
     /** @var \Praxigento\Downline\Service\ISnap */
     private $callDwnlSnap;
+    /** @var \Praxigento\Downline\Helper\Tree */
+    private $hlpDwnlTree;
     /** @var  \Praxigento\BonusHybrid\Helper\IScheme */
     private $hlpScheme;
     /** @var \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds */
@@ -35,6 +31,7 @@ class SaveDownline
     public function __construct(
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust,
+        \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\Accounting\Repo\Entity\Account $repoAcc,
         \Praxigento\BonusBase\Repo\Entity\Rank $repoRank,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnl,
@@ -43,6 +40,7 @@ class SaveDownline
     {
         $this->hlpScheme = $hlpScheme;
         $this->hlpSignupDebitCust = $hlpSignupDebitCust;
+        $this->hlpDwnlTree = $hlpDwnlTree;
         $this->repoAcc = $repoAcc;
         $this->repoRank = $repoRank;
         $this->repoDwnl = $repoDwnl;
@@ -58,7 +56,7 @@ class SaveDownline
         $forcedQualCustomers = $this->prepareForcedQualification();
         /* load customers downline tree and map by depth in descending order */
         $tree = $this->loadDownline($periodEnd);
-        $mapByDepth = $this->mapByTreeDepthDesc(
+        $mapByDepth = $this->hlpDwnlTree->mapByTreeDepthDesc(
             $tree,
             \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::A_CUST_ID,
             \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::A_DEPTH

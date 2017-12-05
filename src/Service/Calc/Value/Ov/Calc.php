@@ -15,13 +15,8 @@ use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
  */
 class Calc
 {
-    /** Add traits */
-    use \Praxigento\BonusHybrid\Service\Calc\A\Traits\TMap {
-        mapById as protected;
-        mapByTeams as protected;
-        mapByTreeDepthDesc as protected;
-    }
-
+    /** @var \Praxigento\Downline\Helper\Tree */
+    private $hlpDwnlTree;
     /** @var \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds */
     private $hlpSignupDebitCust;
     /** @var \Psr\Log\LoggerInterface */
@@ -32,12 +27,14 @@ class Calc
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
         \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust,
+        \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl
     )
     {
         $this->logger = $logger;
-        $this->repoBonDwnl = $repoBonDwnl;
         $this->hlpSignupDebitCust = $hlpSignupDebitCust;
+        $this->hlpDwnlTree = $hlpDwnlTree;
+        $this->repoBonDwnl = $repoBonDwnl;
     }
 
     /**
@@ -52,9 +49,9 @@ class Calc
         /* collect additional data */
         $dwnlCompress = $this->repoBonDwnl->getByCalcId($calcId);
         /* create maps to access data */
-        $mapById = $this->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
-        $mapDepth = $this->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_DEPTH);
-        $mapTeams = $this->mapByTeams($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
+        $mapById = $this->hlpDwnlTree->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
+        $mapDepth = $this->hlpDwnlTree->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_DEPTH);
+        $mapTeams = $this->hlpDwnlTree->mapByTeams($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
         $signupDebitCustomers = $this->hlpSignupDebitCust->exec();
         /**
          * Scan downline by level from bottom to top

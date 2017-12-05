@@ -14,34 +14,30 @@ use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
 
 class Calc
 {
-    /** Add traits */
-    use \Praxigento\BonusHybrid\Service\Calc\A\Traits\TMap {
-        mapById as private;
-        mapByTeams as private;
-        mapByTreeDepthDesc as private;
-    }
-
-    /** @var \Praxigento\Downline\Tool\ITree */
-    private $hlpDwnl;
+    /** @var \Praxigento\Downline\Helper\Tree */
+    private $hlpDwnlTree;
     /** @var \Praxigento\Core\Tool\IFormat */
     private $hlpFormat;
     /** @var  \Praxigento\BonusHybrid\Helper\IScheme */
     private $hlpScheme;
+    /** @var \Praxigento\Downline\Tool\ITree */
+    private $hlpTree;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
+    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
+    private $repoBonDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Cfg\Override */
     private $repoCfgOvrd;
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
     private $repoDwnl;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
-    private $repoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Entity\Rank */
     private $repoRank;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
         \Praxigento\Core\Tool\IFormat $hlpFormat,
-        \Praxigento\Downline\Tool\ITree $hlpDwnl,
+        \Praxigento\Downline\Tool\ITree $hlpTree,
+        \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
         \Praxigento\BonusBase\Repo\Entity\Rank $repoRank,
@@ -51,7 +47,8 @@ class Calc
     {
         $this->logger = $logger;
         $this->hlpFormat = $hlpFormat;
-        $this->hlpDwnl = $hlpDwnl;
+        $this->hlpTree = $hlpTree;
+        $this->hlpDwnlTree = $hlpDwnlTree;
         $this->hlpScheme = $hlpScheme;
         $this->repoDwnl = $repoDwnl;
         $this->repoRank = $repoRank;
@@ -110,13 +107,13 @@ class Calc
         $dwnlPlain = $this->repoDwnl->get();
         $cfgOverride = $this->getCfgOverride();
         /* create maps to access data */
-        $mapCmprsById = $this->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
-        $mapPlainById = $this->mapById($dwnlPlain, ECustomer::ATTR_CUSTOMER_ID);
-        $mapTeams = $this->mapByTeams($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
+        $mapCmprsById = $this->hlpDwnlTree->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
+        $mapPlainById = $this->hlpDwnlTree->mapById($dwnlPlain, ECustomer::ATTR_CUSTOMER_ID);
+        $mapTeams = $this->hlpDwnlTree->mapByTeams($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
         /* populate compressed data with depth & path values */
-        $mapByDepthDesc = $this->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_DEPTH);
+        $mapByDepthDesc = $this->hlpDwnlTree->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_DEPTH);
         /* scan all levels starting from the bottom and collect PV by generations */
-        $mapGenerations = $this->mapByGeneration($mapByDepthDesc,
+        $mapGenerations = $this->hlpDwnlTree->mapByGeneration($mapByDepthDesc,
             $mapCmprsById); // [ $custId=>[$genId => $totalPv, ...], ... ]
         $defRankId = $this->repoRank->getIdByCode(Cfg::RANK_DISTRIBUTOR);
         /* scan all customers and calculate bonus values */
@@ -193,7 +190,7 @@ class Calc
                 /** @var EBonDwnl $entry */
                 $entry = $mapById[$custId];
                 $path = $entry->getPath();
-                $parents = $this->hlpDwnl->getParentsFromPathReversed($path);
+                $parents = $this->hlpTree->getParentsFromPathReversed($path);
                 $level = 0;
                 foreach ($parents as $parentId) {
                     $level += 1;

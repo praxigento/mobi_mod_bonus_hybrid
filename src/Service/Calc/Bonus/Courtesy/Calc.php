@@ -12,22 +12,18 @@ use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
 
 class Calc
 {
-    /** Add traits */
-    use \Praxigento\BonusHybrid\Service\Calc\A\Traits\TMap {
-        mapById as protected;
-        mapByTeams as protected;
-    }
-
+    /** @var \Praxigento\Downline\Helper\Tree */
+    private $hlpDwnlTree;
     /** @var \Praxigento\Core\Tool\IFormat */
     private $hlpFormat;
     /** @var  \Praxigento\BonusHybrid\Helper\IScheme */
     private $hlpScheme;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
-    /** @var \Praxigento\Downline\Repo\Entity\Customer */
-    private $repoDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoBonDwnl;
+    /** @var \Praxigento\Downline\Repo\Entity\Customer */
+    private $repoDwnl;
     /** @var \Praxigento\BonusBase\Repo\Entity\Level */
     private $repoLevel;
 
@@ -35,6 +31,7 @@ class Calc
         \Praxigento\Core\Fw\Logger\App $logger,
         \Praxigento\Core\Tool\IFormat $hlpFormat,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
+        \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusBase\Repo\Entity\Level $repoLevel,
         \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl
@@ -43,6 +40,7 @@ class Calc
         $this->logger = $logger;
         $this->hlpFormat = $hlpFormat;
         $this->hlpScheme = $hlpScheme;
+        $this->hlpDwnlTree = $hlpDwnlTree;
         $this->repoLevel = $repoLevel;
         $this->repoDwnl = $repoDwnl;
         $this->repoBonDwnl = $repoBonDwnl;
@@ -58,9 +56,9 @@ class Calc
         $levelsPersonal = $this->repoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL);
         $levelsTeam = $this->repoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF);
         /* create maps to access data */
-        $mapDataById = $this->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
-        $mapTeams = $this->mapByTeams($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
-        $mapCustById = $this->mapById($dwnlCurrent, ECustomer::ATTR_CUSTOMER_ID);
+        $mapDataById = $this->hlpDwnlTree->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
+        $mapTeams = $this->hlpDwnlTree->mapByTeams($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
+        $mapCustById = $this->hlpDwnlTree->mapById($dwnlCurrent, ECustomer::ATTR_CUSTOMER_ID);
         /**
          * Go through all customers from compressed tree and calculate bonus.
          *

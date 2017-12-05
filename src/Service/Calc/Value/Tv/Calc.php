@@ -14,10 +14,14 @@ use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
  */
 class Calc
 {
-    /** Add traits */
-    use \Praxigento\BonusHybrid\Service\Calc\A\Traits\TMap {
-        mapById as protected;
-        mapByTeams as protected;
+    /** @var \Praxigento\Downline\Helper\Tree */
+    private $hlpDwnlTree;
+
+    public function __construct(
+        \Praxigento\Downline\Helper\Tree $hlpDwnlTree
+    )
+    {
+        $this->hlpDwnlTree = $hlpDwnlTree;
     }
 
     /**
@@ -29,8 +33,8 @@ class Calc
     public function exec($dwnlBonus)
     {
         $result = [];
-        $mapById = $this->mapById($dwnlBonus, EBonDwnl::ATTR_CUST_REF);
-        $mapTeams = $this->mapByTeams($dwnlBonus, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
+        $mapById = $this->hlpDwnlTree->mapById($dwnlBonus, EBonDwnl::ATTR_CUST_REF);
+        $mapTeams = $this->hlpDwnlTree->mapByTeams($dwnlBonus, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
         /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Downline $one */
         foreach ($dwnlBonus as $one) {
             $custId = $one->getCustomerRef();

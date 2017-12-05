@@ -15,31 +15,28 @@ use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
  */
 class CalcDef
 {
-    /** Add traits */
-    use \Praxigento\BonusHybrid\Service\Calc\A\Traits\TMap {
-        mapById as protected;
-        mapByTeams as protected;
-    }
-
-    /** @var \Praxigento\Downline\Tool\ITree */
-    private $hlpDwnl;
+    /** @var \Praxigento\Downline\Helper\Tree */
+    private $hlpDwnlTree;
     /** @var \Praxigento\Core\Tool\IFormat */
     private $hlpFormat;
     /** @var  \Praxigento\BonusHybrid\Helper\IScheme */
     private $hlpScheme;
+    /** @var \Praxigento\Downline\Tool\ITree */
+    private $hlpTree;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
-    /** @var \Praxigento\Downline\Repo\Entity\Customer */
-    private $repoDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoBonDwnl;
+    /** @var \Praxigento\Downline\Repo\Entity\Customer */
+    private $repoDwnl;
     /** @var \Praxigento\BonusBase\Repo\Entity\Level */
     private $repoLevel;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
         \Praxigento\Core\Tool\IFormat $hlpFormat,
-        \Praxigento\Downline\Tool\ITree $hlpDwnl,
+        \Praxigento\Downline\Tool\ITree $hlpTree,
+        \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
         \Praxigento\BonusBase\Repo\Entity\Level $repoLevel,
@@ -48,7 +45,8 @@ class CalcDef
     {
         $this->logger = $logger;
         $this->hlpFormat = $hlpFormat;
-        $this->hlpDwnl = $hlpDwnl;
+        $this->hlpTree = $hlpTree;
+        $this->hlpDwnlTree = $hlpDwnlTree;
         $this->hlpScheme = $hlpScheme;
         $this->repoDwnl = $repoDwnl;
         $this->repoLevel = $repoLevel;
@@ -72,9 +70,9 @@ class CalcDef
         $pctPbMax = $this->getMaxPercentForPersonalBonus($levelsPersonal);
         $courtesyPct = \Praxigento\BonusHybrid\Config::COURTESY_BONUS_PERCENT;
         /* create maps to access data */
-        $mapDwnlById = $this->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
-        $mapTeams = $this->mapByTeams($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
-        $mapCustById = $this->mapById($dwnlCurrent, ECustomer::ATTR_CUSTOMER_ID);
+        $mapDwnlById = $this->hlpDwnlTree->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
+        $mapTeams = $this->hlpDwnlTree->mapByTeams($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
+        $mapCustById = $this->hlpDwnlTree->mapById($dwnlCurrent, ECustomer::ATTR_CUSTOMER_ID);
         /**
          * Go through all customers from compressed tree and calculate bonus.
          *
@@ -99,7 +97,7 @@ class CalcDef
                 }
                 /* traverse up to tree root to calculate team bonus values */
                 $path = $custDwnl->getPath();
-                $parents = $this->hlpDwnl->getParentsFromPathReversed($path);
+                $parents = $this->hlpTree->getParentsFromPathReversed($path);
                 /* init undistributed delta: 20% - 5% */
                 $pctPbLeft = $pctPbMax - $pctPb;
                 /* ... and distributed amount: 5% */

@@ -12,28 +12,26 @@ use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
 
 class Calc
 {
-    /** Add traits */
-    use \Praxigento\BonusHybrid\Service\Calc\A\Traits\TMap {
-        mapById as private;
-    }
-
-    /** @var \Praxigento\Downline\Tool\ITree */
-    private $hlpDwnl;
+    /** @var \Praxigento\Downline\Helper\Tree */
+    private $hlpDwnlTree;
     /** @var \Praxigento\Core\Tool\IFormat */
     private $hlpFormat;
     /** @var  \Praxigento\BonusHybrid\Helper\IScheme */
     private $hlpScheme;
+    /** @var \Praxigento\Downline\Tool\ITree */
+    private $hlpTree;
+    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
+    private $repoBonDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Cfg\Param */
     private $repoCfgParams;
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
     private $repoDwnl;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
-    private $repoBonDwnl;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
         \Praxigento\Core\Tool\IFormat $hlpFormat,
-        \Praxigento\Downline\Tool\ITree $hlpDwnl,
+        \Praxigento\Downline\Tool\ITree $hlpTree,
+        \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
         \Praxigento\BonusHybrid\Repo\Entity\Cfg\Param $repoCfgParams,
@@ -42,7 +40,8 @@ class Calc
     {
         $this->logger = $logger;
         $this->hlpFormat = $hlpFormat;
-        $this->hlpDwnl = $hlpDwnl;
+        $this->hlpTree = $hlpTree;
+        $this->hlpDwnlTree = $hlpDwnlTree;
         $this->hlpScheme = $hlpScheme;
         $this->repoDwnl = $repoDwnl;
         $this->repoCfgParams = $repoCfgParams;
@@ -60,8 +59,8 @@ class Calc
         $cfgParams = $this->getCfgParams();
         $ibPercentMax = $this->getMaxPercentForInfinityBonus($cfgParams, $scheme);
         /* create maps to access data */
-        $mapById = $this->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
-        $mapPlainById = $this->mapById($dwnlPlain, ECustomer::ATTR_CUSTOMER_ID);
+        $mapById = $this->hlpDwnlTree->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
+        $mapPlainById = $this->hlpDwnlTree->mapById($dwnlPlain, ECustomer::ATTR_CUSTOMER_ID);
         /**
          * Process downline tree
          * @var EBonDwnl $custCompress
@@ -73,7 +72,7 @@ class Calc
             $pv = $custCompress->getPv();
             if ($pv > Cfg::DEF_ZERO) {
                 $path = $custCompress->getPath();
-                $parents = $this->hlpDwnl->getParentsFromPathReversed($path);
+                $parents = $this->hlpTree->getParentsFromPathReversed($path);
                 $prevParentIbPercent = 0;
                 $ibPercentDelta = $ibPercentMax - $prevParentIbPercent;
                 $isFirstGen = true; // first generation customers should not have an infinity bonus

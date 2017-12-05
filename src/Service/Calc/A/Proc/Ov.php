@@ -21,14 +21,8 @@ class Ov
     /** \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] updated downline with OV*/
     const OUT_DWNL = 'downline';
 
-
-    /** Add traits */
-    use \Praxigento\BonusHybrid\Service\Calc\A\Traits\TMap {
-        mapById as protected;
-        mapByTeams as protected;
-        mapByTreeDepthDesc as protected;
-    }
-
+    /** @var \Praxigento\Downline\Helper\Tree */
+    private $hlpDwnlTree;
     /** @var \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds */
     private $hlpSignupDebitCust;
     /** @var \Psr\Log\LoggerInterface */
@@ -36,11 +30,13 @@ class Ov
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
-        \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust
+        \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust,
+        \Praxigento\Downline\Helper\Tree $hlpDwnlTree
     )
     {
         $this->logger = $logger;
         $this->hlpSignupDebitCust = $hlpSignupDebitCust;
+        $this->hlpDwnlTree = $hlpDwnlTree;
     }
 
     public function exec(\Praxigento\Core\Data $ctx)
@@ -53,9 +49,9 @@ class Ov
         /* define local working data */
 
         /* create maps to access data */
-        $mapById = $this->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
-        $mapDepth = $this->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_DEPTH);
-        $mapTeams = $this->mapByTeams($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
+        $mapById = $this->hlpDwnlTree->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
+        $mapDepth = $this->hlpDwnlTree->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_DEPTH);
+        $mapTeams = $this->hlpDwnlTree->mapByTeams($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
         $signupDebitCustomers = [];
         if ($useSignUp) {
             $signupDebitCustomers = $this->hlpSignupDebitCust->exec();

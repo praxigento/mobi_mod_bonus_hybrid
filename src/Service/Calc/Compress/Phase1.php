@@ -14,11 +14,8 @@ use Praxigento\Downline\Repo\Query\Snap\OnDate\Builder as QBSnap;
 class Phase1
     implements \Praxigento\BonusHybrid\Service\Calc\Compress\IPhase1
 {
-
-    /** Add traits */
-    use \Praxigento\BonusHybrid\Service\Calc\A\Traits\TMap {
-        mapValueById as protected;
-    }
+    /** @var \Praxigento\Downline\Helper\Tree */
+    private $hlpDwnlTree;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
@@ -29,10 +26,10 @@ class Phase1
     private $qbGetPv;
     /** @var \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder */
     private $qbSnapOnDate;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
-    private $repoCalc;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoBonDwnl;
+    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
+    private $repoCalc;
     /** @var \Praxigento\BonusBase\Repo\Entity\Rank */
     private $repoRank;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase1\Transfer\Pv */
@@ -40,6 +37,7 @@ class Phase1
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
+        \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\BonusBase\Repo\Entity\Rank $repoRank,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
@@ -51,6 +49,7 @@ class Phase1
     )
     {
         $this->logger = $logger;
+        $this->hlpDwnlTree = $hlpDwnlTree;
         $this->repoCalc = $repoCalc;
         $this->repoRank = $repoRank;
         $this->repoBonDwnl = $repoBonDwnl;
@@ -184,12 +183,13 @@ class Phase1
         $conn = $query->getConnection();
         $bind = [QBldGetPv::BIND_CALC_ID => $calcId];
         $data = $conn->fetchAll($query, $bind);
-        $result = $this->mapValueById($data, QBldGetPv::A_CUST_ID, QBldGetPv::A_PV);
+        $result = $this->hlpDwnlTree->mapValueById($data, QBldGetPv::A_CUST_ID, QBldGetPv::A_PV);
         return $result;
     }
 
     /**
-     * @param array $snap snap data with PV (see \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase1::populateCompressedSnapWithPv)
+     * @param array $snap snap data with PV (see
+     *     \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase1::populateCompressedSnapWithPv)
      * @param int $calcId
      */
     private function saveBonusDownline($snap, $calcId)

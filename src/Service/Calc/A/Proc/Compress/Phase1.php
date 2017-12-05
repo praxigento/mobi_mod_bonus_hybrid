@@ -13,13 +13,6 @@ use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
 class Phase1
     implements \Praxigento\Core\Service\IProcess
 {
-    /** Add traits */
-    use \Praxigento\BonusHybrid\Service\Calc\A\Traits\TMap {
-        mapById as protected;
-        mapByTeams as protected;
-        mapByTreeDepthDesc as protected;
-    }
-
     /** Calculation ID to reference in compressed PV transfers  */
     const IN_CALC_ID = 'calcId';
     /** Customers downline tree (plain) to the end of calculation period */
@@ -41,6 +34,8 @@ class Phase1
 
     /** @var    \Praxigento\Downline\Service\ISnap */
     private $callDwnlSnap;
+    /** @var \Praxigento\Downline\Helper\Tree */
+    private $hlpDwnlTree;
     /** @var  \Praxigento\BonusHybrid\Helper\IScheme */
     private $hlpScheme;
     /** @var \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds */
@@ -53,6 +48,7 @@ class Phase1
     public function __construct(
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\Downline\Tool\ITree $hlpTree,
+        \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust,
         \Praxigento\Downline\Repo\Entity\Customer $repoCustDwnl,
         \Praxigento\Downline\Service\ISnap $callDwnlSnap
@@ -60,6 +56,7 @@ class Phase1
     {
         $this->hlpScheme = $hlpScheme;
         $this->hlpTree = $hlpTree;
+        $this->hlpDwnlTree = $hlpDwnlTree;
         $this->hlpSignupDebitCust = $hlpSignupDebitCust;
         $this->repoCustDwnl = $repoCustDwnl;
         $this->callDwnlSnap = $callDwnlSnap;
@@ -116,9 +113,9 @@ class Phase1
 
         /* prepare intermediary structures for calculation */
         $mapCustomer = $this->getCustomersMap();
-        $mapPlain = $this->mapById($plain, $keyCustId);
-        $mapDepth = $this->mapByTreeDepthDesc($plain, $keyCustId, $keyDepth);
-        $mapTeams = $this->mapByTeams($plain, $keyCustId, $keyParentId);
+        $mapPlain = $this->hlpDwnlTree->mapById($plain, $keyCustId);
+        $mapDepth = $this->hlpDwnlTree->mapByTreeDepthDesc($plain, $keyCustId, $keyDepth);
+        $mapTeams = $this->hlpDwnlTree->mapByTeams($plain, $keyCustId, $keyParentId);
 
         /**
          * perform processing
@@ -224,7 +221,7 @@ class Phase1
     {
         /** @var \Praxigento\Downline\Repo\Entity\Data\Customer[] $customers */
         $customers = $this->repoCustDwnl->get();
-        $result = $this->mapById($customers, ECustomer::ATTR_CUSTOMER_ID);
+        $result = $this->hlpDwnlTree->mapById($customers, ECustomer::ATTR_CUSTOMER_ID);
         return $result;
     }
 

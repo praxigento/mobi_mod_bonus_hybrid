@@ -15,26 +15,24 @@ use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
  */
 class CalcEu
 {
-    /** Add traits */
-    use \Praxigento\BonusHybrid\Service\Calc\A\Traits\TMap {
-        mapById as protected;
-    }
-
+    /** @var \Praxigento\Downline\Helper\Tree */
+    private $hlpDwnlTree;
     /** @var \Praxigento\Core\Tool\IFormat */
     private $hlpFormat;
     /** @var  \Praxigento\BonusHybrid\Helper\IScheme */
     private $hlpScheme;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
-    /** @var \Praxigento\Downline\Repo\Entity\Customer */
-    private $repoDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoBonDwnl;
+    /** @var \Praxigento\Downline\Repo\Entity\Customer */
+    private $repoDwnl;
 
     public function __construct(
         \Praxigento\Core\Fw\Logger\App $logger,
         \Praxigento\Core\Tool\IFormat $hlpFormat,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
+        \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl
     )
@@ -42,6 +40,7 @@ class CalcEu
         $this->logger = $logger;
         $this->hlpFormat = $hlpFormat;
         $this->hlpScheme = $hlpScheme;
+        $this->hlpDwnlTree = $hlpDwnlTree;
         $this->repoDwnl = $repoDwnl;
         $this->repoBonDwnl = $repoBonDwnl;
     }
@@ -60,8 +59,8 @@ class CalcEu
         $dwnlCompress = $this->repoBonDwnl->getByCalcId($calcId);
         $dwnlCurrent = $this->repoDwnl->get();
         /* create maps to access data */
-        $mapDwnlById = $this->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
-        $mapCustById = $this->mapById($dwnlCurrent, ECustomer::ATTR_CUSTOMER_ID);
+        $mapDwnlById = $this->hlpDwnlTree->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
+        $mapCustById = $this->hlpDwnlTree->mapById($dwnlCurrent, ECustomer::ATTR_CUSTOMER_ID);
         /**
          * Go through all customers from compressed tree and calculate bonus.
          *

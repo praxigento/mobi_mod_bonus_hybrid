@@ -10,17 +10,20 @@ namespace Praxigento\BonusHybrid\Service\Calc\Forecast\Plain;
  */
 class Calc
 {
-    /** Add traits */
-    use \Praxigento\BonusHybrid\Service\Calc\A\Traits\TMap {
-        mapById as protected;
-        mapByTeams as protected;
-        mapByTreeDepthDesc as protected;
-    }
-
     const CTX_DWNL_TREE = 'dwnlTree';
     const KEY_TREE_DEPTH = \Praxigento\BonusHybrid\Repo\Entity\Data\Downline::ATTR_DEPTH;
     const KEY_TREE_ENTITY = \Praxigento\BonusHybrid\Repo\Entity\Data\Downline::ATTR_CUST_REF;
     const KEY_TREE_PARENT = \Praxigento\BonusHybrid\Repo\Entity\Data\Downline::ATTR_PARENT_REF;
+
+    /** @var \Praxigento\Downline\Helper\Tree */
+    private $hlpDwnlTree;
+
+    public function __construct(
+        \Praxigento\Downline\Helper\Tree $hlpDwnlTree
+    )
+    {
+        $this->hlpDwnlTree = $hlpDwnlTree;
+    }
 
     /**
      * @param \Praxigento\Core\Data $ctx
@@ -30,8 +33,8 @@ class Calc
         /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] $dwnlTree */
         $dwnlTree = $ctx->get(self::CTX_DWNL_TREE);
         /* prepare working data: tree maps, etc.*/
-        $mapByDepth = $this->mapByTreeDepthDesc($dwnlTree, self::KEY_TREE_ENTITY, self::KEY_TREE_DEPTH);
-        $mapByTeam = $this->mapByTeams($dwnlTree, self::KEY_TREE_ENTITY, self::KEY_TREE_PARENT);
+        $mapByDepth = $this->hlpDwnlTree->mapByTreeDepthDesc($dwnlTree, self::KEY_TREE_ENTITY, self::KEY_TREE_DEPTH);
+        $mapByTeam = $this->hlpDwnlTree->mapByTeams($dwnlTree, self::KEY_TREE_ENTITY, self::KEY_TREE_PARENT);
         /* go through the levels and collect PV to TV/OV */
         foreach ($mapByDepth as $level) {
             foreach ($level as $custId) {

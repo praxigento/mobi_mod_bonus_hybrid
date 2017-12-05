@@ -15,11 +15,6 @@ use Praxigento\Downline\Repo\Entity\Data\Customer as ECustDwnl;
 class UpdateDwnl
     implements \Praxigento\Core\Service\IProcess
 {
-    /** Add traits */
-    use \Praxigento\BonusHybrid\Service\Calc\A\Traits\TMap {
-        mapById as protected;
-    }
-
     /**  \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] */
     const IN_DWNL_PHASE1 = 'dwnlPhase1';
     /** \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] */
@@ -28,6 +23,8 @@ class UpdateDwnl
     const IN_DWNL_PHASE2_EU = 'dwnlPhase2Eu';
     /** \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] */
     const OUT_DWNL_PHASE1 = 'dwnlPhase1';
+    /** @var \Praxigento\Downline\Helper\Tree */
+    private $hlpDwnlTree;
     /** @var \Praxigento\BonusHybrid\Helper\IScheme */
     private $hlpScheme;
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
@@ -35,10 +32,12 @@ class UpdateDwnl
 
     public function __construct(
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
+        \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\Downline\Repo\Entity\Customer $repoCustDwnl
     )
     {
         $this->hlpScheme = $hlpScheme;
+        $this->hlpDwnlTree = $hlpDwnlTree;
         $this->repoCustDwnl = $repoCustDwnl;
     }
 
@@ -51,9 +50,9 @@ class UpdateDwnl
 
         /* define local working data */
         $dwnlCust = $this->repoCustDwnl->get();
-        $mapCust = $this->mapById($dwnlCust, ECustDwnl::ATTR_CUSTOMER_ID);
-        $mapByIdDef = $this->mapById($dwnlPhase2Def, EBonDwnl::ATTR_CUST_REF);
-        $mapByIdEu = $this->mapById($dwnlPhase2Eu, EBonDwnl::ATTR_CUST_REF);
+        $mapCust = $this->hlpDwnlTree->mapById($dwnlCust, ECustDwnl::ATTR_CUSTOMER_ID);
+        $mapByIdDef = $this->hlpDwnlTree->mapById($dwnlPhase2Def, EBonDwnl::ATTR_CUST_REF);
+        $mapByIdEu = $this->hlpDwnlTree->mapById($dwnlPhase2Eu, EBonDwnl::ATTR_CUST_REF);
 
         /* prepare output vars */
         $outUpdated = [];

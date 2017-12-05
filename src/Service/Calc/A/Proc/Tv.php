@@ -18,13 +18,15 @@ class Tv
     /** \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] updated downline with TV*/
     const OUT_DWNL = 'downline';
 
+    /** @var \Praxigento\Downline\Helper\Tree */
+    private $hlpDwnlTree;
 
-    /** Add traits */
-    use \Praxigento\BonusHybrid\Service\Calc\A\Traits\TMap {
-        mapById as protected;
-        mapByTeams as protected;
+    public function __construct(
+        \Praxigento\Downline\Helper\Tree $hlpDwnlTree
+    )
+    {
+        $this->hlpDwnlTree = $hlpDwnlTree;
     }
-
 
     public function exec(\Praxigento\Core\Data $ctx)
     {
@@ -32,8 +34,8 @@ class Tv
         $dwnlBonus = $ctx->get(self::IN_DWNL);
 
         /* define local working data */
-        $mapById = $this->mapById($dwnlBonus, EBonDwnl::ATTR_CUST_REF);
-        $mapTeams = $this->mapByTeams($dwnlBonus, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
+        $mapById = $this->hlpDwnlTree->mapById($dwnlBonus, EBonDwnl::ATTR_CUST_REF);
+        $mapTeams = $this->hlpDwnlTree->mapByTeams($dwnlBonus, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
 
         /* prepare output vars */
         $updated = [];
