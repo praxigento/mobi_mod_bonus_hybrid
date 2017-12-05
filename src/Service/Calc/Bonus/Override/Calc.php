@@ -113,7 +113,7 @@ class Calc
         /* populate compressed data with depth & path values */
         $mapByDepthDesc = $this->hlpDwnlTree->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_DEPTH);
         /* scan all levels starting from the bottom and collect PV by generations */
-        $mapGenerations = $this->hlpDwnlTree->mapByGeneration($mapByDepthDesc,
+        $mapGenerations = $this->mapByGeneration($mapByDepthDesc,
             $mapCmprsById); // [ $custId=>[$genId => $totalPv, ...], ... ]
         $defRankId = $this->repoRank->getIdByCode(Cfg::RANK_DISTRIBUTOR);
         /* scan all customers and calculate bonus values */

@@ -19,19 +19,24 @@ class Calc
     const MAX_UNQ_MONTHS = 6;
     /** @var \Praxigento\Downline\Service\ICustomer */
     private $callDwnlCust;
+    /** @var \Praxigento\Downline\Helper\Tree */
+    private $hlpDwnlTree;
 
     public function __construct(
+        \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\Downline\Service\ICustomer $callDwnlCust
     )
     {
+        $this->hlpDwnlTree = $hlpDwnlTree;
         $this->callDwnlCust = $callDwnlCust;
     }
 
     private function changeParent($custId, $parentId)
     {
         $req = new \Praxigento\Downline\Service\Customer\Request\ChangeParent();
+        $req->setCustomerId($custId);
         $req->setNewParentId($parentId);
-        $resp = $this->callDwnlCust->changeParent($req);
+        $this->callDwnlCust->changeParent($req);
     }
 
     /**
@@ -39,6 +44,8 @@ class Calc
      */
     public function exec($tree)
     {
+        /* collect teams by customer */
+        $mapTeams = $this->hlpDwnlTree->mapByTeams($tree, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
         /** @var EBonDwnl $item */
         foreach ($tree as $item) {
             $unqMonths = $item->getUnqMonths();
@@ -46,7 +53,12 @@ class Calc
                 /* we need to rebuild downline tree to pull up unqualified customer's downline to his parent */
                 $custId = $item->getCustomerRef();
                 $parentId = $item->getParentRef();
-                $this->changeParent($custId, $parentId);
+                if (isset($mapTeams[$custId])) {
+                    $team = $mapTeams[$custId];
+                    foreach ($team as $childId) {
+                        $this->changeParent($childId, $parentId);
+                    }
+                }
             }
         }
     }

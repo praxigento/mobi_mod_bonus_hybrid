@@ -55,7 +55,7 @@ class Process
         $treePlain = $this->repoBonDwnl->getByCalcId($writeOffCalcId);
         $this->rouCalc->exec($treePlain);
         /* mark process as successful */
-        $ctx->set(self::CTX_OUT_SUCCESS, false);
+        $ctx->set(self::CTX_OUT_SUCCESS, true);
         $this->logger->info("'Unqualified Process' calculation is completed.");
     }
 
