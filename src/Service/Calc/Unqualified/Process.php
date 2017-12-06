@@ -60,6 +60,9 @@ class Process
         $periodEnd = $writeOffPeriod->getDstampEnd();
         $treePlain = $this->repoBonDwnl->getByCalcId($writeOffCalcId);
         $this->rouCalc->exec($treePlain, $periodEnd);
+        /* mark this calculation complete */
+        $calcId = $processCalc->getId();
+        $this->repoCalc->markComplete($calcId);
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);
         $this->logger->info("'Unqualified Process' calculation is completed.");
