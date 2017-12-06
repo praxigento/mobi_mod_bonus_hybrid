@@ -6,7 +6,7 @@
 namespace Praxigento\BonusHybrid\Cli\Cmd;
 
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\Core\Service\IProcess as PBase;
+use Praxigento\Core\Service\IProcess as IProcess;
 
 /**
  * Calculate hybrid bonus.
@@ -32,18 +32,12 @@ class Calc
     private $procCompressPhase1;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\IPhase2 */
     private $procCompressPhase2;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Inactive\Collect */
-    private $procInactCollect;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Value\IOv */
     private $procOv;
     /** @var \Praxigento\BonusHybrid\Service\Calc\IPvWriteOff */
     private $procPvWriteOff;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Value\ITv */
     private $procTv;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Unqualified\Collect */
-    private $procUnqualCollect;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Unqualified\Process */
-    private $procUnqualProcess;
     /** @var \Magento\Framework\App\ResourceConnection */
     private $resource;
 
@@ -58,10 +52,7 @@ class Calc
         \Praxigento\BonusHybrid\Service\Calc\Bonus\ITeam $procBonusTeam,
         \Praxigento\BonusHybrid\Service\Calc\Compress\IPhase1 $procCompressPhase1,
         \Praxigento\BonusHybrid\Service\Calc\Compress\IPhase2 $procCompressPhase2,
-        \Praxigento\BonusHybrid\Service\Calc\Inactive\Collect $procInactCollect,
         \Praxigento\BonusHybrid\Service\Calc\IPvWriteOff $procPvWriteOff,
-        \Praxigento\BonusHybrid\Service\Calc\Unqualified\Collect $procUnqualCollect,
-        \Praxigento\BonusHybrid\Service\Calc\Unqualified\Process $procUnqualProcess,
         \Praxigento\BonusHybrid\Service\Calc\Value\IOv $procOv,
         \Praxigento\BonusHybrid\Service\Calc\Value\ITv $procTv
     )
@@ -81,19 +72,16 @@ class Calc
         $this->procBonusTeam = $procBonusTeam;
         $this->procCompressPhase1 = $procCompressPhase1;
         $this->procCompressPhase2 = $procCompressPhase2;
-        $this->procInactCollect = $procInactCollect;
         $this->procOv = $procOv;
         $this->procPvWriteOff = $procPvWriteOff;
         $this->procTv = $procTv;
-        $this->procUnqualCollect = $procUnqualCollect;
-        $this->procUnqualProcess = $procUnqualProcess;
     }
 
     private function calcBonusCourtesy()
     {
         $ctx = new \Praxigento\Core\Data();
         $this->procBonusCourtesy->exec($ctx);
-        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
+        $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
 
@@ -102,7 +90,7 @@ class Calc
         $ctx = new \Praxigento\Core\Data();
         $ctx->set($this->procBonusInfinity::CTX_IN_SCHEME, $schema);
         $this->procBonusInfinity->exec($ctx);
-        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
+        $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
 
@@ -111,7 +99,7 @@ class Calc
         $ctx = new \Praxigento\Core\Data();
         $ctx->set($this->procBonusOvrd::CTX_IN_SCHEME, $schema);
         $this->procBonusOvrd->exec($ctx);
-        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
+        $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
 
@@ -119,7 +107,7 @@ class Calc
     {
         $ctx = new \Praxigento\Core\Data();
         $this->procBonusPers->exec($ctx);
-        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
+        $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
 
@@ -128,7 +116,7 @@ class Calc
         $ctx = new \Praxigento\Core\Data();
         $ctx->set($this->procBonusTeam::CTX_IN_SCHEME, Cfg::SCHEMA_DEFAULT);
         $this->procBonusTeam->exec($ctx);
-        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
+        $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
 
@@ -137,7 +125,7 @@ class Calc
         $ctx = new \Praxigento\Core\Data();
         $ctx->set($this->procBonusTeam::CTX_IN_SCHEME, Cfg::SCHEMA_EU);
         $this->procBonusTeam->exec($ctx);
-        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
+        $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
 
@@ -145,7 +133,7 @@ class Calc
     {
         $ctx = new \Praxigento\Core\Data();
         $this->procCompressPhase1->exec($ctx);
-        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
+        $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
 
@@ -154,15 +142,7 @@ class Calc
         $ctx = new \Praxigento\Core\Data();
         $ctx->set($this->procCompressPhase2::CTX_IN_SCHEME, $schema);
         $this->procCompressPhase2->exec($ctx);
-        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
-        return $result;
-    }
-
-    private function calcInactCollect()
-    {
-        $ctx = new \Praxigento\Core\Data();
-        $this->procInactCollect->exec($ctx);
-        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
+        $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
 
@@ -170,7 +150,7 @@ class Calc
     {
         $ctx = new \Praxigento\Core\Data();
         $this->procPvWriteOff->exec($ctx);
-        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
+        $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
 
@@ -178,23 +158,7 @@ class Calc
     {
         $ctx = new \Praxigento\Core\Data();
         $this->callBonusSignup->exec($ctx);
-        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
-        return $result;
-    }
-
-    private function calcUnqualCollect()
-    {
-        $ctx = new \Praxigento\Core\Data();
-        $this->procUnqualCollect->exec($ctx);
-        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
-        return $result;
-    }
-
-    private function calcUnqualProcess()
-    {
-        $ctx = new \Praxigento\Core\Data();
-        $this->procUnqualProcess->exec($ctx);
-        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
+        $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
 
@@ -202,7 +166,7 @@ class Calc
     {
         $ctx = new \Praxigento\Core\Data();
         $this->procOv->exec($ctx);
-        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
+        $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
 
@@ -210,7 +174,7 @@ class Calc
     {
         $ctx = new \Praxigento\Core\Data();
         $this->procTv->exec($ctx);
-        $result = (bool)$ctx->get(PBase::CTX_OUT_SUCCESS);
+        $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
 
@@ -229,22 +193,10 @@ class Calc
             }
             if ($canContinue) {
                 $output->writeln("<info>'PV Write Off' calculation is completed.<info>");
-                $canContinue = $this->calcInactCollect();
-            }
-            if ($canContinue) {
-                $output->writeln("<info>'Inactive Stats Collection' calculation is completed.<info>");
                 $canContinue = $this->calcCompressPhase1();
             }
             if ($canContinue) {
                 $output->writeln("<info>'Phase I' compression is completed.<info>");
-                $canContinue = $this->calcUnqualCollect();
-            }
-            if ($canContinue) {
-                $output->writeln("<info>'Unqualified Stats Collection' calculation is completed.<info>");
-                $canContinue = $this->calcUnqualProcess();
-            }
-            if ($canContinue) {
-                $output->writeln("<info>'Unqualified Process' calculation is completed.<info>");
                 $canContinue = $this->calcBonusPersonal();
             }
             if ($canContinue) {

@@ -21,6 +21,7 @@
             <argument name="commands" xsi:type="array">
                 <item name="prxgt_bonhyb_cmd_calc" xsi:type="object">\Praxigento\BonusHybrid\Cli\Cmd\Calc</item>
                 <item name="prxgt_bonhyb_cmd_forecast" xsi:type="object">\Praxigento\BonusHybrid\Cli\Cmd\Forecast</item>
+                <item name="prxgt_bonhyb_cmd_unqual" xsi:type="object">\Praxigento\BonusHybrid\Cli\Cmd\Unqual</item>
             </argument>
         </arguments>
     </type>
