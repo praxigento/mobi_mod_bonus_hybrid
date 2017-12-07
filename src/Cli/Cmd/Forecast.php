@@ -12,19 +12,21 @@ class Forecast
     extends \Praxigento\Core\Cli\Cmd\Base
 {
     /** @var \Magento\Framework\DB\Adapter\AdapterInterface */
-    protected $conn;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\ICompress */
-    protected $procCalcCompress;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\IPlain */
-    protected $procCalcPlain;
+    private $conn;
     /** @var \Magento\Framework\App\ResourceConnection */
-    protected $resource;
+    private $resource;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\ICompress */
+    private $servCalcCompress;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\IPlain */
+    private $servCalcPlain;
+    private $servSnap;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Magento\Framework\App\ResourceConnection $resource,
-        \Praxigento\BonusHybrid\Service\Calc\Forecast\IPlain $procCalcPlain,
-        \Praxigento\BonusHybrid\Service\Calc\Forecast\ICompress $procCalcCompress
+        \Praxigento\Downline\Service\ISnap $servSnap,
+        \Praxigento\BonusHybrid\Service\Calc\Forecast\IPlain $servCalcPlain,
+        \Praxigento\BonusHybrid\Service\Calc\Forecast\ICompress $servCalcCompress
     )
     {
         parent::__construct(
@@ -34,8 +36,9 @@ class Forecast
         );
         $this->resource = $resource;
         $this->conn = $this->resource->getConnection();
-        $this->procCalcPlain = $procCalcPlain;
-        $this->procCalcCompress = $procCalcCompress;
+        $this->servSnap = $servSnap;
+        $this->servCalcPlain = $servCalcPlain;
+        $this->servCalcCompress = $servCalcCompress;
     }
 
     protected function execute(
@@ -47,8 +50,11 @@ class Forecast
         $this->conn->beginTransaction();
         try {
             $ctx = new \Praxigento\Core\Data();
-            $this->procCalcPlain->exec($ctx);
-            $this->procCalcCompress->exec($ctx);
+            /* MOBI-1026: re-build downline snaps before calculations */
+            $this->rebuildSnaps();
+            /* ... then perform forecast calculations */
+            $this->servCalcPlain->exec($ctx);
+            $this->servCalcCompress->exec($ctx);
             $this->conn->commit();
         } catch (\Throwable $e) {
             $msg = $e->getMessage();
@@ -57,7 +63,11 @@ class Forecast
             $this->conn->rollBack();
         }
         $output->writeln('<info>Command is completed.<info>');
-
     }
 
+    private function rebuildSnaps()
+    {
+        $req = new \Praxigento\Downline\Service\Snap\Request\Calc();
+        $this->servSnap->calc($req);
+    }
 }
