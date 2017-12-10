@@ -13,11 +13,11 @@ use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Data\Context as AContext;
 class Authorize
 {
 
-    /** @var \Praxigento\Core\App\WebApi\IAuthenticator */
+    /** @var \Praxigento\Core\App\Web\IAuthenticator */
     private $authenticator;
 
     public function __construct(
-        \Praxigento\Core\App\WebApi\IAuthenticator $authenticator
+        \Praxigento\Core\App\Web\IAuthenticator $authenticator
     )
     {
         $this->authenticator = $authenticator;

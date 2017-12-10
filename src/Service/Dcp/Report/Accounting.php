@@ -15,7 +15,7 @@ use Praxigento\Core\Tool\IPeriod as HPeriod;
 use Praxigento\Downline\Repo\Query\Customer\Get as QBCust;
 
 class Accounting
-    extends \Praxigento\Core\App\WebApi\Processor\WithQuery
+    extends \Praxigento\Core\App\Web\Processor\WithQuery
     implements \Praxigento\BonusHybrid\Api\Dcp\Report\AccountingInterface
 {
     /**
@@ -34,7 +34,7 @@ class Accounting
     const VAR_DATE_FROM = 'dateTo'; // date before period start
     const VAR_DATE_OPEN = 'dateOpen'; // the last date for period
     const VAR_DATE_TO = 'dateFrom';
-    /** @var \Praxigento\Core\App\WebApi\IAuthenticator */
+    /** @var \Praxigento\Core\App\Web\IAuthenticator */
     private $authenticator;
     /** @var \Praxigento\Core\Tool\IPeriod */
     private $hlpPeriod;
@@ -47,7 +47,7 @@ class Accounting
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Praxigento\Core\Tool\IPeriod $hlpPeriod,
         \Praxigento\Core\Helper\Config $hlpCfg,
-        \Praxigento\Core\App\WebApi\IAuthenticator $authenticator,
+        \Praxigento\Core\App\Web\IAuthenticator $authenticator,
         \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Accounting\Trans\Builder $qbDcpTrans,
         \Praxigento\BonusHybrid\Service\Dcp\Report\Accounting\Repo\Query\GetBalance\Builder $qbBalance,
         \Praxigento\Downline\Repo\Query\Customer\Get $qbCust

@@ -12,7 +12,7 @@ namespace Praxigento\BonusHybrid\Api\Dcp\Report\Downline;
  *
  */
 class Response
-    extends \Praxigento\Core\App\WebApi\Response
+    extends \Praxigento\Core\App\Web\Response
 {
     /**
      * @return \Praxigento\BonusHybrid\Api\Dcp\Report\Downline\Response\Entry[]
