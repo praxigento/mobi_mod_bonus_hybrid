@@ -12,7 +12,7 @@ namespace Praxigento\BonusHybrid\Api\Dcp\Report\Accounting;
  *
  */
 class Response
-    extends \Praxigento\Core\App\Web\Response
+    extends \Praxigento\Core\App\Api\Web\Response
 {
     /**
      * @return \Praxigento\BonusHybrid\Api\Dcp\Report\Accounting\Response\Data

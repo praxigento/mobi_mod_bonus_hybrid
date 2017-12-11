@@ -13,7 +13,7 @@ namespace Praxigento\BonusHybrid\Api\Dcp\Report\Accounting;
  *
  */
 class Request
-    extends \Praxigento\Core\App\Web\Request\WithCond
+    extends \Praxigento\Core\App\Api\Web\Request\WithCond
 {
 
     /**
