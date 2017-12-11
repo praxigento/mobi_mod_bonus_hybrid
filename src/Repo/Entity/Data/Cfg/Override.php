@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Repo\Entity\Data\Cfg;
 
 
 class Override
-    extends \Praxigento\Core\Data\Entity\Base
+    extends \Praxigento\Core\App\Repo\Data\Entity\Base
 {
     const ATTR_GENERATION = 'generation';
     const ATTR_PERCENT = 'percent';

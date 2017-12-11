@@ -9,6 +9,6 @@ namespace Praxigento\BonusHybrid\Service\Calc\Forecast;
  * Forecast compression calculation.
  */
 interface ICompress
-    extends \Praxigento\Core\Service\IProcess
+    extends \Praxigento\Core\App\Service\IProcess
 {
 }

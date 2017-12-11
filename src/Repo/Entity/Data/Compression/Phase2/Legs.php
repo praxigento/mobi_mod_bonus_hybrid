@@ -11,7 +11,7 @@ namespace Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase2;
  *
  */
 class Legs
-    extends \Praxigento\Core\Data\Entity\Base
+    extends \Praxigento\Core\App\Repo\Data\Entity\Base
 {
     const ATTR_CALC_REF = 'calc_ref';
     const ATTR_CUST_MAX_REF = 'cust_max_ref';

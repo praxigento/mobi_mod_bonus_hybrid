@@ -31,7 +31,7 @@ class Phase2
     private $rouSaveDwnl;
 
     public function __construct(
-        \Praxigento\Core\Fw\Logger\App $logger,
+        \Praxigento\Core\App\Logger\App $logger,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
         \Praxigento\BonusHybrid\Repo\Entity\Downline\Qualification $repoDwnlQual,

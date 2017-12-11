@@ -18,7 +18,7 @@ use Praxigento\Downline\Repo\Entity\Data\Customer as EDwnCust;
  * the same as \Praxigento\BonusHybrid\Service\Dcp\Report\Check\Fun\Proc\MineData\InfinityBonus\Db\Query\GetItems
  */
 class GetItems
-    extends \Praxigento\Core\Repo\Query\Builder
+    extends \Praxigento\Core\App\Repo\Query\Builder
 {
 
     /** Tables aliases for external usage ('camelCase' naming) */

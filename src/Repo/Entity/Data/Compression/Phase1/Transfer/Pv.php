@@ -9,7 +9,7 @@ namespace Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase1\Transfer;
  * PV transfers between customers during phase I compression.
  */
 class Pv
-    extends \Praxigento\Core\Data\Entity\Base
+    extends \Praxigento\Core\App\Repo\Data\Entity\Base
 {
     const ATTR_CALC_REF = 'calc_ref';
     const ATTR_CUST_FROM_REF = 'cust_from_ref';

@@ -34,7 +34,7 @@ class Calc
     private $repoRank;
 
     public function __construct(
-        \Praxigento\Core\Fw\Logger\App $logger,
+        \Praxigento\Core\App\Logger\App $logger,
         \Praxigento\Core\Tool\IFormat $hlpFormat,
         \Praxigento\Downline\Tool\ITree $hlpTree,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,

@@ -6,13 +6,13 @@
 namespace Praxigento\BonusHybrid\Cli\Cmd;
 
 use Praxigento\Core\Data as AData;
-use Praxigento\Core\Service\IProcess as IProcess;
+use Praxigento\Core\App\Service\IProcess as IProcess;
 
 /**
  * Process inactive & unqualified customers.
  */
 class Unqual
-    extends \Praxigento\Core\Cli\Cmd\Base
+    extends \Praxigento\Core\App\Cli\Cmd\Base
 {
     /** @var \Magento\Framework\DB\Adapter\AdapterInterface */
     private $conn;

@@ -13,7 +13,7 @@ use Praxigento\Downline\Repo\Entity\Data\Customer as EDwnCust;
  * Query to get legs data (rank qualification).
  */
 class GetItems
-    extends \Praxigento\Core\Repo\Query\Builder
+    extends \Praxigento\Core\App\Repo\Query\Builder
 {
 
     /** Tables aliases for external usage ('camelCase' naming) */

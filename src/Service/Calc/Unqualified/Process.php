@@ -14,7 +14,7 @@ use Praxigento\BonusHybrid\Config as Cfg;
  * This is internal service (for this module only), so it has no own interface.
  */
 class Process
-    implements \Praxigento\Core\Service\IProcess
+    implements \Praxigento\Core\App\Service\IProcess
 {
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
@@ -28,7 +28,7 @@ class Process
     private $rouCalc;
 
     public function __construct(
-        \Praxigento\Core\Fw\Logger\App $logger,
+        \Praxigento\Core\App\Logger\App $logger,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,

@@ -11,7 +11,7 @@ use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 use Praxigento\Downline\Repo\Entity\Data\Customer as EDwnCust;
 
 class GetItems
-    extends \Praxigento\Core\Repo\Query\Builder
+    extends \Praxigento\Core\App\Repo\Query\Builder
 {
 
     /** Tables aliases for external usage ('camelCase' naming) */

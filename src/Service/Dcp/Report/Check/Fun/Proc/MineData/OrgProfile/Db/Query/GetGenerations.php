@@ -12,7 +12,7 @@ use Praxigento\BonusHybrid\Repo\Entity\Data\Downline\Qualification as EBonQual;
  * Get downline tree data by generations.
  */
 class GetGenerations
-    extends \Praxigento\Core\Repo\Query\Builder
+    extends \Praxigento\Core\App\Repo\Query\Builder
 {
 
     /** Tables aliases for external usage ('camelCase' naming) */
@@ -48,9 +48,9 @@ class GetGenerations
         $tbl = $this->resource->getTableName(EBonDwnl::ENTITY_NAME);
         $as = $asDwnl;
         $expCountSrc = 'COUNT(' . EBonDwnl::ATTR_CUST_REF . ')';
-        $expCount = new \Praxigento\Core\Repo\Query\Expression($expCountSrc);
+        $expCount = new \Praxigento\Core\App\Repo\Query\Expression($expCountSrc);
         $expVolumeSrc = 'SUM(' . EBonDwnl::ATTR_PV . ')';
-        $expVolume = new \Praxigento\Core\Repo\Query\Expression($expVolumeSrc);
+        $expVolume = new \Praxigento\Core\App\Repo\Query\Expression($expVolumeSrc);
         $cols = [
             self::A_DEPTH => EBonDwnl::ATTR_DEPTH,
             self::A_COUNT => $expCount,
@@ -62,7 +62,7 @@ class GetGenerations
         $tbl = $this->resource->getTableName(EBonQual::ENTITY_NAME);
         $as = $asQual;
         $expMgrSrc = 'COUNT(' . self::AS_BON_DWNL_QUAL . '.' . EBonQual::ATTR_RANK_REF . ')';
-        $expMgr = new \Praxigento\Core\Repo\Query\Expression($expMgrSrc);
+        $expMgr = new \Praxigento\Core\App\Repo\Query\Expression($expMgrSrc);
         $cols = [
             self::A_QUAL => $expMgr
         ];

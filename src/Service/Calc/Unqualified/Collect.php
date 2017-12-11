@@ -15,7 +15,7 @@ use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
  * This is internal service (for this module only), so it has no own interface.
  */
 class Collect
-    implements \Praxigento\Core\Service\IProcess
+    implements \Praxigento\Core\App\Service\IProcess
 {
     /** @var \Praxigento\Downline\Helper\Tree */
     private $hlpTree;
@@ -29,7 +29,7 @@ class Collect
     private $repoCalc;
 
     public function __construct(
-        \Praxigento\Core\Fw\Logger\App $logger,
+        \Praxigento\Core\App\Logger\App $logger,
         \Praxigento\Downline\Helper\Tree $hlpTree,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,

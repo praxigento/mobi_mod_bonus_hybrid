@@ -11,7 +11,7 @@ use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
  * Process to calculate Phase1 compression.
  */
 class Phase1
-    implements \Praxigento\Core\Service\IProcess
+    implements \Praxigento\Core\App\Service\IProcess
 {
     /** Calculation ID to reference in compressed PV transfers  */
     const IN_CALC_ID = 'calcId';

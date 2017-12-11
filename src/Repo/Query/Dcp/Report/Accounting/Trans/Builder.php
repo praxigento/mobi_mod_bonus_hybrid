@@ -17,7 +17,7 @@ use Praxigento\Downline\Repo\Entity\Data\Customer as EDwnlCust;
  * Build query to get transactions data for DCP Accounting Report.
  */
 class Builder
-    extends \Praxigento\Core\Repo\Query\Builder
+    extends \Praxigento\Core\App\Repo\Query\Builder
 {
     /** Tables aliases for external usage ('camelCase' naming) */
     const AS_ACC = 'acc';

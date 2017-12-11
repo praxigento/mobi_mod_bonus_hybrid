@@ -13,7 +13,7 @@ use Praxigento\BonusBase\Repo\Entity\Data\Log\Opers as ELogOper;
  * Build query to get amount of the one transaction bonus (personal, for example).
  */
 class GetAmount
-    extends \Praxigento\Core\Repo\Query\Builder
+    extends \Praxigento\Core\App\Repo\Query\Builder
 {
     /** Tables aliases for external usage ('camelCase' naming) */
     const AS_ACC = 'acc';

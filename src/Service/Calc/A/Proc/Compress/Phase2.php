@@ -18,7 +18,7 @@ use Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Fun\Rou\ComposeLe
  * Process to calculate Phase2 compression.
  */
 class Phase2
-    implements \Praxigento\Core\Service\IProcess
+    implements \Praxigento\Core\App\Service\IProcess
 {
     /** int */
     const IN_CALC_ID_PHASE2 = 'calcIdPhase2';

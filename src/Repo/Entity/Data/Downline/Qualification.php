@@ -9,7 +9,7 @@ namespace Praxigento\BonusHybrid\Repo\Entity\Data\Downline;
  * Customer qualification data for downline trees.
  */
 class Qualification
-    extends \Praxigento\Core\Data\Entity\Base
+    extends \Praxigento\Core\App\Repo\Data\Entity\Base
 {
     /* names of the entity attributes (table columns) */
     const ATTR_RANK_REF = 'rank_ref';

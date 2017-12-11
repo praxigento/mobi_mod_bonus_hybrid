@@ -36,7 +36,7 @@ class Phase1
     private $repoTransPv;
 
     public function __construct(
-        \Praxigento\Core\Fw\Logger\App $logger,
+        \Praxigento\Core\App\Logger\App $logger,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\BonusBase\Repo\Entity\Rank $repoRank,

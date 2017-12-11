@@ -6,13 +6,13 @@
 namespace Praxigento\BonusHybrid\Cli\Cmd;
 
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\Core\Service\IProcess as IProcess;
+use Praxigento\Core\App\Service\IProcess as IProcess;
 
 /**
  * Calculate hybrid bonus.
  */
 class Calc
-    extends \Praxigento\Core\Cli\Cmd\Base
+    extends \Praxigento\Core\App\Cli\Cmd\Base
 {
     /** @var  \Praxigento\BonusHybrid\Service\Calc\ISignupDebit */
     private $callBonusSignup;

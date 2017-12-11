@@ -6,7 +6,7 @@
 namespace Praxigento\BonusHybrid\Service\Calc;
 
 interface IPvWriteOff
-    extends \Praxigento\Core\Service\IProcess
+    extends \Praxigento\Core\App\Service\IProcess
 {
 
 }

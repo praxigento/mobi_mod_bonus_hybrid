@@ -13,7 +13,7 @@ use Praxigento\Pv\Repo\Entity\Data\Sale as Pv;
  * Build query to get data to process 'Sign Up Volume Debit' bonus (signed customers with first order more then 100 PV).
  */
 class Builder
-    extends \Praxigento\Core\Repo\Query\Builder
+    extends \Praxigento\Core\App\Repo\Query\Builder
 {
     /**
      * Tables aliases.

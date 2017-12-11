@@ -15,7 +15,7 @@ use Praxigento\Downline\Repo\Entity\Data\Customer as EDwnlCust;
  * Build query to get DCP Downline Report data.
  */
 class Builder
-    extends \Praxigento\Core\Repo\Query\Def\Builder
+    extends \Praxigento\Core\App\Repo\Query\Def\Builder
 {
     /** Tables aliases */
     const AS_BONUS_DWNL = 'bdwnl';

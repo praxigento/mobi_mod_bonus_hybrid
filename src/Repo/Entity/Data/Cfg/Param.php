@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Repo\Entity\Data\Cfg;
 
 
 class Param
-    extends \Praxigento\Core\Data\Entity\Base
+    extends \Praxigento\Core\App\Repo\Data\Entity\Base
 {
     const ATTR_INFINITY = 'infinity';
     const ATTR_LEG_MAX = 'leg_max';

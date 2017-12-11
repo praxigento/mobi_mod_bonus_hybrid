@@ -16,7 +16,7 @@ use Praxigento\BonusHybrid\Repo\Entity\Data\Downline\Inactive as DwnlInact;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Registry\SignupDebit as SignupDebit;
 
 class InstallSchema
-    extends \Praxigento\Core\Setup\Schema\Base
+    extends \Praxigento\Core\App\Setup\Schema\Base
 {
     protected function _setup()
     {

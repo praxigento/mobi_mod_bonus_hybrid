@@ -8,7 +8,7 @@ namespace Praxigento\BonusHybrid\Repo\Entity\Data\Registry;
  * User: Alex Gusev <alex@flancer64.com>
  */
 class SignupDebit
-    extends \Praxigento\Core\Data\Entity\Base
+    extends \Praxigento\Core\App\Repo\Data\Entity\Base
 {
     const ATTR_CALC_REF = 'calc_ref';
     /*

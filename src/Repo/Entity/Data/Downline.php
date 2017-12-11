@@ -10,7 +10,7 @@ namespace Praxigento\BonusHybrid\Repo\Entity\Data;
  * Separate trees for the appropriate calculations.
  */
 class Downline
-    extends \Praxigento\Core\Data\Entity\Base
+    extends \Praxigento\Core\App\Repo\Data\Entity\Base
 {
     /* names of the entity attributes (table columns) */
     const ATTR_CALC_REF = 'calc_ref';

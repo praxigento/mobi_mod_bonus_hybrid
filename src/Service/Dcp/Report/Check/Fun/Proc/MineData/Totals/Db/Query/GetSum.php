@@ -13,7 +13,7 @@ use Praxigento\BonusBase\Repo\Entity\Data\Log\Opers as ELogOper;
  * Build query to get summary for amounts of many transactional bonus (team, for example).
  */
 class GetSum
-    extends \Praxigento\Core\Repo\Query\Builder
+    extends \Praxigento\Core\App\Repo\Query\Builder
 {
     /** Tables aliases for external usage ('camelCase' naming) */
     const AS_ACC = 'acc';
@@ -51,7 +51,7 @@ class GetSum
         $tbl = $this->resource->getTableName(ETrans::ENTITY_NAME);
         $as = $asTrans;
         $source = 'SUM(' . ETrans::ATTR_VALUE . ')';
-        $exp = new \Praxigento\Core\Repo\Query\Expression($source);
+        $exp = new \Praxigento\Core\App\Repo\Query\Expression($source);
         $cols = [
             self::A_AMOUNT => $exp
         ];

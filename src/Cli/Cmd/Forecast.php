@@ -9,7 +9,7 @@ namespace Praxigento\BonusHybrid\Cli\Cmd;
  * Daily calculation to forecast results on final bonus calc.
  */
 class Forecast
-    extends \Praxigento\Core\Cli\Cmd\Base
+    extends \Praxigento\Core\App\Cli\Cmd\Base
 {
     /** @var \Magento\Framework\DB\Adapter\AdapterInterface */
     private $conn;

@@ -9,7 +9,7 @@ namespace Praxigento\BonusHybrid\Repo\Entity\Data\Downline;
  * Customers inactivity for downline trees.
  */
 class Inactive
-    extends \Praxigento\Core\Data\Entity\Base
+    extends \Praxigento\Core\App\Repo\Data\Entity\Base
 {
     /* names of the entity attributes (table columns) */
     const ATTR_INACT_MONTHS = 'inact_months';

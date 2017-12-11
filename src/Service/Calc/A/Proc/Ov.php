@@ -12,7 +12,7 @@ use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
  * Calculate OV on the compressed downline tree.
  */
 class Ov
-    implements \Praxigento\Core\Service\IProcess
+    implements \Praxigento\Core\App\Service\IProcess
 {
     /** \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] downline with PV & TV */
     const IN_DWNL = 'downline';
@@ -29,7 +29,7 @@ class Ov
     private $logger;
 
     public function __construct(
-        \Praxigento\Core\Fw\Logger\App $logger,
+        \Praxigento\Core\App\Logger\App $logger,
         \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree
     )

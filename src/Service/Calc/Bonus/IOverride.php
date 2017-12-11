@@ -9,7 +9,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Bonus;
  * Calculate Override Bonus.
  */
 interface IOverride
-    extends \Praxigento\Core\Service\IProcess
+    extends \Praxigento\Core\App\Service\IProcess
 {
     /** Calculation scheme (DEFAULT or EU) */
     const CTX_IN_SCHEME = 'in.scheme';

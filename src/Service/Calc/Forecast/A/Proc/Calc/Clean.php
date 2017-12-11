@@ -12,7 +12,7 @@ use Praxigento\BonusBase\Repo\Entity\Data\Period as EPeriod;
  * Local process to clean calculation data for forecast calculations (plain & compressed).
  */
 class Clean
-    implements \Praxigento\Core\Service\IProcess
+    implements \Praxigento\Core\App\Service\IProcess
 {
     const IN_CALC_TYPE_CODE = 'calcTypeCode';
 

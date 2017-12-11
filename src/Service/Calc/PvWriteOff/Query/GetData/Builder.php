@@ -33,7 +33,7 @@ use Praxigento\BonusHybrid\Service\Calc\PvWriteOff\Data\Trans as DTrans;
  * OR pbblo.calc_id <> :calcId)
  */
 class Builder
-    extends \Praxigento\Core\Repo\Query\Builder
+    extends \Praxigento\Core\App\Repo\Query\Builder
 {
     /** Tables aliases for external usage ('camelCase' naming) */
     const AS_ACC = 'paa';

@@ -15,7 +15,7 @@ use Praxigento\Downline\Repo\Query\Snap\OnDate\Builder as QBBase;
  * to get customer data for the given date.
  */
 class Builder
-    extends \Praxigento\Core\Repo\Query\Builder
+    extends \Praxigento\Core\App\Repo\Query\Builder
 {
     /** Tables aliases for external usage ('camelCase' naming) */
     const AS_DWNL_CUST = 'dwnlCust';

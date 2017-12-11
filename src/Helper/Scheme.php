@@ -14,7 +14,7 @@ use Praxigento\Downline\Repo\Entity\Data\Customer;
  * TODO: move this tool to Repo section or extract DB related methods to standalone class.
  */
 class Scheme
-    extends \Praxigento\Core\Repo\Def\Db
+    extends \Praxigento\Core\App\Repo\Def\Db
     implements \Praxigento\BonusHybrid\Helper\IScheme
 {
     const A_RANK_ID = 'RankId';
@@ -41,7 +41,7 @@ class Scheme
      * @var array [$custId=>[$schema=>[A_RANK_ID=>$rankId, A_CFG_PARAMS=>[...]], ...], ...]
      */
     private $_cachedForcedRanks = null;
-    /** @var \Praxigento\Core\Repo\IGeneric */
+    /** @var \Praxigento\Core\App\Repo\IGeneric */
     protected $_repoBasic;
     /**
      * @var array of customers with forced qualification from 'Sign Up Volume Debit' (MOBI-635)
@@ -57,7 +57,7 @@ class Scheme
      */
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resource,
-        \Praxigento\Core\Repo\IGeneric $repoGeneric,
+        \Praxigento\Core\App\Repo\IGeneric $repoGeneric,
         \Praxigento\BonusHybrid\Repo\Entity\Registry\SignupDebit $repoRegSignupDebit,
         \Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetLastCalcIdForPeriod $queryGetLastSignupCalcId
     ) {

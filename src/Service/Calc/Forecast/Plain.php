@@ -36,7 +36,7 @@ class Plain
     private $subGetDownline;
 
     public function __construct(
-        \Praxigento\Core\Fw\Logger\App $logger,
+        \Praxigento\Core\App\Logger\App $logger,
         \Praxigento\Core\Tool\IPeriod $hlpPeriod,
         RAccount $repoAcc,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,

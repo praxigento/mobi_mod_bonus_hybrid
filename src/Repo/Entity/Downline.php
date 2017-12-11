@@ -8,11 +8,11 @@ namespace Praxigento\BonusHybrid\Repo\Entity;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as Entity;
 
 class Downline
-    extends \Praxigento\Core\Repo\Def\Entity
+    extends \Praxigento\Core\App\Repo\Def\Entity
 {
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resource,
-        \Praxigento\Core\Repo\IGeneric $repoGeneric
+        \Praxigento\Core\App\Repo\IGeneric $repoGeneric
     )
     {
         parent::__construct(

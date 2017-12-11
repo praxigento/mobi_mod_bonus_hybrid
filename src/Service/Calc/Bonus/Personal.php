@@ -44,7 +44,7 @@ class Personal
     private $repoLogOper;
 
     public function __construct(
-        \Praxigento\Core\Fw\Logger\App $logger,
+        \Praxigento\Core\App\Logger\App $logger,
         \Praxigento\Core\Tool\IPeriod $hlpPeriod,
         \Praxigento\BonusBase\Helper\Calc $hlpCalc,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,

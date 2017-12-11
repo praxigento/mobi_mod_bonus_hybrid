@@ -13,7 +13,7 @@ use Praxigento\Downline\Repo\Entity\Data\Customer as ECustDwnl;
  * Update Phase 1 downline with ranks from Phase2 trees (DEF & EU). This is in-memory update (not in-DB).
  */
 class UpdateDwnl
-    implements \Praxigento\Core\Service\IProcess
+    implements \Praxigento\Core\App\Service\IProcess
 {
     /**  \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] */
     const IN_DWNL_PHASE1 = 'dwnlPhase1';

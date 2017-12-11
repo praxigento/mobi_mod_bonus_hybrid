@@ -9,7 +9,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Value;
  * Process to calculate OV (Organization Volumes) values.
  */
 interface IOv
-    extends \Praxigento\Core\Service\IProcess
+    extends \Praxigento\Core\App\Service\IProcess
 {
 
 }

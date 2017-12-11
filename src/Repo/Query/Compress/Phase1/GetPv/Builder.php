@@ -15,7 +15,7 @@ use Praxigento\BonusHybrid\Config as Cfg;
  * Build query to get PV data for phase 1 compression.
  */
 class Builder
-    extends \Praxigento\Core\Repo\Query\Builder
+    extends \Praxigento\Core\App\Repo\Query\Builder
 {
     /**
      * Tables aliases.
