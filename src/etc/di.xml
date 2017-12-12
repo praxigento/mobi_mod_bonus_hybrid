@@ -6,12 +6,12 @@
     <!-- *** -->
     <!-- API -->
     <!-- *** -->
-    <preference for="\Praxigento\BonusHybrid\Api\Dcp\Report\AccountingInterface"
-                type="\Praxigento\BonusHybrid\Service\Dcp\Report\Accounting"/>
-    <preference for="\Praxigento\BonusHybrid\Api\Dcp\Report\CheckInterface"
-                type="\Praxigento\BonusHybrid\Service\Dcp\Report\Check"/>
-    <preference for="\Praxigento\BonusHybrid\Api\Dcp\Report\DownlineInterface"
-                type="\Praxigento\BonusHybrid\Service\Dcp\Report\Downline"/>
+    <preference for="\Praxigento\BonusHybrid\Api\Web\Dcp\Report\AccountingInterface"
+                type="\Praxigento\BonusHybrid\Web\Dcp\Report\Accounting"/>
+    <preference for="\Praxigento\BonusHybrid\Api\Web\Dcp\Report\CheckInterface"
+                type="\Praxigento\BonusHybrid\Web\Dcp\Report\Check"/>
+    <preference for="\Praxigento\BonusHybrid\Api\Web\Dcp\Report\DownlineInterface"
+                type="\Praxigento\BonusHybrid\Web\Dcp\Report\Downline"/>
 
     <!-- ********************** -->
     <!-- Console (CLI Commands) -->

@@ -6,7 +6,7 @@
 namespace Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline;
 
 use Praxigento\BonusBase\Repo\Entity\Data\Rank as ERank;
-use Praxigento\BonusHybrid\Api\Dcp\Report\Downline\Response\Entry as DReportEntry;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Downline\Response\Entry as DReportEntry;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 use Praxigento\Downline\Repo\Entity\Data\Customer as EDwnlCust;

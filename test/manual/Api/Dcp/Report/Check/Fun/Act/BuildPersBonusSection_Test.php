@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc;
 
-use Praxigento\BonusHybrid\Api\Dcp\Report\Check\Fun\Act\BuildPersBonusSection as Act;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Fun\Act\BuildPersBonusSection as Act;
 
 include_once(__DIR__ . '/../../../../../../phpunit_bootstrap.php');
 
