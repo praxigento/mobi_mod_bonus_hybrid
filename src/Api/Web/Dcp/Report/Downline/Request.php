@@ -29,5 +29,4 @@ class Request
         parent::setData($data);
     }
 
-
 }

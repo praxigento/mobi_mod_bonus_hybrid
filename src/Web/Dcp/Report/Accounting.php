@@ -148,10 +148,12 @@ class Accounting
         $vars = $ctx->get(self::CTX_VARS);
         /** @var \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Accounting\Request $req */
         $req = $ctx->get(self::CTX_REQ);
+        $reqData = $req->getData();
+        $reqDev = $req->getDev();
 
         /* extract HTTP request parameters */
-        $period = $req->getPeriod();
-        $custId = $req->getCustomerId();
+        $period = $reqData->getPeriod();
+        $custId = $reqDev->getCustId();
 
         /**
          * Define period.

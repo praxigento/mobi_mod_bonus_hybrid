@@ -15,46 +15,18 @@ namespace Praxigento\BonusHybrid\Api\Web\Dcp\Report\Accounting;
 class Request
     extends \Praxigento\Core\App\Api\Web\RequestCond
 {
-
     /**
-     * Reporting period.
-     *
-     * @return string|null 'YYYYMM'
+     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Accounting\Request\Data
      */
-    public function getPeriod()
-    {
-        $result = parent::getPeriod();
-        return $result;
+    public function getData() {
+        return parent::getData();
     }
 
     /**
-     * Customer ID for whom to get report.
-     *
-     * @return int|null
+     * @param \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Accounting\Request\Data $data
      */
-    public function getCustomerId()
-    {
-        $result = parent::getCustomerId();
-        return $result;
+    public function setData($data) {
+        parent::setData($data);
     }
 
-    /**
-     * Reporting period.
-     *
-     * @param string $data 'YYYYMM'
-     */
-    public function setPeriod($data)
-    {
-        parent::setPeriod($data);
-    }
-
-    /**
-     * Customer ID for whom to get report.
-     *
-     * @param int $data
-     */
-    public function setCustomerId($data)
-    {
-        parent::setCustomerId($data);
-    }
 }
