@@ -45,8 +45,7 @@ class Downline
         \Praxigento\Downline\Repo\Entity\Snap $repoSnap,
         \Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder $qbLastCalc,
         \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Builder $qbDownline
-    )
-    {
+    ) {
         /* don't pass query builder to the parent - we have 4 builders in the operation, not one */
         parent::__construct($manObj, null, $hlpCfg);
         $this->authenticator = $authenticator;
@@ -56,19 +55,16 @@ class Downline
         $this->qbLastCalc = $qbLastCalc;
     }
 
-    protected function authorize(\Praxigento\Core\Data $ctx)
-    {
+    protected function authorize(\Praxigento\Core\Data $ctx) {
         /* do nothing - in Production Mode current customer's ID is used as root customer ID */
     }
 
-    protected function createQuerySelect(\Praxigento\Core\Data $ctx)
-    {
+    protected function createQuerySelect(\Praxigento\Core\Data $ctx) {
         $query = $this->qbDownline->build();
         $ctx->set(self::CTX_QUERY, $query);
     }
 
-    public function exec(\Praxigento\BonusHybrid\Api\Web\Dcp\Report\Downline\Request $request)
-    {
+    public function exec(\Praxigento\BonusHybrid\Api\Web\Dcp\Report\Downline\Request $request) {
         $result = parent::process($request);
         return $result;
     }
@@ -80,8 +76,7 @@ class Downline
      * @param $dateEnd
      * @return mixed
      */
-    private function getCalcId($calcTypeCode, $dateEnd)
-    {
+    private function getCalcId($calcTypeCode, $dateEnd) {
         $query = $this->qbLastCalc->build();
         $bind = [
             QBLastCalc::BND_CODE => $calcTypeCode,
@@ -96,8 +91,30 @@ class Downline
         return $result;
     }
 
-    protected function populateQuery(\Praxigento\Core\Data $ctx)
-    {
+    protected function performQuery(\Praxigento\Core\Data $ctx) {
+        parent::performQuery($ctx);
+        /* MOBI-1033 */
+        $vars = $ctx->get(self::CTX_VARS);
+        $raw = $ctx->get(self::CTX_RESULT);
+        $rootId = $vars->get(self::VAR_CUST_ID);
+        $rootPath = $vars->get(self::VAR_CUST_PATH);
+        $result = [];
+        foreach ($raw as $item) {
+            $custId = $item[QBDownline::A_CUSTOMER_REF];
+            $path = $item[QBDownline::A_PATH];
+            if ($custId == $rootId) {
+                /* set parent ID for the root */
+                $item[QBDownline::A_PARENT_REF] = $custId;
+            }
+            /* shrink path */
+            $shrinked = str_replace($rootPath, '', $path);
+            $item[QBDownline::A_PATH] = $shrinked;
+            $result[] = $item;
+        }
+        $ctx->set(self::CTX_RESULT, $result);
+    }
+
+    protected function populateQuery(\Praxigento\Core\Data $ctx) {
         /* get working vars from context */
         /** @var \Praxigento\Core\Data $bind */
         $bind = $ctx->get(self::CTX_BIND);
@@ -116,19 +133,20 @@ class Downline
         $bind->set(QBDownline::BND_CUST_ID, $rootCustId);
     }
 
-
-    protected function prepareQueryParameters(\Praxigento\Core\Data $ctx)
-    {
+    protected function prepareQueryParameters(\Praxigento\Core\Data $ctx) {
         /* get working vars from context */
         /** @var \Praxigento\Core\Data $vars */
         $vars = $ctx->get(self::CTX_VARS);
         /** @var \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Downline\Request $req */
         $req = $ctx->get(self::CTX_REQ);
-
+        /** @var \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Downline\Request\Data $req */
+        $reqData = $req->getData();
+        /** @var \Praxigento\Core\App\Api\Web\Request\Dev $reqDev */
+        $reqDev = $req->getDev();
         /* extract HTTP request parameters */
-        $period = $req->getPeriod();
-        $rootCustId = $req->getRootCustId();
-        $reqType = $req->getType();
+        $period = $reqData->getPeriod();
+        $reqType = $reqData->getType();
+        $rootCustId = $reqDev->getCustId();
 
         /**
          * Define period.
