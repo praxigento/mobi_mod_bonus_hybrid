@@ -76,7 +76,8 @@ class Accounting
     }
 
     public function exec(ARequest $request): AResponse {
-        $result = parent::process($request);
+        $data = parent::process($request);
+        $result = new AResponse($data);
         return $result;
     }
 

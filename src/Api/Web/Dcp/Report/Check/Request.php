@@ -13,7 +13,7 @@ namespace Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check;
  *
  */
 class Request
-    extends \Praxigento\Core\App\Api\Web\RequestCond
+    extends \Praxigento\Core\App\Api\Web\Request
 {
     /**
      * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Request\Data
