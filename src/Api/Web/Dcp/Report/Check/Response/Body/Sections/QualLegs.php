@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections;
+namespace Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections;
 
 
 class QualLegs
@@ -13,7 +13,7 @@ class QualLegs
     const A_QUALIFICATION = 'qualification';
 
     /**
-     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections\QualLegs\Item[]
+     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\QualLegs\Item[]
      */
     public function getItems()
     {
@@ -22,7 +22,7 @@ class QualLegs
     }
 
     /**
-     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections\QualLegs\Qualification
+     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\QualLegs\Qualification
      */
     public function getQualification()
     {

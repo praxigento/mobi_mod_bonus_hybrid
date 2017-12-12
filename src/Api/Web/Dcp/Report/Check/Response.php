@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data;
+namespace Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check;
 
 /**
  * Response to get data for DCP Check report.
@@ -15,7 +15,7 @@ class Response
     extends \Praxigento\Core\App\Api\Web\Response
 {
     /**
-     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body
+     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body
      */
     public function getData()
     {
@@ -24,7 +24,7 @@ class Response
     }
 
     /**
-     * @param \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body $data
+     * @param \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body $data
      */
     public function setData($data)
     {

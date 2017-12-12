@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections;
+namespace Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections;
 
 
 class TeamBonus
@@ -14,7 +14,7 @@ class TeamBonus
     const A_TOTAL_VOLUME = 'total_volume';
 
     /**
-     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections\TeamBonus\Item[]
+     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\TeamBonus\Item[]
      */
     public function getItems()
     {

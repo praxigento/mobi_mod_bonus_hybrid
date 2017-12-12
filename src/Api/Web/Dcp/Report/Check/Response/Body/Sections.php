@@ -3,15 +3,15 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body;
+namespace Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body;
 
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections\InfBonus as DInf;
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections\OrgProfile as DOrgProfile;
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections\OverBonus as DOver;
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections\PersonalBonus as DPersonal;
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections\QualLegs as DQualLegs;
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections\TeamBonus as DTeam;
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections\Totals as DTotals;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\InfBonus as DInf;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\OrgProfile as DOrgProfile;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\OverBonus as DOver;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\PersonalBonus as DPersonal;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\QualLegs as DQualLegs;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\TeamBonus as DTeam;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\Totals as DTotals;
 
 class Sections
     extends \Praxigento\Core\Data
@@ -25,7 +25,7 @@ class Sections
     const A_TOTALS = 'totals';
 
     /**
-     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections\InfBonus
+     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\InfBonus
      */
     public function getInfBonus()
     {
@@ -34,7 +34,7 @@ class Sections
     }
 
     /**
-     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections\OrgProfile
+     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\OrgProfile
      */
     public function getOrgProfile()
     {
@@ -43,7 +43,7 @@ class Sections
     }
 
     /**
-     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections\OverBonus
+     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\OverBonus
      */
     public function getOverBonus()
     {
@@ -52,7 +52,7 @@ class Sections
     }
 
     /**
-     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections\PersonalBonus
+     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\PersonalBonus
      */
     public function getPersonalBonus()
     {
@@ -61,7 +61,7 @@ class Sections
     }
 
     /**
-     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections\QualLegs
+     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\QualLegs
      */
     public function getQualLegs()
     {
@@ -70,7 +70,7 @@ class Sections
     }
 
     /**
-     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections\TeamBonus
+     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\TeamBonus
      */
     public function getTeamBonus()
     {
@@ -79,7 +79,7 @@ class Sections
     }
 
     /**
-     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections\Totals
+     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\Totals
      */
     public function getTotals()
     {

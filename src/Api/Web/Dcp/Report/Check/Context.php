@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data;
+namespace Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check;
 
 /**
  * Context for the process.
@@ -21,9 +21,9 @@ class Context
     const STATE = 'state';
     const WEB_REQUEST = 'webRequest';
     const WEB_RESPONSE = 'webResponse';
-    /** @var  \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Customer */
+    /** @var  \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Customer */
     public $respCustomer;
-    /** @var  \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections */
+    /** @var  \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections */
     public $respSections;
 
     /** @var  string process state: [active|failed|success] */
@@ -42,22 +42,22 @@ class Context
     }
 
     /**
-     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Customer
+     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Customer
      */
-    public function getRespCustomer(): \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Customer
+    public function getRespCustomer(): \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Customer
     {
         $result = $this->get(self::RESP_CUSTOMER);
-        assert($result instanceof \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Customer);
+        assert($result instanceof \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Customer);
         return $result;
     }
 
     /**
-     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections
+     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections
      */
-    public function getRespSections(): \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections
+    public function getRespSections(): \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections
     {
         $result = $this->get(self::RESP_SECTIONS);
-        assert($result instanceof \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections);
+        assert($result instanceof \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections);
         return $result;
     }
 
@@ -70,13 +70,13 @@ class Context
         return $result;
     }
 
-    public function getWebRequest(): \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Request
+    public function getWebRequest(): \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Request
     {
         $result = $this->get(self::WEB_REQUEST);
         return $result;
     }
 
-    public function getWebResponse(): \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response
+    public function getWebResponse(): \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response
     {
         $result = $this->get(self::WEB_RESPONSE);
         return $result;
@@ -97,12 +97,12 @@ class Context
         $this->set(self::STATE, $data);
     }
 
-    public function setWebRequest(\Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Request $data)
+    public function setWebRequest(\Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Request $data)
     {
         $this->set(self::WEB_REQUEST, $data);
     }
 
-    public function setWebResponse(\Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response $data)
+    public function setWebResponse(\Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response $data)
     {
         $this->set(self::WEB_RESPONSE, $data);
     }

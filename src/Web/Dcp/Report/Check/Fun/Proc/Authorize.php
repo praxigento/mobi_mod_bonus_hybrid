@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc;
 
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Context as AContext;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Context as AContext;
 
 /**
  * Process step to authorize process further completion.

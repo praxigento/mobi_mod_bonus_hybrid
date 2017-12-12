@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response;
+namespace Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response;
 
 /**
  * This is Magento API data object, so we need to declare get/set methods explicitly.
@@ -16,9 +16,9 @@ class Body
     const A_SECTIONS = 'sections';
 
     /**
-     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Customer
+     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Customer
      */
-    public function getCustomer(): \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Customer
+    public function getCustomer(): \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Customer
     {
         $result = parent::get(self::A_CUSTOMER);
         return $result;
@@ -34,16 +34,16 @@ class Body
     }
 
     /**
-     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections
+     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections
      */
-    public function getSections(): \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections
+    public function getSections(): \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections
     {
         $result = parent::get(self::A_SECTIONS);
         return $result;
     }
 
     /**
-     * @param \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Customer $data
+     * @param \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Customer $data
      */
     public function setCustomer($data)
     {
@@ -56,7 +56,7 @@ class Body
     }
 
     /**
-     * @param  \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections $data
+     * @param  \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections $data
      */
     public function setSections($data)
     {

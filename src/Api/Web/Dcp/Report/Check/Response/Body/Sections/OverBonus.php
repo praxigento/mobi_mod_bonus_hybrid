@@ -3,16 +3,16 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections;
+namespace Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections;
 
 
-class InfBonus
+class OverBonus
     extends \Praxigento\Core\Data
 {
     const A_ITEMS = 'items';
 
     /**
-     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections\InfBonus\Item[]
+     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\OverBonus\Item[]
      */
     public function getItems()
     {

@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData;
 
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections\Totals as DTotals;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\Totals as DTotals;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\GetCalcs as RouGetCalcs;
 use Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\IsSchemeEu as RouIsSchemeEu;

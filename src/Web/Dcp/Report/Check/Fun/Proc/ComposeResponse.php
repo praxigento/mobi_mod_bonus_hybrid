@@ -5,8 +5,8 @@
 
 namespace Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc;
 
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Context as AContext;
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body as DBody;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Context as AContext;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body as DBody;
 
 /**
  * Process step to compose mined data into API response.

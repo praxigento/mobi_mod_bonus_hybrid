@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections;
+namespace Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections;
 
 
 class PersonalBonus
@@ -24,7 +24,7 @@ class PersonalBonus
     }
 
     /**
-     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections\PersonalBonus\Item[]
+     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\PersonalBonus\Item[]
      */
     public function getItems()
     {

@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc;
 
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Context as AContext;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Context as AContext;
 
 /**
  * Process step to parse & validate input data then put validated values back into context.
@@ -19,10 +19,12 @@ class ParseRequest
 
             /* get step's local data from the context */
             $request = $ctx->getWebRequest();
+            $reqData = $request->getData();
+            $reqDev = $request->getDev();
 
             /* step's activity */
-            $customerId = (int)$request->getCustomerId();
-            $period = (string)$request->getPeriod();
+            $period = (string)$reqData->getPeriod();
+            $customerId = (int)$reqDev->getCustId();
 
             /* put step's result data back into the context */
             $ctx->setCustomerId($customerId);

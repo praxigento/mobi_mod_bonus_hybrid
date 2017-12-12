@@ -5,9 +5,9 @@
 
 namespace Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData;
 
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Customer as DCustomer;
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections\InfBonus as DInfBonus;
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections\InfBonus\Item as DItem;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Customer as DCustomer;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\InfBonus as DInfBonus;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\InfBonus\Item as DItem;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\GetCalcs as RouGetCalcs;
 use Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\IsSchemeEu as RouIsSchemeEu;

@@ -5,6 +5,8 @@
 
 namespace Praxigento\BonusHybrid\Web\Dcp\Report;
 
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Accounting\Request as ARequest;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Accounting\Response as AResponse;
 use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Accounting\Response\Data as DRespData;
 use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Accounting\Response\Data\Balance as DRespBalance;
 use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Accounting\Response\Data\Customer as DRespCust;
@@ -51,8 +53,7 @@ class Accounting
         \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Accounting\Trans\Builder $qbDcpTrans,
         \Praxigento\BonusHybrid\Web\Dcp\Report\Accounting\Repo\Query\GetBalance\Builder $qbBalance,
         \Praxigento\Downline\Repo\Query\Customer\Get $qbCust
-    )
-    {
+    ) {
         parent::__construct($manObj, $qbDcpTrans, $hlpCfg);
         $this->authenticator = $authenticator;
         $this->hlpPeriod = $hlpPeriod;
@@ -60,13 +61,11 @@ class Accounting
         $this->qbCust = $qbCust;
     }
 
-    protected function authorize(\Praxigento\Core\Data $ctx)
-    {
+    protected function authorize(\Praxigento\Core\Data $ctx) {
         /* do nothing - in Production Mode current customer's ID is used as root customer ID */
     }
 
-    protected function createQuerySelect(\Praxigento\Core\Data $ctx)
-    {
+    protected function createQuerySelect(\Praxigento\Core\Data $ctx) {
         parent::createQuerySelect($ctx);
         /* add more query builders */
         $query = $this->qbBalance->build();
@@ -76,14 +75,12 @@ class Accounting
 
     }
 
-    public function exec(\Praxigento\BonusHybrid\Api\Web\Dcp\Report\Accounting\Request $request)
-    {
+    public function exec(ARequest $request): AResponse {
         $result = parent::process($request);
         return $result;
     }
 
-    protected function performQuery(\Praxigento\Core\Data $ctx)
-    {
+    protected function performQuery(\Praxigento\Core\Data $ctx) {
         /* get working vars from context */
         $var = $ctx->get(self::CTX_VARS);
         $custId = $var->get(self::VAR_CUST_ID);
@@ -121,8 +118,7 @@ class Accounting
         $ctx->set(self::CTX_RESULT, $result);
     }
 
-    protected function populateQuery(\Praxigento\Core\Data $ctx)
-    {
+    protected function populateQuery(\Praxigento\Core\Data $ctx) {
         /* get working vars from context */
         /** @var \Praxigento\Core\Data $bind */
         $bind = $ctx->get(self::CTX_BIND);
@@ -141,8 +137,7 @@ class Accounting
 
     }
 
-    protected function prepareQueryParameters(\Praxigento\Core\Data $ctx)
-    {
+    protected function prepareQueryParameters(\Praxigento\Core\Data $ctx) {
         /* get working vars from context */
         /** @var \Praxigento\Core\Data $vars */
         $vars = $ctx->get(self::CTX_VARS);
@@ -193,8 +188,7 @@ class Accounting
      * @param $bind
      * @return DRespBalance[]
      */
-    private function queryBalances(\Magento\Framework\DB\Select $query, $bind)
-    {
+    private function queryBalances(\Magento\Framework\DB\Select $query, $bind) {
         $result = [];
         $conn = $query->getConnection();
         $rs = $conn->fetchAll($query, $bind);
@@ -214,8 +208,7 @@ class Accounting
      * @param $bind
      * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Accounting\Response\Data\Customer
      */
-    private function queryCustomer(\Magento\Framework\DB\Select $query, $bind)
-    {
+    private function queryCustomer(\Magento\Framework\DB\Select $query, $bind) {
         /* perform query and collect data */
         $conn = $query->getConnection();
         $rs = $conn->fetchRow($query, $bind);
@@ -237,8 +230,7 @@ class Accounting
      * @param \Praxigento\Core\Data $ctx
      * @return DRespTrans[]
      */
-    private function queryTrans(\Praxigento\Core\Data $ctx)
-    {
+    private function queryTrans(\Praxigento\Core\Data $ctx) {
         $result = [];
         /* get transactions details */
         parent::performQuery($ctx);

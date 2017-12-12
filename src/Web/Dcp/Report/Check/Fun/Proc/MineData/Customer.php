@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData;
 
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Customer as DCustomer;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Customer as DCustomer;
 use Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData\Customer\Db\Query\GetCustomer\Builder as QBGetCustomer;
 
 /**

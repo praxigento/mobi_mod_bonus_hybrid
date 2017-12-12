@@ -3,19 +3,29 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections\QualLegs;
+namespace Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\TeamBonus;
 
 
 class Item
     extends \Praxigento\Core\Data
 {
+    const A_AMOUNT = 'amount';
     const A_CUSTOMER = 'customer';
     const A_VOLUME = 'volume';
 
     /**
-     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Customer
+     * @return float
      */
-    public function getCustomer(): \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Customer
+    public function getAmount(): float
+    {
+        $result = parent::get(self::A_AMOUNT);
+        return $result;
+    }
+
+    /**
+     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Customer
+     */
+    public function getCustomer(): \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Customer
     {
         $result = parent::get(self::A_CUSTOMER);
         return $result;
@@ -30,6 +40,11 @@ class Item
         return $result;
     }
 
+    public function setAmount($data)
+    {
+        parent::set(self::A_AMOUNT, $data);
+    }
+
     public function setCustomer($data)
     {
         parent::set(self::A_CUSTOMER, $data);
@@ -39,5 +54,4 @@ class Item
     {
         parent::set(self::A_VOLUME, $data);
     }
-
 }

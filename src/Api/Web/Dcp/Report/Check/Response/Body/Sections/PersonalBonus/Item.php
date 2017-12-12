@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections\TeamBonus;
+namespace Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\PersonalBonus;
 
 
 class Item
@@ -23,9 +23,9 @@ class Item
     }
 
     /**
-     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Customer
+     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Customer
      */
-    public function getCustomer(): \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Customer
+    public function getCustomer(): \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Customer
     {
         $result = parent::get(self::A_CUSTOMER);
         return $result;

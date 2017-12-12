@@ -5,10 +5,10 @@
 
 namespace Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData;
 
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Customer as DCustomer;
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections\QualLegs as DQualLegs;
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections\QualLegs\Item as DItem;
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections\QualLegs\Qualification as DQual;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Customer as DCustomer;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\QualLegs as DQualLegs;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\QualLegs\Item as DItem;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\QualLegs\Qualification as DQual;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase2\Legs as ELegs;
 use Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\GetCalcs as RouGetCalcs;

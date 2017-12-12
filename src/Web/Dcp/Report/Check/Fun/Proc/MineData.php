@@ -5,8 +5,8 @@
 
 namespace Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc;
 
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Context as AContext;
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections as DSections;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Context as AContext;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections as DSections;
 use Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData\Customer as SubCustomer;
 use Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData\InfinityBonus as SubInfBonus;
 use Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData\OrgProfile as SubOrgProfile;

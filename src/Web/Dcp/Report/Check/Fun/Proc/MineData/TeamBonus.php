@@ -4,9 +4,9 @@
  */
 
 namespace Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData;
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Customer as DCustomer;
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections\TeamBonus as DTeamBonus;
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response\Body\Sections\TeamBonus\Item as DItem;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Customer as DCustomer;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\TeamBonus as DTeamBonus;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\TeamBonus\Item as DItem;
 use Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\GetCalcs as RouGetCalcs;
 use Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData\TeamBonus\Db\Query\GetItems as QBGetItems;
 use Praxigento\BonusHybrid\Config as Cfg;

@@ -5,9 +5,9 @@
 
 namespace Praxigento\BonusHybrid\Web\Dcp\Report;
 
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Context as AContext;
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Request as ARequest;
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response as AResponse;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Context as AContext;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Request as ARequest;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response as AResponse;
 
 class Check
     implements \Praxigento\BonusHybrid\Api\Web\Dcp\Report\CheckInterface

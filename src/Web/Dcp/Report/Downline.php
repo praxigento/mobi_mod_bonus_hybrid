@@ -6,6 +6,8 @@
 namespace Praxigento\BonusHybrid\Web\Dcp\Report;
 
 use Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder as QBLastCalc;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Downline\Request as ARequest;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Downline\Response as AResponse;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Builder as QBDownline;
 
@@ -64,7 +66,7 @@ class Downline
         $ctx->set(self::CTX_QUERY, $query);
     }
 
-    public function exec(\Praxigento\BonusHybrid\Api\Web\Dcp\Report\Downline\Request $request) {
+    public function exec(ARequest $request): AResponse {
         $result = parent::process($request);
         return $result;
     }

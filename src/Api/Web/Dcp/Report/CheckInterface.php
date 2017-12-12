@@ -5,8 +5,8 @@
 
 namespace Praxigento\BonusHybrid\Api\Web\Dcp\Report;
 
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Request as Request;
-use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response as Response;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Request as ARequest;
+use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response as AResponse;
 
 /**
  * Get data for DCP Check report.
@@ -14,8 +14,8 @@ use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response as Response;
 interface CheckInterface
 {
     /**
-     * @param \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Request $request
-     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Data\Response
+     * @param \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Request $request
+     * @return \Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response
      */
-    public function exec(Request $request): Response;
+    public function exec(ARequest $request): AResponse;
 }
