@@ -15,7 +15,7 @@ class Tv
     implements \Praxigento\BonusHybrid\Service\Calc\Value\ITv
 {
 
-    /** @var \Praxigento\Core\App\Logger\App */
+    /** @var \Psr\Log\LoggerInterface */
     private $logger;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
@@ -27,7 +27,7 @@ class Tv
     private $subCalc;
 
     public function __construct(
-        \Praxigento\Core\App\Logger\App $logger,
+        \Psr\Log\LoggerInterface $logger,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,

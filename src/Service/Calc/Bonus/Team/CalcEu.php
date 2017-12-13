@@ -29,7 +29,7 @@ class CalcEu
     private $repoDwnl;
 
     public function __construct(
-        \Praxigento\Core\App\Logger\App $logger,
+        \Psr\Log\LoggerInterface $logger,
         \Praxigento\Core\Tool\IFormat $hlpFormat,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,

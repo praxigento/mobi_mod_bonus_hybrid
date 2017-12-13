@@ -29,7 +29,7 @@ class Collect
     private $repoCalc;
 
     public function __construct(
-        \Praxigento\Core\App\Logger\App $logger,
+        \Psr\Log\LoggerInterface $logger,
         \Praxigento\Downline\Helper\Tree $hlpTree,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,

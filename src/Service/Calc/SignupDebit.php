@@ -24,7 +24,7 @@ class SignupDebit
     private $subProcessOrders;
 
     public function __construct(
-        \Praxigento\Core\App\Logger\App $logger,
+        \Psr\Log\LoggerInterface $logger,
         \Praxigento\Core\Tool\IPeriod $hlpPeriod,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IBasis $procPeriodGetBasis,

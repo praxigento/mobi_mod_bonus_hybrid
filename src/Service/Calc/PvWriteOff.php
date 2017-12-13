@@ -38,7 +38,7 @@ class PvWriteOff
     private $subSaveDownline;
 
     public function __construct(
-        \Praxigento\Core\App\Logger\App $logger,
+        \Psr\Log\LoggerInterface $logger,
         \Praxigento\Core\Tool\IDate $hlpDate,
         \Praxigento\Core\Tool\IPeriod $hlpPeriod,
         \Praxigento\Accounting\Repo\Entity\Type\Asset $repoTypeAsset,

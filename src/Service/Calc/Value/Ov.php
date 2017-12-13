@@ -13,7 +13,7 @@ class Ov
     implements \Praxigento\BonusHybrid\Service\Calc\Value\IOv
 {
 
-    /** @var \Praxigento\Core\App\Logger\App */
+    /** @var \Psr\Log\LoggerInterface */
     private $logger;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
@@ -25,7 +25,7 @@ class Ov
     private $subCalc;
 
     public function __construct(
-        \Praxigento\Core\App\Logger\App $logger,
+        \Psr\Log\LoggerInterface $logger,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,

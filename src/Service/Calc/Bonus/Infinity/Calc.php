@@ -28,7 +28,7 @@ class Calc
     private $repoDwnl;
 
     public function __construct(
-        \Praxigento\Core\App\Logger\App $logger,
+        \Psr\Log\LoggerInterface $logger,
         \Praxigento\Core\Tool\IFormat $hlpFormat,
         \Praxigento\Downline\Tool\ITree $hlpTree,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
