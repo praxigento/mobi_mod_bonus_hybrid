@@ -28,10 +28,12 @@ class ProcessOrders
     const PREFIX_WALLET_FATHER = 'wf';
     const PREFIX_WALLET_GRAND = 'wg';
 
-    /** @var \Praxigento\Accounting\Service\IAccount */
+    /** @var \Praxigento\Accounting\Api\Service\Account\Get */
     private $callAccount;
     /** @var \Praxigento\Accounting\Service\IOperation */
     private $callOper;
+    /** @var  \Praxigento\BonusHybrid\Helper\IScheme */
+    private $hlpScheme;
     /** @var \Praxigento\BonusBase\Repo\Entity\Log\Customers */
     private $repoLogCust;
     /** @var \Praxigento\BonusBase\Repo\Entity\Log\Opers */
@@ -40,8 +42,6 @@ class ProcessOrders
     private $repoLogSale;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Registry\SignupDebit */
     private $repoRegSignupDebit;
-    /** @var  \Praxigento\BonusHybrid\Helper\IScheme */
-    private $hlpScheme;
 
     public function __construct(
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
@@ -49,7 +49,7 @@ class ProcessOrders
         \Praxigento\BonusBase\Repo\Entity\Log\Opers $repoLogOper,
         \Praxigento\BonusBase\Repo\Entity\Log\Sales $repoLogSale,
         \Praxigento\BonusHybrid\Repo\Entity\Registry\SignupDebit $repoRegSignupDebit,
-        \Praxigento\Accounting\Service\IAccount $callAccount,
+        \Praxigento\Accounting\Api\Service\Account\Get $callAccount,
         \Praxigento\Accounting\Service\IOperation $callOper
     )
     {
@@ -152,11 +152,10 @@ class ProcessOrders
      */
     private function getAccCust($assetTypeCode, $custId)
     {
-        $req = new \Praxigento\Accounting\Service\Account\Request\Get();
+        $req = new \Praxigento\Accounting\Api\Service\Account\Get\Request();
         $req->setAssetTypeCode($assetTypeCode);
         $req->setCustomerId($custId);
-        $req->setCreateNewAccountIfMissed(true);
-        $resp = $this->callAccount->get($req);
+        $resp = $this->callAccount->exec($req);
         $result = $resp->getId();
         return $result;
     }
@@ -169,9 +168,10 @@ class ProcessOrders
      */
     private function getAccRepres($assetTypeCode)
     {
-        $req = new \Praxigento\Accounting\Service\Account\Request\GetRepresentative();
+        $req = new \Praxigento\Accounting\Api\Service\Account\Get\Request();
+        $req->setIsRepresentative(TRUE);
         $req->setAssetTypeCode($assetTypeCode);
-        $resp = $this->callAccount->getRepresentative($req);
+        $resp = $this->callAccount->exec($req);
         $result = $resp->getId();
         return $result;
     }
