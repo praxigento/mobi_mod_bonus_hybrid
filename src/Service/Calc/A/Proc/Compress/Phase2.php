@@ -42,7 +42,7 @@ class Phase2
     private $hlpIsQualified;
     /** @var \Praxigento\BonusHybrid\Helper\IScheme */
     private $hlpScheme;
-    /** @var \Praxigento\Downline\Tool\ITree */
+    /** @var \Praxigento\Downline\Api\Helper\Downline */
     private $hlpTree;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoBonDwnl;
@@ -56,7 +56,7 @@ class Phase2
     private $rouComposeLegs;
 
     public function __construct(
-        \Praxigento\Downline\Tool\ITree $hlpTree,
+        \Praxigento\Downline\Api\Helper\Downline $hlpTree,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\BonusHybrid\Helper\Calc\IsQualified $hlpIsQualified,

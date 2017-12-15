@@ -40,14 +40,14 @@ class Phase1
     private $hlpScheme;
     /** @var \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds */
     private $hlpSignupDebitCust;
-    /** @var \Praxigento\Downline\Tool\ITree */
+    /** @var \Praxigento\Downline\Api\Helper\Downline */
     private $hlpTree;
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
     private $repoCustDwnl;
 
     public function __construct(
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
-        \Praxigento\Downline\Tool\ITree $hlpTree,
+        \Praxigento\Downline\Api\Helper\Downline $hlpTree,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust,
         \Praxigento\Downline\Repo\Entity\Customer $repoCustDwnl,
