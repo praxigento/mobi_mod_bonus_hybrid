@@ -25,6 +25,7 @@ class Downline
      * Name of the local context variables.
      */
     const VAR_CALC_ID = 'calcId';
+    const VAR_CUST_DEPTH = 'depth';
     const VAR_CUST_ID = 'custId';
     const VAR_CUST_PATH = 'path';
 
@@ -101,6 +102,7 @@ class Downline
         $raw = $ctx->get(self::CTX_RESULT);
         $rootId = $vars->get(self::VAR_CUST_ID);
         $rootPath = $vars->get(self::VAR_CUST_PATH);
+        $rootDepth = $vars->get(self::VAR_CUST_DEPTH);
         $result = [];
         foreach ($raw as $item) {
             $custId = $item[QBDownline::A_CUSTOMER_REF];
@@ -112,6 +114,10 @@ class Downline
             /* shrink path */
             $shrinked = str_replace($rootPath, '', $path);
             $item[QBDownline::A_PATH] = $shrinked;
+            /* decrease depth */
+            $decreased = $item[QBDownline::A_DEPTH] - $rootDepth;
+            $item[QBDownline::A_DEPTH] = $decreased;
+            /* place into result set */
             $result[] = $item;
         }
         $ctx->set(self::CTX_RESULT, $result);
@@ -167,8 +173,10 @@ class Downline
         if (is_null($rootCustId) || $isLiveMode) {
             $rootCustId = $this->authenticator->getCurrentCustomerId();
         }
+        /** @var \Praxigento\Downline\Repo\Entity\Data\Snap $customerRoot */
         $customerRoot = $this->repoSnap->getByCustomerIdOnDate($rootCustId, $period);
         $path = $customerRoot->getPath();
+        $depth = $customerRoot->getDepth();
 
         /**
          * Define calculation ID to get downline data.
@@ -192,8 +200,9 @@ class Downline
         $calcId = $this->getCalcId($calcTypeCode, $onDate);
 
         /* save working variables into execution context */
+        $vars->set(self::VAR_CALC_ID, $calcId);
+        $vars->set(self::VAR_CUST_DEPTH, $depth);
         $vars->set(self::VAR_CUST_ID, $rootCustId);
         $vars->set(self::VAR_CUST_PATH, $path);
-        $vars->set(self::VAR_CALC_ID, $calcId);
     }
 }
