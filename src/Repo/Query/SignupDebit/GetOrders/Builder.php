@@ -66,7 +66,7 @@ class Builder
         $result->joinLeft([$asOrder => $tbl], $on, $cols);
         /* LEFT JOIN prxgt_pv_sale  */
         $tbl = $this->resource->getTableName(Pv::ENTITY_NAME);
-        $on = $asPv . '.' . Pv::ATTR_SALE_ID . '=' . $asOrder . '.' . Cfg::E_SALE_ORDER_A_ENTITY_ID;
+        $on = $asPv . '.' . Pv::ATTR_SALE_REF . '=' . $asOrder . '.' . Cfg::E_SALE_ORDER_A_ENTITY_ID;
         $cols = [self::A_PV => Pv::ATTR_TOTAL];
         $result->joinLeft([$asPv => $tbl], $on, $cols);
         /* LEFT JOIN prxgt_dwnl_customer (as parent) */
