@@ -168,7 +168,12 @@ class Accounting
         /**
          * Define root customer & path to the root customer on the date.
          */
-        $custId = $this->authenticator->getCurrentCustomerId($devCustId);
+        /* TODO: add authorization */
+        $request = new \Praxigento\Core\App\Api\Web\Request();
+        $dev = new \Praxigento\Core\App\Api\Web\Request\Dev();
+        $dev->setCustId($devCustId);
+        $request->setDev($dev);
+        $custId = $this->authenticator->getCurrentCustomerId($request);
 
         /* save working variables into execution context */
         $vars->set(self::VAR_CUST_ID, $custId);

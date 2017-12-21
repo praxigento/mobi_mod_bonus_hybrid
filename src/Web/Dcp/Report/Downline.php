@@ -168,7 +168,12 @@ class Downline
         /**
          * Define root customer & path to the root customer on the date.
          */
-        $rootCustId = $this->authenticator->getCurrentCustomerId($devCustId);
+        /* TODO: add authorization */
+        $request = new \Praxigento\Core\App\Api\Web\Request();
+        $dev = new \Praxigento\Core\App\Api\Web\Request\Dev();
+        $dev->setCustId($devCustId);
+        $request->setDev($dev);
+        $rootCustId = $this->authenticator->getCurrentCustomerId($request);
 
         /** @var \Praxigento\Downline\Repo\Entity\Data\Snap $customerRoot */
         $customerRoot = $this->repoSnap->getByCustomerIdOnDate($rootCustId, $period);

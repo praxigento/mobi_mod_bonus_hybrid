@@ -18,13 +18,11 @@ class Authorize
 
     public function __construct(
         \Praxigento\Core\App\Api\Web\IAuthenticator $authenticator
-    )
-    {
+    ) {
         $this->authenticator = $authenticator;
     }
 
-    public function exec(AContext $ctx): AContext
-    {
+    public function exec(AContext $ctx): AContext {
         /* if current instance is active */
         if ($ctx->state == AContext::DEF_STATE_ACTIVE) {
 
@@ -32,7 +30,12 @@ class Authorize
             $customerId = $ctx->getCustomerId();
 
             /* step's activity */
-            $customerId = $this->authenticator->getCurrentCustomerId($customerId);
+            /* TODO: add authorization */
+            $request = new \Praxigento\Core\App\Api\Web\Request();
+            $dev = new \Praxigento\Core\App\Api\Web\Request\Dev();
+            $dev->setCustId($customerId);
+            $request->setDev($dev);
+            $customerId = $this->authenticator->getCurrentCustomerId($request);
 
             /* put step's result data back into the context */
             $ctx->setCustomerId($customerId);
