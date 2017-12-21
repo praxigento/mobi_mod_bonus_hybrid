@@ -43,14 +43,13 @@ class Downline
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Praxigento\Core\App\Api\Web\IAuthenticator $authenticator,
-        \Praxigento\Core\Helper\Config $hlpCfg,
         \Praxigento\Core\Tool\IPeriod $hlpPeriod,
         \Praxigento\Downline\Repo\Entity\Snap $repoSnap,
         \Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder $qbLastCalc,
         \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Builder $qbDownline
     ) {
         /* don't pass query builder to the parent - we have 4 builders in the operation, not one */
-        parent::__construct($manObj, null, $hlpCfg);
+        parent::__construct($manObj, null);
         $this->authenticator = $authenticator;
         $this->hlpPeriod = $hlpPeriod;
         $this->repoSnap = $repoSnap;
@@ -155,7 +154,7 @@ class Downline
         /* extract HTTP request parameters */
         $period = $reqData->getPeriod();
         $reqType = $reqData->getType();
-        $rootCustId = $reqDev->getCustId();
+        $devCustId = $reqDev->getCustId();
 
         /**
          * Define period.
@@ -169,10 +168,8 @@ class Downline
         /**
          * Define root customer & path to the root customer on the date.
          */
-        $isLiveMode = !$this->hlpCfg->getApiAuthenticationEnabledDevMode();
-        if (is_null($rootCustId) || $isLiveMode) {
-            $rootCustId = $this->authenticator->getCurrentCustomerId();
-        }
+        $rootCustId = $this->authenticator->getCurrentCustomerId($devCustId);
+
         /** @var \Praxigento\Downline\Repo\Entity\Data\Snap $customerRoot */
         $customerRoot = $this->repoSnap->getByCustomerIdOnDate($rootCustId, $period);
         $path = $customerRoot->getPath();

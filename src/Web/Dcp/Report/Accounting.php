@@ -48,13 +48,12 @@ class Accounting
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Praxigento\Core\Tool\IPeriod $hlpPeriod,
-        \Praxigento\Core\Helper\Config $hlpCfg,
         \Praxigento\Core\App\Api\Web\IAuthenticator $authenticator,
         \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Accounting\Trans\Builder $qbDcpTrans,
         \Praxigento\BonusHybrid\Web\Dcp\Report\Accounting\Repo\Query\GetBalance\Builder $qbBalance,
         \Praxigento\Downline\Repo\Query\Customer\Get $qbCust
     ) {
-        parent::__construct($manObj, $qbDcpTrans, $hlpCfg);
+        parent::__construct($manObj, $qbDcpTrans);
         $this->authenticator = $authenticator;
         $this->hlpPeriod = $hlpPeriod;
         $this->qbBalance = $qbBalance;
@@ -149,7 +148,7 @@ class Accounting
 
         /* extract HTTP request parameters */
         $period = $reqData->getPeriod();
-        $custId = $reqDev->getCustId();
+        $devCustId = $reqDev->getCustId();
 
         /**
          * Define period.
@@ -169,10 +168,7 @@ class Accounting
         /**
          * Define root customer & path to the root customer on the date.
          */
-        $isLiveMode = !$this->hlpCfg->getApiAuthenticationEnabledDevMode();
-        if (is_null($custId) || $isLiveMode) {
-            $custId = $this->authenticator->getCurrentCustomerId();
-        }
+        $custId = $this->authenticator->getCurrentCustomerId($devCustId);
 
         /* save working variables into execution context */
         $vars->set(self::VAR_CUST_ID, $custId);
