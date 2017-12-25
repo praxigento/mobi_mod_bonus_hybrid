@@ -35,7 +35,7 @@ class Authorize
             $dev = new \Praxigento\Core\App\Api\Web\Request\Dev();
             $dev->setCustId($customerId);
             $request->setDev($dev);
-            $customerId = $this->authenticator->getCurrentCustomerId($request);
+            $customerId = $this->authenticator->getCurrentUserId($request);
 
             /* put step's result data back into the context */
             $ctx->setCustomerId($customerId);

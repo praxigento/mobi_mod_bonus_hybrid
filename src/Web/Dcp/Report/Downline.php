@@ -173,7 +173,7 @@ class Downline
         $dev = new \Praxigento\Core\App\Api\Web\Request\Dev();
         $dev->setCustId($devCustId);
         $request->setDev($dev);
-        $rootCustId = $this->authenticator->getCurrentCustomerId($request);
+        $rootCustId = $this->authenticator->getCurrentUserId($request);
 
         /** @var \Praxigento\Downline\Repo\Entity\Data\Snap $customerRoot */
         $customerRoot = $this->repoSnap->getByCustomerIdOnDate($rootCustId, $period);

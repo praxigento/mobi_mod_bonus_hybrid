@@ -173,7 +173,7 @@ class Accounting
         $dev = new \Praxigento\Core\App\Api\Web\Request\Dev();
         $dev->setCustId($devCustId);
         $request->setDev($dev);
-        $custId = $this->authenticator->getCurrentCustomerId($request);
+        $custId = $this->authenticator->getCurrentUserId($request);
 
         /* save working variables into execution context */
         $vars->set(self::VAR_CUST_ID, $custId);
