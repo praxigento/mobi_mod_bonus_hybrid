@@ -30,7 +30,7 @@ class ProcessOrders
 
     /** @var \Praxigento\Accounting\Api\Service\Account\Get */
     private $callAccount;
-    /** @var \Praxigento\Accounting\Service\IOperation */
+    /** @var \Praxigento\Accounting\Api\Service\Operation */
     private $callOper;
     /** @var  \Praxigento\BonusHybrid\Helper\IScheme */
     private $hlpScheme;
@@ -50,7 +50,7 @@ class ProcessOrders
         \Praxigento\BonusBase\Repo\Entity\Log\Sales $repoLogSale,
         \Praxigento\BonusHybrid\Repo\Entity\Registry\SignupDebit $repoRegSignupDebit,
         \Praxigento\Accounting\Api\Service\Account\Get $callAccount,
-        \Praxigento\Accounting\Service\IOperation $callOper
+        \Praxigento\Accounting\Api\Service\Operation $callOper
     )
     {
         $this->hlpScheme = $hlpScheme;
@@ -75,7 +75,7 @@ class ProcessOrders
         $accPvRepres = $this->getAccRepres(Cfg::CODE_TYPE_ASSET_PV);
         $accWalletRepres = $this->getAccRepres(Cfg::CODE_TYPE_ASSET_WALLET_ACTIVE);
         /* Create one operation for all transactions */
-        $req = new \Praxigento\Accounting\Service\Operation\Request\Add();
+        $req = new \Praxigento\Accounting\Api\Service\Operation\Request();
         $req->setOperationTypeCode(Cfg::CODE_TYPE_OPER_BONUS_SIGNUP_DEBIT);
         $transRef = 'ref';
         $req->setAsTransRef($transRef);
@@ -122,7 +122,7 @@ class ProcessOrders
             }
         }
         $req->setTransactions($trans);
-        $resp = $this->callOper->add($req);
+        $resp = $this->callOper->exec($req);
         /* log transactions into Customer & Order logs */
         $ids = $resp->getTransactionsIds();
         $this->saveTransLogs($orders, $ids);

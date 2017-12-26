@@ -13,14 +13,14 @@ use Praxigento\BonusHybrid\Service\Calc\A\Helper\CreateOper\Result as DResult;
  */
 class CreateOper
 {
-    /** @var \Praxigento\Accounting\Service\IOperation */
+    /** @var \Praxigento\Accounting\Service\Operation */
     private $callOper;
     /** @var \Praxigento\Core\Tool\IDate */
     private $hlpDate;
 
     public function __construct(
         \Praxigento\Core\Tool\IDate $hlpDate,
-        \Praxigento\Accounting\Service\IOperation $callOper
+        \Praxigento\Accounting\Service\Operation $callOper
     )
     {
         $this->hlpDate = $hlpDate;
@@ -40,7 +40,7 @@ class CreateOper
         $dsBegin = $period->getDstampBegin();
         $dsEnd = $period->getDstampEnd();
         $datePerformed = $this->hlpDate->getUtcNowForDb();
-        $req = new \Praxigento\Accounting\Service\Operation\Request\Add();
+        $req = new \Praxigento\Accounting\Api\Service\Operation\Request();
         $req->setOperationTypeCode($calcTypeCode);
         $req->setDatePerformed($datePerformed);
         $req->setTransactions($trans);
@@ -48,7 +48,7 @@ class CreateOper
         $req->setOperationNote($note);
         /* add key to link newly created transaction IDs with donators */
         $req->setAsTransRef(\Praxigento\BonusHybrid\Service\Calc\A\Helper\PrepareTrans::REF_DONATOR_ID);
-        $resp = $this->callOper->add($req);
+        $resp = $this->callOper->exec($req);
         $operId = $resp->getOperationId();
         $transIds = $resp->getTransactionsIds();
         $result->setOperationId($operId);

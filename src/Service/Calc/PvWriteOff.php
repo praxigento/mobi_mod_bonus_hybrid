@@ -12,7 +12,7 @@ use Praxigento\BonusHybrid\Service\Calc\PvWriteOff\Data\Trans as DTrans;
 class PvWriteOff
     implements IPvWriteOff
 {
-    /** @var \Praxigento\Accounting\Service\IOperation */
+    /** @var \Praxigento\Accounting\Service\Operation */
     private $callOperation;
     /** @var \Praxigento\Core\Tool\IDate */
     private $hlpDate;
@@ -45,7 +45,7 @@ class PvWriteOff
         \Praxigento\Accounting\Repo\Entity\Type\Operation $repoTypeOper,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\BonusBase\Repo\Entity\Log\Opers $repoLogOper,
-        \Praxigento\Accounting\Service\IOperation $callOperation,
+        \Praxigento\Accounting\Service\Operation $callOperation,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         PvWriteOff\Query\GetData\Builder $sqbGetData,
         PvWriteOff\PrepareTrans $subPrepareTrans,
@@ -77,13 +77,13 @@ class PvWriteOff
     private function createOperation($trans, $dsBegin, $dsEnd)
     {
         $datePerformed = $this->hlpDate->getUtcNowForDb();
-        $req = new \Praxigento\Accounting\Service\Operation\Request\Add();
+        $req = new \Praxigento\Accounting\Api\Service\Operation\Request();
         $req->setOperationTypeCode(Cfg::CODE_TYPE_OPER_PV_WRITE_OFF);
         $req->setDatePerformed($datePerformed);
         $req->setTransactions($trans);
         $note = "PV Write Off ($dsBegin-$dsEnd)";
         $req->setOperationNote($note);
-        $resp = $this->callOperation->add($req);
+        $resp = $this->callOperation->exec($req);
         $result = $resp->getOperationId();
         return $result;
     }
