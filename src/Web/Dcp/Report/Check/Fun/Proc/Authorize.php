@@ -17,7 +17,7 @@ class Authorize
     private $authenticator;
 
     public function __construct(
-        \Praxigento\Core\App\Api\Web\IAuthenticator $authenticator
+        \Praxigento\Core\App\Api\Web\Authenticator\Front $authenticator
     ) {
         $this->authenticator = $authenticator;
     }

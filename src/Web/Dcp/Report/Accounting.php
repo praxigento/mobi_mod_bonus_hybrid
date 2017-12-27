@@ -48,7 +48,7 @@ class Accounting
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Praxigento\Core\Tool\IPeriod $hlpPeriod,
-        \Praxigento\Core\App\Api\Web\IAuthenticator $authenticator,
+        \Praxigento\Core\App\Api\Web\Authenticator\Front $authenticator,
         \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Accounting\Trans\Builder $qbDcpTrans,
         \Praxigento\BonusHybrid\Web\Dcp\Report\Accounting\Repo\Query\GetBalance\Builder $qbBalance,
         \Praxigento\Downline\Repo\Query\Customer\Get $qbCust

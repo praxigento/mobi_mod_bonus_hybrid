@@ -42,7 +42,7 @@ class Downline
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
-        \Praxigento\Core\App\Api\Web\IAuthenticator $authenticator,
+        \Praxigento\Core\App\Api\Web\Authenticator\Front $authenticator,
         \Praxigento\Core\Tool\IPeriod $hlpPeriod,
         \Praxigento\Downline\Repo\Entity\Snap $repoSnap,
         \Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder $qbLastCalc,
