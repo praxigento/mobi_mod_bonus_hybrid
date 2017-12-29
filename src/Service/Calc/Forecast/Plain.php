@@ -14,7 +14,7 @@ use Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetDownline as PGetDownli
 class Plain
     implements \Praxigento\BonusHybrid\Service\Calc\Forecast\IPlain
 {
-    /** @var \Praxigento\Accounting\Service\Balance\Get\ITurnover */
+    /** @var \Praxigento\Accounting\Api\Service\Balance\Get\Turnover */
     private $callBalanceGetTurnover;
     /** @var  \Praxigento\Core\Tool\IPeriod */
     private $hlpPeriod;
@@ -41,7 +41,7 @@ class Plain
         RAccount $repoAcc,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
-        \Praxigento\Accounting\Service\Balance\Get\ITurnover $callBalanceGetTurnover,
+        \Praxigento\Accounting\Api\Service\Balance\Get\Turnover $callBalanceGetTurnover,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Calc $subCalc,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetDownline $subGetDownline,
         \Praxigento\BonusBase\Service\Period\Calc\IAdd $procPeriodAdd,
@@ -93,7 +93,7 @@ class Plain
 
         /* extract only positive turnovers */
         $positiveTurnover = [];
-        /** @var \Praxigento\Accounting\Service\Balance\Get\Turnover\Data\Entry $entry */
+        /** @var \Praxigento\Accounting\Api\Service\Balance\Get\Turnover\Response\Entry $entry */
         foreach ($entries as $entry) {
             $turnover = $entry->turnover;
             $customerId = $entry->customerId;
@@ -152,7 +152,7 @@ class Plain
 
     private function getPvTurnover($dateFrom, $dateTo)
     {
-        $reqTurnover = new \Praxigento\Accounting\Service\Balance\Get\Turnover\Request ();
+        $reqTurnover = new \Praxigento\Accounting\Api\Service\Balance\Get\Turnover\Request();
         $reqTurnover->assetTypeCode = Cfg::CODE_TYPE_ASSET_PV;
         $reqTurnover->dateFrom = $dateFrom;
         $reqTurnover->dateTo = $dateTo;
