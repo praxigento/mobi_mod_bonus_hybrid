@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Cli\Cmd;
+namespace Praxigento\BonusHybrid\Cli;
 
 use Praxigento\Core\Data as AData;
 use Praxigento\Core\App\Service\IProcess as IProcess;

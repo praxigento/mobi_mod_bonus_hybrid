@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Cli\Cmd;
+namespace Praxigento\BonusHybrid\Cli;
 
 /**
  * Daily calculation to forecast results on final bonus calc.
