@@ -37,36 +37,43 @@ class Downline
     private $qbDownline;
     /** @var \Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder */
     private $qbLastCalc;
+    /** @var \Praxigento\Downline\Repo\Entity\Customer */
+    private $repoDwnlCust;
     /** @var \Praxigento\Downline\Repo\Entity\Snap */
     private $repoSnap;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Praxigento\Core\App\Api\Web\Authenticator\Front $authenticator,
-        \Praxigento\Core\Tool\IPeriod $hlpPeriod,
+        \Praxigento\Downline\Repo\Entity\Customer $repoDwnlCust,
         \Praxigento\Downline\Repo\Entity\Snap $repoSnap,
         \Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder $qbLastCalc,
-        \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Builder $qbDownline
+        \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Builder $qbDownline,
+        \Praxigento\Core\Tool\IPeriod $hlpPeriod
     ) {
         /* don't pass query builder to the parent - we have 4 builders in the operation, not one */
         parent::__construct($manObj, null);
         $this->authenticator = $authenticator;
-        $this->hlpPeriod = $hlpPeriod;
+        $this->repoDwnlCust = $repoDwnlCust;
         $this->repoSnap = $repoSnap;
         $this->qbDownline = $qbDownline;
         $this->qbLastCalc = $qbLastCalc;
+        $this->hlpPeriod = $hlpPeriod;
     }
 
-    protected function authorize(\Praxigento\Core\Data $ctx) {
+    protected function authorize(\Praxigento\Core\Data $ctx)
+    {
         /* do nothing - in Production Mode current customer's ID is used as root customer ID */
     }
 
-    protected function createQuerySelect(\Praxigento\Core\Data $ctx) {
+    protected function createQuerySelect(\Praxigento\Core\Data $ctx)
+    {
         $query = $this->qbDownline->build();
         $ctx->set(self::CTX_QUERY, $query);
     }
 
-    public function exec(ARequest $request): AResponse {
+    public function exec(ARequest $request): AResponse
+    {
         $data = parent::process($request);
         $result = new AResponse($data);
         return $result;
@@ -79,7 +86,8 @@ class Downline
      * @param $dateEnd
      * @return mixed
      */
-    private function getCalcId($calcTypeCode, $dateEnd) {
+    private function getCalcId($calcTypeCode, $dateEnd)
+    {
         $query = $this->qbLastCalc->build();
         $bind = [
             QBLastCalc::BND_CODE => $calcTypeCode,
@@ -94,7 +102,8 @@ class Downline
         return $result;
     }
 
-    protected function performQuery(\Praxigento\Core\Data $ctx) {
+    protected function performQuery(\Praxigento\Core\Data $ctx)
+    {
         parent::performQuery($ctx);
         /* MOBI-1033 */
         $vars = $ctx->get(self::CTX_VARS);
@@ -122,7 +131,8 @@ class Downline
         $ctx->set(self::CTX_RESULT, $result);
     }
 
-    protected function populateQuery(\Praxigento\Core\Data $ctx) {
+    protected function populateQuery(\Praxigento\Core\Data $ctx)
+    {
         /* get working vars from context */
         /** @var \Praxigento\Core\Data $bind */
         $bind = $ctx->get(self::CTX_BIND);
@@ -141,7 +151,8 @@ class Downline
         $bind->set(QBDownline::BND_CUST_ID, $rootCustId);
     }
 
-    protected function prepareQueryParameters(\Praxigento\Core\Data $ctx) {
+    protected function prepareQueryParameters(\Praxigento\Core\Data $ctx)
+    {
         /* get working vars from context */
         /** @var \Praxigento\Core\Data $vars */
         $vars = $ctx->get(self::CTX_VARS);
@@ -168,7 +179,6 @@ class Downline
         /**
          * Define root customer & path to the root customer on the date.
          */
-        /* TODO: add authorization */
         $request = new \Praxigento\Core\App\Api\Web\Request();
         $dev = new \Praxigento\Core\App\Api\Web\Request\Dev();
         $dev->setCustId($devCustId);
@@ -177,6 +187,10 @@ class Downline
 
         /** @var \Praxigento\Downline\Repo\Entity\Data\Snap $customerRoot */
         $customerRoot = $this->repoSnap->getByCustomerIdOnDate($rootCustId, $period);
+        if ($customerRoot === false) {
+            /* probably this is new customer that is not in Downline Snaps */
+            $customerRoot = $this->repoDwnlCust->getById($rootCustId);
+        }
         $path = $customerRoot->getPath();
         $depth = $customerRoot->getDepth();
 
