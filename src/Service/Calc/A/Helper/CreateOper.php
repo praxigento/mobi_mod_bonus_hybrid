@@ -15,11 +15,11 @@ class CreateOper
 {
     /** @var \Praxigento\Accounting\Service\Operation */
     private $callOper;
-    /** @var \Praxigento\Core\Tool\IDate */
+    /** @var \Praxigento\Core\Api\Helper\Date */
     private $hlpDate;
 
     public function __construct(
-        \Praxigento\Core\Tool\IDate $hlpDate,
+        \Praxigento\Core\Api\Helper\Date $hlpDate,
         \Praxigento\Accounting\Service\Operation $callOper
     )
     {
