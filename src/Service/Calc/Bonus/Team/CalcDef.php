@@ -17,7 +17,7 @@ class CalcDef
 {
     /** @var \Praxigento\Downline\Helper\Tree */
     private $hlpDwnlTree;
-    /** @var \Praxigento\Core\Tool\IFormat */
+    /** @var \Praxigento\Core\Api\Helper\Format */
     private $hlpFormat;
     /** @var  \Praxigento\BonusHybrid\Helper\IScheme */
     private $hlpScheme;
@@ -34,7 +34,7 @@ class CalcDef
 
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
-        \Praxigento\Core\Tool\IFormat $hlpFormat,
+        \Praxigento\Core\Api\Helper\Format $hlpFormat,
         \Praxigento\Downline\Api\Helper\Downline $hlpTree,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,

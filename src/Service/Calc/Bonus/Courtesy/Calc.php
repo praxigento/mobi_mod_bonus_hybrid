@@ -14,7 +14,7 @@ class Calc
 {
     /** @var \Praxigento\Downline\Helper\Tree */
     private $hlpDwnlTree;
-    /** @var \Praxigento\Core\Tool\IFormat */
+    /** @var \Praxigento\Core\Api\Helper\Format */
     private $hlpFormat;
     /** @var  \Praxigento\BonusHybrid\Helper\IScheme */
     private $hlpScheme;
@@ -29,7 +29,7 @@ class Calc
 
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
-        \Praxigento\Core\Tool\IFormat $hlpFormat,
+        \Praxigento\Core\Api\Helper\Format $hlpFormat,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusBase\Repo\Entity\Level $repoLevel,
