@@ -13,13 +13,13 @@ use Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData\Customer\Db\Qu
  */
 class Customer
 {
-    /** @var \Praxigento\Core\Tool\IPeriod */
+    /** @var \Praxigento\Core\Api\Helper\Period */
     private $hlpPeriod;
     /** @var QBGetCustomer */
     private $qbGetCustomer;
 
     public function __construct(
-        \Praxigento\Core\Tool\IPeriod $hlpPeriod,
+        \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         QBGetCustomer $qbGetCustomer
     )
     {

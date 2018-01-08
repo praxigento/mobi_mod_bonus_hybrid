@@ -10,7 +10,7 @@ use Praxigento\BonusHybrid\Config as Cfg;
 class SignupDebit
     implements \Praxigento\BonusHybrid\Service\Calc\ISignupDebit
 {
-    /** @var  \Praxigento\Core\Tool\IPeriod */
+    /** @var  \Praxigento\Core\Api\Helper\Period */
     private $hlpPeriod;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
@@ -25,7 +25,7 @@ class SignupDebit
 
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
-        \Praxigento\Core\Tool\IPeriod $hlpPeriod,
+        \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IBasis $procPeriodGetBasis,
         \Praxigento\BonusHybrid\Service\Calc\SignupDebit\GetOrders $subGetOrders,
@@ -86,7 +86,7 @@ class SignupDebit
         $ctx = new \Praxigento\Core\Data();
         $ctx->set($this->procPeriodGetBasis::CTX_IN_CALC_CODE, Cfg::CODE_TYPE_CALC_BONUS_SIGN_UP_DEBIT);
         $ctx->set($this->procPeriodGetBasis::CTX_IN_ASSET_TYPE_CODE, Cfg::CODE_TYPE_ASSET_PV);
-        $ctx->set($this->procPeriodGetBasis::CTX_IN_PERIOD_TYPE, \Praxigento\Core\Tool\IPeriod::TYPE_MONTH);
+        $ctx->set($this->procPeriodGetBasis::CTX_IN_PERIOD_TYPE, \Praxigento\Core\Api\Helper\Period::TYPE_MONTH);
         $this->procPeriodGetBasis->exec($ctx);
         $periodData = $ctx->get($this->procPeriodGetBasis::CTX_OUT_PERIOD_DATA);
         $calcData = $ctx->get($this->procPeriodGetBasis::CTX_OUT_CALC_DATA);

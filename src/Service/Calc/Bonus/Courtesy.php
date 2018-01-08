@@ -15,7 +15,7 @@ use Praxigento\BonusHybrid\Config as Cfg;
 class Courtesy
     implements \Praxigento\BonusHybrid\Service\Calc\Bonus\ICourtesy
 {
-    /** @var  \Praxigento\Core\Tool\IPeriod */
+    /** @var  \Praxigento\Core\Api\Helper\Period */
     private $hlpPeriod;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
@@ -36,7 +36,7 @@ class Courtesy
 
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
-        \Praxigento\Core\Tool\IPeriod $hlpPeriod,
+        \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\BonusBase\Repo\Entity\Log\Customers $repoLogCust,
         \Praxigento\BonusBase\Repo\Entity\Log\Opers $repoLogOper,

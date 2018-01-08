@@ -22,11 +22,11 @@ class Calc
     private $callDwnlCust;
     /** @var \Praxigento\Downline\Helper\Tree */
     private $hlpDwnlTree;
-    /** @var \Praxigento\Core\Tool\IPeriod */
+    /** @var \Praxigento\Core\Api\Helper\Period */
     private $hlpPeriod;
 
     public function __construct(
-        \Praxigento\Core\Tool\IPeriod $hlpPeriod,
+        \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\Downline\Service\ICustomer $callDwnlCust
     )

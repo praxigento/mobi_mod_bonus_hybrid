@@ -17,7 +17,7 @@ use Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData\Totals\Db\Quer
  */
 class Totals
 {
-    /** @var \Praxigento\Core\Tool\IPeriod */
+    /** @var \Praxigento\Core\Api\Helper\Period */
     private $hlpPeriod;
     /** @var \Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData\Totals\Db\Query\GetAmount */
     private $qbGetAmnt;
@@ -29,7 +29,7 @@ class Totals
     private $rouIsSchemeEu;
 
     public function __construct(
-        \Praxigento\Core\Tool\IPeriod $hlpPeriod,
+        \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         QBGetAmnt $qbGetAmnt,
         QBGetSum $qbGetSum,
         RouGetCalcs $rouGetCalcs,

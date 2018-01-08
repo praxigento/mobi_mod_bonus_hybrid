@@ -13,7 +13,7 @@ use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Accounting\Response\Data\Customer 
 use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Accounting\Response\Data\Trans as DRespTrans;
 use Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Accounting\Trans\Builder as QBAccTrans;
 use Praxigento\BonusHybrid\Web\Dcp\Report\Accounting\Repo\Query\GetBalance\Builder as QBBal;
-use Praxigento\Core\Tool\IPeriod as HPeriod;
+use Praxigento\Core\Api\Helper\Period as HPeriod;
 use Praxigento\Downline\Repo\Query\Customer\Get as QBCust;
 
 class Accounting
@@ -38,7 +38,7 @@ class Accounting
     const VAR_DATE_TO = 'dateFrom';
     /** @var \Praxigento\Core\App\Api\Web\IAuthenticator */
     private $authenticator;
-    /** @var \Praxigento\Core\Tool\IPeriod */
+    /** @var \Praxigento\Core\Api\Helper\Period */
     private $hlpPeriod;
     /** @var \Praxigento\BonusHybrid\Web\Dcp\Report\Accounting\Repo\Query\GetBalance\Builder */
     private $qbBalance;
@@ -47,7 +47,7 @@ class Accounting
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
-        \Praxigento\Core\Tool\IPeriod $hlpPeriod,
+        \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         \Praxigento\Core\App\Api\Web\Authenticator\Front $authenticator,
         \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Accounting\Trans\Builder $qbDcpTrans,
         \Praxigento\BonusHybrid\Web\Dcp\Report\Accounting\Repo\Query\GetBalance\Builder $qbBalance,

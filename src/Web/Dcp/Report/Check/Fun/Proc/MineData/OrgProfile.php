@@ -17,7 +17,7 @@ use Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData\OrgProfile\Db\
  */
 class OrgProfile
 {
-    /** @var \Praxigento\Core\Tool\IPeriod */
+    /** @var \Praxigento\Core\Api\Helper\Period */
     private $hlpPeriod;
     /** @var QBGetGen */
     private $qbGetGen;
@@ -27,7 +27,7 @@ class OrgProfile
     private $rouGetCalcs;
 
     public function __construct(
-        \Praxigento\Core\Tool\IPeriod $hlpPeriod,
+        \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         RepoBonDwnl $repoBonDwnl,
         QBGetGen $qbGetGen,
         RouGetCalcs $rouGetCalcs

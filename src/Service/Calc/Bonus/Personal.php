@@ -22,7 +22,7 @@ class Personal
     private $hlpDwnlTree;
     /** @var \Praxigento\BonusHybrid\Service\Calc\A\Helper\CreateOper */
     private $hlpOper;
-    /** @var  \Praxigento\Core\Tool\IPeriod */
+    /** @var  \Praxigento\Core\Api\Helper\Period */
     private $hlpPeriod;
     /** @var  \Praxigento\BonusHybrid\Helper\IScheme */
     private $hlpScheme;
@@ -45,7 +45,7 @@ class Personal
 
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
-        \Praxigento\Core\Tool\IPeriod $hlpPeriod,
+        \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         \Praxigento\BonusBase\Helper\Calc $hlpCalc,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,

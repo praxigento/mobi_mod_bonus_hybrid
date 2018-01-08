@@ -16,7 +16,7 @@ class PvWriteOff
     private $callOperation;
     /** @var \Praxigento\Core\Tool\IDate */
     private $hlpDate;
-    /** @var  \Praxigento\Core\Tool\IPeriod */
+    /** @var  \Praxigento\Core\Api\Helper\Period */
     private $hlpPeriod;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
@@ -40,7 +40,7 @@ class PvWriteOff
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
         \Praxigento\Core\Tool\IDate $hlpDate,
-        \Praxigento\Core\Tool\IPeriod $hlpPeriod,
+        \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         \Praxigento\Accounting\Repo\Entity\Type\Asset $repoTypeAsset,
         \Praxigento\Accounting\Repo\Entity\Type\Operation $repoTypeOper,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,

@@ -18,7 +18,7 @@ use Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData\OverrideBonus\
  */
 class InfinityBonus
 {
-    /** @var \Praxigento\Core\Tool\IPeriod */
+    /** @var \Praxigento\Core\Api\Helper\Period */
     private $hlpPeriod;
     /** @var \Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData\InfinityBonus\Db\Query\GetItems */
     private $qbGetItems;
@@ -28,7 +28,7 @@ class InfinityBonus
     private $rouIsSchemeEu;
 
     public function __construct(
-        \Praxigento\Core\Tool\IPeriod $hlpPeriod,
+        \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         QBGetItems $qbGetItems,
         RouGetCalcs $rouGetCalcs,
         RouIsSchemeEu $rouIsSchemeEu

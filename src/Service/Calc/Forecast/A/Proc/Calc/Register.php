@@ -18,13 +18,13 @@ class Register
     /** int */
     const OUT_CALC_ID = 'calcId';
 
-    /** @var  \Praxigento\Core\Tool\IPeriod */
+    /** @var  \Praxigento\Core\Api\Helper\Period */
     private $hlpPeriod;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\IAdd */
     private $procPeriodAdd;
 
     public function __construct(
-        \Praxigento\Core\Tool\IPeriod $hlpPeriod,
+        \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         \Praxigento\BonusBase\Service\Period\Calc\IAdd $procPeriodAdd
     )
     {
@@ -56,7 +56,7 @@ class Register
     private function getPeriod()
     {
         /* get current month as MONTH period */
-        $month = $this->hlpPeriod->getPeriodCurrent(null, 0, \Praxigento\Core\Tool\IPeriod::TYPE_MONTH);
+        $month = $this->hlpPeriod->getPeriodCurrent(null, 0, \Praxigento\Core\Api\Helper\Period::TYPE_MONTH);
         /* get current date then get yesterday date (end of period) */
         $today = $this->hlpPeriod->getPeriodCurrent();
         $end = $this->hlpPeriod->getPeriodPrev($today);

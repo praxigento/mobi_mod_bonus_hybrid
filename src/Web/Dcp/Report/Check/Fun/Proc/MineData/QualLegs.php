@@ -20,7 +20,7 @@ use Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData\QualLegs\Db\Qu
  */
 class QualLegs
 {
-    /** @var \Praxigento\Core\Tool\IPeriod */
+    /** @var \Praxigento\Core\Api\Helper\Period */
     private $hlpPeriod;
     /** @var \Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData\QualLegs\Db\Query\GetItems */
     private $qbGetItems;
@@ -32,7 +32,7 @@ class QualLegs
     private $rouIsSchemeEu;
 
     public function __construct(
-        \Praxigento\Core\Tool\IPeriod $hlpPeriod,
+        \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase2\Legs $repoLegs,
         QBGetItems $qbGetItems,
         RouGetCalcs $rouGetCalcs,

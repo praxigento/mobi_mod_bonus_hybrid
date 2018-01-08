@@ -16,7 +16,7 @@ class Plain
 {
     /** @var \Praxigento\Accounting\Api\Service\Balance\Get\Turnover */
     private $callBalanceGetTurnover;
-    /** @var  \Praxigento\Core\Tool\IPeriod */
+    /** @var  \Praxigento\Core\Api\Helper\Period */
     private $hlpPeriod;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
@@ -37,7 +37,7 @@ class Plain
 
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
-        \Praxigento\Core\Tool\IPeriod $hlpPeriod,
+        \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         RAccount $repoAcc,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
@@ -133,13 +133,13 @@ class Plain
     {
         if ($requested) {
             /* convert $requested to MONTH period */
-            $month = $this->hlpPeriod->getPeriodNext($requested, \Praxigento\Core\Tool\IPeriod::TYPE_MONTH);
-            $month = $this->hlpPeriod->getPeriodPrev($month, \Praxigento\Core\Tool\IPeriod::TYPE_MONTH);
+            $month = $this->hlpPeriod->getPeriodNext($requested, \Praxigento\Core\Api\Helper\Period::TYPE_MONTH);
+            $month = $this->hlpPeriod->getPeriodPrev($month, \Praxigento\Core\Api\Helper\Period::TYPE_MONTH);
             /* get period end */
             $end = $this->hlpPeriod->getPeriodLastDate($month);
         } else {
             /* get current month as MONTH period */
-            $month = $this->hlpPeriod->getPeriodCurrent(null, 0, \Praxigento\Core\Tool\IPeriod::TYPE_MONTH);
+            $month = $this->hlpPeriod->getPeriodCurrent(null, 0, \Praxigento\Core\Api\Helper\Period::TYPE_MONTH);
             /* get current date then get yesterday date (end of period) */
             $today = $this->hlpPeriod->getPeriodCurrent();
 //            $end = $this->hlpPeriod->getPeriodPrev($today);

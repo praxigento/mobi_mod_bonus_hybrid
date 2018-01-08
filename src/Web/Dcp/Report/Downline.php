@@ -31,7 +31,7 @@ class Downline
 
     /** @var \Praxigento\Core\App\Api\Web\IAuthenticator */
     private $authenticator;
-    /** @var \Praxigento\Core\Tool\IPeriod */
+    /** @var \Praxigento\Core\Api\Helper\Period */
     private $hlpPeriod;
     /** @var \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Builder */
     private $qbDownline;
@@ -49,7 +49,7 @@ class Downline
         \Praxigento\Downline\Repo\Entity\Snap $repoSnap,
         \Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder $qbLastCalc,
         \Praxigento\BonusHybrid\Repo\Query\Dcp\Report\Downline\Builder $qbDownline,
-        \Praxigento\Core\Tool\IPeriod $hlpPeriod
+        \Praxigento\Core\Api\Helper\Period $hlpPeriod
     ) {
         /* don't pass query builder to the parent - we have 4 builders in the operation, not one */
         parent::__construct($manObj, null);
