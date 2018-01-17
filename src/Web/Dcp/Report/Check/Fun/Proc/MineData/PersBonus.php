@@ -8,10 +8,10 @@ namespace Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData;
 use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Customer as DCustomer;
 use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\PersonalBonus as DPersonalBonus;
 use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\PersonalBonus\Item as DItem;
-use Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\GetCalcs as RouGetCalcs;
-use Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData\PersBonus\Db\Query\GetItems as QBGetItems;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
+use Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\GetCalcs as RouGetCalcs;
+use Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData\PersBonus\Db\Query\GetItems as QBGetItems;
 
 /**
  * Action to build "Personal Bonus" section of the DCP's "Check" report.
@@ -45,22 +45,33 @@ class PersBonus
         $dsBegin = $this->hlpPeriod->getPeriodFirstDate($period);
         $dsEnd = $this->hlpPeriod->getPeriodLastDate($period);
 
+        /* default values for result attributes */
+        $items = [];
+        $pvCompress = 0;
+        $pvOwn = 0;
+        /** TODO: calc value or remove attr */
+        $percent = 0;
+
         /* perform processing */
         $calcs = $this->rouGetCalcs->exec($dsBegin, $dsEnd);
-        $calcPvWriteOff = $calcs[Cfg::CODE_TYPE_CALC_PV_WRITE_OFF];
-        $calcCompress = $calcs[Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1];
+        if (
+            isset($calcs[Cfg::CODE_TYPE_CALC_PV_WRITE_OFF]) &&
+            isset($calcs[Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1])
+        ) {
+            $calcPvWriteOff = $calcs[Cfg::CODE_TYPE_CALC_PV_WRITE_OFF];
+            $calcCompress = $calcs[Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1];
 
-        $pvOwn = $this->getPv($calcPvWriteOff, $custId);
-        $pvCompress = $this->getPv($calcCompress, $custId);
-        $items = $this->getItems($calcPvWriteOff, $calcCompress, $custId);
+            $pvOwn = $this->getPv($calcPvWriteOff, $custId);
+            $pvCompress = $this->getPv($calcCompress, $custId);
+            $items = $this->getItems($calcPvWriteOff, $calcCompress, $custId);
+        }
 
         /* compose result */
         $result = new DPersonalBonus();
         $result->setCompressedVolume($pvCompress);
         $result->setItems($items);
         $result->setOwnVolume($pvOwn);
-        /** TODO: calc value or remove attr */
-        $result->setPercent(0);
+        $result->setPercent($percent);
         return $result;
     }
 

@@ -7,10 +7,10 @@ namespace Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData;
 use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Customer as DCustomer;
 use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\TeamBonus as DTeamBonus;
 use Praxigento\BonusHybrid\Api\Web\Dcp\Report\Check\Response\Body\Sections\TeamBonus\Item as DItem;
-use Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\GetCalcs as RouGetCalcs;
-use Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData\TeamBonus\Db\Query\GetItems as QBGetItems;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
+use Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData\A\Fun\Rou\GetCalcs as RouGetCalcs;
+use Praxigento\BonusHybrid\Web\Dcp\Report\Check\Fun\Proc\MineData\TeamBonus\Db\Query\GetItems as QBGetItems;
 
 /**
  * Action to build "Team Bonus" section of the DCP's "Check" report.
@@ -45,21 +45,33 @@ class TeamBonus
         $dsBegin = $this->hlpPeriod->getPeriodFirstDate($period);
         $dsEnd = $this->hlpPeriod->getPeriodLastDate($period);
 
+        /* default values for result attributes */
+        $items = [];
+        $pv = 0;
+        /** TODO: calc value or remove attr */
+        $percent = 0;
+
         /* perform processing */
         $calcs = $this->rouGetCalcs->exec($dsBegin, $dsEnd);
-        $calcPvWriteOff = $calcs[Cfg::CODE_TYPE_CALC_PV_WRITE_OFF];
-        $calcDef = $calcs[Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF];
-        $calcEu = $calcs[Cfg::CODE_TYPE_CALC_BONUS_TEAM_EU];
+        if (
+            isset($calcs[Cfg::CODE_TYPE_CALC_PV_WRITE_OFF]) &&
+            isset($calcs[Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF]) &&
+            isset($calcs[Cfg::CODE_TYPE_CALC_BONUS_TEAM_EU])
+        ) {
+            $calcPvWriteOff = $calcs[Cfg::CODE_TYPE_CALC_PV_WRITE_OFF];
+            $calcDef = $calcs[Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF];
+            $calcEu = $calcs[Cfg::CODE_TYPE_CALC_BONUS_TEAM_EU];
 
-        $pv = $this->getPv($calcPvWriteOff, $custId);
-        $items = $this->getItems($calcPvWriteOff, $calcDef, $calcEu, $custId);
+            $pv = $this->getPv($calcPvWriteOff, $custId);
+            $items = $this->getItems($calcPvWriteOff, $calcDef, $calcEu, $custId);
+        }
 
         /* compose result */
         $result = new DTeamBonus();
         $result->setItems($items);
         $result->setTotalVolume($pv);
-        /** TODO: calc value or remove attr */
-        $result->setPercent(0);
+        $result->setPercent($percent);
+
         return $result;
     }
 

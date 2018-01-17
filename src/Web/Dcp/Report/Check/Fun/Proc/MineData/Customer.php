@@ -29,6 +29,8 @@ class Customer
 
     public function exec($custId, $period): DCustomer
     {
+        $result = new DCustomer();
+
         /* define local working data */
         $onDate = $this->hlpPeriod->getPeriodLastDate($period);
 
@@ -51,7 +53,6 @@ class Customer
         $name = "$nameFirst $nameLast";
 
         /* compose result */
-        $result = new DCustomer();
         $result->setId($custId);
         $result->setMlmId($mlmId);
         $result->setLevel($level);

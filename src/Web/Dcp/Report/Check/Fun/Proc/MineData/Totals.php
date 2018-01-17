@@ -49,30 +49,41 @@ class Totals
         $dsBegin = $this->hlpPeriod->getPeriodFirstDate($period);
         $dsEnd = $this->hlpPeriod->getPeriodLastDate($period);
 
+        /* default values for result attributes */
+        $amntCourt = 0;
+        $amntInf = 0;
+        $amntNet = 0;
+        $amntOver = 0;
+        $amntPers = 0;
+        $amntTeam = 0;
+        $amntTotal = 0;
+        $amntFee = 0; // TODO: unhardcode fee
+
         /* perform processing */
         $calcs = $this->rouGetCalcs->exec($dsBegin, $dsEnd);
-        $isSchemeEu = $this->rouIsSchemeEu->exec($custId);
-        $idBonPers = $calcs[Cfg::CODE_TYPE_CALC_BONUS_PERSONAL];
-        $idBonCourt = $calcs[Cfg::CODE_TYPE_CALC_BONUS_COURTESY];
-        if ($isSchemeEu) {
-            $idBonTeam = $calcs[Cfg::CODE_TYPE_CALC_BONUS_TEAM_EU];
-            $idBonOver = $calcs[Cfg::CODE_TYPE_CALC_BONUS_OVERRIDE_EU];
-            $idBonInf = $calcs[Cfg::CODE_TYPE_CALC_BONUS_INFINITY_EU];
-        } else {
-            $idBonTeam = $calcs[Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF];
-            $idBonOver = $calcs[Cfg::CODE_TYPE_CALC_BONUS_OVERRIDE_DEF];
-            $idBonInf = $calcs[Cfg::CODE_TYPE_CALC_BONUS_INFINITY_DEF];
-        }
+        if (count($calcs) > 0) {
+            $isSchemeEu = $this->rouIsSchemeEu->exec($custId);
+            $idBonPers = $calcs[Cfg::CODE_TYPE_CALC_BONUS_PERSONAL];
+            $idBonCourt = $calcs[Cfg::CODE_TYPE_CALC_BONUS_COURTESY];
+            if ($isSchemeEu) {
+                $idBonTeam = $calcs[Cfg::CODE_TYPE_CALC_BONUS_TEAM_EU];
+                $idBonOver = $calcs[Cfg::CODE_TYPE_CALC_BONUS_OVERRIDE_EU];
+                $idBonInf = $calcs[Cfg::CODE_TYPE_CALC_BONUS_INFINITY_EU];
+            } else {
+                $idBonTeam = $calcs[Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF];
+                $idBonOver = $calcs[Cfg::CODE_TYPE_CALC_BONUS_OVERRIDE_DEF];
+                $idBonInf = $calcs[Cfg::CODE_TYPE_CALC_BONUS_INFINITY_DEF];
+            }
 
-        /* fetch data from DB */
-        $amntPers = $this->getAmount($idBonPers, $custId);
-        $amntTeam = $this->getSum($idBonTeam, $custId);
-        $amntCourt = $this->getAmount($idBonCourt, $custId);
-        $amntOver = $this->getSum($idBonOver, $custId);
-        $amntInf = $this->getSum($idBonInf, $custId);
-        $amntTotal = $amntPers + $amntTeam + $amntCourt + $amntOver + $amntInf;
-        $amntFee = 0; // TODO: unhardcode fee
-        $amntNet = $amntTotal - $amntFee;
+            /* fetch data from DB */
+            $amntPers = $this->getAmount($idBonPers, $custId);
+            $amntTeam = $this->getSum($idBonTeam, $custId);
+            $amntCourt = $this->getAmount($idBonCourt, $custId);
+            $amntOver = $this->getSum($idBonOver, $custId);
+            $amntInf = $this->getSum($idBonInf, $custId);
+            $amntTotal = $amntPers + $amntTeam + $amntCourt + $amntOver + $amntInf;
+            $amntNet = $amntTotal - $amntFee;
+        }
 
         /* compose result */
         $result = new DTotals();

@@ -46,18 +46,23 @@ class InfinityBonus
         $dsBegin = $this->hlpPeriod->getPeriodFirstDate($period);
         $dsEnd = $this->hlpPeriod->getPeriodLastDate($period);
 
+        /* default values for result attributes */
+        $items = [];
+
         /* perform processing */
         $calcs = $this->rouGetCalcs->exec($dsBegin, $dsEnd);
-        $isSchemeEu = $this->rouIsSchemeEu->exec($custId);
-        if ($isSchemeEu) {
-            $calcCompress = $calcs[Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_EU];
-            $calcBonus = $calcs[Cfg::CODE_TYPE_CALC_BONUS_INFINITY_EU];
-        } else {
-            $calcCompress = $calcs[Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_DEF];
-            $calcBonus = $calcs[Cfg::CODE_TYPE_CALC_BONUS_INFINITY_DEF];
-        }
+        if (count($calcs) > 0) {
+            $isSchemeEu = $this->rouIsSchemeEu->exec($custId);
+            if ($isSchemeEu) {
+                $calcCompress = $calcs[Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_EU];
+                $calcBonus = $calcs[Cfg::CODE_TYPE_CALC_BONUS_INFINITY_EU];
+            } else {
+                $calcCompress = $calcs[Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_DEF];
+                $calcBonus = $calcs[Cfg::CODE_TYPE_CALC_BONUS_INFINITY_DEF];
+            }
 
-        $items = $this->getItems($calcCompress, $calcBonus, $custId);
+            $items = $this->getItems($calcCompress, $calcBonus, $custId);
+        }
 
         /* compose result */
         $result = new DInfBonus();

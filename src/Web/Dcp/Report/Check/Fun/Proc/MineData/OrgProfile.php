@@ -45,10 +45,15 @@ class OrgProfile
         $dsBegin = $this->hlpPeriod->getPeriodFirstDate($period);
         $dsEnd = $this->hlpPeriod->getPeriodLastDate($period);
 
+        /* default values for result attributes */
+        $items = [];
+
         /* perform processing */
         $calcs = $this->rouGetCalcs->exec($dsBegin, $dsEnd);
-        $calcIdWriteOff = $calcs[Cfg::CODE_TYPE_CALC_PV_WRITE_OFF];
-        $items = $this->getItems($calcIdWriteOff, $custId);
+        if (count($calcs) > 0) {
+            $calcIdWriteOff = $calcs[Cfg::CODE_TYPE_CALC_PV_WRITE_OFF];
+            $items = $this->getItems($calcIdWriteOff, $custId);
+        }
 
         /* compose result */
         $result = new DOrgProfile();

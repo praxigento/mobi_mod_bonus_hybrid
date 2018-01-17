@@ -52,16 +52,22 @@ class QualLegs
         $dsBegin = $this->hlpPeriod->getPeriodFirstDate($period);
         $dsEnd = $this->hlpPeriod->getPeriodLastDate($period);
 
+        /* default values for result attributes */
+        $items = [];
+        $qual = new DQual();
+
         /* perform processing */
         $calcs = $this->rouGetCalcs->exec($dsBegin, $dsEnd);
-        $isSchemeEu = $this->rouIsSchemeEu->exec($custId);
-        if ($isSchemeEu) {
-            $calcId = $calcs[Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_EU];
-        } else {
-            $calcId = $calcs[Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_DEF];
+        if (count($calcs) > 0) {
+            $isSchemeEu = $this->rouIsSchemeEu->exec($custId);
+            if ($isSchemeEu) {
+                $calcId = $calcs[Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_EU];
+            } else {
+                $calcId = $calcs[Cfg::CODE_TYPE_CALC_COMPRESS_PHASE2_DEF];
+            }
+            $items = $this->getItems($calcId, $custId);
+            $qual = $this->getQualData($calcId, $custId);
         }
-        $items = $this->getItems($calcId, $custId);
-        $qual = $this->getQualData($calcId, $custId);
 
         /* compose result */
         $result = new DQualLegs();
