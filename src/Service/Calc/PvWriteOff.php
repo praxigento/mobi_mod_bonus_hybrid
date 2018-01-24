@@ -73,6 +73,7 @@ class PvWriteOff
      * @param string $dsBegin
      * @param string $dsEnd
      * @return int operation ID
+     * @throws \Exception
      */
     private function createOperation($trans, $dsBegin, $dsEnd)
     {
