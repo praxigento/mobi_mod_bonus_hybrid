@@ -40,7 +40,7 @@ class PrepareTrans
      */
     public function exec($bonus, $dateApplied)
     {
-        $assetTypeId = $this->repoAssetType->getIdByCode(Cfg::CODE_TYPE_ASSET_WALLET_ACTIVE);
+        $assetTypeId = $this->repoAssetType->getIdByCode(Cfg::CODE_TYPE_ASSET_WALLET);
         $represAccId = $this->repoAcc->getRepresentativeAccountId($assetTypeId);
         $result = [];
         /** @var DBonus $one */

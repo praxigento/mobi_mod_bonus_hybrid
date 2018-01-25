@@ -73,7 +73,7 @@ class ProcessOrders
         $calcId = $opts[self::OPT_CALC_ID];
         /* get representatives accounts */
         $accPvRepres = $this->getAccRepres(Cfg::CODE_TYPE_ASSET_PV);
-        $accWalletRepres = $this->getAccRepres(Cfg::CODE_TYPE_ASSET_WALLET_ACTIVE);
+        $accWalletRepres = $this->getAccRepres(Cfg::CODE_TYPE_ASSET_WALLET);
         /* Create one operation for all transactions */
         $req = new \Praxigento\Accounting\Api\Service\Operation\Request();
         $req->setOperationTypeCode(Cfg::CODE_TYPE_OPER_BONUS_SIGNUP_DEBIT);
@@ -90,8 +90,8 @@ class ProcessOrders
             if ($scheme == Cfg::SCHEMA_EU) {
                 /* prepare data for transactions */
                 $accPvCust = $this->getAccCust(Cfg::CODE_TYPE_ASSET_PV, $custId);
-                $accWalletParent = $this->getAccCust(Cfg::CODE_TYPE_ASSET_WALLET_ACTIVE, $parentId);
-                $accWalletGrand = $this->getAccCust(Cfg::CODE_TYPE_ASSET_WALLET_ACTIVE, $grandId);
+                $accWalletParent = $this->getAccCust(Cfg::CODE_TYPE_ASSET_WALLET, $parentId);
+                $accWalletGrand = $this->getAccCust(Cfg::CODE_TYPE_ASSET_WALLET, $grandId);
                 /* add PV transaction */
                 $tranPvOff = [
                     Trans::ATTR_DEBIT_ACC_ID => $accPvCust,
