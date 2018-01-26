@@ -23,8 +23,6 @@ class Phase2
     private $repoCalc;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoBonDwnl;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline\Qualification */
-    private $repoDwnlQual;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\Phase2\GetPv */
     private $rouGetPv;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\Phase2\SaveDownline */
@@ -34,7 +32,6 @@ class Phase2
         \Psr\Log\LoggerInterface $logger,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline\Qualification $repoDwnlQual,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2 $procCmprsPhase2,
         \Praxigento\BonusHybrid\Service\Calc\Compress\Phase2\GetPv $rouGetPv,
@@ -44,7 +41,6 @@ class Phase2
         $this->logger = $logger;
         $this->repoCalc = $repoCalc;
         $this->repoBonDwnl = $repoBonDwnl;
-        $this->repoDwnlQual = $repoDwnlQual;
         $this->procPeriodGet = $procPeriodGet;
         $this->procCmprsPhase2 = $procCmprsPhase2;
         $this->rouGetPv = $rouGetPv;
@@ -106,7 +102,7 @@ class Phase2
         /* perform calculation for given source calculations */
         list($downline, $legs) = $this->compressPhase2($writeOffCalcId, $phase1CalcId, $phase2CalcId, $scheme);
         /* save calculation results */
-        $this->rouSaveDwnl->exec($downline, $legs, $writeOffCalcId, $scheme);
+        $this->rouSaveDwnl->exec($downline, $legs, $writeOffCalcId, $phase1CalcId,$scheme);
         /* mark this calculation complete */
         $this->repoCalc->markComplete($phase2CalcId);
         /* mark process as successful */

@@ -53,11 +53,13 @@ class SaveDownline
      * @param \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] $downline
      * @param $legs
      * @param $calcIdWriteOff
+     * @param $phase1CalcId
      * @param $scheme
+     * @throws \Exception
      */
-    public function exec($downline, $legs, $calcIdWriteOff, $scheme)
+    public function exec($downline, $legs, $calcIdWriteOff, $phase1CalcId, $scheme)
     {
-        $this->saveDownline($downline, $calcIdWriteOff, $scheme);
+        $this->saveDownline($downline, $calcIdWriteOff, $phase1CalcId, $scheme);
         $this->saveLegs($legs);
     }
 
@@ -80,14 +82,16 @@ class SaveDownline
     }
 
     /**
-     * @param \Praxigento\BonusHybrid\Repo\Entity\Data\Downline $entries
-     * @param int $calcId
+     * @param \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] $entries
+     * @param int $plainCalcId
+     * @param int $cmprsCalcId
      * @param string $scheme
+     * @throws \Exception
      */
-    private function saveDownline($entries, $calcId, $scheme)
+    private function saveDownline($entries, $plainCalcId, $cmprsCalcId, $scheme)
     {
         $custById = $this->getCustomersById();
-        $plainByCust = $this->getBonTreeByCustId($calcId);
+        $plainByCust = $this->getBonTreeByCustId($plainCalcId);
         /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Downline $entry */
         foreach ($entries as $entry) {
             $custId = $entry->getCustomerRef();
@@ -106,6 +110,13 @@ class SaveDownline
                 $qual->setTreeEntryRef($plainId);
                 $qual->setRankRef($rankId);
                 $this->repoDwnlQual->create($qual);
+                /* update rank in downlines (plain & compressed) */
+                $dwnlData = [EBonDwnl::ATTR_RANK_REF => $rankId];
+                $byCust = EBonDwnl::ATTR_CUST_REF . '=' . (int)$custId;
+                $byPlain = EBonDwnl::ATTR_CALC_REF . '=' . (int)$plainCalcId;
+                $byCmprs = EBonDwnl::ATTR_CALC_REF . '=' . (int)$cmprsCalcId;
+                $where = "($byCust) AND (($byPlain) OR ($byCmprs))";
+                $this->repoBonDwnl->update($dwnlData, $where);
             }
         }
     }
