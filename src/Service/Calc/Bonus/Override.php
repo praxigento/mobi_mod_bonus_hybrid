@@ -159,6 +159,7 @@ class Override
      *
      * @param int $operId
      * @param int $calcId
+     * @throws \Exception
      */
     private function saveLogOper($operId, $calcId)
     {
