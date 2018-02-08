@@ -102,7 +102,7 @@ class PvWriteOff
         $dsEnd = $periodData->getDstampEnd();
         $calcId = $calcData->getId();
         /* get accounting data for calculation (PV transitions) */
-        $transitions = $this->getTransitions($calcId, $dsBegin, $dsEnd);
+        $transitions = $this->getTransitions($dsBegin, $dsEnd);
         /* group PV transitions by account */
         $balances = $this->groupPvTrans($transitions);
         /* compose transactions for the operation */
@@ -112,7 +112,7 @@ class PvWriteOff
         /* calculate PV/TV/OV and save plain downline */
         $this->subSaveDownline->exec($calcId, $dsEnd, $balances);
         /* register operation in log */
-        $this->saveLog($transitions, $operId, $calcId);
+        $this->saveLog($operId, $calcId);
         /* mark this calculation complete */
         $this->repoCalc->markComplete($calcId);
         /* mark process as successful */
@@ -155,27 +155,24 @@ class PvWriteOff
     }
 
     /**
-     * Get PV transitions data for period (except related to 'PV Write Off' itself).
+     * Get PV transitions data for period.
      *
-     * @param int $calcId
      * @param string $dsBegin
      * @param string $dsEnd
-     * @return  PvWriteOff\Data\Trans[]
+     * @return  DTrans[]
+     * @throws \Exception
      */
-    private function getTransitions($calcId, $dsBegin, $dsEnd)
+    private function getTransitions($dsBegin, $dsEnd)
     {
         $assetTypeId = $this->repoTypeAsset->getIdByCode(Cfg::CODE_TYPE_ASSET_PV);
-        $operTypeId = $this->repoTypeOper->getIdByCode(Cfg::CODE_TYPE_OPER_PV_WRITE_OFF);
         $dateFrom = $this->hlpPeriod->getTimestampFrom($dsBegin);
         $dateTo = $this->hlpPeriod->getTimestampNextFrom($dsEnd);
 
         $query = $this->sqbGetData->build();
         $bind = [
             $this->sqbGetData::BND_ASSET_TYPE_ID => $assetTypeId,
-            $this->sqbGetData::BND_CALC_ID => $calcId,
             $this->sqbGetData::BND_DATE_FROM => $dateFrom,
-            $this->sqbGetData::BND_DATE_TO => $dateTo,
-            $this->sqbGetData::BND_OPER_TYPE_ID => $operTypeId
+            $this->sqbGetData::BND_DATE_TO => $dateTo
         ];
 
         $conn = $query->getConnection();
@@ -218,26 +215,12 @@ class PvWriteOff
     /**
      * Bind operations with calculation.
      *
-     * @param PvWriteOff\Data\Trans[] $transitions
      * @param int $operIdWriteOff
      * @param int $calcId
+     * @throws \Exception
      */
-    private function saveLog($transitions, $operIdWriteOff, $calcId)
+    private function saveLog($operIdWriteOff, $calcId)
     {
-        /* log all PV related operations */
-        $uniqueOperIds = [];
-        /** @var PvWriteOff\Data\Trans $one */
-        foreach ($transitions as $one) {
-            /* MOBI-628 : some operations could consist of many transactions */
-            $operId = $one->get(DTrans::A_OPER_ID);
-            if (!isset($uniqueOperIds[$operId])) {
-                $log = new ELogOper();
-                $log->setCalcId($calcId);
-                $log->setOperId($operId);
-                $this->repoLogOper->create($log);
-                $uniqueOperIds[$operId] = true;
-            }
-        }
         /* log PvWriteOff operation itself */
         $log = new ELogOper();
         $log->setCalcId($calcId);
