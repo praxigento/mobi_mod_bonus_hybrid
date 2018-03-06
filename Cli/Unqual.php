@@ -5,8 +5,8 @@
 
 namespace Praxigento\BonusHybrid\Cli;
 
-use Praxigento\Core\Data as AData;
 use Praxigento\Core\App\Service\IProcess as IProcess;
+use Praxigento\Core\Data as AData;
 
 /**
  * Process inactive & unqualified customers.

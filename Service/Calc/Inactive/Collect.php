@@ -55,6 +55,37 @@ class Collect
         $this->qbGetStats = $qbGetStats;
     }
 
+    /**
+     * @param EBonDwnl[] $tree
+     * @param $prevStat
+     * @return array
+     */
+    private function calc($tree, $prevStat)
+    {
+        $result = [];
+        /* map inactive statistics by customer ID */
+        $mapMonths = $this->hlpTree->mapValueById($prevStat, QBGetStats::A_CUST_REF, QBGetStats::A_MONTHS_INACT);
+        foreach ($tree as $item) {
+            $pv = $item->getPv();
+            if ($pv < Cfg::DEF_ZERO) {
+                /* this customer is inactive in this period */
+                $custId = $item->getCustomerRef();
+                $treeEntryId = $item->getId();
+                if (isset($mapMonths[$custId])) {
+                    $prevMonths = $mapMonths[$custId];
+                    $months = $prevMonths + 1;
+                } else {
+                    $months = 1;
+                }
+                $inactItem = new EInact();
+                $inactItem->setTreeEntryRef($treeEntryId);
+                $inactItem->setInactMonths($months);
+                $result[] = $inactItem;
+            }
+        }
+        return $result;
+    }
+
     public function exec(\Praxigento\Core\Data $ctx)
     {
         $this->logger->info("Inactive Stats Collection calculation is started.");
@@ -130,37 +161,6 @@ class Collect
             QBGetStats::BND_CALC_REF => $calcId
         ];
         $result = $conn->fetchAll($query, $bind);
-        return $result;
-    }
-
-    /**
-     * @param EBonDwnl[] $tree
-     * @param $prevStat
-     * @return array
-     */
-    private function calc($tree, $prevStat)
-    {
-        $result = [];
-        /* map inactive statistics by customer ID */
-        $mapMonths = $this->hlpTree->mapValueById($prevStat, QBGetStats::A_CUST_REF, QBGetStats::A_MONTHS_INACT);
-        foreach ($tree as $item) {
-            $pv = $item->getPv();
-            if ($pv < Cfg::DEF_ZERO) {
-                /* this customer is inactive in this period */
-                $custId = $item->getCustomerRef();
-                $treeEntryId = $item->getId();
-                if (isset($mapMonths[$custId])) {
-                    $prevMonths = $mapMonths[$custId];
-                    $months = $prevMonths + 1;
-                } else {
-                    $months = 1;
-                }
-                $inactItem = new EInact();
-                $inactItem->setTreeEntryRef($treeEntryId);
-                $inactItem->setInactMonths($months);
-                $result[] = $inactItem;
-            }
-        }
         return $result;
     }
 

@@ -5,25 +5,23 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Value;
 
-use Praxigento\BonusBase\Repo\Entity\Data\Calculation as ECalc;
 use Praxigento\BonusBase\Service\Period\Calc\Get\IDependent as PGetPeriodDep;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
-use Praxigento\BonusHybrid\Service\Calc\Value\ITv;
 
-class Tv
-    implements \Praxigento\BonusHybrid\Service\Calc\Value\ITv
+class Ov
+    implements \Praxigento\BonusHybrid\Service\Calc\Value\IOv
 {
 
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
-    private $repoCalc;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoBonDwnl;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Value\Tv\Calc */
+    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
+    private $repoCalc;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Value\Ov\Calc */
     private $subCalc;
 
     public function __construct(
@@ -31,7 +29,7 @@ class Tv
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
-        \Praxigento\BonusHybrid\Service\Calc\Value\Tv\Calc $subCalc
+        \Praxigento\BonusHybrid\Service\Calc\Value\Ov\Calc $subCalc
     )
     {
         $this->logger = $logger;
@@ -43,67 +41,59 @@ class Tv
 
     public function exec(\Praxigento\Core\Data $ctx)
     {
-        $this->logger->info("TV calculation is started.");
+        $this->logger->info("OV calculation is started.");
         /**
          * perform processing
          */
-        /**
-         * Get dependent calculation data
-         *
-         * @var ECalc $compressCalc
-         * @var ECalc $tvCalc
-         *
-         */
-        list($compressCalc, $tvCalc) = $this->getCalcData();
+        /* get dependent calculation data */
+        list($compressCalc, $ovCalc) = $this->getCalcData();
         $compressCalcId = $compressCalc->getId();
-        $tvCalcId = $tvCalc->getId();
-        /* load compressed downlines for period */
-        $dwnlCompress = $this->repoBonDwnl->getByCalcId($compressCalcId);
-        /* populate downline with TV data */
-        $dwnlUpdated = $this->subCalc->exec($dwnlCompress);
+        $ovCalcId = $ovCalc->getId();
+        /* get compressed downline & populate it with OV data */
+        $dwnl = $this->subCalc->exec($compressCalcId);
         /* save updates into repo */
-        $this->updateTv($dwnlUpdated);
+        $this->updateOv($dwnl);
         /* mark this calculation complete */
-        $this->repoCalc->markComplete($tvCalcId);
+        $this->repoCalc->markComplete($ovCalcId);
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);
-        $this->logger->info("TV calculation is completed.");
+        $this->logger->info("OV calculation is completed.");
     }
 
     /**
      * Get data for periods/calculations.
      *
-     * @return array [$compressCalc, $tvCalc]
+     * @return array [$compressCalc, $ovCalc]
      */
     private function getCalcData()
     {
         /* get period & calc data */
         $ctx = new \Praxigento\Core\Data();
         $ctx->set(PGetPeriodDep::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
-        $ctx->set(PGetPeriodDep::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_VALUE_TV);
+        $ctx->set(PGetPeriodDep::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_VALUE_OV);
         $this->procPeriodGet->exec($ctx);
-        /** @var ECalc $compressCalc */
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $compressCalc */
         $compressCalc = $ctx->get(PGetPeriodDep::CTX_OUT_BASE_CALC_DATA);
-        /** @var ECalc $tvCalc */
-        $tvCalc = $ctx->get(PGetPeriodDep::CTX_OUT_DEP_CALC_DATA);
-        $result = [$compressCalc, $tvCalc];
+        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $ovCalc */
+        $ovCalc = $ctx->get(PGetPeriodDep::CTX_OUT_DEP_CALC_DATA);
+        $result = [$compressCalc, $ovCalc];
         return $result;
     }
 
     /**
-     * Update downline tree with calculated TV values.
+     * Update downline tree with calculated OV values.
      *
      * @param EBonDwnl[] $dwnl
      */
-    private function updateTv($dwnl)
+    private function updateOv($dwnl)
     {
         $entity = new  EBonDwnl();
         /** @var EBonDwnl $one */
         foreach ($dwnl as $one) {
-            $tv = $one->getTv();
+            $ov = $one->getOv();
             $calcId = $one->getCalculationRef();
             $custId = $one->getCustomerRef();
-            $entity->setTv($tv);
+            $entity->setOv($ov);
             $id = [
                 EBonDwnl::ATTR_CALC_REF => $calcId,
                 EBonDwnl::ATTR_CUST_REF => $custId
@@ -111,5 +101,4 @@ class Tv
             $this->repoBonDwnl->updateById($id, $entity);
         }
     }
-
 }

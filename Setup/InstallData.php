@@ -19,6 +19,28 @@ class InstallData extends \Praxigento\Core\App\Setup\Data\Base
         $this->addAccountingOperationsTypes();
     }
 
+    private function addAccountingOperationsTypes()
+    {
+        $this->_conn->insertArray(
+            $this->_resource->getTableName(TypeOperation::ENTITY_NAME),
+            [TypeOperation::ATTR_CODE, TypeOperation::ATTR_NOTE],
+            [
+                [Cfg::CODE_TYPE_OPER_BONUS_COURTESY, 'Courtesy bonus.'],
+                [Cfg::CODE_TYPE_OPER_BONUS_INFINITY, 'Infinity bonus.'],
+                [Cfg::CODE_TYPE_OPER_BONUS_OVERRIDE, 'Override bonus.'],
+                [Cfg::CODE_TYPE_OPER_BONUS_PERSONAL, 'Personal bonus.'],
+                [
+                    Cfg::CODE_TYPE_OPER_PV_FORWARD,
+                    'PV transfer from one not closed period to other period in the future for the same customer.'
+                ],
+                [Cfg::CODE_TYPE_OPER_PV_WRITE_OFF, 'PV write off in the end of the bonus calculation period.'],
+                [Cfg::CODE_TYPE_OPER_BONUS_REBATE, 'Orders rebates (personal bonus in EU scheme).'],
+                [Cfg::CODE_TYPE_OPER_BONUS_SIGNUP_DEBIT, 'Sign Up Volume Debit bonus.'],
+                [Cfg::CODE_TYPE_OPER_BONUS_TEAM, 'Team bonus.']
+            ]
+        );
+    }
+
     private function addBonusCalculationsTypes()
     {
         $this->_conn->insertArray(
@@ -56,28 +78,6 @@ class InstallData extends \Praxigento\Core\App\Setup\Data\Base
                 [Cfg::CODE_TYPE_CALC_INACTIVE_PROCESS, 'Inactive customers stats processing.'],
                 [Cfg::CODE_TYPE_CALC_UNQUALIFIED_COLLECT, 'Unqualified customers stats collection.'],
                 [Cfg::CODE_TYPE_CALC_UNQUALIFIED_PROCESS, 'Unqualified customers stats processing.']
-            ]
-        );
-    }
-
-    private function addAccountingOperationsTypes()
-    {
-        $this->_conn->insertArray(
-            $this->_resource->getTableName(TypeOperation::ENTITY_NAME),
-            [TypeOperation::ATTR_CODE, TypeOperation::ATTR_NOTE],
-            [
-                [Cfg::CODE_TYPE_OPER_BONUS_COURTESY, 'Courtesy bonus.'],
-                [Cfg::CODE_TYPE_OPER_BONUS_INFINITY, 'Infinity bonus.'],
-                [Cfg::CODE_TYPE_OPER_BONUS_OVERRIDE, 'Override bonus.'],
-                [Cfg::CODE_TYPE_OPER_BONUS_PERSONAL, 'Personal bonus.'],
-                [
-                    Cfg::CODE_TYPE_OPER_PV_FORWARD,
-                    'PV transfer from one not closed period to other period in the future for the same customer.'
-                ],
-                [Cfg::CODE_TYPE_OPER_PV_WRITE_OFF, 'PV write off in the end of the bonus calculation period.'],
-                [Cfg::CODE_TYPE_OPER_BONUS_REBATE, 'Orders rebates (personal bonus in EU scheme).'],
-                [Cfg::CODE_TYPE_OPER_BONUS_SIGNUP_DEBIT, 'Sign Up Volume Debit bonus.'],
-                [Cfg::CODE_TYPE_OPER_BONUS_TEAM, 'Team bonus.']
             ]
         );
     }

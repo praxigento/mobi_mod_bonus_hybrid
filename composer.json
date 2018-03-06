@@ -12,11 +12,11 @@
   ],
   "autoload": {
     "files": [
-      "src/registration.php"
+      "registration.php"
     ],
     "psr-4": {
-      "Praxigento\\BonusHybrid\\": "src/",
-      "Praxigento\\Bonus\\Hybrid\\": "src/",
+      "Praxigento\\BonusHybrid\\": "",
+      "Praxigento\\Bonus\\Hybrid\\": "",
       "Praxigento\\Bonus\\Hybrid\\Lib\\Test\\": "test/fw"
     }
   },

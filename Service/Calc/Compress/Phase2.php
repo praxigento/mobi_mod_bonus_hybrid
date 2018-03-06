@@ -7,7 +7,6 @@ namespace Praxigento\BonusHybrid\Service\Calc\Compress;
 
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2 as PCpmrsPhase2;
-use \Praxigento\BonusHybrid\Repo\Entity\Data\Downline\Qualification as EDwnlQual;
 
 class Phase2
     implements \Praxigento\BonusHybrid\Service\Calc\Compress\IPhase2
@@ -19,10 +18,10 @@ class Phase2
     private $procCmprsPhase2;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
-    private $repoCalc;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoBonDwnl;
+    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
+    private $repoCalc;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\Phase2\GetPv */
     private $rouGetPv;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\Phase2\SaveDownline */
