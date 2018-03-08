@@ -19,7 +19,7 @@ use Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\UpdateDwnl as PUpdateD
 class Compress
     implements \Praxigento\BonusHybrid\Service\Calc\Forecast\ICompress
 {
-    /** @var \Psr\Log\LoggerInterface */
+    /** @var \Praxigento\Core\App\Api\Logger\Main */
     private $logger;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Clean */
     private $procCalcClean;
@@ -43,7 +43,7 @@ class Compress
     private $repoCalc;
 
     public function __construct(
-        \Psr\Log\LoggerInterface $logger,
+        \Praxigento\Core\App\Api\Logger\Main $logger,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
         \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase1 $procCmprsPhase1,

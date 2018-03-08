@@ -21,7 +21,7 @@ class Team
     private $hlpPeriod;
     /** @var \Praxigento\BonusHybrid\Service\Calc\A\Helper\PrepareTrans */
     private $hlpTrans;
-    /** @var \Psr\Log\LoggerInterface */
+    /** @var \Praxigento\Core\App\Api\Logger\Main */
     private $logger;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
@@ -37,7 +37,7 @@ class Team
     private $subCalcEu;
 
     public function __construct(
-        \Psr\Log\LoggerInterface $logger,
+        \Praxigento\Core\App\Api\Logger\Main $logger,
         \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\BonusBase\Repo\Entity\Log\Customers $repoLogCust,

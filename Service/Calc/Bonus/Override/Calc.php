@@ -22,7 +22,7 @@ class Calc
     private $hlpScheme;
     /** @var \Praxigento\Downline\Api\Helper\Downline */
     private $hlpTree;
-    /** @var \Psr\Log\LoggerInterface */
+    /** @var \Praxigento\Core\App\Api\Logger\Main */
     private $logger;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoBonDwnl;
@@ -34,7 +34,7 @@ class Calc
     private $repoRank;
 
     public function __construct(
-        \Psr\Log\LoggerInterface $logger,
+        \Praxigento\Core\App\Api\Logger\Main $logger,
         \Praxigento\Core\Api\Helper\Format $hlpFormat,
         \Praxigento\Downline\Api\Helper\Downline $hlpTree,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,

@@ -16,7 +16,7 @@ class Phase1
 {
     /** @var \Praxigento\Downline\Helper\Tree */
     private $hlpDwnlTree;
-    /** @var \Psr\Log\LoggerInterface */
+    /** @var \Praxigento\Core\App\Api\Logger\Main */
     private $logger;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
@@ -36,7 +36,7 @@ class Phase1
     private $repoTransPv;
 
     public function __construct(
-        \Psr\Log\LoggerInterface $logger,
+        \Praxigento\Core\App\Api\Logger\Main $logger,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\BonusBase\Repo\Entity\Rank $repoRank,

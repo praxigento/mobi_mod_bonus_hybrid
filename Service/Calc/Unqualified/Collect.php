@@ -19,7 +19,7 @@ class Collect
 {
     /** @var \Praxigento\Downline\Helper\Tree */
     private $hlpTree;
-    /** @var \Psr\Log\LoggerInterface */
+    /** @var \Praxigento\Core\App\Api\Logger\Main */
     private $logger;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
@@ -29,7 +29,7 @@ class Collect
     private $repoCalc;
 
     public function __construct(
-        \Psr\Log\LoggerInterface $logger,
+        \Praxigento\Core\App\Api\Logger\Main $logger,
         \Praxigento\Downline\Helper\Tree $hlpTree,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
