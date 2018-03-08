@@ -19,13 +19,13 @@ class Calc
     private $hlpDwnlTree;
     /** @var \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds */
     private $hlpSignupDebitCust;
-    /** @var \Praxigento\Core\App\Api\Logger\Main */
+    /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoBonDwnl;
 
     public function __construct(
-        \Praxigento\Core\App\Api\Logger\Main $logger,
+        \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl

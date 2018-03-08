@@ -23,7 +23,7 @@ class CalcDef
     private $hlpScheme;
     /** @var \Praxigento\Downline\Api\Helper\Downline */
     private $hlpTree;
-    /** @var \Praxigento\Core\App\Api\Logger\Main */
+    /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoBonDwnl;
@@ -33,7 +33,7 @@ class CalcDef
     private $repoLevel;
 
     public function __construct(
-        \Praxigento\Core\App\Api\Logger\Main $logger,
+        \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Core\Api\Helper\Format $hlpFormat,
         \Praxigento\Downline\Api\Helper\Downline $hlpTree,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,

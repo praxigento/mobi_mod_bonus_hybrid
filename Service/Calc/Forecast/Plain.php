@@ -18,7 +18,7 @@ class Plain
     private $callBalanceGetTurnover;
     /** @var  \Praxigento\Core\Api\Helper\Period */
     private $hlpPeriod;
-    /** @var \Praxigento\Core\App\Api\Logger\Main */
+    /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Clean */
     private $procCleanCalc;
@@ -36,7 +36,7 @@ class Plain
     private $subGetDownline;
 
     public function __construct(
-        \Praxigento\Core\App\Api\Logger\Main $logger,
+        \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         RAccount $repoAcc,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,

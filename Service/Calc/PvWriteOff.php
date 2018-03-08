@@ -18,7 +18,7 @@ class PvWriteOff
     private $hlpDate;
     /** @var  \Praxigento\Core\Api\Helper\Period */
     private $hlpPeriod;
-    /** @var \Praxigento\Core\App\Api\Logger\Main */
+    /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
@@ -38,7 +38,7 @@ class PvWriteOff
     private $subSaveDownline;
 
     public function __construct(
-        \Praxigento\Core\App\Api\Logger\Main $logger,
+        \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Core\Api\Helper\Date $hlpDate,
         \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         \Praxigento\Accounting\Repo\Entity\Type\Asset $repoTypeAsset,

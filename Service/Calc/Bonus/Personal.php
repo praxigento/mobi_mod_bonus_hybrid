@@ -28,7 +28,7 @@ class Personal
     private $hlpScheme;
     /** @var  \Praxigento\BonusHybrid\Service\Calc\A\Helper\PrepareTrans */
     private $hlpTrans;
-    /** @var \Praxigento\Core\App\Api\Logger\Main */
+    /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
@@ -44,7 +44,7 @@ class Personal
     private $repoLogOper;
 
     public function __construct(
-        \Praxigento\Core\App\Api\Logger\Main $logger,
+        \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         \Praxigento\BonusBase\Helper\Calc $hlpCalc,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,

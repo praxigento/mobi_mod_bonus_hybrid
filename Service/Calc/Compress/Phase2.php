@@ -12,7 +12,7 @@ class Phase2
     implements \Praxigento\BonusHybrid\Service\Calc\Compress\IPhase2
 {
 
-    /** @var \Praxigento\Core\App\Api\Logger\Main */
+    /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
     /** @var \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2 */
     private $procCmprsPhase2;
@@ -28,7 +28,7 @@ class Phase2
     private $rouSaveDwnl;
 
     public function __construct(
-        \Praxigento\Core\App\Api\Logger\Main $logger,
+        \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,

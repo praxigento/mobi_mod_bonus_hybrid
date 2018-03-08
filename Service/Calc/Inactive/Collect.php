@@ -23,7 +23,7 @@ class Collect
     const CTX_IN_PERIOD_END = 'in.periodEnd';
     /** @var \Praxigento\Downline\Helper\Tree */
     private $hlpTree;
-    /** @var \Praxigento\Core\App\Api\Logger\Main */
+    /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
@@ -37,7 +37,7 @@ class Collect
     private $repoInact;
 
     public function __construct(
-        \Praxigento\Core\App\Api\Logger\Main $logger,
+        \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Downline\Helper\Tree $hlpTree,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
