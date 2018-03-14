@@ -9,6 +9,7 @@ namespace Praxigento\BonusHybrid;
 
 use Praxigento\BonusBase\Config as BonusBaseCfg;
 use Praxigento\Downline\Config as DownlineCfg;
+use Praxigento\Odoo\Config as OdooCfg;
 use Praxigento\Pv\Config as PvCfg;
 use Praxigento\Wallet\Config as WalletCfg;
 
@@ -55,6 +56,7 @@ class Config extends BonusBaseCfg
     const CODE_TYPE_OPER_BONUS_REBATE = 'HYBRID_BONUS_REBATE';
     const CODE_TYPE_OPER_BONUS_SIGNUP_DEBIT = 'HYBRID_BONUS_SIGNUP_DEBIT';
     const CODE_TYPE_OPER_BONUS_TEAM = 'HYBRID_BONUS_TEAM';
+    const CODE_TYPE_OPER_ODOO_DEBIT = OdooCfg::CODE_TYPE_OPER_WALLET_DEBIT;
     const CODE_TYPE_OPER_PV_FORWARD = 'HYBRID_PV_FWRD';
     const CODE_TYPE_OPER_PV_WRITE_OFF = 'HYBRID_PV_WRITE_OFF';
     const CODE_TYPE_OPER_WALLET_TRANSFER = WalletCfg::CODE_TYPE_OPER_WALLET_TRANSFER;
