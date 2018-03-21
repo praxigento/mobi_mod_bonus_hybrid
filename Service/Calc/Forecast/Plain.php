@@ -85,8 +85,8 @@ class Plain
         /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] $dwnlTree */
         $dwnlTree = $ctxDwnl->get(PGetDownline::CTX_OUT_DWNL);
 
-        /* get representative customer */
-        $custRepresId = $this->repoAcc->getRepresentativeCustomerId();
+        /* get system customer */
+        $custSysId = $this->repoAcc->getSystemCustomerId();
 
         /* get PV turnover for period */
         $entries = $this->getPvTurnover($dateFrom, $dateTo);
@@ -99,7 +99,7 @@ class Plain
             $customerId = $entry->customerId;
             if (
                 ($turnover > Cfg::DEF_ZERO) &&
-                ($customerId != $custRepresId)
+                ($customerId != $custSysId)
             ) {
                 $positiveTurnover[$customerId] = $entry;
                 /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Downline $dwnlEntry */

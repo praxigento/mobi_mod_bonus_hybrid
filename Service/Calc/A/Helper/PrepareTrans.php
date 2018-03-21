@@ -41,7 +41,7 @@ class PrepareTrans
     public function exec($bonus, $dateApplied)
     {
         $assetTypeId = $this->repoAssetType->getIdByCode(Cfg::CODE_TYPE_ASSET_WALLET);
-        $represAccId = $this->repoAcc->getRepresentativeAccountId($assetTypeId);
+        $sysAccId = $this->repoAcc->getSystemAccountId($assetTypeId);
         $result = [];
         /** @var DBonus $one */
         foreach ($bonus as $one) {
@@ -52,12 +52,12 @@ class PrepareTrans
                 /* get account ID for customer ID */
                 $acc = $this->repoAcc->getByCustomerId($custId, $assetTypeId);
                 $accId = $acc->getId();
-                /* skip representative account */
-                if ($accId == $represAccId) {
+                /* skip system account */
+                if ($accId == $sysAccId) {
                     continue;
                 }
                 $tran = new ETrans();
-                $tran->setDebitAccId($represAccId);
+                $tran->setDebitAccId($sysAccId);
                 $tran->setCreditAccId($accId);
                 $tran->setDateApplied($dateApplied);
                 $tran->setValue($value);

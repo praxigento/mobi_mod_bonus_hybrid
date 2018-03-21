@@ -71,9 +71,9 @@ class ProcessOrders
         $orders = $opts[self::OPT_ORDERS];
         $dateApplied = $opts[self::OPT_DATE_APPLIED];
         $calcId = $opts[self::OPT_CALC_ID];
-        /* get representatives accounts */
-        $accPvRepres = $this->getAccRepres(Cfg::CODE_TYPE_ASSET_PV);
-        $accWalletRepres = $this->getAccRepres(Cfg::CODE_TYPE_ASSET_WALLET);
+        /* get system accounts */
+        $accPvSys = $this->getAccSys(Cfg::CODE_TYPE_ASSET_PV);
+        $accWalletSys = $this->getAccSys(Cfg::CODE_TYPE_ASSET_WALLET);
         /* Create one operation for all transactions */
         $req = new \Praxigento\Accounting\Api\Service\Operation\Request();
         $req->setOperationTypeCode(Cfg::CODE_TYPE_OPER_BONUS_SIGNUP_DEBIT);
@@ -95,7 +95,7 @@ class ProcessOrders
                 /* add PV transaction */
                 $tranPvOff = [
                     Trans::ATTR_DEBIT_ACC_ID => $accPvCust,
-                    Trans::ATTR_CREDIT_ACC_ID => $accPvRepres,
+                    Trans::ATTR_CREDIT_ACC_ID => $accPvSys,
                     Trans::ATTR_DATE_APPLIED => $dateApplied,
                     Trans::ATTR_VALUE => Cfg::SIGNUP_DEBIT_PV,
                     $transRef => self::PREFIX_PV . $orderId
@@ -103,7 +103,7 @@ class ProcessOrders
                 $trans[] = $tranPvOff;
                 /* add Wallet transaction for "father" */
                 $tranWalletFatherOn = [
-                    Trans::ATTR_DEBIT_ACC_ID => $accWalletRepres,
+                    Trans::ATTR_DEBIT_ACC_ID => $accWalletSys,
                     Trans::ATTR_CREDIT_ACC_ID => $accWalletParent,
                     Trans::ATTR_DATE_APPLIED => $dateApplied,
                     Trans::ATTR_VALUE => Cfg::SIGNUP_DEBIT_WALLET_FATHER,
@@ -112,7 +112,7 @@ class ProcessOrders
                 $trans[] = $tranWalletFatherOn;
                 /* add Wallet transaction for "grand" */
                 $tranWalletFatherOn = [
-                    Trans::ATTR_DEBIT_ACC_ID => $accWalletRepres,
+                    Trans::ATTR_DEBIT_ACC_ID => $accWalletSys,
                     Trans::ATTR_CREDIT_ACC_ID => $accWalletGrand,
                     Trans::ATTR_DATE_APPLIED => $dateApplied,
                     Trans::ATTR_VALUE => Cfg::SIGNUP_DEBIT_WALLET_GRAND,
@@ -161,15 +161,15 @@ class ProcessOrders
     }
 
     /**
-     * Get representative account ID by asset type ID.
+     * Get system account ID by asset type ID.
      *
      * @param string $assetTypeCode
      * @return int
      */
-    private function getAccRepres($assetTypeCode)
+    private function getAccSys($assetTypeCode)
     {
         $req = new \Praxigento\Accounting\Api\Service\Account\Get\Request();
-        $req->setIsRepresentative(TRUE);
+        $req->setIsSystem(TRUE);
         $req->setAssetTypeCode($assetTypeCode);
         $resp = $this->callAccount->exec($req);
         $result = $resp->getId();

@@ -35,17 +35,17 @@ class PrepareTrans
     public function exec($turnover, $dateApplied)
     {
         $assetTypeId = $this->repoAssetType->getIdByCode(Cfg::CODE_TYPE_ASSET_PV);
-        $represAccId = $this->repoAcc->getRepresentativeAccountId($assetTypeId);
+        $sysAccId = $this->repoAcc->getSystemAccountId($assetTypeId);
         $result = [];
         foreach ($turnover as $accId => $value) {
             if ($value > Cfg::DEF_ZERO) {
-                /* skip representative account */
-                if ($accId == $represAccId) {
+                /* skip system account */
+                if ($accId == $sysAccId) {
                     continue;
                 }
                 $tran = new ETrans();
                 $tran->setDebitAccId($accId);
-                $tran->setCreditAccId($represAccId);
+                $tran->setCreditAccId($sysAccId);
                 $tran->setDateApplied($dateApplied);
                 $tran->setValue($value);
                 $result[] = $tran;
