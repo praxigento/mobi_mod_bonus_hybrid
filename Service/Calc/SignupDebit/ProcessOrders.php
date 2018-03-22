@@ -9,7 +9,7 @@ use Praxigento\BonusBase\Repo\Data\Log\Customers as LogCust;
 use Praxigento\BonusBase\Repo\Data\Log\Opers as LogOpers;
 use Praxigento\BonusBase\Repo\Data\Log\Sales as LogSales;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Registry\SignupDebit as RegSignup;
+use Praxigento\BonusHybrid\Repo\Data\Registry\SignupDebit as RegSignup;
 use Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetOrders\Builder as Query;
 
 /**
@@ -40,7 +40,7 @@ class ProcessOrders
     private $repoLogOper;
     /** @var \Praxigento\BonusBase\Repo\Dao\Log\Sales */
     private $repoLogSale;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Registry\SignupDebit */
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Registry\SignupDebit */
     private $repoRegSignupDebit;
 
     public function __construct(
@@ -48,7 +48,7 @@ class ProcessOrders
         \Praxigento\BonusBase\Repo\Dao\Log\Customers $repoLogCust,
         \Praxigento\BonusBase\Repo\Dao\Log\Opers $repoLogOper,
         \Praxigento\BonusBase\Repo\Dao\Log\Sales $repoLogSale,
-        \Praxigento\BonusHybrid\Repo\Entity\Registry\SignupDebit $repoRegSignupDebit,
+        \Praxigento\BonusHybrid\Repo\Dao\Registry\SignupDebit $repoRegSignupDebit,
         \Praxigento\Accounting\Api\Service\Account\Get $callAccount,
         \Praxigento\Accounting\Api\Service\Operation $callOper
     )

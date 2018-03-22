@@ -10,7 +10,7 @@ use Praxigento\Downline\Repo\Query\Snap\OnDate\Builder as QBSnapOnDate;
 
 /**
  * Process to collect downline data and compose array of entities
- * (\Praxigento\BonusHybrid\Repo\Entity\Data\Downline) to populate it with additional values and to it save in the end.
+ * (\Praxigento\BonusHybrid\Repo\Data\Downline) to populate it with additional values and to it save in the end.
  */
 class GetDownline
 {
@@ -57,7 +57,7 @@ class GetDownline
             $depth = $row[QBSnapOnDate::A_DEPTH];
             $path = $row[QBSnapOnDate::A_PATH];
             /* prepare result data object */
-            $item = new \Praxigento\BonusHybrid\Repo\Entity\Data\Downline();
+            $item = new \Praxigento\BonusHybrid\Repo\Data\Downline();
             $item->setCalculationRef($calcId);
             $item->setCustomerRef($customerId);
             $item->setParentRef($parentId);

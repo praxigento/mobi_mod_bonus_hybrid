@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Helper;
 
 use Praxigento\BonusBase\Repo\Data\Rank;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Cfg\Param as CfgParam;
+use Praxigento\BonusHybrid\Repo\Data\Cfg\Param as CfgParam;
 use Praxigento\Downline\Repo\Entity\Data\Customer;
 
 /**
@@ -49,7 +49,7 @@ class Scheme
     private $cachedSignupDebitCustIds = null;
     /** @var \Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetLastCalcIdForPeriod */
     protected $queryGetLastSignupCalcId;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Registry\SignupDebit */
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Registry\SignupDebit */
     protected $repoRegSignupDebit;
 
     /**
@@ -58,7 +58,7 @@ class Scheme
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resource,
         \Praxigento\Core\App\Repo\IGeneric $repoGeneric,
-        \Praxigento\BonusHybrid\Repo\Entity\Registry\SignupDebit $repoRegSignupDebit,
+        \Praxigento\BonusHybrid\Repo\Dao\Registry\SignupDebit $repoRegSignupDebit,
         \Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetLastCalcIdForPeriod $queryGetLastSignupCalcId
     ) {
         parent::__construct($resource);
@@ -192,12 +192,12 @@ class Scheme
         if (is_null($this->cachedSignupDebitCustIds)) {
             $ids = [];
             $calcId = $this->queryGetLastSignupCalcId->exec();
-            $where = \Praxigento\BonusHybrid\Repo\Entity\Data\Registry\SignupDebit::ATTR_CALC_REF . '=' . (int)$calcId;
+            $where = \Praxigento\BonusHybrid\Repo\Data\Registry\SignupDebit::ATTR_CALC_REF . '=' . (int)$calcId;
             $rs = $this->repoRegSignupDebit->get($where);
             foreach ($rs as $one) {
                 /* TODO: use as object not as array */
                 $one = (array)$one->get();
-                $ids[] = $one[\Praxigento\BonusHybrid\Repo\Entity\Data\Registry\SignupDebit::ATTR_CUST_REF];
+                $ids[] = $one[\Praxigento\BonusHybrid\Repo\Data\Registry\SignupDebit::ATTR_CUST_REF];
             }
             $this->cachedSignupDebitCustIds = $ids;
         }

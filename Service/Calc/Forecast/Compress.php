@@ -6,7 +6,7 @@
 namespace Praxigento\BonusHybrid\Service\Calc\Forecast;
 
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
+use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase1 as PCpmrsPhase1;
 use Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2 as PCpmrsPhase2;
 use Praxigento\BonusHybrid\Service\Calc\A\Proc\Ov as POv;
@@ -37,7 +37,7 @@ class Compress
     private $procTv;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\UpdateDwnl */
     private $procUpdateDwnl;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $repoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $repoCalc;
@@ -45,7 +45,7 @@ class Compress
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl,
         \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase1 $procCmprsPhase1,
         \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2 $procCmprsPhase2,
         \Praxigento\BonusHybrid\Service\Calc\A\Proc\Tv $procTv,

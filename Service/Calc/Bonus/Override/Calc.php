@@ -6,8 +6,8 @@
 namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Override;
 
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Cfg\Override as ECfgOvrd;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
+use Praxigento\BonusHybrid\Repo\Data\Cfg\Override as ECfgOvrd;
+use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Service\Calc\A\Data\Bonus as DBonus;
 use Praxigento\BonusHybrid\Service\Calc\Bonus\Override\Calc\Entry as DEntry;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
@@ -24,9 +24,9 @@ class Calc
     private $hlpTree;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $repoBonDwnl;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Cfg\Override */
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Cfg\Override */
     private $repoCfgOvrd;
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
     private $repoDwnl;
@@ -41,8 +41,8 @@ class Calc
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
         \Praxigento\BonusBase\Repo\Dao\Rank $repoRank,
-        \Praxigento\BonusHybrid\Repo\Entity\Cfg\Override $repoCfgOvrd,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl
+        \Praxigento\BonusHybrid\Repo\Dao\Cfg\Override $repoCfgOvrd,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl
     )
     {
         $this->logger = $logger;

@@ -6,7 +6,7 @@
 namespace Praxigento\BonusHybrid\Service\Calc\Compress;
 
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
+use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder as QBldGetPv;
 use Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase1 as PPhase1;
 use Praxigento\Downline\Repo\Query\Snap\OnDate\Builder as QBSnap;
@@ -26,13 +26,13 @@ class Phase1
     private $qbGetPv;
     /** @var \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder */
     private $qbSnapOnDate;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $repoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $repoCalc;
     /** @var \Praxigento\BonusBase\Repo\Dao\Rank */
     private $repoRank;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase1\Transfer\Pv */
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Compression\Phase1\Transfer\Pv */
     private $repoTransPv;
 
     public function __construct(
@@ -40,8 +40,8 @@ class Phase1
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
         \Praxigento\BonusBase\Repo\Dao\Rank $repoRank,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
-        \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase1\Transfer\Pv $repoTransPv,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl,
+        \Praxigento\BonusHybrid\Repo\Dao\Compression\Phase1\Transfer\Pv $repoTransPv,
         \Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder $qbGetPv,
         \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder $qbSnapOnDate,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
@@ -110,7 +110,7 @@ class Phase1
         $dwnlSnap = $this->getDownlineSnapshot($dsEnd);
         $dataPv = $this->getPv($writeOffCalcId);
         /** @var \Praxigento\Downline\Repo\Entity\Data\Snap[] $updates */
-        /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase1\Transfer\Pv[] $pvTransfers */
+        /** @var \Praxigento\BonusHybrid\Repo\Data\Compression\Phase1\Transfer\Pv[] $pvTransfers */
         list($updates, $pvTransfers) = $this->compress($dwnlSnap, $dataPv, $compressCalcId);
         /* save compressed downline & PV transfers into DB */
         $this->saveBonusDownline($updates, $compressCalcId);
@@ -220,11 +220,11 @@ class Phase1
     }
 
     /**
-     * @param \Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase1\Transfer\Pv[] $data
+     * @param \Praxigento\BonusHybrid\Repo\Data\Compression\Phase1\Transfer\Pv[] $data
      */
     private function savePvTransfers($data)
     {
-        /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase1\Transfer\Pv $one */
+        /** @var \Praxigento\BonusHybrid\Repo\Data\Compression\Phase1\Transfer\Pv $one */
         foreach ($data as $one) {
             $this->repoTransPv->create($one);
         }

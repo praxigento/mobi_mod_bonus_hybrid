@@ -6,7 +6,7 @@
 namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Team;
 
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
+use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Service\Calc\A\Data\Bonus as DBonus;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
 
@@ -25,7 +25,7 @@ class CalcDef
     private $hlpTree;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $repoBonDwnl;
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
     private $repoDwnl;
@@ -40,7 +40,7 @@ class CalcDef
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
         \Praxigento\BonusBase\Repo\Dao\Level $repoLevel,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl
     )
     {
         $this->logger = $logger;

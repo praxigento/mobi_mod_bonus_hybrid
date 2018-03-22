@@ -18,7 +18,7 @@ class Clean
 
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $repoCalc;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $repoDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Period */
     private $repoPeriod;
@@ -29,7 +29,7 @@ class Clean
         \Praxigento\BonusBase\Repo\Dao\Type\Calc $repoTypeCalc,
         \Praxigento\BonusBase\Repo\Dao\Period $repoPeriod,
         \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnl
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoDwnl
     )
     {
         $this->repoTypeCalc = $repoTypeCalc;
@@ -60,7 +60,7 @@ class Clean
                     foreach ($calcs as $calc) {
                         $calcId = $calc->getId();
                         /* delete all downline trees for the calculation */
-                        $whereDwnl = \Praxigento\BonusHybrid\Repo\Entity\Data\Downline::ATTR_CALC_REF . '=' . (int)$calcId;
+                        $whereDwnl = \Praxigento\BonusHybrid\Repo\Data\Downline::ATTR_CALC_REF . '=' . (int)$calcId;
                         $this->repoDwnl->delete($whereDwnl);
                         /* delete calculation itself */
                         $this->repoCalc->deleteById($calcId);

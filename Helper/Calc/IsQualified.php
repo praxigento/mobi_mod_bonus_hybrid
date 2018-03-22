@@ -44,7 +44,7 @@ class IsQualified
             ($tv > Cfg::DEF_ZERO)
         ) {
             $params = $cfgParams[$scheme];
-            /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Cfg\Param $param */
+            /** @var \Praxigento\BonusHybrid\Repo\Data\Cfg\Param $param */
             foreach ($params as $param) {
                 $qpv = $param->getQualifyPv();
                 $qtv = $param->getQualifyTv();

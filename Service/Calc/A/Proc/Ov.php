@@ -6,7 +6,7 @@
 namespace Praxigento\BonusHybrid\Service\Calc\A\Proc;
 
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
+use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 
 /**
  * Calculate OV on the compressed downline tree.
@@ -14,11 +14,11 @@ use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 class Ov
     implements \Praxigento\Core\App\Service\IProcess
 {
-    /** \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] downline with PV & TV */
+    /** \Praxigento\BonusHybrid\Repo\Data\Downline[] downline with PV & TV */
     const IN_DWNL = 'downline';
     /** bool 'false' - don't use "Sign Up" bonus values in OV calculation */
     const IN_USE_SIGN_UP = 'useSignUp';
-    /** \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] updated downline with OV*/
+    /** \Praxigento\BonusHybrid\Repo\Data\Downline[] updated downline with OV*/
     const OUT_DWNL = 'downline';
 
     /** @var \Praxigento\Downline\Helper\Tree */

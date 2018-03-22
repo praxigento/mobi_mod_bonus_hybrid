@@ -14,18 +14,18 @@ use Praxigento\BonusHybrid\Config as Cfg;
 class GetPlainData
     implements \Praxigento\Core\App\Service\IProcess
 {
-    /** \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] */
+    /** \Praxigento\BonusHybrid\Repo\Data\Downline[] */
     const OUT_DWNL = 'downline';
     /** Array [$custId => $pv] */
     const OUT_PV = 'pv';
 
     /** @var \Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder */
     private $qbCalcGetLast;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $repoBonDwnl;
 
     public function __construct(
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl,
         \Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder $qbCalcGetLast
     )
     {
@@ -42,7 +42,7 @@ class GetPlainData
          * perform processing
          */
         $calcIdPlain = $this->getPlainCalcId();
-        /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] $downline */
+        /** @var \Praxigento\BonusHybrid\Repo\Data\Downline[] $downline */
         $downline = $this->repoBonDwnl->getByCalcId($calcIdPlain);
         foreach ($downline as $item) {
             $custId = $item->getCustomerRef();

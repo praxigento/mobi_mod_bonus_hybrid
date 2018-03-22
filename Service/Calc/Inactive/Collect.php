@@ -7,8 +7,8 @@ namespace Praxigento\BonusHybrid\Service\Calc\Inactive;
 
 use Praxigento\BonusBase\Service\Period\Calc\Get\IDependent as SPeriodGetDep;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline\Inactive as EInact;
+use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
+use Praxigento\BonusHybrid\Repo\Data\Downline\Inactive as EInact;
 use Praxigento\BonusHybrid\Service\Calc\Inactive\Collect\Repo\Query\GetInactiveStats as QBGetStats;
 
 /**
@@ -29,19 +29,19 @@ class Collect
     private $procPeriodGet;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Inactive\Collect\Repo\Query\GetInactiveStats */
     private $qbGetStats;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $repoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $repoCalc;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline\Inactive */
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline\Inactive */
     private $repoInact;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Downline\Helper\Tree $hlpTree,
         \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline\Inactive $repoInact,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline\Inactive $repoInact,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         QBGetStats $qbGetStats
     )
@@ -165,11 +165,11 @@ class Collect
     }
 
     /**
-     * @param \Praxigento\BonusHybrid\Repo\Entity\Data\Downline\Inactive[] $stats
+     * @param \Praxigento\BonusHybrid\Repo\Data\Downline\Inactive[] $stats
      */
     private function saveStats($stats)
     {
-        /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Downline\Inactive $stat */
+        /** @var \Praxigento\BonusHybrid\Repo\Data\Downline\Inactive $stat */
         foreach ($stats as $stat) {
             $this->repoInact->create($stat);
         }

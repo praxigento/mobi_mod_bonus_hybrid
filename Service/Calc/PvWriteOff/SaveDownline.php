@@ -6,7 +6,7 @@
 namespace Praxigento\BonusHybrid\Service\Calc\PvWriteOff;
 
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
+use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 
 /**
  * Process PV Write Offs and calculate PV/TV/OV values for plain downline tree.
@@ -23,7 +23,7 @@ class SaveDownline
     private $hlpSignupDebitCust;
     /** @var \Praxigento\Accounting\Repo\Dao\Account */
     private $repoAcc;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $repoDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Rank */
     private $repoRank;
@@ -34,7 +34,7 @@ class SaveDownline
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\Accounting\Repo\Dao\Account $repoAcc,
         \Praxigento\BonusBase\Repo\Dao\Rank $repoRank,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnl,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoDwnl,
         \Praxigento\Downline\Service\ISnap $callDwnlSnap
     )
     {

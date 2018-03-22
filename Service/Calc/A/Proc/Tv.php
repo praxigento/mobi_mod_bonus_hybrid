@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\A\Proc;
 
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
+use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 
 /**
  * Calculate TV on the compressed downline tree.
@@ -13,9 +13,9 @@ use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
 class Tv
     implements \Praxigento\Core\App\Service\IProcess
 {
-    /** \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] downline with PV */
+    /** \Praxigento\BonusHybrid\Repo\Data\Downline[] downline with PV */
     const IN_DWNL = 'downline';
-    /** \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] updated downline with TV*/
+    /** \Praxigento\BonusHybrid\Repo\Data\Downline[] updated downline with TV*/
     const OUT_DWNL = 'downline';
 
     /** @var \Praxigento\Downline\Helper\Tree */
@@ -43,10 +43,10 @@ class Tv
         /**
          * perform processing
          */
-        /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Downline $one */
+        /** @var \Praxigento\BonusHybrid\Repo\Data\Downline $one */
         foreach ($dwnlBonus as $one) {
             $custId = $one->getCustomerRef();
-            /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Downline $cust */
+            /** @var \Praxigento\BonusHybrid\Repo\Data\Downline $cust */
             $cust = $mapById[$custId];
             /* initial TV equal to own PV */
             $tv = $cust->getPv();
@@ -54,7 +54,7 @@ class Tv
                 /* add PV of the front line team (first generation) */
                 $frontTeam = $mapTeams[$custId];
                 foreach ($frontTeam as $teamMemberId) {
-                    /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Downline $member */
+                    /** @var \Praxigento\BonusHybrid\Repo\Data\Downline $member */
                     $member = $mapById[$teamMemberId];
                     $memberPv = $member->getPv();
                     $tv += $memberPv;

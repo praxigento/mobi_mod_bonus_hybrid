@@ -9,8 +9,8 @@
 namespace Praxigento\BonusHybrid\Service\Calc\Inactive\Collect\Repo\Query;
 
 
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline\Inactive as EInact;
+use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
+use Praxigento\BonusHybrid\Repo\Data\Downline\Inactive as EInact;
 
 class GetInactiveStats
     extends \Praxigento\Core\App\Repo\Query\Builder

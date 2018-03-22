@@ -11,9 +11,9 @@ namespace Praxigento\BonusHybrid\Service\Calc\Forecast\Plain;
 class Calc
 {
     const CTX_DWNL_TREE = 'dwnlTree';
-    const KEY_TREE_DEPTH = \Praxigento\BonusHybrid\Repo\Entity\Data\Downline::ATTR_DEPTH;
-    const KEY_TREE_ENTITY = \Praxigento\BonusHybrid\Repo\Entity\Data\Downline::ATTR_CUST_REF;
-    const KEY_TREE_PARENT = \Praxigento\BonusHybrid\Repo\Entity\Data\Downline::ATTR_PARENT_REF;
+    const KEY_TREE_DEPTH = \Praxigento\BonusHybrid\Repo\Data\Downline::ATTR_DEPTH;
+    const KEY_TREE_ENTITY = \Praxigento\BonusHybrid\Repo\Data\Downline::ATTR_CUST_REF;
+    const KEY_TREE_PARENT = \Praxigento\BonusHybrid\Repo\Data\Downline::ATTR_PARENT_REF;
 
     /** @var \Praxigento\Downline\Helper\Tree */
     private $hlpDwnlTree;
@@ -30,7 +30,7 @@ class Calc
      */
     public function exec(\Praxigento\Core\Data $ctx = null)
     {
-        /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] $dwnlTree */
+        /** @var \Praxigento\BonusHybrid\Repo\Data\Downline[] $dwnlTree */
         $dwnlTree = $ctx->get(self::CTX_DWNL_TREE);
         /* prepare working data: tree maps, etc.*/
         $mapByDepth = $this->hlpDwnlTree->mapByTreeDepthDesc($dwnlTree, self::KEY_TREE_ENTITY, self::KEY_TREE_DEPTH);

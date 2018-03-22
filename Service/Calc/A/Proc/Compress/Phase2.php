@@ -6,9 +6,9 @@
 namespace Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress;
 
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Cfg\Param as ECfgParam;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase2\Legs as ELegs;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
+use Praxigento\BonusHybrid\Repo\Data\Cfg\Param as ECfgParam;
+use Praxigento\BonusHybrid\Repo\Data\Compression\Phase2\Legs as ELegs;
+use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Data\Legs as DLegs;
 use Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Fun\Act\Qualify as ActQualify;
 use Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Fun\Rou\CalcLegs as RouCalcLegs;
@@ -30,9 +30,9 @@ class Phase2
     const IN_MAP_PV = 'mapPV';
     /** string Scheme code (see \Praxigento\BonusHybrid\Config::SCHEMA_XXX) */
     const IN_SCHEME = 'scheme';
-    /** \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] */
+    /** \Praxigento\BonusHybrid\Repo\Data\Downline[] */
     const OUT_DWNL_PHASE2 = 'dwnlPhase2';
-    /** \Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase2\Legs[] */
+    /** \Praxigento\BonusHybrid\Repo\Data\Compression\Phase2\Legs[] */
     const OUT_LEGS = 'legs';
     /** @var \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Fun\Act\Qualify */
     private $actQualify;
@@ -44,9 +44,9 @@ class Phase2
     private $hlpScheme;
     /** @var \Praxigento\Downline\Api\Helper\Downline */
     private $hlpTree;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $repoBonDwnl;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Cfg\Param */
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Cfg\Param */
     private $repoCfgParam;
     /** @var \Praxigento\BonusBase\Repo\Dao\Rank */
     private $repoRank;
@@ -61,8 +61,8 @@ class Phase2
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\BonusHybrid\Helper\Calc\IsQualified $hlpIsQualified,
         \Praxigento\BonusBase\Repo\Dao\Rank $repoRank,
-        \Praxigento\BonusHybrid\Repo\Entity\Cfg\Param $repoCfgParam,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
+        \Praxigento\BonusHybrid\Repo\Dao\Cfg\Param $repoCfgParam,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl,
         ActQualify $actQualify,
         RouCalcLegs $rouCalcLegs,
         RouComposeLegs $rouComposeLegs

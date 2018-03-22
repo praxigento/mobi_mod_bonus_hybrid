@@ -6,8 +6,8 @@
 namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Infinity;
 
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Cfg\Param as ECfgParam;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
+use Praxigento\BonusHybrid\Repo\Data\Cfg\Param as ECfgParam;
+use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
 
 class Calc
@@ -20,9 +20,9 @@ class Calc
     private $hlpScheme;
     /** @var \Praxigento\Downline\Api\Helper\Downline */
     private $hlpTree;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $repoBonDwnl;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Cfg\Param */
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Cfg\Param */
     private $repoCfgParams;
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
     private $repoDwnl;
@@ -34,8 +34,8 @@ class Calc
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
-        \Praxigento\BonusHybrid\Repo\Entity\Cfg\Param $repoCfgParams,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl
+        \Praxigento\BonusHybrid\Repo\Dao\Cfg\Param $repoCfgParams,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl
     )
     {
         $this->logger = $logger;

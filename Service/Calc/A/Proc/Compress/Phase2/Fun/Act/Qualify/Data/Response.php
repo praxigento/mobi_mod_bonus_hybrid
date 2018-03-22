@@ -15,7 +15,7 @@ class Response
     const RANK_ID = 'rankId';
 
     /**
-     * @return \Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase2\Legs
+     * @return \Praxigento\BonusHybrid\Repo\Data\Compression\Phase2\Legs
      */
     public function getLegsEntry()
     {
@@ -32,7 +32,7 @@ class Response
         return $result;
     }
 
-    public function setLegsEntry(\Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase2\Legs $data)
+    public function setLegsEntry(\Praxigento\BonusHybrid\Repo\Data\Compression\Phase2\Legs $data)
     {
         parent::set(self::LEGS_ENTRY, $data);
     }

@@ -51,7 +51,7 @@ class Qualify
             $sortedMin = $sorted[0];
             /* lookup for the max qualified rank */
             $ranks = $cfgParam[$scheme];
-            /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Cfg\Param $rank */
+            /** @var \Praxigento\BonusHybrid\Repo\Data\Cfg\Param $rank */
             foreach ($ranks as $rank) {
                 /* rank legs values */
                 $qpv = $rank->getQualifyPv();

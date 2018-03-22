@@ -26,7 +26,7 @@ class Plain
     private $procPeriodAdd;
     /** @var \Praxigento\Accounting\Repo\Dao\Account */
     private $repoAcc;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $repoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $repoCalc;
@@ -39,7 +39,7 @@ class Plain
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         RAccount $repoAcc,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl,
         \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
         \Praxigento\Accounting\Api\Service\Balance\Get\Turnover $callBalanceGetTurnover,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Calc $subCalc,
@@ -82,7 +82,7 @@ class Plain
         $ctxDwnl->set(PGetDownline::CTX_IN_CALC_ID, $calcId);
         $ctxDwnl->set(PGetDownline::CTX_IN_DATE_ON, $dateTo);
         $this->subGetDownline->exec($ctxDwnl);
-        /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] $dwnlTree */
+        /** @var \Praxigento\BonusHybrid\Repo\Data\Downline[] $dwnlTree */
         $dwnlTree = $ctxDwnl->get(PGetDownline::CTX_OUT_DWNL);
 
         /* get system customer */
@@ -102,7 +102,7 @@ class Plain
                 ($customerId != $custSysId)
             ) {
                 $positiveTurnover[$customerId] = $entry;
-                /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Downline $dwnlEntry */
+                /** @var \Praxigento\BonusHybrid\Repo\Data\Downline $dwnlEntry */
                 $dwnlEntry = $dwnlTree[$customerId];
                 $dwnlEntry->setPv($turnover);
             }

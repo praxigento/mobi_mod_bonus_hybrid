@@ -32,7 +32,7 @@ class Personal
     private $logger;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $repoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $repoCalc;
@@ -53,7 +53,7 @@ class Personal
         \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
         \Praxigento\BonusBase\Repo\Dao\Level $repoLevel,
         \Praxigento\BonusBase\Repo\Dao\Log\Opers $repoLogOper,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\A\Helper\PrepareTrans $hlpTrans,
         \Praxigento\BonusHybrid\Service\Calc\A\Helper\CreateOper $hlpOper
@@ -78,7 +78,7 @@ class Personal
      * Walk through the compressed downline tree and calculate Personal bonus for DEFAULT scheme.
      *
      * @param \Praxigento\Downline\Repo\Entity\Data\Customer[] $dwnlCurrent
-     * @param \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] $dwnlCompress
+     * @param \Praxigento\BonusHybrid\Repo\Data\Downline[] $dwnlCompress
      * @param array $levels percents for bonus levels ([level=>percent])
      *
      * @return DBonus[]
@@ -87,7 +87,7 @@ class Personal
     {
         $result = [];
         $mapCustomer = $this->hlpDwnlTree->mapById($dwnlCurrent, ECustomer::ATTR_CUSTOMER_ID);
-        /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Downline $one */
+        /** @var \Praxigento\BonusHybrid\Repo\Data\Downline $one */
         foreach ($dwnlCompress as $one) {
             $custId = $one->getCustomerRef();
             $pvValue = $one->getPv();

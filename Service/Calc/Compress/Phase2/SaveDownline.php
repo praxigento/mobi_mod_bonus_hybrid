@@ -8,8 +8,8 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Compress\Phase2;
 
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline\Qualification as EBonDwnQual;
+use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
+use Praxigento\BonusHybrid\Repo\Data\Downline\Qualification as EBonDwnQual;
 use Praxigento\Downline\Repo\Entity\Data\Customer as EDwnlCust;
 
 /**
@@ -23,22 +23,22 @@ class SaveDownline
     private $hlpDwnl;
     /** @var \Praxigento\BonusHybrid\Helper\IScheme */
     private $hlpScheme;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $repoBonDwnl;
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
     private $repoDwnlCust;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline\Qualification */
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline\Qualification */
     private $repoDwnlQual;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase2\Legs */
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Compression\Phase2\Legs */
     private $repoLegs;
 
     public function __construct(
         \Praxigento\Downline\Helper\Tree $hlpDwnl,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\Downline\Repo\Entity\Customer $repoDwnlCust,
-        \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase2\Legs $repoLegs,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline\Qualification $repoDwnlQual
+        \Praxigento\BonusHybrid\Repo\Dao\Compression\Phase2\Legs $repoLegs,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline\Qualification $repoDwnlQual
     )
     {
         $this->hlpDwnl = $hlpDwnl;
@@ -50,7 +50,7 @@ class SaveDownline
     }
 
     /**
-     * @param \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] $downline
+     * @param \Praxigento\BonusHybrid\Repo\Data\Downline[] $downline
      * @param $legs
      * @param $calcIdWriteOff
      * @param $phase1CalcId
@@ -82,7 +82,7 @@ class SaveDownline
     }
 
     /**
-     * @param \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] $entries
+     * @param \Praxigento\BonusHybrid\Repo\Data\Downline[] $entries
      * @param int $plainCalcId
      * @param int $cmprsCalcId
      * @param string $scheme
@@ -92,7 +92,7 @@ class SaveDownline
     {
         $custById = $this->getCustomersById();
         $plainByCust = $this->getBonTreeByCustId($plainCalcId);
-        /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Downline $entry */
+        /** @var \Praxigento\BonusHybrid\Repo\Data\Downline $entry */
         foreach ($entries as $entry) {
             $custId = $entry->getCustomerRef();
             /* create downline entry */

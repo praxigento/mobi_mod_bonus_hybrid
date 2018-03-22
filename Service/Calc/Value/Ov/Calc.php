@@ -6,7 +6,7 @@
 namespace Praxigento\BonusHybrid\Service\Calc\Value\Ov;
 
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
+use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 
 /**
  * Calculate OV on the compressed downline tree.
@@ -21,14 +21,14 @@ class Calc
     private $hlpSignupDebitCust;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $repoBonDwnl;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl
     )
     {
         $this->logger = $logger;

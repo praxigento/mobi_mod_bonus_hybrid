@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Unqualified;
 
 use Praxigento\BonusBase\Service\Period\Calc\Get\IDependent as SPeriodGetDep;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
+use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 
 /**
  * Collect stats for unqualified customers.
@@ -23,7 +23,7 @@ class Collect
     private $logger;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
-    /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $repoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $repoCalc;
@@ -31,7 +31,7 @@ class Collect
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Downline\Helper\Tree $hlpTree,
-        \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl,
         \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet
     )
@@ -146,11 +146,11 @@ class Collect
     }
 
     /**
-     * @param \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] $tree
+     * @param \Praxigento\BonusHybrid\Repo\Data\Downline[] $tree
      */
     private function saveDownline($tree)
     {
-        /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Downline $one */
+        /** @var \Praxigento\BonusHybrid\Repo\Data\Downline $one */
         foreach ($tree as $one) {
             $id = $one->getId();
             $this->repoBonDwnl->updateById($id, $one);

@@ -16,7 +16,7 @@ class CalcLegs
      * Run though first-line team members and collect OVs (plain or compressed).
      *
      * @param array $team Customers IDs for first-line team.
-     * @param \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] $mapById Downline data (with OV) mapped by customer
+     * @param \Praxigento\BonusHybrid\Repo\Data\Downline[] $mapById Downline data (with OV) mapped by customer
      *     ID.
      * @return \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Data\Legs
      */
@@ -25,7 +25,7 @@ class CalcLegs
         $legMax = $legSecond = $legOthers = 0;
         $custMax = $custSecond = null;
         foreach ($team as $memberId) {
-            /** @var \Praxigento\BonusHybrid\Repo\Entity\Data\Downline $member */
+            /** @var \Praxigento\BonusHybrid\Repo\Data\Downline $member */
             $member = $mapById[$memberId];
             $ovMember = $member->getOv();
             if ($ovMember > $legMax) {

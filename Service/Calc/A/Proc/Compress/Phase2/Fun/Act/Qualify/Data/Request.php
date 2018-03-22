@@ -26,7 +26,7 @@ class Request
     }
 
     /**
-     * @return \Praxigento\BonusHybrid\Repo\Entity\Data\Downline
+     * @return \Praxigento\BonusHybrid\Repo\Data\Downline
      */
     public function getDownlineEntry()
     {
@@ -35,7 +35,7 @@ class Request
     }
 
     /**
-     * @return \Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase2\Legs
+     * @return \Praxigento\BonusHybrid\Repo\Data\Compression\Phase2\Legs
      */
     public function getLegsEntry()
     {
@@ -60,12 +60,12 @@ class Request
         parent::set(self::CFG_PARAMS, $data);
     }
 
-    public function setDownlineEntry(\Praxigento\BonusHybrid\Repo\Entity\Data\Downline $data)
+    public function setDownlineEntry(\Praxigento\BonusHybrid\Repo\Data\Downline $data)
     {
         parent::set(self::DOWNLINE_ENTRY, $data);
     }
 
-    public function setLegsEntry(\Praxigento\BonusHybrid\Repo\Entity\Data\Compression\Phase2\Legs $data)
+    public function setLegsEntry(\Praxigento\BonusHybrid\Repo\Data\Compression\Phase2\Legs $data)
     {
         parent::set(self::LEGS_ENTRY, $data);
     }

@@ -6,7 +6,7 @@
 namespace Praxigento\BonusHybrid\Service\Calc\Forecast\Compress;
 
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
+use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECustDwnl;
 
 /**
@@ -15,13 +15,13 @@ use Praxigento\Downline\Repo\Entity\Data\Customer as ECustDwnl;
 class UpdateDwnl
     implements \Praxigento\Core\App\Service\IProcess
 {
-    /**  \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] */
+    /**  \Praxigento\BonusHybrid\Repo\Data\Downline[] */
     const IN_DWNL_PHASE1 = 'dwnlPhase1';
-    /** \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] */
+    /** \Praxigento\BonusHybrid\Repo\Data\Downline[] */
     const IN_DWNL_PHASE2_DEF = 'dwnlPhase2Def';
-    /** \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] */
+    /** \Praxigento\BonusHybrid\Repo\Data\Downline[] */
     const IN_DWNL_PHASE2_EU = 'dwnlPhase2Eu';
-    /** \Praxigento\BonusHybrid\Repo\Entity\Data\Downline[] */
+    /** \Praxigento\BonusHybrid\Repo\Data\Downline[] */
     const OUT_DWNL_PHASE1 = 'dwnlPhase1';
     /** @var \Praxigento\Downline\Helper\Tree */
     private $hlpDwnlTree;

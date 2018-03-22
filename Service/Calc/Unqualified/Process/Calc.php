@@ -8,7 +8,7 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Unqualified\Process;
 
-use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
+use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 
 /**
  * Routine to process plain downline & to perform qualification compression (re-link downlines of the unqualified
