@@ -5,8 +5,8 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\PvWriteOff\Query\GetData;
 
-use Praxigento\Accounting\Repo\Entity\Data\Account as EAcc;
-use Praxigento\Accounting\Repo\Entity\Data\Transaction as ETrans;
+use Praxigento\Accounting\Repo\Data\Account as EAcc;
+use Praxigento\Accounting\Repo\Data\Transaction as ETrans;
 use Praxigento\BonusHybrid\Service\Calc\PvWriteOff\Data\Trans as DTrans;
 
 /**

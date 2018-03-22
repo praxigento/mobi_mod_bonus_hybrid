@@ -138,7 +138,7 @@ class Team
     /**
      * @param array $bonus [custId => bonusValue]
      * @param \Praxigento\BonusBase\Repo\Entity\Data\Period $period
-     * @return \Praxigento\Accounting\Repo\Entity\Data\Transaction[]
+     * @return \Praxigento\Accounting\Repo\Data\Transaction[]
      */
     private function getTransactions($bonus, $period)
     {

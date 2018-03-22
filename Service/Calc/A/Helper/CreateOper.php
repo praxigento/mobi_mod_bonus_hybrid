@@ -29,7 +29,7 @@ class CreateOper
 
     /**
      * @param string $calcTypeCode
-     * @param \Praxigento\Accounting\Repo\Entity\Data\Transaction[] $trans
+     * @param \Praxigento\Accounting\Repo\Data\Transaction[] $trans
      * @param \Praxigento\BonusBase\Repo\Entity\Data\Period $period
      * @return \Praxigento\BonusHybrid\Service\Calc\A\Helper\CreateOper\Result
      */

@@ -26,9 +26,9 @@ class PvWriteOff
     private $repoCalc;
     /** @var \Praxigento\BonusBase\Repo\Entity\Log\Opers */
     private $repoLogOper;
-    /** @var  \Praxigento\Accounting\Repo\Entity\Type\Asset */
+    /** @var  \Praxigento\Accounting\Repo\Dao\Type\Asset */
     private $repoTypeAsset;
-    /** @var  \Praxigento\Accounting\Repo\Entity\Type\Operation */
+    /** @var  \Praxigento\Accounting\Repo\Dao\Type\Operation */
     private $repoTypeOper;
     /** @var PvWriteOff\Query\GetData\Builder */
     private $sqbGetData;
@@ -41,8 +41,8 @@ class PvWriteOff
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Core\Api\Helper\Date $hlpDate,
         \Praxigento\Core\Api\Helper\Period $hlpPeriod,
-        \Praxigento\Accounting\Repo\Entity\Type\Asset $repoTypeAsset,
-        \Praxigento\Accounting\Repo\Entity\Type\Operation $repoTypeOper,
+        \Praxigento\Accounting\Repo\Dao\Type\Asset $repoTypeAsset,
+        \Praxigento\Accounting\Repo\Dao\Type\Operation $repoTypeOper,
         \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
         \Praxigento\BonusBase\Repo\Entity\Log\Opers $repoLogOper,
         \Praxigento\Accounting\Service\Operation $callOperation,
@@ -69,7 +69,7 @@ class PvWriteOff
     /**
      * Register new operation.
      *
-     * @param \Praxigento\Accounting\Repo\Entity\Data\Transaction[] $trans
+     * @param \Praxigento\Accounting\Repo\Data\Transaction[] $trans
      * @param string $dsBegin
      * @param string $dsEnd
      * @return int operation ID
@@ -145,7 +145,7 @@ class PvWriteOff
      *
      * @param array $turnover [accId => pvTurnover]
      * @param string $dsEnd (YYYYMMDD)
-     * @return \Praxigento\Accounting\Repo\Entity\Data\Transaction[]
+     * @return \Praxigento\Accounting\Repo\Data\Transaction[]
      */
     private function getTransactions($turnover, $dsEnd)
     {

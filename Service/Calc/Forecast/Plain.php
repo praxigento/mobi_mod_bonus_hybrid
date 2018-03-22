@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Forecast;
 
-use Praxigento\Accounting\Repo\Entity\Account as RAccount;
+use Praxigento\Accounting\Repo\Dao\Account as RAccount;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Clean as PCleanCalcData;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Calc as SubCalc;
@@ -24,7 +24,7 @@ class Plain
     private $procCleanCalc;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\IAdd */
     private $procPeriodAdd;
-    /** @var \Praxigento\Accounting\Repo\Entity\Account */
+    /** @var \Praxigento\Accounting\Repo\Dao\Account */
     private $repoAcc;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoBonDwnl;

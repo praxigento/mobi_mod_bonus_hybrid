@@ -5,9 +5,9 @@
 
 namespace Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv;
 
-use Praxigento\Accounting\Repo\Entity\Data\Account as EAcc;
-use Praxigento\Accounting\Repo\Entity\Data\Operation as EOper;
-use Praxigento\Accounting\Repo\Entity\Data\Transaction as ETrans;
+use Praxigento\Accounting\Repo\Data\Account as EAcc;
+use Praxigento\Accounting\Repo\Data\Operation as EOper;
+use Praxigento\Accounting\Repo\Data\Transaction as ETrans;
 use Praxigento\BonusBase\Repo\Entity\Data\Log\Opers as ELogOpers;
 use Praxigento\BonusHybrid\Config as Cfg;
 
@@ -35,12 +35,12 @@ class Builder
      */
     const BIND_CALC_ID = 'calcId';
 
-    /** @var  \Praxigento\Accounting\Repo\Entity\Type\Operation */
+    /** @var  \Praxigento\Accounting\Repo\Dao\Type\Operation */
     private $repoTypeOper;
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resource,
-        \Praxigento\Accounting\Repo\Entity\Type\Operation $repoTypeOper
+        \Praxigento\Accounting\Repo\Dao\Type\Operation $repoTypeOper
     )
     {
         parent::__construct($resource);

@@ -4,7 +4,7 @@
  */
 namespace Praxigento\BonusHybrid\Service\Calc\SignupDebit;
 
-use Praxigento\Accounting\Repo\Entity\Data\Transaction as Trans;
+use Praxigento\Accounting\Repo\Data\Transaction as Trans;
 use Praxigento\BonusBase\Repo\Entity\Data\Log\Customers as LogCust;
 use Praxigento\BonusBase\Repo\Entity\Data\Log\Opers as LogOpers;
 use Praxigento\BonusBase\Repo\Entity\Data\Log\Sales as LogSales;

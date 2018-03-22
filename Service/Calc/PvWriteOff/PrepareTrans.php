@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\PvWriteOff;
 
-use Praxigento\Accounting\Repo\Entity\Data\Transaction as ETrans;
+use Praxigento\Accounting\Repo\Data\Transaction as ETrans;
 use Praxigento\BonusHybrid\Config as Cfg;
 
 /**
@@ -15,14 +15,14 @@ use Praxigento\BonusHybrid\Config as Cfg;
  */
 class PrepareTrans
 {
-    /** @var \Praxigento\Accounting\Repo\Entity\Account */
+    /** @var \Praxigento\Accounting\Repo\Dao\Account */
     private $repoAcc;
-    /** @var \Praxigento\Accounting\Repo\Entity\Type\Asset */
+    /** @var \Praxigento\Accounting\Repo\Dao\Type\Asset */
     private $repoAssetType;
 
     public function __construct(
-        \Praxigento\Accounting\Repo\Entity\Account $repoAcc,
-        \Praxigento\Accounting\Repo\Entity\Type\Asset $repoAssetType
+        \Praxigento\Accounting\Repo\Dao\Account $repoAcc,
+        \Praxigento\Accounting\Repo\Dao\Type\Asset $repoAssetType
     )
     {
         $this->repoAcc = $repoAcc;

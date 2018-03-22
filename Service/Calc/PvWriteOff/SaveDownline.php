@@ -21,7 +21,7 @@ class SaveDownline
     private $hlpScheme;
     /** @var \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds */
     private $hlpSignupDebitCust;
-    /** @var \Praxigento\Accounting\Repo\Entity\Account */
+    /** @var \Praxigento\Accounting\Repo\Dao\Account */
     private $repoAcc;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoDwnl;
@@ -32,7 +32,7 @@ class SaveDownline
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
-        \Praxigento\Accounting\Repo\Entity\Account $repoAcc,
+        \Praxigento\Accounting\Repo\Dao\Account $repoAcc,
         \Praxigento\BonusBase\Repo\Entity\Rank $repoRank,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnl,
         \Praxigento\Downline\Service\ISnap $callDwnlSnap
@@ -198,7 +198,7 @@ class SaveDownline
     /**
      * Load accounts by asset type code and map its using $customerId as a key.
      *
-     * @return \Praxigento\Accounting\Repo\Entity\Data\Account[]
+     * @return \Praxigento\Accounting\Repo\Data\Account[]
      */
     private function loadCustomersAccounts()
     {
