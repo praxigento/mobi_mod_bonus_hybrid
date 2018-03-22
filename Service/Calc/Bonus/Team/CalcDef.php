@@ -82,7 +82,7 @@ class CalcDef
         foreach ($mapDwnlById as $custId => $custDwnl) {
             /** @var ECustomer $custData */
             $custData = $mapCustById[$custId];
-            $custMlmId = $custData->getHumanRef();
+            $custMlmId = $custData->getMlmId();
             $scheme = $this->hlpScheme->getSchemeByCustomer($custData);
             /* only DEFAULT-schema customers may apply to Team Bonus */
             $pv = $custDwnl->getPv();
@@ -114,7 +114,7 @@ class CalcDef
                         $parentDwnl = $mapDwnlById[$parentId];
                         /** @var ECustomer $parentData */
                         $parentData = $mapCustById[$parentId];
-                        $parentMlmId = $parentData->getHumanRef();
+                        $parentMlmId = $parentData->getMlmId();
                         $parentScheme = $this->hlpScheme->getSchemeByCustomer($parentData);
                         $tv = $parentDwnl->getTv();
                         $tvForced = $this->hlpScheme->getForcedTv($parentId, $scheme, $tv);

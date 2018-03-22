@@ -70,14 +70,14 @@ class CalcEu
         foreach ($mapDwnlById as $custId => $custDwnl) {
             /** @var ECustomer $custData */
             $custData = $mapCustById[$custId];
-            $custMlmId = $custData->getHumanRef();
+            $custMlmId = $custData->getMlmId();
             $pv = $custDwnl->getPv();
             $parentId = $custDwnl->getParentRef();
             /** @var EBonDwnl $parentDwnl */
             $parentDwnl = $mapDwnlById[$parentId];
             /** @var ECustomer $parentData */
             $parentData = $mapCustById[$parentId];
-            $parentMlmId = $parentData->getHumanRef();
+            $parentMlmId = $parentData->getMlmId();
             $scheme = $this->hlpScheme->getSchemeByCustomer($parentData);
             if ($scheme == Cfg::SCHEMA_EU) {
                 $pvParent = $parentDwnl->getPv();

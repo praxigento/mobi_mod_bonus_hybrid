@@ -68,7 +68,7 @@ class Calc
         foreach ($mapById as $custId => $custCompress) {
             /** @var ECustomer $custPlain */
             $custPlain = $mapPlainById[$custId];
-            $custMlmId = $custPlain->getHumanRef();
+            $custMlmId = $custPlain->getMlmId();
             $pv = $custCompress->getPv();
             if ($pv > Cfg::DEF_ZERO) {
                 $path = $custCompress->getPath();
@@ -81,7 +81,7 @@ class Calc
                     $parentCompress = $mapById[$parentId];
                     /** @var ECustomer $parentPlain */
                     $parentPlain = $mapPlainById[$parentId];
-                    $parentMlmId = $parentPlain->getHumanRef();
+                    $parentMlmId = $parentPlain->getMlmId();
                     $parentRankId = $parentCompress->getRankRef();
                     $parentScheme = $this->hlpScheme->getSchemeByCustomer($parentPlain);
                     /* should parent get an Infinity bonus? */

@@ -123,7 +123,7 @@ class Calc
             $rankId = $custCompress->getRankRef();
             /** @var ECustomer $custPlain */
             $custPlain = $mapPlainById[$custId];
-            $custRef = $custPlain->getHumanRef();
+            $custRef = $custPlain->getMlmId();
             $custScheme = $this->hlpScheme->getSchemeByCustomer($custPlain);
             if (
                 ($rankId != $defRankId) &&

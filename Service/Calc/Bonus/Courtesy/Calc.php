@@ -73,7 +73,7 @@ class Calc
                 isset($mapTeams[$custId]) &&
                 ($custScheme == Cfg::SCHEMA_DEFAULT)
             ) {
-                $custMlmId = $custData->getHumanRef();
+                $custMlmId = $custData->getMlmId();
                 $tv = $item->getTv();
                 $tv = $this->hlpScheme->getForcedTv($custId, $custScheme, $tv);
                 $percentTeam = $this->getLevelPercent($tv, $levelsTeam);
@@ -87,7 +87,7 @@ class Calc
                     if ($pv > 0) {
                         /** @var ECustomer $memberData */
                         $memberData = $mapCustById[$memberId];
-                        $memberMlmId = $memberData->getHumanRef();
+                        $memberMlmId = $memberData->getMlmId();
                         $percentPv = $this->getLevelPercent($pv, $levelsPersonal);
                         $percentDelta = $percentTeam - $percentPv;
                         if ($percentDelta > Cfg::DEF_ZERO) {

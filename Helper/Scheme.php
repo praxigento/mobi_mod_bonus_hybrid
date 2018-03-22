@@ -108,7 +108,7 @@ class Scheme
     /**
      * IDs for customers with forced qualification.
      *
-     * @return array [[Customer::ATTR_CUSTOMER_ID=>..., Customer::ATTR_HUMAN_REF=>...], ...]
+     * @return array [[Customer::ATTR_CUSTOMER_ID=>..., Customer::ATTR_MLM_ID=>...], ...]
      */
     private function _getForcedCustomersIds()
     {
