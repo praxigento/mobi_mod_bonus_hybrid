@@ -254,8 +254,8 @@ class Phase2
         $snap = $this->hlpTree->expandMinimal($outDownline, EBonDwnl::ATTR_PARENT_REF);
         /* go through the downline snapshot and move depth & path info into results */
         foreach ($outDownline as $id => $one) {
-            $depth = $snap[$id][\Praxigento\Downline\Repo\Entity\Data\Snap::ATTR_DEPTH];
-            $path = $snap[$id][\Praxigento\Downline\Repo\Entity\Data\Snap::ATTR_PATH];
+            $depth = $snap[$id][\Praxigento\Downline\Repo\Data\Snap::ATTR_DEPTH];
+            $path = $snap[$id][\Praxigento\Downline\Repo\Data\Snap::ATTR_PATH];
             /** @var EBonDwnl $entry */
             $entry = $outDownline[$id];
             $entry->setDepth($depth);

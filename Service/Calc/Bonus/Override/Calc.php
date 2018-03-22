@@ -10,7 +10,7 @@ use Praxigento\BonusHybrid\Repo\Data\Cfg\Override as ECfgOvrd;
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Service\Calc\A\Data\Bonus as DBonus;
 use Praxigento\BonusHybrid\Service\Calc\Bonus\Override\Calc\Entry as DEntry;
-use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
+use Praxigento\Downline\Repo\Data\Customer as ECustomer;
 
 class Calc
 {
@@ -28,7 +28,7 @@ class Calc
     private $repoBonDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Cfg\Override */
     private $repoCfgOvrd;
-    /** @var \Praxigento\Downline\Repo\Entity\Customer */
+    /** @var \Praxigento\Downline\Repo\Dao\Customer */
     private $repoDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Rank */
     private $repoRank;
@@ -39,7 +39,7 @@ class Calc
         \Praxigento\Downline\Api\Helper\Downline $hlpTree,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
-        \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
+        \Praxigento\Downline\Repo\Dao\Customer $repoDwnl,
         \Praxigento\BonusBase\Repo\Dao\Rank $repoRank,
         \Praxigento\BonusHybrid\Repo\Dao\Cfg\Override $repoCfgOvrd,
         \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl

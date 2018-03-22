@@ -8,7 +8,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Infinity;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Cfg\Param as ECfgParam;
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
-use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
+use Praxigento\Downline\Repo\Data\Customer as ECustomer;
 
 class Calc
 {
@@ -24,7 +24,7 @@ class Calc
     private $repoBonDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Cfg\Param */
     private $repoCfgParams;
-    /** @var \Praxigento\Downline\Repo\Entity\Customer */
+    /** @var \Praxigento\Downline\Repo\Dao\Customer */
     private $repoDwnl;
 
     public function __construct(
@@ -33,7 +33,7 @@ class Calc
         \Praxigento\Downline\Api\Helper\Downline $hlpTree,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
-        \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
+        \Praxigento\Downline\Repo\Dao\Customer $repoDwnl,
         \Praxigento\BonusHybrid\Repo\Dao\Cfg\Param $repoCfgParams,
         \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl
     )

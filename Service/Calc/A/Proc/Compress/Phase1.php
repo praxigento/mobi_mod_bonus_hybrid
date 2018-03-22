@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress;
 
-use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
+use Praxigento\Downline\Repo\Data\Customer as ECustomer;
 
 /**
  * Process to calculate Phase1 compression.
@@ -42,7 +42,7 @@ class Phase1
     private $hlpSignupDebitCust;
     /** @var \Praxigento\Downline\Api\Helper\Downline */
     private $hlpTree;
-    /** @var \Praxigento\Downline\Repo\Entity\Customer */
+    /** @var \Praxigento\Downline\Repo\Dao\Customer */
     private $repoCustDwnl;
 
     public function __construct(
@@ -50,7 +50,7 @@ class Phase1
         \Praxigento\Downline\Api\Helper\Downline $hlpTree,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust,
-        \Praxigento\Downline\Repo\Entity\Customer $repoCustDwnl,
+        \Praxigento\Downline\Repo\Dao\Customer $repoCustDwnl,
         \Praxigento\Downline\Service\ISnap $callDwnlSnap
     )
     {
@@ -64,7 +64,7 @@ class Phase1
 
     /**
      * @param array $compressionData array [$custId=>[$pv, $parentId], ... ] with compression data.
-     * @return \Praxigento\Downline\Repo\Entity\Data\Snap[]
+     * @return \Praxigento\Downline\Repo\Data\Snap[]
      */
     private function composeTree($compressionData)
     {
@@ -82,7 +82,7 @@ class Phase1
         /* convert 2D array to array of entities */
         $result = [];
         foreach ($snap as $one) {
-            $entity = new \Praxigento\Downline\Repo\Entity\Data\Snap($one);
+            $entity = new \Praxigento\Downline\Repo\Data\Snap($one);
             $result[] = $entity;
         }
         return $result;
@@ -197,7 +197,7 @@ class Phase1
         unset($mapDepth);
         unset($mapTeams);
         /* compose compressed tree */
-        /** @var \Praxigento\Downline\Repo\Entity\Data\Snap[] $cmprsSnap */
+        /** @var \Praxigento\Downline\Repo\Data\Snap[] $cmprsSnap */
         $cmprsSnap = $this->composeTree($compression);
 
         /* re-build result tree (compressed) from source tree (plain) */
@@ -215,11 +215,11 @@ class Phase1
     /**
      * Actual customers downline mapped by customer ID.
      *
-     * @return \Praxigento\Downline\Repo\Entity\Data\Customer[]
+     * @return \Praxigento\Downline\Repo\Data\Customer[]
      */
     private function getCustomersMap()
     {
-        /** @var \Praxigento\Downline\Repo\Entity\Data\Customer[] $customers */
+        /** @var \Praxigento\Downline\Repo\Data\Customer[] $customers */
         $customers = $this->repoCustDwnl->get();
         $result = $this->hlpDwnlTree->mapById($customers, ECustomer::ATTR_CUSTOMER_ID);
         return $result;
@@ -253,7 +253,7 @@ class Phase1
      * Rebuild target tree from source ($mapPlain) using compressed snap data.
      *
      * @param int $calcId phase1 compression calculation ID
-     * @param \Praxigento\Downline\Repo\Entity\Data\Snap[] $compressed
+     * @param \Praxigento\Downline\Repo\Data\Snap[] $compressed
      * @param array|\Praxigento\Core\Data[] $mapPlain
      * @param string $keyCalcId
      * @param string $keyParentId
@@ -264,7 +264,7 @@ class Phase1
     private function rebuildTree($calcId, $compressed, $mapPlain, $keyCalcId, $keyParentId, $keyDepth, $keyPath)
     {
         $result = [];
-        /** @var \Praxigento\Downline\Repo\Entity\Data\Snap $item */
+        /** @var \Praxigento\Downline\Repo\Data\Snap $item */
         foreach ($compressed as $item) {
             $snapCustId = $item->getCustomerId();
             $snapParentId = $item->getParentId();

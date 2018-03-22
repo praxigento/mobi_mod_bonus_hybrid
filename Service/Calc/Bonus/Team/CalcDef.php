@@ -8,7 +8,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Team;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Service\Calc\A\Data\Bonus as DBonus;
-use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
+use Praxigento\Downline\Repo\Data\Customer as ECustomer;
 
 /**
  * Calculate Team bonus according to DEFAULT scheme.
@@ -27,7 +27,7 @@ class CalcDef
     private $logger;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $repoBonDwnl;
-    /** @var \Praxigento\Downline\Repo\Entity\Customer */
+    /** @var \Praxigento\Downline\Repo\Dao\Customer */
     private $repoDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Level */
     private $repoLevel;
@@ -38,7 +38,7 @@ class CalcDef
         \Praxigento\Downline\Api\Helper\Downline $hlpTree,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
-        \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
+        \Praxigento\Downline\Repo\Dao\Customer $repoDwnl,
         \Praxigento\BonusBase\Repo\Dao\Level $repoLevel,
         \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl
     )

@@ -109,7 +109,7 @@ class Phase1
         /* TODO: move source data collection into sub-class */
         $dwnlSnap = $this->getDownlineSnapshot($dsEnd);
         $dataPv = $this->getPv($writeOffCalcId);
-        /** @var \Praxigento\Downline\Repo\Entity\Data\Snap[] $updates */
+        /** @var \Praxigento\Downline\Repo\Data\Snap[] $updates */
         /** @var \Praxigento\BonusHybrid\Repo\Data\Compression\Phase1\Transfer\Pv[] $pvTransfers */
         list($updates, $pvTransfers) = $this->compress($dwnlSnap, $dataPv, $compressCalcId);
         /* save compressed downline & PV transfers into DB */

@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Forecast\Compress;
 
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
-use Praxigento\Downline\Repo\Entity\Data\Customer as ECustDwnl;
+use Praxigento\Downline\Repo\Data\Customer as ECustDwnl;
 
 /**
  * Update Phase 1 downline with ranks from Phase2 trees (DEF & EU). This is in-memory update (not in-DB).
@@ -27,13 +27,13 @@ class UpdateDwnl
     private $hlpDwnlTree;
     /** @var \Praxigento\BonusHybrid\Helper\IScheme */
     private $hlpScheme;
-    /** @var \Praxigento\Downline\Repo\Entity\Customer */
+    /** @var \Praxigento\Downline\Repo\Dao\Customer */
     private $repoCustDwnl;
 
     public function __construct(
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
-        \Praxigento\Downline\Repo\Entity\Customer $repoCustDwnl
+        \Praxigento\Downline\Repo\Dao\Customer $repoCustDwnl
     )
     {
         $this->hlpScheme = $hlpScheme;

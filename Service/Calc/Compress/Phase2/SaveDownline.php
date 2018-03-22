@@ -10,7 +10,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Compress\Phase2;
 
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Repo\Data\Downline\Qualification as EBonDwnQual;
-use Praxigento\Downline\Repo\Entity\Data\Customer as EDwnlCust;
+use Praxigento\Downline\Repo\Data\Customer as EDwnlCust;
 
 /**
  * Save compressed downline and related data (ranks, etc.).
@@ -25,7 +25,7 @@ class SaveDownline
     private $hlpScheme;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $repoBonDwnl;
-    /** @var \Praxigento\Downline\Repo\Entity\Customer */
+    /** @var \Praxigento\Downline\Repo\Dao\Customer */
     private $repoDwnlCust;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline\Qualification */
     private $repoDwnlQual;
@@ -35,7 +35,7 @@ class SaveDownline
     public function __construct(
         \Praxigento\Downline\Helper\Tree $hlpDwnl,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
-        \Praxigento\Downline\Repo\Entity\Customer $repoDwnlCust,
+        \Praxigento\Downline\Repo\Dao\Customer $repoDwnlCust,
         \Praxigento\BonusHybrid\Repo\Dao\Compression\Phase2\Legs $repoLegs,
         \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl,
         \Praxigento\BonusHybrid\Repo\Dao\Downline\Qualification $repoDwnlQual

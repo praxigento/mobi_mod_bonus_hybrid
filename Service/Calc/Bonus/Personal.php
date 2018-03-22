@@ -8,7 +8,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Bonus;
 use Praxigento\BonusBase\Repo\Data\Log\Opers as ELogOper;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Service\Calc\A\Data\Bonus as DBonus;
-use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
+use Praxigento\Downline\Repo\Data\Customer as ECustomer;
 
 /**
  * Calculate Personal Bonus.
@@ -36,7 +36,7 @@ class Personal
     private $repoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $repoCalc;
-    /** @var \Praxigento\Downline\Repo\Entity\Customer */
+    /** @var \Praxigento\Downline\Repo\Dao\Customer */
     private $repoDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Level */
     private $repoLevel;
@@ -49,7 +49,7 @@ class Personal
         \Praxigento\BonusBase\Helper\Calc $hlpCalc,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
-        \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
+        \Praxigento\Downline\Repo\Dao\Customer $repoDwnl,
         \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
         \Praxigento\BonusBase\Repo\Dao\Level $repoLevel,
         \Praxigento\BonusBase\Repo\Dao\Log\Opers $repoLogOper,
@@ -77,7 +77,7 @@ class Personal
     /**
      * Walk through the compressed downline tree and calculate Personal bonus for DEFAULT scheme.
      *
-     * @param \Praxigento\Downline\Repo\Entity\Data\Customer[] $dwnlCurrent
+     * @param \Praxigento\Downline\Repo\Data\Customer[] $dwnlCurrent
      * @param \Praxigento\BonusHybrid\Repo\Data\Downline[] $dwnlCompress
      * @param array $levels percents for bonus levels ([level=>percent])
      *
