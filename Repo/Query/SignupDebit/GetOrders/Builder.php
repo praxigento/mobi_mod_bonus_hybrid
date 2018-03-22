@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetOrders;
 
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\Downline\Repo\Data\Customer as Dwnl;
-use Praxigento\Pv\Repo\Entity\Data\Sale as Pv;
+use Praxigento\Pv\Repo\Data\Sale as Pv;
 
 /**
  * Build query to get data to process 'Sign Up Volume Debit' bonus (signed customers with first order more then 100 PV).
