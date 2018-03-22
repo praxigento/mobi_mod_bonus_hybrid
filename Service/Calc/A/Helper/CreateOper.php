@@ -30,7 +30,7 @@ class CreateOper
     /**
      * @param string $calcTypeCode
      * @param \Praxigento\Accounting\Repo\Data\Transaction[] $trans
-     * @param \Praxigento\BonusBase\Repo\Entity\Data\Period $period
+     * @param \Praxigento\BonusBase\Repo\Data\Period $period
      * @return \Praxigento\BonusHybrid\Service\Calc\A\Helper\CreateOper\Result
      */
     public function exec($calcTypeCode, $trans, $period)

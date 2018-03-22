@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Helper;
 
-use Praxigento\BonusBase\Repo\Entity\Data\Rank;
+use Praxigento\BonusBase\Repo\Data\Rank;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Cfg\Param as CfgParam;
 use Praxigento\Downline\Repo\Entity\Data\Customer;

@@ -8,7 +8,7 @@ namespace Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv;
 use Praxigento\Accounting\Repo\Data\Account as EAcc;
 use Praxigento\Accounting\Repo\Data\Operation as EOper;
 use Praxigento\Accounting\Repo\Data\Transaction as ETrans;
-use Praxigento\BonusBase\Repo\Entity\Data\Log\Opers as ELogOpers;
+use Praxigento\BonusBase\Repo\Data\Log\Opers as ELogOpers;
 use Praxigento\BonusHybrid\Config as Cfg;
 
 /**

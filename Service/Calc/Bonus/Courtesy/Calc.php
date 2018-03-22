@@ -24,7 +24,7 @@ class Calc
     private $repoBonDwnl;
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
     private $repoDwnl;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Level */
+    /** @var \Praxigento\BonusBase\Repo\Dao\Level */
     private $repoLevel;
 
     public function __construct(
@@ -32,7 +32,7 @@ class Calc
         \Praxigento\Core\Api\Helper\Format $hlpFormat,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
-        \Praxigento\BonusBase\Repo\Entity\Level $repoLevel,
+        \Praxigento\BonusBase\Repo\Dao\Level $repoLevel,
         \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl
     )

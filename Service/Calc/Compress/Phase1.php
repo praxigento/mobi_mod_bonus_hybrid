@@ -28,9 +28,9 @@ class Phase1
     private $qbSnapOnDate;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoBonDwnl;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
+    /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $repoCalc;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Rank */
+    /** @var \Praxigento\BonusBase\Repo\Dao\Rank */
     private $repoRank;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase1\Transfer\Pv */
     private $repoTransPv;
@@ -38,8 +38,8 @@ class Phase1
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
-        \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
-        \Praxigento\BonusBase\Repo\Entity\Rank $repoRank,
+        \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
+        \Praxigento\BonusBase\Repo\Dao\Rank $repoRank,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
         \Praxigento\BonusHybrid\Repo\Entity\Compression\Phase1\Transfer\Pv $repoTransPv,
         \Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder $qbGetPv,
@@ -95,9 +95,9 @@ class Phase1
         $ctx->set(self::CTX_OUT_SUCCESS, false);
         $this->logger->info("Phase1 compression is started.");
         /* get dependent calculation data */
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $writeOffCalc */
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $compressPeriod */
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $compressCalc */
+        /** @var \Praxigento\BonusBase\Repo\Data\Calculation $writeOffCalc */
+        /** @var \Praxigento\BonusBase\Repo\Data\Period $compressPeriod */
+        /** @var \Praxigento\BonusBase\Repo\Data\Calculation $compressCalc */
         list($writeOffCalc, $compressPeriod, $compressCalc) = $this->getCalcData();
         $compressPeriodId = $compressPeriod->getId();
         $dsBegin = $compressPeriod->getDstampBegin();
@@ -134,11 +134,11 @@ class Phase1
         $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
         $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
         $this->procPeriodGet->exec($ctx);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $compressCalc */
+        /** @var \Praxigento\BonusBase\Repo\Data\Calculation $compressCalc */
         $writeOffCalc = $ctx->get($this->procPeriodGet::CTX_OUT_BASE_CALC_DATA);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $compressPeriod */
+        /** @var \Praxigento\BonusBase\Repo\Data\Period $compressPeriod */
         $compressPeriod = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_PERIOD_DATA);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $depCalcData */
+        /** @var \Praxigento\BonusBase\Repo\Data\Calculation $depCalcData */
         $compressCalc = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
         $result = [$writeOffCalc, $compressPeriod, $compressCalc];
         return $result;

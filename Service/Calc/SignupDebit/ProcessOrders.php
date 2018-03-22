@@ -5,9 +5,9 @@
 namespace Praxigento\BonusHybrid\Service\Calc\SignupDebit;
 
 use Praxigento\Accounting\Repo\Data\Transaction as Trans;
-use Praxigento\BonusBase\Repo\Entity\Data\Log\Customers as LogCust;
-use Praxigento\BonusBase\Repo\Entity\Data\Log\Opers as LogOpers;
-use Praxigento\BonusBase\Repo\Entity\Data\Log\Sales as LogSales;
+use Praxigento\BonusBase\Repo\Data\Log\Customers as LogCust;
+use Praxigento\BonusBase\Repo\Data\Log\Opers as LogOpers;
+use Praxigento\BonusBase\Repo\Data\Log\Sales as LogSales;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Registry\SignupDebit as RegSignup;
 use Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetOrders\Builder as Query;
@@ -34,20 +34,20 @@ class ProcessOrders
     private $callOper;
     /** @var  \Praxigento\BonusHybrid\Helper\IScheme */
     private $hlpScheme;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Log\Customers */
+    /** @var \Praxigento\BonusBase\Repo\Dao\Log\Customers */
     private $repoLogCust;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Log\Opers */
+    /** @var \Praxigento\BonusBase\Repo\Dao\Log\Opers */
     private $repoLogOper;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Log\Sales */
+    /** @var \Praxigento\BonusBase\Repo\Dao\Log\Sales */
     private $repoLogSale;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Registry\SignupDebit */
     private $repoRegSignupDebit;
 
     public function __construct(
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
-        \Praxigento\BonusBase\Repo\Entity\Log\Customers $repoLogCust,
-        \Praxigento\BonusBase\Repo\Entity\Log\Opers $repoLogOper,
-        \Praxigento\BonusBase\Repo\Entity\Log\Sales $repoLogSale,
+        \Praxigento\BonusBase\Repo\Dao\Log\Customers $repoLogCust,
+        \Praxigento\BonusBase\Repo\Dao\Log\Opers $repoLogOper,
+        \Praxigento\BonusBase\Repo\Dao\Log\Sales $repoLogSale,
         \Praxigento\BonusHybrid\Repo\Entity\Registry\SignupDebit $repoRegSignupDebit,
         \Praxigento\Accounting\Api\Service\Account\Get $callAccount,
         \Praxigento\Accounting\Api\Service\Operation $callOper

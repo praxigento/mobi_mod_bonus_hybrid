@@ -20,11 +20,11 @@ class GetDownline
 
     /** @var \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder */
     private $qbSnapOnDate;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Rank */
+    /** @var \Praxigento\BonusBase\Repo\Dao\Rank */
     private $repoRanks;
 
     public function __construct(
-        \Praxigento\BonusBase\Repo\Entity\Rank $repoRank,
+        \Praxigento\BonusBase\Repo\Dao\Rank $repoRank,
         \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder $qbSnapOnDate
     ) {
         $this->repoRanks = $repoRank;

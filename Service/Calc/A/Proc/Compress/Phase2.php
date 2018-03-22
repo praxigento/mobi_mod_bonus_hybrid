@@ -48,7 +48,7 @@ class Phase2
     private $repoBonDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Cfg\Param */
     private $repoCfgParam;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Rank */
+    /** @var \Praxigento\BonusBase\Repo\Dao\Rank */
     private $repoRank;
     /** @var \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Fun\Rou\CalcLegs */
     private $rouCalcLegs;
@@ -60,7 +60,7 @@ class Phase2
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\BonusHybrid\Helper\Calc\IsQualified $hlpIsQualified,
-        \Praxigento\BonusBase\Repo\Entity\Rank $repoRank,
+        \Praxigento\BonusBase\Repo\Dao\Rank $repoRank,
         \Praxigento\BonusHybrid\Repo\Entity\Cfg\Param $repoCfgParam,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
         ActQualify $actQualify,

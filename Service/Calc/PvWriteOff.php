@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc;
 
-use Praxigento\BonusBase\Repo\Entity\Data\Log\Opers as ELogOper;
+use Praxigento\BonusBase\Repo\Data\Log\Opers as ELogOper;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Service\Calc\PvWriteOff\Data\Trans as DTrans;
 
@@ -22,9 +22,9 @@ class PvWriteOff
     private $logger;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
+    /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $repoCalc;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Log\Opers */
+    /** @var \Praxigento\BonusBase\Repo\Dao\Log\Opers */
     private $repoLogOper;
     /** @var  \Praxigento\Accounting\Repo\Dao\Type\Asset */
     private $repoTypeAsset;
@@ -43,8 +43,8 @@ class PvWriteOff
         \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         \Praxigento\Accounting\Repo\Dao\Type\Asset $repoTypeAsset,
         \Praxigento\Accounting\Repo\Dao\Type\Operation $repoTypeOper,
-        \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
-        \Praxigento\BonusBase\Repo\Entity\Log\Opers $repoLogOper,
+        \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
+        \Praxigento\BonusBase\Repo\Dao\Log\Opers $repoLogOper,
         \Praxigento\Accounting\Service\Operation $callOperation,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         PvWriteOff\Query\GetData\Builder $sqbGetData,
@@ -132,9 +132,9 @@ class PvWriteOff
         $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_BONUS_SIGN_UP_DEBIT);
         $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
         $this->procPeriodGet->exec($ctx);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $periodData */
+        /** @var \Praxigento\BonusBase\Repo\Data\Period $periodData */
         $periodData = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_PERIOD_DATA);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $calcData */
+        /** @var \Praxigento\BonusBase\Repo\Data\Calculation $calcData */
         $calcData = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
         $result = [$periodData, $calcData];
         return $result;

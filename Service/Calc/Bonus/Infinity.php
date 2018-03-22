@@ -5,8 +5,8 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Bonus;
 
-use Praxigento\BonusBase\Repo\Entity\Data\Log\Customers as ELogCust;
-use Praxigento\BonusBase\Repo\Entity\Data\Log\Opers as ELogOper;
+use Praxigento\BonusBase\Repo\Data\Log\Customers as ELogCust;
+use Praxigento\BonusBase\Repo\Data\Log\Opers as ELogOper;
 use Praxigento\BonusHybrid\Config as Cfg;
 
 /**
@@ -25,11 +25,11 @@ class Infinity
     private $logger;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
+    /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $repoCalc;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Log\Customers */
+    /** @var \Praxigento\BonusBase\Repo\Dao\Log\Customers */
     private $repoLogCust;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Log\Opers */
+    /** @var \Praxigento\BonusBase\Repo\Dao\Log\Opers */
     private $repoLogOper;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Infinity\Calc */
     private $subCalc;
@@ -37,9 +37,9 @@ class Infinity
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Core\Api\Helper\Period $hlpPeriod,
-        \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
-        \Praxigento\BonusBase\Repo\Entity\Log\Customers $repoLogCust,
-        \Praxigento\BonusBase\Repo\Entity\Log\Opers $repoLogOper,
+        \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
+        \Praxigento\BonusBase\Repo\Dao\Log\Customers $repoLogCust,
+        \Praxigento\BonusBase\Repo\Dao\Log\Opers $repoLogOper,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\A\Helper\PrepareTrans $hlpTrans,
         \Praxigento\BonusHybrid\Service\Calc\A\Helper\CreateOper $hlpOper,
@@ -69,9 +69,9 @@ class Infinity
         /**
          * get dependent calculation data
          *
-         * @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $compressCalc
-         * @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $infPeriod
-         * @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $infCalc
+         * @var \Praxigento\BonusBase\Repo\Data\Calculation $compressCalc
+         * @var \Praxigento\BonusBase\Repo\Data\Calculation $infPeriod
+         * @var \Praxigento\BonusBase\Repo\Data\Calculation $infCalc
          */
         list($compressCalc, $infPeriod, $infCalc) = $this->getCalcData($scheme);
         $compressCalcId = $compressCalc->getId();
@@ -114,11 +114,11 @@ class Infinity
         $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, $baseTypeCode);
         $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, $depTypeCode);
         $this->procPeriodGet->exec($ctx);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $infPeriod */
+        /** @var \Praxigento\BonusBase\Repo\Data\Period $infPeriod */
         $infPeriod = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_PERIOD_DATA);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $infCalc */
+        /** @var \Praxigento\BonusBase\Repo\Data\Calculation $infCalc */
         $infCalc = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $compressCalc */
+        /** @var \Praxigento\BonusBase\Repo\Data\Calculation $compressCalc */
         $compressCalc = $ctx->get($this->procPeriodGet::CTX_OUT_BASE_CALC_DATA);
         /* composer result */
         $result = [$compressCalc, $infPeriod, $infCalc];
@@ -127,7 +127,7 @@ class Infinity
 
     /**
      * @param array $bonus [custId => bonusValue]
-     * @param \Praxigento\BonusBase\Repo\Entity\Data\Period $period
+     * @param \Praxigento\BonusBase\Repo\Data\Period $period
      * @return \Praxigento\Accounting\Repo\Data\Transaction[]
      */
     private function getTransactions($bonus, $period)

@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Value;
 
-use Praxigento\BonusBase\Repo\Entity\Data\Calculation as ECalc;
+use Praxigento\BonusBase\Repo\Data\Calculation as ECalc;
 use Praxigento\BonusBase\Service\Period\Calc\Get\IDependent as PGetPeriodDep;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Entity\Data\Downline as EBonDwnl;
@@ -20,14 +20,14 @@ class Tv
     private $procPeriodGet;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoBonDwnl;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
+    /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $repoCalc;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Value\Tv\Calc */
     private $subCalc;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
-        \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
+        \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\Value\Tv\Calc $subCalc

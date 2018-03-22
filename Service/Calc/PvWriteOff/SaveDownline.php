@@ -25,7 +25,7 @@ class SaveDownline
     private $repoAcc;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoDwnl;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Rank */
+    /** @var \Praxigento\BonusBase\Repo\Dao\Rank */
     private $repoRank;
 
     public function __construct(
@@ -33,7 +33,7 @@ class SaveDownline
         \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\Accounting\Repo\Dao\Account $repoAcc,
-        \Praxigento\BonusBase\Repo\Entity\Rank $repoRank,
+        \Praxigento\BonusBase\Repo\Dao\Rank $repoRank,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoDwnl,
         \Praxigento\Downline\Service\ISnap $callDwnlSnap
     )

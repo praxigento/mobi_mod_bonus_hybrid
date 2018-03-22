@@ -28,7 +28,7 @@ class Plain
     private $repoAcc;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoBonDwnl;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
+    /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $repoCalc;
     /** @var  \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Calc */
     private $subCalc;
@@ -40,7 +40,7 @@ class Plain
         \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         RAccount $repoAcc,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
-        \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
+        \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
         \Praxigento\Accounting\Api\Service\Balance\Get\Turnover $callBalanceGetTurnover,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Calc $subCalc,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetDownline $subGetDownline,

@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Bonus;
 
-use Praxigento\BonusBase\Repo\Entity\Data\Log\Opers as ELogOper;
+use Praxigento\BonusBase\Repo\Data\Log\Opers as ELogOper;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Service\Calc\A\Data\Bonus as DBonus;
 use Praxigento\Downline\Repo\Entity\Data\Customer as ECustomer;
@@ -34,13 +34,13 @@ class Personal
     private $procPeriodGet;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoBonDwnl;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
+    /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $repoCalc;
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
     private $repoDwnl;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Level */
+    /** @var \Praxigento\BonusBase\Repo\Dao\Level */
     private $repoLevel;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Log\Opers */
+    /** @var \Praxigento\BonusBase\Repo\Dao\Log\Opers */
     private $repoLogOper;
 
     public function __construct(
@@ -50,9 +50,9 @@ class Personal
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
-        \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
-        \Praxigento\BonusBase\Repo\Entity\Level $repoLevel,
-        \Praxigento\BonusBase\Repo\Entity\Log\Opers $repoLogOper,
+        \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
+        \Praxigento\BonusBase\Repo\Dao\Level $repoLevel,
+        \Praxigento\BonusBase\Repo\Dao\Log\Opers $repoLogOper,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\A\Helper\PrepareTrans $hlpTrans,
@@ -114,9 +114,9 @@ class Personal
         $ctx->set(self::CTX_OUT_SUCCESS, false);
         $this->logger->info("Personal bonus is started.");
         /* get dependent calculation data */
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $compressCalc */
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $persPeriod */
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $persCalc */
+        /** @var \Praxigento\BonusBase\Repo\Data\Calculation $compressCalc */
+        /** @var \Praxigento\BonusBase\Repo\Data\Period $persPeriod */
+        /** @var \Praxigento\BonusBase\Repo\Data\Calculation $persCalc */
         list($compressCalc, $persPeriod, $persCalc) = $this->getCalcData();
         $baseCalcId = $compressCalc->getId();
         $depCalcId = $persCalc->getId();
@@ -153,11 +153,11 @@ class Personal
         $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
         $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_BONUS_PERSONAL);
         $this->procPeriodGet->exec($ctx);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $compressCalc */
+        /** @var \Praxigento\BonusBase\Repo\Data\Calculation $compressCalc */
         $compressCalc = $ctx->get($this->procPeriodGet::CTX_OUT_BASE_CALC_DATA);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $persPeriod */
+        /** @var \Praxigento\BonusBase\Repo\Data\Period $persPeriod */
         $persPeriod = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_PERIOD_DATA);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $persCalc */
+        /** @var \Praxigento\BonusBase\Repo\Data\Calculation $persCalc */
         $persCalc = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
         $result = [$compressCalc, $persPeriod, $persCalc];
         return $result;
@@ -165,7 +165,7 @@ class Personal
 
     /**
      * @param array $bonus [custId => bonusValue]
-     * @param \Praxigento\BonusBase\Repo\Entity\Data\Period $period
+     * @param \Praxigento\BonusBase\Repo\Data\Period $period
      * @return \Praxigento\Accounting\Repo\Data\Transaction[]
      */
     private function getTransactions($bonus, $period)

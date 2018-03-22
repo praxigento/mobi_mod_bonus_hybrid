@@ -25,14 +25,14 @@ class Collect
     private $procPeriodGet;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoBonDwnl;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
+    /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $repoCalc;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Downline\Helper\Tree $hlpTree,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
-        \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
+        \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet
     )
     {
@@ -113,7 +113,7 @@ class Collect
         $ctx->set(SPeriodGetDep::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
         $ctx->set(SPeriodGetDep::CTX_IN_DEP_IGNORE_COMPLETE, true);
         $this->procPeriodGet->exec($ctx);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $writeOffCalc */
+        /** @var \Praxigento\BonusBase\Repo\Data\Calculation $writeOffCalc */
         $writeOffCalc = $ctx->get(SPeriodGetDep::CTX_OUT_BASE_CALC_DATA);
         $pwWriteOffPeriod = $ctx->get(SPeriodGetDep::CTX_OUT_BASE_PERIOD_DATA);
         $phase1Calc = $ctx->get(SPeriodGetDep::CTX_OUT_DEP_CALC_DATA);
@@ -124,7 +124,7 @@ class Collect
         $ctx->set(SPeriodGetDep::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
         $ctx->set(SPeriodGetDep::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_UNQUALIFIED_COLLECT);
         $this->procPeriodGet->exec($ctx);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $pwWriteOffCalc */
+        /** @var \Praxigento\BonusBase\Repo\Data\Calculation $pwWriteOffCalc */
         $unqCollCalc = $ctx->get(SPeriodGetDep::CTX_OUT_DEP_CALC_DATA);
         /**
          * Get previous PV Write Off data to access stats history.
@@ -136,7 +136,7 @@ class Collect
         $ctx->set(SPeriodGetDep::CTX_IN_PERIOD_END, $periodPrev);
         $ctx->set(SPeriodGetDep::CTX_IN_DEP_IGNORE_COMPLETE, true);
         $this->procPeriodGet->exec($ctx);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $phase1CalcPrev */
+        /** @var \Praxigento\BonusBase\Repo\Data\Calculation $phase1CalcPrev */
         $writeOffCalcPrev = $ctx->get(SPeriodGetDep::CTX_OUT_BASE_CALC_DATA);
         /**
          * Compose result.

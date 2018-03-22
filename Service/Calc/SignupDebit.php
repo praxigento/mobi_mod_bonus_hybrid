@@ -16,7 +16,7 @@ class SignupDebit
     private $logger;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IBasis */
     private $procPeriodGetBasis;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
+    /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $repoCalc;
     /** @var  \Praxigento\BonusHybrid\Service\Calc\SignupDebit\GetOrders */
     private $subGetOrders;
@@ -26,7 +26,7 @@ class SignupDebit
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Core\Api\Helper\Period $hlpPeriod,
-        \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
+        \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IBasis $procPeriodGetBasis,
         \Praxigento\BonusHybrid\Service\Calc\SignupDebit\GetOrders $subGetOrders,
         \Praxigento\BonusHybrid\Service\Calc\SignupDebit\ProcessOrders $subProcessOrders

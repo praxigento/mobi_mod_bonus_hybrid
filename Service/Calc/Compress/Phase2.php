@@ -20,7 +20,7 @@ class Phase2
     private $procPeriodGet;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoBonDwnl;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
+    /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $repoCalc;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\Phase2\GetPv */
     private $rouGetPv;
@@ -29,7 +29,7 @@ class Phase2
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
-        \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
+        \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2 $procCmprsPhase2,
@@ -85,10 +85,10 @@ class Phase2
         /**
          * Get dependent calculation data
          *
-         * @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $writeOffCalc
-         * @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $phase1Calc
-         * @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $phase2Calc
-         * @var \Praxigento\BonusBase\Repo\Entity\Data\Period $phase2Period
+         * @var \Praxigento\BonusBase\Repo\Data\Calculation $writeOffCalc
+         * @var \Praxigento\BonusBase\Repo\Data\Calculation $phase1Calc
+         * @var \Praxigento\BonusBase\Repo\Data\Calculation $phase2Calc
+         * @var \Praxigento\BonusBase\Repo\Data\Period $phase2Period
          */
         list($writeOffCalc, $phase1Calc, $phase2Calc, $phase2Period) = $this->getCalcData($scheme);
         $writeOffCalcId = $writeOffCalc->getId();
@@ -127,9 +127,9 @@ class Phase2
         $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_VALUE_OV);
         $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, $calcTypeCode);
         $this->procPeriodGet->exec($ctx);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $phase2Period */
+        /** @var \Praxigento\BonusBase\Repo\Data\Period $phase2Period */
         $phase2Period = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_PERIOD_DATA);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $phaseCalc */
+        /** @var \Praxigento\BonusBase\Repo\Data\Calculation $phaseCalc */
         $phaseCalc = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
         /**
          * Get data for PV Write Off & phase1 compression calculations
@@ -139,9 +139,9 @@ class Phase2
         $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
         $ctx->set($this->procPeriodGet::CTX_IN_DEP_IGNORE_COMPLETE, true);
         $this->procPeriodGet->exec($ctx);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $writeOffCalc */
+        /** @var \Praxigento\BonusBase\Repo\Data\Calculation $writeOffCalc */
         $writeOffCalc = $ctx->get($this->procPeriodGet::CTX_OUT_BASE_CALC_DATA);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $phase1Calc */
+        /** @var \Praxigento\BonusBase\Repo\Data\Calculation $phase1Calc */
         $phase1Calc = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
         /**
          * Compose results vector.

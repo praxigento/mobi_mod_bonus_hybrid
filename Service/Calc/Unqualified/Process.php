@@ -22,7 +22,7 @@ class Process
     private $procPeriodGet;
     /** @var \Praxigento\BonusHybrid\Repo\Entity\Downline */
     private $repoBonDwnl;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
+    /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $repoCalc;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Unqualified\Process\Calc */
     private $rouCalc;
@@ -30,7 +30,7 @@ class Process
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\BonusHybrid\Repo\Entity\Downline $repoBonDwnl,
-        \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
+        \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\Unqualified\Process\Calc $rouCalc
     )
@@ -51,9 +51,9 @@ class Process
         $ctx->set(self::CTX_OUT_SUCCESS, false);
         /* get dependent calculation data */
         /**
-         * @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $writeOffCalc
-         * @var \Praxigento\BonusBase\Repo\Entity\Data\Period $writeOffPeriod
-         * @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $processCalc
+         * @var \Praxigento\BonusBase\Repo\Data\Calculation $writeOffCalc
+         * @var \Praxigento\BonusBase\Repo\Data\Period $writeOffPeriod
+         * @var \Praxigento\BonusBase\Repo\Data\Calculation $processCalc
          */
         list($writeOffCalc, $writeOffPeriod, $processCalc) = $this->getCalcData();
         $writeOffCalcId = $writeOffCalc->getId();
@@ -83,9 +83,9 @@ class Process
         $ctx->set(SPeriodGetDep::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_UNQUALIFIED_COLLECT);
         $ctx->set(SPeriodGetDep::CTX_IN_DEP_IGNORE_COMPLETE, true);
         $this->procPeriodGet->exec($ctx);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $writeOffCalc */
+        /** @var \Praxigento\BonusBase\Repo\Data\Calculation $writeOffCalc */
         $writeOffCalc = $ctx->get(SPeriodGetDep::CTX_OUT_BASE_CALC_DATA);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $writeOffPeriod */
+        /** @var \Praxigento\BonusBase\Repo\Data\Period $writeOffPeriod */
         $writeOffPeriod = $ctx->get(SPeriodGetDep::CTX_OUT_BASE_PERIOD_DATA);
         /**
          * Create Unqualified Process calculation.
@@ -94,7 +94,7 @@ class Process
         $ctx->set(SPeriodGetDep::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_UNQUALIFIED_COLLECT);
         $ctx->set(SPeriodGetDep::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_UNQUALIFIED_PROCESS);
         $this->procPeriodGet->exec($ctx);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $pwWriteOffCalc */
+        /** @var \Praxigento\BonusBase\Repo\Data\Calculation $pwWriteOffCalc */
         $processCalc = $ctx->get(SPeriodGetDep::CTX_OUT_DEP_CALC_DATA);
         /**
          * Compose result.

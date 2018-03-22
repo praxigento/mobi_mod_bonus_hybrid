@@ -5,8 +5,8 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Bonus;
 
-use Praxigento\BonusBase\Repo\Entity\Data\Log\Customers as ELogCust;
-use Praxigento\BonusBase\Repo\Entity\Data\Log\Opers as ELogOper;
+use Praxigento\BonusBase\Repo\Data\Log\Customers as ELogCust;
+use Praxigento\BonusBase\Repo\Data\Log\Opers as ELogOper;
 use Praxigento\BonusHybrid\Config as Cfg;
 
 /**
@@ -25,11 +25,11 @@ class Team
     private $logger;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Calculation */
+    /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $repoCalc;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Log\Customers */
+    /** @var \Praxigento\BonusBase\Repo\Dao\Log\Customers */
     private $repoLogCust;
-    /** @var \Praxigento\BonusBase\Repo\Entity\Log\Opers */
+    /** @var \Praxigento\BonusBase\Repo\Dao\Log\Opers */
     private $repoLogOper;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Team\CalcDef */
     private $subCalcDef;
@@ -39,9 +39,9 @@ class Team
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Core\Api\Helper\Period $hlpPeriod,
-        \Praxigento\BonusBase\Repo\Entity\Calculation $repoCalc,
-        \Praxigento\BonusBase\Repo\Entity\Log\Customers $repoLogCust,
-        \Praxigento\BonusBase\Repo\Entity\Log\Opers $repoLogOper,
+        \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
+        \Praxigento\BonusBase\Repo\Dao\Log\Customers $repoLogCust,
+        \Praxigento\BonusBase\Repo\Dao\Log\Opers $repoLogOper,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\A\Helper\PrepareTrans $hlpTrans,
         \Praxigento\BonusHybrid\Service\Calc\A\Helper\CreateOper $hlpOper,
@@ -73,9 +73,9 @@ class Team
         /**
          * get dependent calculation data
          *
-         * @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $compressCalc
-         * @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $teamPeriod
-         * @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $teamCalc
+         * @var \Praxigento\BonusBase\Repo\Data\Calculation $compressCalc
+         * @var \Praxigento\BonusBase\Repo\Data\Calculation $teamPeriod
+         * @var \Praxigento\BonusBase\Repo\Data\Calculation $teamCalc
          */
         list($compressCalc, $teamPeriod, $teamCalc) = $this->getCalcData($scheme);
         $compressCalcId = $compressCalc->getId();
@@ -119,16 +119,16 @@ class Team
         $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_VALUE_TV);
         $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, $calcTypeCode);
         $this->procPeriodGet->exec($ctx);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Period $teamPeriod */
+        /** @var \Praxigento\BonusBase\Repo\Data\Period $teamPeriod */
         $teamPeriod = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_PERIOD_DATA);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $teamCalc */
+        /** @var \Praxigento\BonusBase\Repo\Data\Calculation $teamCalc */
         $teamCalc = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
         /* get period and calc data for compression calc (basic for TV volumes) */
         $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
         $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_VALUE_TV);
         $ctx->set($this->procPeriodGet::CTX_IN_DEP_IGNORE_COMPLETE, true);
         $this->procPeriodGet->exec($ctx);
-        /** @var \Praxigento\BonusBase\Repo\Entity\Data\Calculation $compressCalc */
+        /** @var \Praxigento\BonusBase\Repo\Data\Calculation $compressCalc */
         $compressCalc = $ctx->get($this->procPeriodGet::CTX_OUT_BASE_CALC_DATA);
         /* compose result */
         $result = [$compressCalc, $teamPeriod, $teamCalc];
@@ -137,7 +137,7 @@ class Team
 
     /**
      * @param array $bonus [custId => bonusValue]
-     * @param \Praxigento\BonusBase\Repo\Entity\Data\Period $period
+     * @param \Praxigento\BonusBase\Repo\Data\Period $period
      * @return \Praxigento\Accounting\Repo\Data\Transaction[]
      */
     private function getTransactions($bonus, $period)
