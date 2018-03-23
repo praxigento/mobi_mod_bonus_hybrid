@@ -91,15 +91,15 @@ class Scheme
         $query = $this->conn->select();
         $query->from([$asParams => $tblParams]);
         // LEFT JOIN prxgt_bon_hyb_rank pbhr ON pbhcp.rank_id = pbhr.id
-        $on = "$asParams." . CfgParam::ATTR_RANK_ID . "=$asRank." . Rank::ATTR_ID;
-        $cols = [Rank::ATTR_CODE];
+        $on = "$asParams." . CfgParam::A_RANK_ID . "=$asRank." . Rank::A_ID;
+        $cols = [Rank::A_CODE];
         $query->joinLeft([$asRank => $tblRank], $on, $cols);
         // $sql = (string)$query;
         $entries = $this->conn->fetchAll($query);
         $result = [];
         foreach ($entries as $entry) {
-            $rankCode = $entry[Rank::ATTR_CODE];
-            $rankScheme = $entry[CfgParam::ATTR_SCHEME];
+            $rankCode = $entry[Rank::A_CODE];
+            $rankScheme = $entry[CfgParam::A_SCHEME];
             $result[$rankCode][$rankScheme] = $entry;
         }
         return $result;
@@ -108,7 +108,7 @@ class Scheme
     /**
      * IDs for customers with forced qualification.
      *
-     * @return array [[Customer::ATTR_CUSTOMER_ID=>..., Customer::ATTR_MLM_ID=>...], ...]
+     * @return array [[Customer::A_CUSTOMER_ID=>..., Customer::A_MLM_ID=>...], ...]
      */
     private function _getForcedCustomersIds()
     {
@@ -120,9 +120,9 @@ class Scheme
                 $where .= ' OR ';
             }
             $quoted = $this->conn->quote($one);
-            $where .= Customer::ATTR_MLM_ID . "=\"$quoted\"";
+            $where .= Customer::A_MLM_ID . "=\"$quoted\"";
         }
-        $cols = [Customer::ATTR_CUSTOMER_ID, Customer::ATTR_MLM_ID];
+        $cols = [Customer::A_CUSTOMER_ID, Customer::A_MLM_ID];
         $result = $this->_repoBasic->getEntities(Customer::ENTITY_NAME, $cols, $where);
         return $result;
     }
@@ -134,7 +134,7 @@ class Scheme
         $this->getForcedQualificationCustomers();
         if (in_array($custId, $this->_cachedForcedCustomerIds)) {
             $custData = $this->_cachedForcedRanks[$custId];
-            $qpv = $custData[$scheme][CfgParam::ATTR_QUALIFY_PV];
+            $qpv = $custData[$scheme][CfgParam::A_QUALIFY_PV];
             if ($result < $qpv) {
                 $result = $qpv;
             }
@@ -156,8 +156,8 @@ class Scheme
             $ranks = $this->_getCfgParamsByRanks();
             $this->_cachedForcedRanks = [];
             foreach ($custIds as $item) {
-                $custId = $item[Customer::ATTR_CUSTOMER_ID];
-                $ref = $item[Customer::ATTR_MLM_ID];
+                $custId = $item[Customer::A_CUSTOMER_ID];
+                $ref = $item[Customer::A_MLM_ID];
                 $rankCode = $this->QUALIFIED_CUSTOMERS[$ref][1];
                 $cfgParamsWithSchemes = $ranks[$rankCode];
                 $this->_cachedForcedRanks[$custId] = $cfgParamsWithSchemes;
@@ -179,7 +179,7 @@ class Scheme
         $result = null;
         $forced = $this->getForcedQualificationCustomers();
         if (isset($forced[$custId][$scheme])) {
-            $result = $forced[$custId][$scheme][CfgParam::ATTR_RANK_ID];
+            $result = $forced[$custId][$scheme][CfgParam::A_RANK_ID];
         }
         return $result;
     }
@@ -192,12 +192,12 @@ class Scheme
         if (is_null($this->cachedSignupDebitCustIds)) {
             $ids = [];
             $calcId = $this->queryGetLastSignupCalcId->exec();
-            $where = \Praxigento\BonusHybrid\Repo\Data\Registry\SignupDebit::ATTR_CALC_REF . '=' . (int)$calcId;
+            $where = \Praxigento\BonusHybrid\Repo\Data\Registry\SignupDebit::A_CALC_REF . '=' . (int)$calcId;
             $rs = $this->repoRegSignupDebit->get($where);
             foreach ($rs as $one) {
                 /* TODO: use as object not as array */
                 $one = (array)$one->get();
-                $ids[] = $one[\Praxigento\BonusHybrid\Repo\Data\Registry\SignupDebit::ATTR_CUST_REF];
+                $ids[] = $one[\Praxigento\BonusHybrid\Repo\Data\Registry\SignupDebit::A_CUST_REF];
             }
             $this->cachedSignupDebitCustIds = $ids;
         }
@@ -212,7 +212,7 @@ class Scheme
         $this->getForcedQualificationCustomers();
         if (in_array($custId, $this->_cachedForcedCustomerIds)) {
             $custData = $this->_cachedForcedRanks[$custId];
-            $qpv = $custData[$scheme][CfgParam::ATTR_QUALIFY_TV];
+            $qpv = $custData[$scheme][CfgParam::A_QUALIFY_TV];
             if ($result < $qpv) {
                 $result = $qpv;
             }
@@ -233,9 +233,9 @@ class Scheme
     {
         $result = Cfg::SCHEMA_DEFAULT;
         if (is_array($data)) {
-            $countryCode = $data[Customer::ATTR_COUNTRY_CODE];
+            $countryCode = $data[Customer::A_COUNTRY_CODE];
         } elseif ($data instanceof \Praxigento\Core\Data) {
-            $countryCode = $data->get(Customer::ATTR_COUNTRY_CODE);
+            $countryCode = $data->get(Customer::A_COUNTRY_CODE);
         }
         $code = strtoupper($countryCode);
         if (

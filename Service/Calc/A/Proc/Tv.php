@@ -34,8 +34,8 @@ class Tv
         $dwnlBonus = $ctx->get(self::IN_DWNL);
 
         /* define local working data */
-        $mapById = $this->hlpDwnlTree->mapById($dwnlBonus, EBonDwnl::ATTR_CUST_REF);
-        $mapTeams = $this->hlpDwnlTree->mapByTeams($dwnlBonus, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
+        $mapById = $this->hlpDwnlTree->mapById($dwnlBonus, EBonDwnl::A_CUST_REF);
+        $mapTeams = $this->hlpDwnlTree->mapByTeams($dwnlBonus, EBonDwnl::A_CUST_REF, EBonDwnl::A_PARENT_REF);
 
         /* prepare output vars */
         $updated = [];

@@ -147,8 +147,8 @@ class Override
     {
         foreach ($transIds as $transId => $custId) {
             $this->repoLogCust->create([
-                ELogCust::ATTR_TRANS_ID => $transId,
-                ELogCust::ATTR_CUSTOMER_ID => $custId
+                ELogCust::A_TRANS_ID => $transId,
+                ELogCust::A_CUSTOMER_ID => $custId
 
             ]);
         }

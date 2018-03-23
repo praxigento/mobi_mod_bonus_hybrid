@@ -42,20 +42,20 @@ class GetLastCalcIdForPeriod
         $query->from([$asTypeCalc => $tbl], $cols);
         /*  LEFT JOIN prxgt_bon_base_period */
         $tbl = $this->resource->getTableName(Period::ENTITY_NAME);
-        $on = $asPeriod . '.' . Period::ATTR_CALC_TYPE_ID . '=' . $asTypeCalc . '.' . TypeCalc::ATTR_ID;
+        $on = $asPeriod . '.' . Period::A_CALC_TYPE_ID . '=' . $asTypeCalc . '.' . TypeCalc::A_ID;
         $cols = [];
         $query->joinLeft([$asPeriod => $tbl], $on, $cols);
         /* LEFT JOIN prxgt_bon_base_calc */
         $tbl = $this->resource->getTableName(Calc::ENTITY_NAME);
-        $on = $asCalc . '.' . Calc::ATTR_PERIOD_ID . '=' . $asPeriod . '.' . Period::ATTR_ID;
-        $cols = [Calc::ATTR_ID];
+        $on = $asCalc . '.' . Calc::A_PERIOD_ID . '=' . $asPeriod . '.' . Period::A_ID;
+        $cols = [Calc::A_ID];
         $query->joinLeft([$asCalc => $tbl], $on, $cols);
         /* WHERE */
-        $where = $asTypeCalc . '.' . TypeCalc::ATTR_CODE . '=:' . self::BIND_CODE;
-        $where .= ' AND ' . $asCalc . '.' . Calc::ATTR_STATE . '=:' . self::BIND_STATE;
+        $where = $asTypeCalc . '.' . TypeCalc::A_CODE . '=:' . self::BIND_CODE;
+        $where .= ' AND ' . $asCalc . '.' . Calc::A_STATE . '=:' . self::BIND_STATE;
         $query->where($where);
         /* ORDER */
-        $order = $asCalc . '.' . Calc::ATTR_ID . ' DESC';
+        $order = $asCalc . '.' . Calc::A_ID . ' DESC';
         $query->order($order);
         /* LIMIT 1 */
         $query->limit(1);

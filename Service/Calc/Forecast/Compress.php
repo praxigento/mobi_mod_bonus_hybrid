@@ -118,12 +118,12 @@ class Compress
         $ctx->set(PCpmrsPhase1::IN_CALC_ID, $calcId);
         $ctx->set(PCpmrsPhase1::IN_PV, $pv);
         $ctx->set(PCpmrsPhase1::IN_DWNL_PLAIN, $downline);
-        $ctx->set(PCpmrsPhase1::IN_KEY_CALC_ID, EBonDwnl::ATTR_CALC_REF);
-        $ctx->set(PCpmrsPhase1::IN_KEY_CUST_ID, EBonDwnl::ATTR_CUST_REF);
-        $ctx->set(PCpmrsPhase1::IN_KEY_PARENT_ID, EBonDwnl::ATTR_PARENT_REF);
-        $ctx->set(PCpmrsPhase1::IN_KEY_DEPTH, EBonDwnl::ATTR_DEPTH);
-        $ctx->set(PCpmrsPhase1::IN_KEY_PATH, EBonDwnl::ATTR_PATH);
-        $ctx->set(PCpmrsPhase1::IN_KEY_PV, EBonDwnl::ATTR_PV);
+        $ctx->set(PCpmrsPhase1::IN_KEY_CALC_ID, EBonDwnl::A_CALC_REF);
+        $ctx->set(PCpmrsPhase1::IN_KEY_CUST_ID, EBonDwnl::A_CUST_REF);
+        $ctx->set(PCpmrsPhase1::IN_KEY_PARENT_ID, EBonDwnl::A_PARENT_REF);
+        $ctx->set(PCpmrsPhase1::IN_KEY_DEPTH, EBonDwnl::A_DEPTH);
+        $ctx->set(PCpmrsPhase1::IN_KEY_PATH, EBonDwnl::A_PATH);
+        $ctx->set(PCpmrsPhase1::IN_KEY_PV, EBonDwnl::A_PV);
 
         $outPhase1 = $this->procCmprsPhase1->exec($ctx);
         $result = $outPhase1->get(PCpmrsPhase1::OUT_COMPRESSED);

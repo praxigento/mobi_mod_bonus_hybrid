@@ -30,7 +30,7 @@ class Downline
      */
     public function getByCalcId($calcId)
     {
-        $where = Entity::ATTR_CALC_REF . '=' . (int)$calcId;
+        $where = Entity::A_CALC_REF . '=' . (int)$calcId;
         $result = $this->get($where);
         return $result;
     }
@@ -44,8 +44,8 @@ class Downline
      */
     public function getByKeyCalcCust($calcId, $custId)
     {
-        $byCalc = Entity::ATTR_CALC_REF . '=' . (int)$calcId;
-        $byCust = Entity::ATTR_CUST_REF . '=' . (int)$custId;
+        $byCalc = Entity::A_CALC_REF . '=' . (int)$calcId;
+        $byCust = Entity::A_CUST_REF . '=' . (int)$custId;
         $where = "($byCalc) AND ($byCust)";
         $rs = $this->get($where);
         $result = (is_array($rs)) ? reset($rs) : null;

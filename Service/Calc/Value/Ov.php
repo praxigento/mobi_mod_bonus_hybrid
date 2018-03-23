@@ -95,8 +95,8 @@ class Ov
             $custId = $one->getCustomerRef();
             $entity->setOv($ov);
             $id = [
-                EBonDwnl::ATTR_CALC_REF => $calcId,
-                EBonDwnl::ATTR_CUST_REF => $custId
+                EBonDwnl::A_CALC_REF => $calcId,
+                EBonDwnl::A_CUST_REF => $custId
             ];
             $this->repoBonDwnl->updateById($id, $entity);
         }

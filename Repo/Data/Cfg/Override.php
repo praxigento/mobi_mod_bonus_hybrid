@@ -9,10 +9,10 @@ namespace Praxigento\BonusHybrid\Repo\Data\Cfg;
 class Override
     extends \Praxigento\Core\App\Repo\Data\Entity\Base
 {
-    const ATTR_GENERATION = 'generation';
-    const ATTR_PERCENT = 'percent';
-    const ATTR_RANK_ID = 'rank_id';
-    const ATTR_SCHEME = 'scheme';
+    const A_GENERATION = 'generation';
+    const A_PERCENT = 'percent';
+    const A_RANK_ID = 'rank_id';
+    const A_SCHEME = 'scheme';
     const ENTITY_NAME = 'prxgt_bon_hyb_cfg_override';
 
     /**
@@ -20,7 +20,7 @@ class Override
      */
     public function getGeneration()
     {
-        $result = parent::get(self::ATTR_GENERATION);
+        $result = parent::get(self::A_GENERATION);
         return $result;
     }
 
@@ -29,13 +29,13 @@ class Override
      */
     public function getPercent()
     {
-        $result = parent::get(self::ATTR_PERCENT);
+        $result = parent::get(self::A_PERCENT);
         return $result;
     }
 
     public static function getPrimaryKeyAttrs()
     {
-        return [self::ATTR_RANK_ID, self::ATTR_SCHEME, self::ATTR_GENERATION];
+        return [self::A_RANK_ID, self::A_SCHEME, self::A_GENERATION];
 
     }
 
@@ -44,7 +44,7 @@ class Override
      */
     public function getRankId()
     {
-        $result = parent::get(self::ATTR_RANK_ID);
+        $result = parent::get(self::A_RANK_ID);
         return $result;
     }
 
@@ -53,7 +53,7 @@ class Override
      */
     public function getScheme()
     {
-        $result = parent::get(self::ATTR_SCHEME);
+        $result = parent::get(self::A_SCHEME);
         return $result;
     }
 
@@ -62,7 +62,7 @@ class Override
      */
     public function setGeneration($data)
     {
-        parent::set(self::ATTR_GENERATION, $data);
+        parent::set(self::A_GENERATION, $data);
     }
 
     /**
@@ -70,7 +70,7 @@ class Override
      */
     public function setPercent($data)
     {
-        parent::set(self::ATTR_PERCENT, $data);
+        parent::set(self::A_PERCENT, $data);
     }
 
     /**
@@ -78,7 +78,7 @@ class Override
      */
     public function setRankId($data)
     {
-        parent::set(self::ATTR_RANK_ID, $data);
+        parent::set(self::A_RANK_ID, $data);
     }
 
     /**
@@ -86,6 +86,6 @@ class Override
      */
     public function setScheme($data)
     {
-        parent::set(self::ATTR_SCHEME, $data);
+        parent::set(self::A_SCHEME, $data);
     }
 }

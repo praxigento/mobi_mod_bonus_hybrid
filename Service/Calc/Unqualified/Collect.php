@@ -53,8 +53,8 @@ class Collect
     private function calc(&$treePlain, $treePlainPrev, $treePhase1)
     {
         /* map inactive statistics by customer ID */
-        $mapMonths = $this->hlpTree->mapValueById($treePlainPrev, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_UNQ_MONTHS);
-        $mapQual = $this->hlpTree->mapValueById($treePhase1, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_RANK_REF);
+        $mapMonths = $this->hlpTree->mapValueById($treePlainPrev, EBonDwnl::A_CUST_REF, EBonDwnl::A_UNQ_MONTHS);
+        $mapQual = $this->hlpTree->mapValueById($treePhase1, EBonDwnl::A_CUST_REF, EBonDwnl::A_RANK_REF);
         foreach ($treePlain as $item) {
             $custId = $item->getCustomerRef();
             if (isset($mapQual[$custId])) {

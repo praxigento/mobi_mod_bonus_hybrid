@@ -107,11 +107,11 @@ class Calc
         $dwnlPlain = $this->repoDwnl->get();
         $cfgOverride = $this->getCfgOverride();
         /* create maps to access data */
-        $mapCmprsById = $this->hlpDwnlTree->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
-        $mapPlainById = $this->hlpDwnlTree->mapById($dwnlPlain, ECustomer::ATTR_CUSTOMER_ID);
-        $mapTeams = $this->hlpDwnlTree->mapByTeams($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
+        $mapCmprsById = $this->hlpDwnlTree->mapById($dwnlCompress, EBonDwnl::A_CUST_REF);
+        $mapPlainById = $this->hlpDwnlTree->mapById($dwnlPlain, ECustomer::A_CUSTOMER_ID);
+        $mapTeams = $this->hlpDwnlTree->mapByTeams($dwnlCompress, EBonDwnl::A_CUST_REF, EBonDwnl::A_PARENT_REF);
         /* populate compressed data with depth & path values */
-        $mapByDepthDesc = $this->hlpDwnlTree->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_DEPTH);
+        $mapByDepthDesc = $this->hlpDwnlTree->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::A_CUST_REF, EBonDwnl::A_DEPTH);
         /* scan all levels starting from the bottom and collect PV by generations */
         $mapGenerations = $this->mapByGeneration($mapByDepthDesc,
             $mapCmprsById); // [ $custId=>[$genId => $totalPv, ...], ... ]

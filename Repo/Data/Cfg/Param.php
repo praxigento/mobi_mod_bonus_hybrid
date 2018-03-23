@@ -9,14 +9,14 @@ namespace Praxigento\BonusHybrid\Repo\Data\Cfg;
 class Param
     extends \Praxigento\Core\App\Repo\Data\Entity\Base
 {
-    const ATTR_INFINITY = 'infinity';
-    const ATTR_LEG_MAX = 'leg_max';
-    const ATTR_LEG_MEDIUM = 'leg_medium';
-    const ATTR_LEG_MIN = 'leg_min';
-    const ATTR_QUALIFY_PV = 'qualify_pv';
-    const ATTR_QUALIFY_TV = 'qualify_tv';
-    const ATTR_RANK_ID = 'rank_id';
-    const ATTR_SCHEME = 'scheme';
+    const A_INFINITY = 'infinity';
+    const A_LEG_MAX = 'leg_max';
+    const A_LEG_MEDIUM = 'leg_medium';
+    const A_LEG_MIN = 'leg_min';
+    const A_QUALIFY_PV = 'qualify_pv';
+    const A_QUALIFY_TV = 'qualify_tv';
+    const A_RANK_ID = 'rank_id';
+    const A_SCHEME = 'scheme';
     const ENTITY_NAME = 'prxgt_bon_hyb_cfg_param';
 
     /**
@@ -24,7 +24,7 @@ class Param
      */
     public function getInfinity()
     {
-        $result = parent::get(self::ATTR_INFINITY);
+        $result = parent::get(self::A_INFINITY);
         return $result;
     }
 
@@ -33,7 +33,7 @@ class Param
      */
     public function getLegMax()
     {
-        $result = parent::get(self::ATTR_LEG_MAX);
+        $result = parent::get(self::A_LEG_MAX);
         return $result;
     }
 
@@ -42,7 +42,7 @@ class Param
      */
     public function getLegMedium()
     {
-        $result = parent::get(self::ATTR_LEG_MEDIUM);
+        $result = parent::get(self::A_LEG_MEDIUM);
         return $result;
     }
 
@@ -51,7 +51,7 @@ class Param
      */
     public function getLegMin()
     {
-        $result = parent::get(self::ATTR_LEG_MIN);
+        $result = parent::get(self::A_LEG_MIN);
         return $result;
     }
 
@@ -60,7 +60,7 @@ class Param
      */
     public static function getPrimaryKeyAttrs()
     {
-        return [self::ATTR_RANK_ID, self::ATTR_SCHEME];
+        return [self::A_RANK_ID, self::A_SCHEME];
 
     }
 
@@ -69,7 +69,7 @@ class Param
      */
     public function getQualifyPv()
     {
-        $result = parent::get(self::ATTR_QUALIFY_PV);
+        $result = parent::get(self::A_QUALIFY_PV);
         return $result;
     }
 
@@ -78,7 +78,7 @@ class Param
      */
     public function getQualifyTv()
     {
-        $result = parent::get(self::ATTR_QUALIFY_TV);
+        $result = parent::get(self::A_QUALIFY_TV);
         return $result;
     }
 
@@ -87,7 +87,7 @@ class Param
      */
     public function getRankId()
     {
-        $result = parent::get(self::ATTR_RANK_ID);
+        $result = parent::get(self::A_RANK_ID);
         return $result;
     }
 
@@ -96,7 +96,7 @@ class Param
      */
     public function getScheme()
     {
-        $result = parent::get(self::ATTR_SCHEME);
+        $result = parent::get(self::A_SCHEME);
         return $result;
     }
 
@@ -105,7 +105,7 @@ class Param
      */
     public function setInfinity($data)
     {
-        parent::set(self::ATTR_INFINITY, $data);
+        parent::set(self::A_INFINITY, $data);
     }
 
     /**
@@ -113,7 +113,7 @@ class Param
      */
     public function setLegMax($data)
     {
-        parent::set(self::ATTR_LEG_MAX, $data);
+        parent::set(self::A_LEG_MAX, $data);
     }
 
     /**
@@ -121,7 +121,7 @@ class Param
      */
     public function setLegMedium($data)
     {
-        parent::set(self::ATTR_LEG_MEDIUM, $data);
+        parent::set(self::A_LEG_MEDIUM, $data);
     }
 
     /**
@@ -129,7 +129,7 @@ class Param
      */
     public function setLegMin($data)
     {
-        parent::set(self::ATTR_LEG_MIN, $data);
+        parent::set(self::A_LEG_MIN, $data);
     }
 
     /**
@@ -137,7 +137,7 @@ class Param
      */
     public function setQualifyPv($data)
     {
-        parent::set(self::ATTR_QUALIFY_PV, $data);
+        parent::set(self::A_QUALIFY_PV, $data);
     }
 
     /**
@@ -145,7 +145,7 @@ class Param
      */
     public function setQualifyTv($data)
     {
-        parent::set(self::ATTR_QUALIFY_TV, $data);
+        parent::set(self::A_QUALIFY_TV, $data);
     }
 
     /**
@@ -153,7 +153,7 @@ class Param
      */
     public function setRankId($data)
     {
-        parent::set(self::ATTR_RANK_ID, $data);
+        parent::set(self::A_RANK_ID, $data);
     }
 
     /**
@@ -161,6 +161,6 @@ class Param
      */
     public function setScheme($data)
     {
-        parent::set(self::ATTR_SCHEME, $data);
+        parent::set(self::A_SCHEME, $data);
     }
 }

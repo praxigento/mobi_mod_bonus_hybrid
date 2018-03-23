@@ -13,16 +13,16 @@ namespace Praxigento\BonusHybrid\Repo\Data\Compression\Phase2;
 class Legs
     extends \Praxigento\Core\App\Repo\Data\Entity\Base
 {
-    const ATTR_CALC_REF = 'calc_ref';
-    const ATTR_CUST_MAX_REF = 'cust_max_ref';
-    const ATTR_CUST_REF = 'cust_ref';
-    const ATTR_CUST_SECOND_REF = 'cust_second_ref';
-    const ATTR_LEG_MAX = 'leg_max';
-    const ATTR_LEG_OTHERS = 'leg_others';
-    const ATTR_LEG_SECOND = 'leg_second';
-    const ATTR_PV_QUAL_MAX = 'pv_qual_max';
-    const ATTR_PV_QUAL_OTHER = 'pv_qual_other';
-    const ATTR_PV_QUAL_SECOND = 'pv_qual_second';
+    const A_CALC_REF = 'calc_ref';
+    const A_CUST_MAX_REF = 'cust_max_ref';
+    const A_CUST_REF = 'cust_ref';
+    const A_CUST_SECOND_REF = 'cust_second_ref';
+    const A_LEG_MAX = 'leg_max';
+    const A_LEG_OTHERS = 'leg_others';
+    const A_LEG_SECOND = 'leg_second';
+    const A_PV_QUAL_MAX = 'pv_qual_max';
+    const A_PV_QUAL_OTHER = 'pv_qual_other';
+    const A_PV_QUAL_SECOND = 'pv_qual_second';
     const ENTITY_NAME = 'prxgt_bon_hyb_cmprs_ph2_legs';
 
     /**
@@ -30,7 +30,7 @@ class Legs
      */
     public function getCalcRef()
     {
-        $result = parent::get(self::ATTR_CALC_REF);
+        $result = parent::get(self::A_CALC_REF);
         return $result;
     }
 
@@ -39,7 +39,7 @@ class Legs
      */
     public function getCustMaxRef()
     {
-        $result = parent::get(self::ATTR_CUST_MAX_REF);
+        $result = parent::get(self::A_CUST_MAX_REF);
         return $result;
     }
 
@@ -48,7 +48,7 @@ class Legs
      */
     public function getCustRef()
     {
-        $result = parent::get(self::ATTR_CUST_REF);
+        $result = parent::get(self::A_CUST_REF);
         return $result;
     }
 
@@ -57,7 +57,7 @@ class Legs
      */
     public function getCustSecondRef()
     {
-        $result = parent::get(self::ATTR_CUST_SECOND_REF);
+        $result = parent::get(self::A_CUST_SECOND_REF);
         return $result;
     }
 
@@ -66,7 +66,7 @@ class Legs
      */
     public function getLegMax()
     {
-        $result = parent::get(self::ATTR_LEG_MAX);
+        $result = parent::get(self::A_LEG_MAX);
         return $result;
     }
 
@@ -75,7 +75,7 @@ class Legs
      */
     public function getLegOthers()
     {
-        $result = parent::get(self::ATTR_LEG_OTHERS);
+        $result = parent::get(self::A_LEG_OTHERS);
         return $result;
     }
 
@@ -84,7 +84,7 @@ class Legs
      */
     public function getLegSecond()
     {
-        $result = parent::get(self::ATTR_LEG_SECOND);
+        $result = parent::get(self::A_LEG_SECOND);
         return $result;
     }
 
@@ -93,7 +93,7 @@ class Legs
      */
     public static function getPrimaryKeyAttrs()
     {
-        $result = [self::ATTR_CALC_REF, self::ATTR_CUST_REF];
+        $result = [self::A_CALC_REF, self::A_CUST_REF];
         return $result;
     }
 
@@ -102,7 +102,7 @@ class Legs
      */
     public function getPvQualMax()
     {
-        $result = parent::get(self::ATTR_PV_QUAL_MAX);
+        $result = parent::get(self::A_PV_QUAL_MAX);
         return $result;
     }
 
@@ -111,7 +111,7 @@ class Legs
      */
     public function getPvQualOther()
     {
-        $result = parent::get(self::ATTR_PV_QUAL_OTHER);
+        $result = parent::get(self::A_PV_QUAL_OTHER);
         return $result;
     }
 
@@ -120,7 +120,7 @@ class Legs
      */
     public function getPvQualSecond()
     {
-        $result = parent::get(self::ATTR_PV_QUAL_SECOND);
+        $result = parent::get(self::A_PV_QUAL_SECOND);
         return $result;
     }
 
@@ -129,7 +129,7 @@ class Legs
      */
     public function setCalcRef($data)
     {
-        parent::set(self::ATTR_CALC_REF, $data);
+        parent::set(self::A_CALC_REF, $data);
     }
 
     /**
@@ -137,7 +137,7 @@ class Legs
      */
     public function setCustMaxRef($data)
     {
-        parent::set(self::ATTR_CUST_MAX_REF, $data);
+        parent::set(self::A_CUST_MAX_REF, $data);
     }
 
     /**
@@ -145,7 +145,7 @@ class Legs
      */
     public function setCustRef($data)
     {
-        parent::set(self::ATTR_CUST_REF, $data);
+        parent::set(self::A_CUST_REF, $data);
     }
 
     /**
@@ -153,7 +153,7 @@ class Legs
      */
     public function setCustSecondRef($data)
     {
-        parent::set(self::ATTR_CUST_SECOND_REF, $data);
+        parent::set(self::A_CUST_SECOND_REF, $data);
     }
 
     /**
@@ -161,7 +161,7 @@ class Legs
      */
     public function setLegMax($data)
     {
-        parent::set(self::ATTR_LEG_MAX, $data);
+        parent::set(self::A_LEG_MAX, $data);
     }
 
     /**
@@ -169,7 +169,7 @@ class Legs
      */
     public function setLegOthers($data)
     {
-        parent::set(self::ATTR_LEG_OTHERS, $data);
+        parent::set(self::A_LEG_OTHERS, $data);
     }
 
     /**
@@ -177,7 +177,7 @@ class Legs
      */
     public function setLegSecond($data)
     {
-        parent::set(self::ATTR_LEG_SECOND, $data);
+        parent::set(self::A_LEG_SECOND, $data);
     }
 
 
@@ -186,7 +186,7 @@ class Legs
      */
     public function setPvQualMax($data)
     {
-        parent::set(self::ATTR_PV_QUAL_MAX, $data);
+        parent::set(self::A_PV_QUAL_MAX, $data);
     }
 
     /**
@@ -194,7 +194,7 @@ class Legs
      */
     public function setPvQualOther($data)
     {
-        parent::set(self::ATTR_PV_QUAL_OTHER, $data);
+        parent::set(self::A_PV_QUAL_OTHER, $data);
     }
 
     /**
@@ -202,7 +202,7 @@ class Legs
      */
     public function setPvQualSecond($data)
     {
-        parent::set(self::ATTR_PV_QUAL_SECOND, $data);
+        parent::set(self::A_PV_QUAL_SECOND, $data);
     }
 
 }

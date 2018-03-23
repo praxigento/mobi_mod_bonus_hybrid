@@ -11,9 +11,9 @@ namespace Praxigento\BonusHybrid\Service\Calc\Forecast\Plain;
 class Calc
 {
     const CTX_DWNL_TREE = 'dwnlTree';
-    const KEY_TREE_DEPTH = \Praxigento\BonusHybrid\Repo\Data\Downline::ATTR_DEPTH;
-    const KEY_TREE_ENTITY = \Praxigento\BonusHybrid\Repo\Data\Downline::ATTR_CUST_REF;
-    const KEY_TREE_PARENT = \Praxigento\BonusHybrid\Repo\Data\Downline::ATTR_PARENT_REF;
+    const KEY_TREE_DEPTH = \Praxigento\BonusHybrid\Repo\Data\Downline::A_DEPTH;
+    const KEY_TREE_ENTITY = \Praxigento\BonusHybrid\Repo\Data\Downline::A_CUST_REF;
+    const KEY_TREE_PARENT = \Praxigento\BonusHybrid\Repo\Data\Downline::A_PARENT_REF;
 
     /** @var \Praxigento\Downline\Helper\Tree */
     private $hlpDwnlTree;

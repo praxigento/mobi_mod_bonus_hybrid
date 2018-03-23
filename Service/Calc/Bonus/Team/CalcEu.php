@@ -59,8 +59,8 @@ class CalcEu
         $dwnlCompress = $this->repoBonDwnl->getByCalcId($calcId);
         $dwnlCurrent = $this->repoDwnl->get();
         /* create maps to access data */
-        $mapDwnlById = $this->hlpDwnlTree->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
-        $mapCustById = $this->hlpDwnlTree->mapById($dwnlCurrent, ECustomer::ATTR_CUSTOMER_ID);
+        $mapDwnlById = $this->hlpDwnlTree->mapById($dwnlCompress, EBonDwnl::A_CUST_REF);
+        $mapCustById = $this->hlpDwnlTree->mapById($dwnlCurrent, ECustomer::A_CUSTOMER_ID);
         /**
          * Go through all customers from compressed tree and calculate bonus.
          *

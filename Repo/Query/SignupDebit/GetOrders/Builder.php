@@ -27,7 +27,7 @@ class Builder
     /**
      * Attributes aliases.
      */
-    const A_COUNTRY = Dwnl::ATTR_COUNTRY_CODE;
+    const A_COUNTRY = Dwnl::A_COUNTRY_CODE;
     const A_CUST_ID = 'cust_id';
     const A_ORDER_ID = 'order_id';
     const A_PARENT_GRAND_ID = 'parent_grand_id';
@@ -53,10 +53,10 @@ class Builder
         $result->from([$asCust => $tbl], $cols);
         /* LEFT JOIN prxgt_dwnl_customer */
         $tbl = $this->resource->getTableName(Dwnl::ENTITY_NAME);
-        $on = $asDwnl . '.' . Dwnl::ATTR_CUSTOMER_ID . '=' . $asCust . '.' . Cfg::E_CUSTOMER_A_ENTITY_ID;
+        $on = $asDwnl . '.' . Dwnl::A_CUSTOMER_ID . '=' . $asCust . '.' . Cfg::E_CUSTOMER_A_ENTITY_ID;
         $cols = [
-            self::A_COUNTRY => Dwnl::ATTR_COUNTRY_CODE,
-            self::A_PARENT_ID => Dwnl::ATTR_PARENT_ID
+            self::A_COUNTRY => Dwnl::A_COUNTRY_CODE,
+            self::A_PARENT_ID => Dwnl::A_PARENT_ID
         ];
         $result->joinLeft([$asDwnl => $tbl], $on, $cols);
         /* LEFT JOIN sales_order */
@@ -66,20 +66,20 @@ class Builder
         $result->joinLeft([$asOrder => $tbl], $on, $cols);
         /* LEFT JOIN prxgt_pv_sale  */
         $tbl = $this->resource->getTableName(Pv::ENTITY_NAME);
-        $on = $asPv . '.' . Pv::ATTR_SALE_REF . '=' . $asOrder . '.' . Cfg::E_SALE_ORDER_A_ENTITY_ID;
-        $cols = [self::A_PV => Pv::ATTR_TOTAL];
+        $on = $asPv . '.' . Pv::A_SALE_REF . '=' . $asOrder . '.' . Cfg::E_SALE_ORDER_A_ENTITY_ID;
+        $cols = [self::A_PV => Pv::A_TOTAL];
         $result->joinLeft([$asPv => $tbl], $on, $cols);
         /* LEFT JOIN prxgt_dwnl_customer (as parent) */
         $tbl = $this->resource->getTableName(Dwnl::ENTITY_NAME);
-        $on = $asParent . '.' . Dwnl::ATTR_CUSTOMER_ID . '=' . $asDwnl . '.' . Dwnl::ATTR_PARENT_ID;
+        $on = $asParent . '.' . Dwnl::A_CUSTOMER_ID . '=' . $asDwnl . '.' . Dwnl::A_PARENT_ID;
         $cols = [
-            self::A_PARENT_GRAND_ID => Dwnl::ATTR_PARENT_ID
+            self::A_PARENT_GRAND_ID => Dwnl::A_PARENT_ID
         ];
         $result->joinLeft([$asParent => $tbl], $on, $cols);
         /* WHERE */
         $where = $asCust . '.' . Cfg::E_CUSTOMER_A_CREATED_AT . '>=:' . self::BIND_DATE_FROM;
         $where .= ' AND ' . $asCust . '.' . Cfg::E_CUSTOMER_A_CREATED_AT . '<:' . self::BIND_DATE_TO;
-        $where .= ' AND ' . $asPv . '.' . Pv::ATTR_TOTAL . ' IS NOT NULL';
+        $where .= ' AND ' . $asPv . '.' . Pv::A_TOTAL . ' IS NOT NULL';
         $result->where($where);
         /* ORDER */
         $order = $asOrder . '.' . Cfg::E_SALE_ORDER_A_ENTITY_ID . ' ASC';

@@ -50,9 +50,9 @@ class UpdateDwnl
 
         /* define local working data */
         $dwnlCust = $this->repoCustDwnl->get();
-        $mapCust = $this->hlpDwnlTree->mapById($dwnlCust, ECustDwnl::ATTR_CUSTOMER_ID);
-        $mapByIdDef = $this->hlpDwnlTree->mapById($dwnlPhase2Def, EBonDwnl::ATTR_CUST_REF);
-        $mapByIdEu = $this->hlpDwnlTree->mapById($dwnlPhase2Eu, EBonDwnl::ATTR_CUST_REF);
+        $mapCust = $this->hlpDwnlTree->mapById($dwnlCust, ECustDwnl::A_CUSTOMER_ID);
+        $mapByIdDef = $this->hlpDwnlTree->mapById($dwnlPhase2Def, EBonDwnl::A_CUST_REF);
+        $mapByIdEu = $this->hlpDwnlTree->mapById($dwnlPhase2Eu, EBonDwnl::A_CUST_REF);
 
         /* prepare output vars */
         $outUpdated = [];

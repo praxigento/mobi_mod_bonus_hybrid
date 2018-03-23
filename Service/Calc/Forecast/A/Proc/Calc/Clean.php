@@ -46,21 +46,21 @@ class Clean
         /* get calculation type ID by code */
         $calcTypeId = $this->repoTypeCalc->getIdByCode($calcTypeCode);
         /* get all periods by calculation type */
-        $where = EPeriod::ATTR_CALC_TYPE_ID . '=' . (int)$calcTypeId;
+        $where = EPeriod::A_CALC_TYPE_ID . '=' . (int)$calcTypeId;
         $periods = $this->repoPeriod->get($where);
         if (is_array($periods)) {
             /** @var \Praxigento\BonusBase\Repo\Data\Period $period */
             foreach ($periods as $period) {
                 /* get calculations by period */
                 $periodId = $period->getId();
-                $whereCalc = ECalc::ATTR_PERIOD_ID . '=' . (int)$periodId;
+                $whereCalc = ECalc::A_PERIOD_ID . '=' . (int)$periodId;
                 $calcs = $this->repoCalc->get($whereCalc);
                 if (is_array($calcs)) {
                     /** @var \Praxigento\BonusBase\Repo\Data\Calculation $calc */
                     foreach ($calcs as $calc) {
                         $calcId = $calc->getId();
                         /* delete all downline trees for the calculation */
-                        $whereDwnl = \Praxigento\BonusHybrid\Repo\Data\Downline::ATTR_CALC_REF . '=' . (int)$calcId;
+                        $whereDwnl = \Praxigento\BonusHybrid\Repo\Data\Downline::A_CALC_REF . '=' . (int)$calcId;
                         $this->repoDwnl->delete($whereDwnl);
                         /* delete calculation itself */
                         $this->repoCalc->deleteById($calcId);

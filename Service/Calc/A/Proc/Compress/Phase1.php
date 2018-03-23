@@ -221,7 +221,7 @@ class Phase1
     {
         /** @var \Praxigento\Downline\Repo\Data\Customer[] $customers */
         $customers = $this->repoCustDwnl->get();
-        $result = $this->hlpDwnlTree->mapById($customers, ECustomer::ATTR_CUSTOMER_ID);
+        $result = $this->hlpDwnlTree->mapById($customers, ECustomer::A_CUSTOMER_ID);
         return $result;
     }
 

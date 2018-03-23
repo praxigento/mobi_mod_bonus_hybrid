@@ -27,8 +27,8 @@ class Builder
     /**
      * Attributes aliases.
      */
-    const A_CUST_ID = EAcc::ATTR_CUST_ID;
-    const A_PV = ETrans::ATTR_VALUE;
+    const A_CUST_ID = EAcc::A_CUST_ID;
+    const A_PV = ETrans::A_VALUE;
 
     /**
      * Bound variables names
@@ -67,32 +67,32 @@ class Builder
         /* LEFT JOIN prxgt_acc_operation */
         $tbl = $this->resource->getTableName(EOper::ENTITY_NAME);
         $as = $asOper;
-        $on = $as . '.' . EOper::ATTR_ID . '=' . $asLog . '.' . ELogOpers::ATTR_OPER_ID;
+        $on = $as . '.' . EOper::A_ID . '=' . $asLog . '.' . ELogOpers::A_OPER_ID;
         $cols = [];
         $result->joinLeft([$as => $tbl], $on, $cols);
 
         /* LEFT JOIN prxgt_acc_transaction */
         $tbl = $this->resource->getTableName(ETrans::ENTITY_NAME);
         $as = $asTrans;
-        $on = $as . '.' . ETrans::ATTR_OPERATION_ID . '=' . $asOper . '.' . EOper::ATTR_ID;
+        $on = $as . '.' . ETrans::A_OPERATION_ID . '=' . $asOper . '.' . EOper::A_ID;
         $cols = [
-            self::A_PV => ETrans::ATTR_VALUE
+            self::A_PV => ETrans::A_VALUE
         ];
         $result->joinLeft([$as => $tbl], $on, $cols);
 
         /* LEFT JOIN prxgt_acc_account */
         $tbl = $this->resource->getTableName(EAcc::ENTITY_NAME);
         $as = $asAcc;
-        $on = $as . '.' . EAcc::ATTR_ID . '=' . $asTrans . '.' . ETrans::ATTR_DEBIT_ACC_ID;
+        $on = $as . '.' . EAcc::A_ID . '=' . $asTrans . '.' . ETrans::A_DEBIT_ACC_ID;
         $cols = [
-            self::A_CUST_ID => EAcc::ATTR_CUST_ID
+            self::A_CUST_ID => EAcc::A_CUST_ID
         ];
         $result->joinLeft([$as => $tbl], $on, $cols);
 
         // where
         $operTypeId = (int)$this->getPvWriteOffOperTypeId();
-        $whereByCalcId = "($asLog." . ELogOpers::ATTR_CALC_ID . '=:' . self::BIND_CALC_ID . ')';
-        $whereByOperType = "($asOper." . EOper::ATTR_TYPE_ID . "=$operTypeId)";
+        $whereByCalcId = "($asLog." . ELogOpers::A_CALC_ID . '=:' . self::BIND_CALC_ID . ')';
+        $whereByOperType = "($asOper." . EOper::A_TYPE_ID . "=$operTypeId)";
         $result->where("$whereByOperType AND $whereByCalcId");
 
         return $result;

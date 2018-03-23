@@ -94,28 +94,28 @@ class ProcessOrders
                 $accWalletGrand = $this->getAccCust(Cfg::CODE_TYPE_ASSET_WALLET, $grandId);
                 /* add PV transaction */
                 $tranPvOff = [
-                    Trans::ATTR_DEBIT_ACC_ID => $accPvCust,
-                    Trans::ATTR_CREDIT_ACC_ID => $accPvSys,
-                    Trans::ATTR_DATE_APPLIED => $dateApplied,
-                    Trans::ATTR_VALUE => Cfg::SIGNUP_DEBIT_PV,
+                    Trans::A_DEBIT_ACC_ID => $accPvCust,
+                    Trans::A_CREDIT_ACC_ID => $accPvSys,
+                    Trans::A_DATE_APPLIED => $dateApplied,
+                    Trans::A_VALUE => Cfg::SIGNUP_DEBIT_PV,
                     $transRef => self::PREFIX_PV . $orderId
                 ];
                 $trans[] = $tranPvOff;
                 /* add Wallet transaction for "father" */
                 $tranWalletFatherOn = [
-                    Trans::ATTR_DEBIT_ACC_ID => $accWalletSys,
-                    Trans::ATTR_CREDIT_ACC_ID => $accWalletParent,
-                    Trans::ATTR_DATE_APPLIED => $dateApplied,
-                    Trans::ATTR_VALUE => Cfg::SIGNUP_DEBIT_WALLET_FATHER,
+                    Trans::A_DEBIT_ACC_ID => $accWalletSys,
+                    Trans::A_CREDIT_ACC_ID => $accWalletParent,
+                    Trans::A_DATE_APPLIED => $dateApplied,
+                    Trans::A_VALUE => Cfg::SIGNUP_DEBIT_WALLET_FATHER,
                     $transRef => self::PREFIX_WALLET_FATHER . $orderId
                 ];
                 $trans[] = $tranWalletFatherOn;
                 /* add Wallet transaction for "grand" */
                 $tranWalletFatherOn = [
-                    Trans::ATTR_DEBIT_ACC_ID => $accWalletSys,
-                    Trans::ATTR_CREDIT_ACC_ID => $accWalletGrand,
-                    Trans::ATTR_DATE_APPLIED => $dateApplied,
-                    Trans::ATTR_VALUE => Cfg::SIGNUP_DEBIT_WALLET_GRAND,
+                    Trans::A_DEBIT_ACC_ID => $accWalletSys,
+                    Trans::A_CREDIT_ACC_ID => $accWalletGrand,
+                    Trans::A_DATE_APPLIED => $dateApplied,
+                    Trans::A_VALUE => Cfg::SIGNUP_DEBIT_WALLET_GRAND,
                     $transRef => self::PREFIX_WALLET_GRAND . $orderId
                 ];
                 $trans[] = $tranWalletFatherOn;
@@ -129,17 +129,17 @@ class ProcessOrders
         /* log operation */
         $operId = $resp->getOperationId();
         $this->repoLogOper->create([
-            LogOpers::ATTR_CALC_ID => $calcId,
-            LogOpers::ATTR_OPER_ID => $operId
+            LogOpers::A_CALC_ID => $calcId,
+            LogOpers::A_OPER_ID => $operId
         ]);
         /* save customers into Sign Up Registry */
         foreach ($orders as $one) {
             $custId = $one[Query::A_CUST_ID];
             $orderId = $one[Query::A_ORDER_ID];
             $this->repoRegSignupDebit->create([
-                RegSignup::ATTR_CALC_REF => $calcId,
-                RegSignup::ATTR_CUST_REF => $custId,
-                RegSignup::ATTR_SALE_REF => $orderId
+                RegSignup::A_CALC_REF => $calcId,
+                RegSignup::A_CUST_REF => $custId,
+                RegSignup::A_SALE_REF => $orderId
             ]);
 
         }
@@ -191,26 +191,26 @@ class ProcessOrders
                 /* log PV off & order itself*/
                 $custId = $orders[$orderId][Query::A_CUST_ID];
                 $this->repoLogCust->create([
-                    LogCust::ATTR_TRANS_ID => $tranId,
-                    LogCust::ATTR_CUSTOMER_ID => $custId
+                    LogCust::A_TRANS_ID => $tranId,
+                    LogCust::A_CUSTOMER_ID => $custId
                 ]);
                 $this->repoLogSale->create([
-                    LogSales::ATTR_TRANS_ID => $tranId,
-                    LogSales::ATTR_SALE_ORDER_ID => $orderId
+                    LogSales::A_TRANS_ID => $tranId,
+                    LogSales::A_SALE_ORDER_ID => $orderId
                 ]);
             } elseif ($pref == self::PREFIX_WALLET_FATHER) {
                 /* log Wallet Father On */
                 $custId = $orders[$orderId][Query::A_PARENT_ID];
                 $this->repoLogCust->create([
-                    LogCust::ATTR_TRANS_ID => $tranId,
-                    LogCust::ATTR_CUSTOMER_ID => $custId
+                    LogCust::A_TRANS_ID => $tranId,
+                    LogCust::A_CUSTOMER_ID => $custId
                 ]);
             } else {
                 /* log Wallet Grand On */
                 $custId = $orders[$orderId][Query::A_PARENT_GRAND_ID];
                 $this->repoLogCust->create([
-                    LogCust::ATTR_TRANS_ID => $tranId,
-                    LogCust::ATTR_CUSTOMER_ID => $custId
+                    LogCust::A_TRANS_ID => $tranId,
+                    LogCust::A_CUSTOMER_ID => $custId
                 ]);
             }
         }

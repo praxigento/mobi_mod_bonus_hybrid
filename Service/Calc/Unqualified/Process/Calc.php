@@ -54,7 +54,7 @@ class Calc
         /* register changes by the last date of the period */
         $dateChanged = $this->hlpPeriod->getTimestampTo($period);
         /* collect teams by customer */
-        $mapTeams = $this->hlpDwnlTree->mapByTeams($tree, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
+        $mapTeams = $this->hlpDwnlTree->mapByTeams($tree, EBonDwnl::A_CUST_REF, EBonDwnl::A_PARENT_REF);
         /** @var EBonDwnl $item */
         foreach ($tree as $item) {
             $unqMonths = $item->getUnqMonths();

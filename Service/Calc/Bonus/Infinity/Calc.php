@@ -59,8 +59,8 @@ class Calc
         $cfgParams = $this->getCfgParams();
         $ibPercentMax = $this->getMaxPercentForInfinityBonus($cfgParams, $scheme);
         /* create maps to access data */
-        $mapById = $this->hlpDwnlTree->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
-        $mapPlainById = $this->hlpDwnlTree->mapById($dwnlPlain, ECustomer::ATTR_CUSTOMER_ID);
+        $mapById = $this->hlpDwnlTree->mapById($dwnlCompress, EBonDwnl::A_CUST_REF);
+        $mapPlainById = $this->hlpDwnlTree->mapById($dwnlPlain, ECustomer::A_CUSTOMER_ID);
         /**
          * Process downline tree
          * @var EBonDwnl $custCompress
@@ -141,10 +141,10 @@ class Calc
         $result = [];
         $where = null;
         $order = [
-            ECfgParam::ATTR_SCHEME . ' ASC',
-            ECfgParam::ATTR_LEG_MAX . ' DESC',
-            ECfgParam::ATTR_LEG_MEDIUM . ' DESC',
-            ECfgParam::ATTR_LEG_MIN . ' DESC'
+            ECfgParam::A_SCHEME . ' ASC',
+            ECfgParam::A_LEG_MAX . ' DESC',
+            ECfgParam::A_LEG_MEDIUM . ' DESC',
+            ECfgParam::A_LEG_MIN . ' DESC'
         ];
         $data = $this->repoCfgParams->get($where, $order);
         /** @var ECfgParam $one */

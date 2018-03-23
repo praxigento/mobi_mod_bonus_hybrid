@@ -70,14 +70,14 @@ class SaveDownline
     private function getBonTreeByCustId($calcId)
     {
         $tree = $this->repoBonDwnl->getByCalcId($calcId);
-        $result = $this->hlpDwnl->mapById($tree, EBonDwnl::ATTR_CUST_REF);
+        $result = $this->hlpDwnl->mapById($tree, EBonDwnl::A_CUST_REF);
         return $result;
     }
 
     private function getCustomersById()
     {
         $customers = $this->repoDwnlCust->get();
-        $result = $this->hlpDwnl->mapById($customers, EDwnlCust::ATTR_CUSTOMER_ID);
+        $result = $this->hlpDwnl->mapById($customers, EDwnlCust::A_CUSTOMER_ID);
         return $result;
     }
 
@@ -111,10 +111,10 @@ class SaveDownline
                 $qual->setRankRef($rankId);
                 $this->repoDwnlQual->create($qual);
                 /* update rank in downlines (plain & compressed) */
-                $dwnlData = [EBonDwnl::ATTR_RANK_REF => $rankId];
-                $byCust = EBonDwnl::ATTR_CUST_REF . '=' . (int)$custId;
-                $byPlain = EBonDwnl::ATTR_CALC_REF . '=' . (int)$plainCalcId;
-                $byCmprs = EBonDwnl::ATTR_CALC_REF . '=' . (int)$cmprsCalcId;
+                $dwnlData = [EBonDwnl::A_RANK_REF => $rankId];
+                $byCust = EBonDwnl::A_CUST_REF . '=' . (int)$custId;
+                $byPlain = EBonDwnl::A_CALC_REF . '=' . (int)$plainCalcId;
+                $byCmprs = EBonDwnl::A_CALC_REF . '=' . (int)$cmprsCalcId;
                 $where = "($byCust) AND (($byPlain) OR ($byCmprs))";
                 $this->repoBonDwnl->update($dwnlData, $where);
             }

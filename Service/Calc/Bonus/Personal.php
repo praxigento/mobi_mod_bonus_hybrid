@@ -86,7 +86,7 @@ class Personal
     private function calcBonus($dwnlCurrent, $dwnlCompress, $levels)
     {
         $result = [];
-        $mapCustomer = $this->hlpDwnlTree->mapById($dwnlCurrent, ECustomer::ATTR_CUSTOMER_ID);
+        $mapCustomer = $this->hlpDwnlTree->mapById($dwnlCurrent, ECustomer::A_CUSTOMER_ID);
         /** @var \Praxigento\BonusHybrid\Repo\Data\Downline $one */
         foreach ($dwnlCompress as $one) {
             $custId = $one->getCustomerRef();

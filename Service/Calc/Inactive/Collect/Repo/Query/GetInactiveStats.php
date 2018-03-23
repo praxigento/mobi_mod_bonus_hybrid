@@ -42,7 +42,7 @@ class GetInactiveStats
         $tbl = $this->resource->getTableName(self::E_BON_DWNL);
         $as = $asBonDwnl;
         $cols = [
-            self::A_CUST_REF => EBonDwnl::ATTR_CUST_REF
+            self::A_CUST_REF => EBonDwnl::A_CUST_REF
         ];
         $result->from([$as => $tbl], $cols);
 
@@ -50,14 +50,14 @@ class GetInactiveStats
         $tbl = $this->resource->getTableName(self::E_INACT);
         $as = $asStats;
         $cols = [
-            self::A_MONTHS_INACT => EInact::ATTR_INACT_MONTHS
+            self::A_MONTHS_INACT => EInact::A_INACT_MONTHS
         ];
-        $cond = $as . '.' . EInact::ATTR_TREE_ENTRY_REF . '=' . $asBonDwnl . '.' . EBonDwnl::ATTR_ID;
+        $cond = $as . '.' . EInact::A_TREE_ENTRY_REF . '=' . $asBonDwnl . '.' . EBonDwnl::A_ID;
         $result->joinLeft([$as => $tbl], $cond, $cols);
 
         /* query tuning */
-        $byCalcId = $asBonDwnl . '.' . EBonDwnl::ATTR_CALC_REF . '=:' . self::BND_CALC_REF;
-        $byNotNull = $asStats . '.' . EInact::ATTR_INACT_MONTHS . '>0';
+        $byCalcId = $asBonDwnl . '.' . EBonDwnl::A_CALC_REF . '=:' . self::BND_CALC_REF;
+        $byNotNull = $asStats . '.' . EInact::A_INACT_MONTHS . '>0';
         $result->where("($byCalcId) AND ($byNotNull)");
 
         return $result;

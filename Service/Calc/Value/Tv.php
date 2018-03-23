@@ -104,8 +104,8 @@ class Tv
             $custId = $one->getCustomerRef();
             $entity->setTv($tv);
             $id = [
-                EBonDwnl::ATTR_CALC_REF => $calcId,
-                EBonDwnl::ATTR_CUST_REF => $custId
+                EBonDwnl::A_CALC_REF => $calcId,
+                EBonDwnl::A_CUST_REF => $custId
             ];
             $this->repoBonDwnl->updateById($id, $entity);
         }

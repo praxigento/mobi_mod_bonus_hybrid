@@ -60,9 +60,9 @@ class Builder
         $tbl = $this->resource->getTableName(ETrans::ENTITY_NAME);
         $as = $asTrans;
         $cols = [
-            self::A_ACC_ID_DEBIT => ETrans::ATTR_DEBIT_ACC_ID,
-            self::A_ACC_ID_CREDIT => ETrans::ATTR_CREDIT_ACC_ID,
-            self::A_AMOUNT => ETrans::ATTR_VALUE
+            self::A_ACC_ID_DEBIT => ETrans::A_DEBIT_ACC_ID,
+            self::A_ACC_ID_CREDIT => ETrans::A_CREDIT_ACC_ID,
+            self::A_AMOUNT => ETrans::A_VALUE
         ];
         $result->from([$as => $tbl], $cols);
 
@@ -70,13 +70,13 @@ class Builder
         $tbl = $this->resource->getTableName(EAcc::ENTITY_NAME);
         $as = $asAcc;
         $cols = [];
-        $cond = $as . '.' . EAcc::ATTR_ID . '=' . $asTrans . '.' . ETrans::ATTR_DEBIT_ACC_ID;
+        $cond = $as . '.' . EAcc::A_ID . '=' . $asTrans . '.' . ETrans::A_DEBIT_ACC_ID;
         $result->joinLeft([$as => $tbl], $cond, $cols);
 
         /* query tuning */
-        $result->where($asAcc . '.' . EAcc::ATTR_ASSET_TYPE_ID . '=:' . self::BND_ASSET_TYPE_ID);
-        $result->where($asTrans . '.' . ETrans::ATTR_DATE_APPLIED . '>=:' . self::BND_DATE_FROM);
-        $result->where($asTrans . '.' . ETrans::ATTR_DATE_APPLIED . '<:' . self::BND_DATE_TO);
+        $result->where($asAcc . '.' . EAcc::A_ASSET_TYPE_ID . '=:' . self::BND_ASSET_TYPE_ID);
+        $result->where($asTrans . '.' . ETrans::A_DATE_APPLIED . '>=:' . self::BND_DATE_FROM);
+        $result->where($asTrans . '.' . ETrans::A_DATE_APPLIED . '<:' . self::BND_DATE_TO);
 
         return $result;
     }

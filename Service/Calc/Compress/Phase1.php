@@ -74,12 +74,12 @@ class Phase1
         $in->set(PPhase1::IN_DWNL_PLAIN, $dwnlSnap);
         $in->set(PPhase1::IN_PV, $pv);
         $in->set(PPhase1::IN_CALC_ID, $calcId);
-        $in->set(PPhase1::IN_KEY_CALC_ID, EBonDwnl::ATTR_CALC_REF);
+        $in->set(PPhase1::IN_KEY_CALC_ID, EBonDwnl::A_CALC_REF);
         $in->set(PPhase1::IN_KEY_CUST_ID, QBSnap::A_CUST_ID);
         $in->set(PPhase1::IN_KEY_PARENT_ID, QBSnap::A_PARENT_ID);
         $in->set(PPhase1::IN_KEY_DEPTH, QBSnap::A_DEPTH);
         $in->set(PPhase1::IN_KEY_PATH, QBSnap::A_PATH);
-        $in->set(PPhase1::IN_KEY_PV, EBonDwnl::ATTR_PV);
+        $in->set(PPhase1::IN_KEY_PV, EBonDwnl::A_PV);
         $out = $this->procPhase1->exec($in);
         $updates = $out->get(PPhase1::OUT_COMPRESSED);
         $pvTransfers = $out->get(PPhase1::OUT_PV_TRANSFERS);
@@ -202,7 +202,7 @@ class Phase1
             $depth = $one[QBSnap::A_DEPTH];
             $parentId = $one[QBSnap::A_PARENT_ID];
             $path = $one[QBSnap::A_PATH];
-            $pv = $one[EBonDwnl::ATTR_PV];
+            $pv = $one[EBonDwnl::A_PV];
             /* compose new entity to save */
             $entity = new EBonDwnl();
             $entity->setCalculationRef($calcId);

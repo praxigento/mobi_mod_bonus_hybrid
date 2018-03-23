@@ -13,59 +13,59 @@ class Downline
     extends \Praxigento\Core\App\Repo\Data\Entity\Base
 {
     /* names of the entity attributes (table columns) */
-    const ATTR_CALC_REF = 'calc_ref';
-    const ATTR_CUST_REF = 'cust_ref';
-    const ATTR_DEPTH = 'depth';
-    const ATTR_ID = 'id';
-    const ATTR_OV = 'ov';
-    const ATTR_PARENT_REF = 'parent_ref';
-    const ATTR_PATH = 'path';
-    const ATTR_PV = 'pv';
-    const ATTR_RANK_REF = 'rank_ref';
-    const ATTR_TV = 'tv';
-    const ATTR_UNQ_MONTHS = 'unq_months';
+    const A_CALC_REF = 'calc_ref';
+    const A_CUST_REF = 'cust_ref';
+    const A_DEPTH = 'depth';
+    const A_ID = 'id';
+    const A_OV = 'ov';
+    const A_PARENT_REF = 'parent_ref';
+    const A_PATH = 'path';
+    const A_PV = 'pv';
+    const A_RANK_REF = 'rank_ref';
+    const A_TV = 'tv';
+    const A_UNQ_MONTHS = 'unq_months';
     /* entity (table) name */
     const ENTITY_NAME = 'prxgt_bon_hyb_dwnl';
 
     public function getCalculationRef()
     {
-        $result = parent::get(self::ATTR_CALC_REF);
+        $result = parent::get(self::A_CALC_REF);
         return $result;
     }
 
     public function getCustomerRef()
     {
-        $result = parent::get(self::ATTR_CUST_REF);
+        $result = parent::get(self::A_CUST_REF);
         return $result;
     }
 
     public function getDepth()
     {
-        $result = parent::get(self::ATTR_DEPTH);
+        $result = parent::get(self::A_DEPTH);
         return $result;
     }
 
     public function getId()
     {
-        $result = parent::get(self::ATTR_ID);
+        $result = parent::get(self::A_ID);
         return $result;
     }
 
     public function getOv()
     {
-        $result = parent::get(self::ATTR_OV);
+        $result = parent::get(self::A_OV);
         return $result;
     }
 
     public function getParentRef()
     {
-        $result = parent::get(self::ATTR_PARENT_REF);
+        $result = parent::get(self::A_PARENT_REF);
         return $result;
     }
 
     public function getPath()
     {
-        $result = parent::get(self::ATTR_PATH);
+        $result = parent::get(self::A_PATH);
         return $result;
     }
 
@@ -76,86 +76,86 @@ class Downline
      */
     public static function getPrimaryKeyAttrs()
     {
-        return [self::ATTR_ID];
+        return [self::A_ID];
     }
 
     public function getPv()
     {
-        $result = parent::get(self::ATTR_PV);
+        $result = parent::get(self::A_PV);
         return $result;
     }
 
     public function getRankRef()
     {
-        $result = parent::get(self::ATTR_RANK_REF);
+        $result = parent::get(self::A_RANK_REF);
         return $result;
     }
 
     public function getTv()
     {
-        $result = parent::get(self::ATTR_TV);
+        $result = parent::get(self::A_TV);
         return $result;
     }
 
     public function getUnqMonths()
     {
-        $result = parent::get(self::ATTR_UNQ_MONTHS);
+        $result = parent::get(self::A_UNQ_MONTHS);
         return $result;
     }
 
     public function setCalculationRef($data)
     {
-        parent::set(self::ATTR_CALC_REF, $data);
+        parent::set(self::A_CALC_REF, $data);
     }
 
     public function setCustomerRef($data)
     {
-        parent::set(self::ATTR_CUST_REF, $data);
+        parent::set(self::A_CUST_REF, $data);
     }
 
     public function setDepth($data)
     {
-        parent::set(self::ATTR_DEPTH, $data);
+        parent::set(self::A_DEPTH, $data);
     }
 
     public function setId($data)
     {
-        parent::set(self::ATTR_ID, $data);
+        parent::set(self::A_ID, $data);
     }
 
     public function setOv($data)
     {
-        parent::set(self::ATTR_OV, $data);
+        parent::set(self::A_OV, $data);
     }
 
     public function setParentRef($data)
     {
-        parent::set(self::ATTR_PARENT_REF, $data);
+        parent::set(self::A_PARENT_REF, $data);
     }
 
     public function setPath($data)
     {
-        parent::set(self::ATTR_PATH, $data);
+        parent::set(self::A_PATH, $data);
     }
 
     public function setPv($data)
     {
-        parent::set(self::ATTR_PV, $data);
+        parent::set(self::A_PV, $data);
     }
 
     public function setRankRef($data)
     {
-        parent::set(self::ATTR_RANK_REF, $data);
+        parent::set(self::A_RANK_REF, $data);
     }
 
     public function setTv($data)
     {
-        parent::set(self::ATTR_TV, $data);
+        parent::set(self::A_TV, $data);
     }
 
     public function setUnqMonths($data)
     {
-        parent::set(self::ATTR_UNQ_MONTHS, $data);
+        parent::set(self::A_UNQ_MONTHS, $data);
     }
 
 }

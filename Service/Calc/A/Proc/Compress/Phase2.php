@@ -99,11 +99,11 @@ class Phase2
         /**
          * perform processing
          */
-        $mapByIdCompress = $this->hlpDwnlTree->mapById($dwnlCompress, EBonDwnl::ATTR_CUST_REF);
-        $mapByTeamCompress = $this->hlpDwnlTree->mapByTeams($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
-        $mapByDepthCompress = $this->hlpDwnlTree->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_DEPTH);
-        $mapByIdPlain = $this->hlpDwnlTree->mapById($dwnlPlain, EBonDwnl::ATTR_CUST_REF);
-        $mapByTeamPlain = $this->hlpDwnlTree->mapByTeams($dwnlPlain, EBonDwnl::ATTR_CUST_REF, EBonDwnl::ATTR_PARENT_REF);
+        $mapByIdCompress = $this->hlpDwnlTree->mapById($dwnlCompress, EBonDwnl::A_CUST_REF);
+        $mapByTeamCompress = $this->hlpDwnlTree->mapByTeams($dwnlCompress, EBonDwnl::A_CUST_REF, EBonDwnl::A_PARENT_REF);
+        $mapByDepthCompress = $this->hlpDwnlTree->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::A_CUST_REF, EBonDwnl::A_DEPTH);
+        $mapByIdPlain = $this->hlpDwnlTree->mapById($dwnlPlain, EBonDwnl::A_CUST_REF);
+        $mapByTeamPlain = $this->hlpDwnlTree->mapByTeams($dwnlPlain, EBonDwnl::A_CUST_REF, EBonDwnl::A_PARENT_REF);
         $rankIdMgr = $this->repoRank->getIdByCode(Cfg::RANK_MANAGER);
         /* MOBI-629: add init rank for un-ranked entries */
         $rankIdDistr = $this->repoRank->getIdByCode(Cfg::RANK_DISTRIBUTOR);;
@@ -251,11 +251,11 @@ class Phase2
             }
         }
         /* get paths & depths for downline tree (is & parentId only present in results ) */
-        $snap = $this->hlpTree->expandMinimal($outDownline, EBonDwnl::ATTR_PARENT_REF);
+        $snap = $this->hlpTree->expandMinimal($outDownline, EBonDwnl::A_PARENT_REF);
         /* go through the downline snapshot and move depth & path info into results */
         foreach ($outDownline as $id => $one) {
-            $depth = $snap[$id][\Praxigento\Downline\Repo\Data\Snap::ATTR_DEPTH];
-            $path = $snap[$id][\Praxigento\Downline\Repo\Data\Snap::ATTR_PATH];
+            $depth = $snap[$id][\Praxigento\Downline\Repo\Data\Snap::A_DEPTH];
+            $path = $snap[$id][\Praxigento\Downline\Repo\Data\Snap::A_PATH];
             /** @var EBonDwnl $entry */
             $entry = $outDownline[$id];
             $entry->setDepth($depth);
@@ -286,10 +286,10 @@ class Phase2
     {
         $result = [];
         $order = [
-            ECfgParam::ATTR_SCHEME . ' ASC',
-            ECfgParam::ATTR_LEG_MAX . ' DESC',
-            ECfgParam::ATTR_LEG_MEDIUM . ' DESC',
-            ECfgParam::ATTR_LEG_MIN . ' DESC'
+            ECfgParam::A_SCHEME . ' ASC',
+            ECfgParam::A_LEG_MAX . ' DESC',
+            ECfgParam::A_LEG_MEDIUM . ' DESC',
+            ECfgParam::A_LEG_MIN . ' DESC'
         ];
         $data = $this->repoCfgParam->get(null, $order);
         /** @var ECfgParam $one */
