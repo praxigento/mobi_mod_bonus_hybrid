@@ -36,15 +36,15 @@ class Builder
     const BIND_CALC_ID = 'calcId';
 
     /** @var  \Praxigento\Accounting\Repo\Dao\Type\Operation */
-    private $repoTypeOper;
+    private $daoTypeOper;
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resource,
-        \Praxigento\Accounting\Repo\Dao\Type\Operation $repoTypeOper
+        \Praxigento\Accounting\Repo\Dao\Type\Operation $daoTypeOper
     )
     {
         parent::__construct($resource);
-        $this->repoTypeOper = $repoTypeOper;
+        $this->daoTypeOper = $daoTypeOper;
     }
 
     public function build(\Magento\Framework\DB\Select $source = null)
@@ -105,7 +105,7 @@ class Builder
      */
     private function getPvWriteOffOperTypeId()
     {
-        $result = $this->repoTypeOper->getIdByCode(Cfg::CODE_TYPE_OPER_PV_WRITE_OFF);
+        $result = $this->daoTypeOper->getIdByCode(Cfg::CODE_TYPE_OPER_PV_WRITE_OFF);
         return $result;
     }
 }

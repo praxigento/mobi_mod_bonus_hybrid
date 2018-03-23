@@ -17,7 +17,7 @@ class SignupDebit
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IBasis */
     private $procPeriodGetBasis;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
-    private $repoCalc;
+    private $daoCalc;
     /** @var  \Praxigento\BonusHybrid\Service\Calc\SignupDebit\GetOrders */
     private $subGetOrders;
     /** @var  \Praxigento\BonusHybrid\Service\Calc\SignupDebit\ProcessOrders */
@@ -26,7 +26,7 @@ class SignupDebit
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Core\Api\Helper\Period $hlpPeriod,
-        \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
+        \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IBasis $procPeriodGetBasis,
         \Praxigento\BonusHybrid\Service\Calc\SignupDebit\GetOrders $subGetOrders,
         \Praxigento\BonusHybrid\Service\Calc\SignupDebit\ProcessOrders $subProcessOrders
@@ -34,7 +34,7 @@ class SignupDebit
     {
         $this->logger = $logger;
         $this->hlpPeriod = $hlpPeriod;
-        $this->repoCalc = $repoCalc;
+        $this->daoCalc = $daoCalc;
         $this->procPeriodGetBasis = $procPeriodGetBasis;
         $this->subGetOrders = $subGetOrders;
         $this->subProcessOrders = $subProcessOrders;
@@ -68,7 +68,7 @@ class SignupDebit
                 \Praxigento\BonusHybrid\Service\Calc\SignupDebit\ProcessOrders::OPT_DATE_APPLIED => $dateApplied
             ]);
             /* mark this calculation complete */
-            $this->repoCalc->markComplete($calcId);
+            $this->daoCalc->markComplete($calcId);
             /* mark process as successful */
             $ctx->set(self::CTX_OUT_SUCCESS, true);
         }

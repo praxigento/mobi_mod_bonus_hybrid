@@ -45,11 +45,11 @@ class Phase2
     /** @var \Praxigento\Downline\Api\Helper\Downline */
     private $hlpTree;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
-    private $repoBonDwnl;
+    private $daoBonDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Cfg\Param */
-    private $repoCfgParam;
+    private $daoCfgParam;
     /** @var \Praxigento\BonusBase\Repo\Dao\Rank */
-    private $repoRank;
+    private $daoRank;
     /** @var \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Fun\Rou\CalcLegs */
     private $rouCalcLegs;
     /** @var \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2\Fun\Rou\ComposeLegs */
@@ -60,9 +60,9 @@ class Phase2
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\BonusHybrid\Helper\Calc\IsQualified $hlpIsQualified,
-        \Praxigento\BonusBase\Repo\Dao\Rank $repoRank,
-        \Praxigento\BonusHybrid\Repo\Dao\Cfg\Param $repoCfgParam,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl,
+        \Praxigento\BonusBase\Repo\Dao\Rank $daoRank,
+        \Praxigento\BonusHybrid\Repo\Dao\Cfg\Param $daoCfgParam,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
         ActQualify $actQualify,
         RouCalcLegs $rouCalcLegs,
         RouComposeLegs $rouComposeLegs
@@ -72,9 +72,9 @@ class Phase2
         $this->hlpDwnlTree = $hlpDwnlTree;
         $this->hlpScheme = $hlpScheme;
         $this->hlpIsQualified = $hlpIsQualified;
-        $this->repoRank = $repoRank;
-        $this->repoCfgParam = $repoCfgParam;
-        $this->repoBonDwnl = $repoBonDwnl;
+        $this->daoRank = $daoRank;
+        $this->daoCfgParam = $daoCfgParam;
+        $this->daoBonDwnl = $daoBonDwnl;
         $this->actQualify = $actQualify;
         $this->rouCalcLegs = $rouCalcLegs;
         $this->rouComposeLegs = $rouComposeLegs;
@@ -104,9 +104,9 @@ class Phase2
         $mapByDepthCompress = $this->hlpDwnlTree->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::A_CUST_REF, EBonDwnl::A_DEPTH);
         $mapByIdPlain = $this->hlpDwnlTree->mapById($dwnlPlain, EBonDwnl::A_CUST_REF);
         $mapByTeamPlain = $this->hlpDwnlTree->mapByTeams($dwnlPlain, EBonDwnl::A_CUST_REF, EBonDwnl::A_PARENT_REF);
-        $rankIdMgr = $this->repoRank->getIdByCode(Cfg::RANK_MANAGER);
+        $rankIdMgr = $this->daoRank->getIdByCode(Cfg::RANK_MANAGER);
         /* MOBI-629: add init rank for un-ranked entries */
-        $rankIdDistr = $this->repoRank->getIdByCode(Cfg::RANK_DISTRIBUTOR);;
+        $rankIdDistr = $this->daoRank->getIdByCode(Cfg::RANK_DISTRIBUTOR);;
         /* run though the compressed tree from bottom to top and collect OV */
         foreach ($mapByDepthCompress as $level) {
             foreach ($level as $custId) {
@@ -291,7 +291,7 @@ class Phase2
             ECfgParam::A_LEG_MEDIUM . ' DESC',
             ECfgParam::A_LEG_MIN . ' DESC'
         ];
-        $data = $this->repoCfgParam->get(null, $order);
+        $data = $this->daoCfgParam->get(null, $order);
         /** @var ECfgParam $one */
         foreach ($data as $one) {
             $scheme = $one->getScheme();

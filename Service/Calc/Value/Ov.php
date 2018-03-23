@@ -18,23 +18,23 @@ class Ov
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
-    private $repoBonDwnl;
+    private $daoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
-    private $repoCalc;
+    private $daoCalc;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Value\Ov\Calc */
     private $subCalc;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
-        \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl,
+        \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\Value\Ov\Calc $subCalc
     )
     {
         $this->logger = $logger;
-        $this->repoCalc = $repoCalc;
-        $this->repoBonDwnl = $repoBonDwnl;
+        $this->daoCalc = $daoCalc;
+        $this->daoBonDwnl = $daoBonDwnl;
         $this->procPeriodGet = $procPeriodGet;
         $this->subCalc = $subCalc;
     }
@@ -54,7 +54,7 @@ class Ov
         /* save updates into repo */
         $this->updateOv($dwnl);
         /* mark this calculation complete */
-        $this->repoCalc->markComplete($ovCalcId);
+        $this->daoCalc->markComplete($ovCalcId);
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);
         $this->logger->info("OV calculation is completed.");
@@ -98,7 +98,7 @@ class Ov
                 EBonDwnl::A_CALC_REF => $calcId,
                 EBonDwnl::A_CUST_REF => $custId
             ];
-            $this->repoBonDwnl->updateById($id, $entity);
+            $this->daoBonDwnl->updateById($id, $entity);
         }
     }
 }

@@ -28,17 +28,17 @@ class UpdateDwnl
     /** @var \Praxigento\BonusHybrid\Helper\IScheme */
     private $hlpScheme;
     /** @var \Praxigento\Downline\Repo\Dao\Customer */
-    private $repoCustDwnl;
+    private $daoCustDwnl;
 
     public function __construct(
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
-        \Praxigento\Downline\Repo\Dao\Customer $repoCustDwnl
+        \Praxigento\Downline\Repo\Dao\Customer $daoCustDwnl
     )
     {
         $this->hlpScheme = $hlpScheme;
         $this->hlpDwnlTree = $hlpDwnlTree;
-        $this->repoCustDwnl = $repoCustDwnl;
+        $this->daoCustDwnl = $daoCustDwnl;
     }
 
     public function exec(\Praxigento\Core\Data $ctx)
@@ -49,7 +49,7 @@ class UpdateDwnl
         $dwnlPhase2Eu = $ctx->get(self::IN_DWNL_PHASE2_EU);
 
         /* define local working data */
-        $dwnlCust = $this->repoCustDwnl->get();
+        $dwnlCust = $this->daoCustDwnl->get();
         $mapCust = $this->hlpDwnlTree->mapById($dwnlCust, ECustDwnl::A_CUSTOMER_ID);
         $mapByIdDef = $this->hlpDwnlTree->mapById($dwnlPhase2Def, EBonDwnl::A_CUST_REF);
         $mapByIdEu = $this->hlpDwnlTree->mapById($dwnlPhase2Eu, EBonDwnl::A_CUST_REF);

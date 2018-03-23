@@ -35,29 +35,29 @@ class ProcessOrders
     /** @var  \Praxigento\BonusHybrid\Helper\IScheme */
     private $hlpScheme;
     /** @var \Praxigento\BonusBase\Repo\Dao\Log\Customers */
-    private $repoLogCust;
+    private $daoLogCust;
     /** @var \Praxigento\BonusBase\Repo\Dao\Log\Opers */
-    private $repoLogOper;
+    private $daoLogOper;
     /** @var \Praxigento\BonusBase\Repo\Dao\Log\Sales */
-    private $repoLogSale;
+    private $daoLogSale;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Registry\SignupDebit */
-    private $repoRegSignupDebit;
+    private $daoRegSignupDebit;
 
     public function __construct(
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
-        \Praxigento\BonusBase\Repo\Dao\Log\Customers $repoLogCust,
-        \Praxigento\BonusBase\Repo\Dao\Log\Opers $repoLogOper,
-        \Praxigento\BonusBase\Repo\Dao\Log\Sales $repoLogSale,
-        \Praxigento\BonusHybrid\Repo\Dao\Registry\SignupDebit $repoRegSignupDebit,
+        \Praxigento\BonusBase\Repo\Dao\Log\Customers $daoLogCust,
+        \Praxigento\BonusBase\Repo\Dao\Log\Opers $daoLogOper,
+        \Praxigento\BonusBase\Repo\Dao\Log\Sales $daoLogSale,
+        \Praxigento\BonusHybrid\Repo\Dao\Registry\SignupDebit $daoRegSignupDebit,
         \Praxigento\Accounting\Api\Service\Account\Get $callAccount,
         \Praxigento\Accounting\Api\Service\Operation $callOper
     )
     {
         $this->hlpScheme = $hlpScheme;
-        $this->repoLogCust = $repoLogCust;
-        $this->repoLogOper = $repoLogOper;
-        $this->repoRegSignupDebit = $repoRegSignupDebit;
-        $this->repoLogSale = $repoLogSale;
+        $this->daoLogCust = $daoLogCust;
+        $this->daoLogOper = $daoLogOper;
+        $this->daoRegSignupDebit = $daoRegSignupDebit;
+        $this->daoLogSale = $daoLogSale;
         $this->callAccount = $callAccount;
         $this->callOper = $callOper;
     }
@@ -128,7 +128,7 @@ class ProcessOrders
         $this->saveTransLogs($orders, $ids);
         /* log operation */
         $operId = $resp->getOperationId();
-        $this->repoLogOper->create([
+        $this->daoLogOper->create([
             LogOpers::A_CALC_ID => $calcId,
             LogOpers::A_OPER_ID => $operId
         ]);
@@ -136,7 +136,7 @@ class ProcessOrders
         foreach ($orders as $one) {
             $custId = $one[Query::A_CUST_ID];
             $orderId = $one[Query::A_ORDER_ID];
-            $this->repoRegSignupDebit->create([
+            $this->daoRegSignupDebit->create([
                 RegSignup::A_CALC_REF => $calcId,
                 RegSignup::A_CUST_REF => $custId,
                 RegSignup::A_SALE_REF => $orderId
@@ -190,25 +190,25 @@ class ProcessOrders
             if ($pref == self::PREFIX_PV) {
                 /* log PV off & order itself*/
                 $custId = $orders[$orderId][Query::A_CUST_ID];
-                $this->repoLogCust->create([
+                $this->daoLogCust->create([
                     LogCust::A_TRANS_ID => $tranId,
                     LogCust::A_CUSTOMER_ID => $custId
                 ]);
-                $this->repoLogSale->create([
+                $this->daoLogSale->create([
                     LogSales::A_TRANS_ID => $tranId,
                     LogSales::A_SALE_ORDER_ID => $orderId
                 ]);
             } elseif ($pref == self::PREFIX_WALLET_FATHER) {
                 /* log Wallet Father On */
                 $custId = $orders[$orderId][Query::A_PARENT_ID];
-                $this->repoLogCust->create([
+                $this->daoLogCust->create([
                     LogCust::A_TRANS_ID => $tranId,
                     LogCust::A_CUSTOMER_ID => $custId
                 ]);
             } else {
                 /* log Wallet Grand On */
                 $custId = $orders[$orderId][Query::A_PARENT_GRAND_ID];
-                $this->repoLogCust->create([
+                $this->daoLogCust->create([
                     LogCust::A_TRANS_ID => $tranId,
                     LogCust::A_CUSTOMER_ID => $custId
                 ]);

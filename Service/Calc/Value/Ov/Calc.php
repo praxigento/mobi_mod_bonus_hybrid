@@ -22,19 +22,19 @@ class Calc
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
-    private $repoBonDwnl;
+    private $daoBonDwnl;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl
     )
     {
         $this->logger = $logger;
         $this->hlpSignupDebitCust = $hlpSignupDebitCust;
         $this->hlpDwnlTree = $hlpDwnlTree;
-        $this->repoBonDwnl = $repoBonDwnl;
+        $this->daoBonDwnl = $daoBonDwnl;
     }
 
     /**
@@ -47,7 +47,7 @@ class Calc
     {
         $result = [];
         /* collect additional data */
-        $dwnlCompress = $this->repoBonDwnl->getByCalcId($calcId);
+        $dwnlCompress = $this->daoBonDwnl->getByCalcId($calcId);
         /* create maps to access data */
         $mapById = $this->hlpDwnlTree->mapById($dwnlCompress, EBonDwnl::A_CUST_REF);
         $mapDepth = $this->hlpDwnlTree->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::A_CUST_REF, EBonDwnl::A_DEPTH);

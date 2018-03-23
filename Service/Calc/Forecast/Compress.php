@@ -38,14 +38,14 @@ class Compress
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\UpdateDwnl */
     private $procUpdateDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
-    private $repoBonDwnl;
+    private $daoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
-    private $repoCalc;
+    private $daoCalc;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
-        \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl,
+        \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
         \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase1 $procCmprsPhase1,
         \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2 $procCmprsPhase2,
         \Praxigento\BonusHybrid\Service\Calc\A\Proc\Tv $procTv,
@@ -57,8 +57,8 @@ class Compress
     )
     {
         $this->logger = $logger;
-        $this->repoCalc = $repoCalc;
-        $this->repoBonDwnl = $repoBonDwnl;
+        $this->daoCalc = $daoCalc;
+        $this->daoBonDwnl = $daoBonDwnl;
         $this->procCmprsPhase1 = $procCmprsPhase1;
         $this->procCmprsPhase2 = $procCmprsPhase2;
         $this->procTv = $procTv;
@@ -170,7 +170,7 @@ class Compress
         $this->saveDownline($dwnlPhase1);
 
         /* finalize calculation */
-        $this->repoCalc->markComplete($calcId);
+        $this->daoCalc->markComplete($calcId);
 
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);
@@ -207,11 +207,11 @@ class Compress
     {
         foreach ($items as $item) {
             $entryId = $item->getId();
-            $found = $this->repoBonDwnl->getById($entryId);
+            $found = $this->daoBonDwnl->getById($entryId);
             if ($found) {
-                $this->repoBonDwnl->updateById($entryId, $item);
+                $this->daoBonDwnl->updateById($entryId, $item);
             } else {
-                $this->repoBonDwnl->create($item);
+                $this->daoBonDwnl->create($item);
             }
         }
     }

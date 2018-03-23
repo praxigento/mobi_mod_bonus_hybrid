@@ -19,9 +19,9 @@ class Phase2
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
-    private $repoBonDwnl;
+    private $daoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
-    private $repoCalc;
+    private $daoCalc;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\Phase2\GetPv */
     private $rouGetPv;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\Phase2\SaveDownline */
@@ -29,8 +29,8 @@ class Phase2
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
-        \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl,
+        \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2 $procCmprsPhase2,
         \Praxigento\BonusHybrid\Service\Calc\Compress\Phase2\GetPv $rouGetPv,
@@ -38,8 +38,8 @@ class Phase2
     )
     {
         $this->logger = $logger;
-        $this->repoCalc = $repoCalc;
-        $this->repoBonDwnl = $repoBonDwnl;
+        $this->daoCalc = $daoCalc;
+        $this->daoBonDwnl = $daoBonDwnl;
         $this->procPeriodGet = $procPeriodGet;
         $this->procCmprsPhase2 = $procCmprsPhase2;
         $this->rouGetPv = $rouGetPv;
@@ -58,8 +58,8 @@ class Phase2
     private function compressPhase2($calcIdWriteOff, $calcIdPhase1, $calcIdPhase2, $scheme)
     {
         $pv = $this->rouGetPv->exec($calcIdWriteOff);
-        $dwnlPlain = $this->repoBonDwnl->getByCalcId($calcIdWriteOff);
-        $dwnlPhase1 = $this->repoBonDwnl->getByCalcId($calcIdPhase1);
+        $dwnlPlain = $this->daoBonDwnl->getByCalcId($calcIdWriteOff);
+        $dwnlPhase1 = $this->daoBonDwnl->getByCalcId($calcIdPhase1);
         $ctx = new \Praxigento\Core\Data();
         $ctx->set(PCpmrsPhase2::IN_CALC_ID_PHASE2, $calcIdPhase2);
         $ctx->set(PCpmrsPhase2::IN_SCHEME, $scheme);
@@ -103,7 +103,7 @@ class Phase2
         /* save calculation results */
         $this->rouSaveDwnl->exec($downline, $legs, $writeOffCalcId, $phase1CalcId,$scheme);
         /* mark this calculation complete */
-        $this->repoCalc->markComplete($phase2CalcId);
+        $this->daoCalc->markComplete($phase2CalcId);
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);
         $this->logger->info("Phase2 compression for '$scheme' scheme is completed.");

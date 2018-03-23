@@ -50,20 +50,20 @@ class Scheme
     /** @var \Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetLastCalcIdForPeriod */
     protected $queryGetLastSignupCalcId;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Registry\SignupDebit */
-    protected $repoRegSignupDebit;
+    protected $daoRegSignupDebit;
 
     /**
      * Scheme constructor.
      */
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resource,
-        \Praxigento\Core\App\Repo\IGeneric $repoGeneric,
-        \Praxigento\BonusHybrid\Repo\Dao\Registry\SignupDebit $repoRegSignupDebit,
+        \Praxigento\Core\App\Repo\IGeneric $daoGeneric,
+        \Praxigento\BonusHybrid\Repo\Dao\Registry\SignupDebit $daoRegSignupDebit,
         \Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetLastCalcIdForPeriod $queryGetLastSignupCalcId
     ) {
         parent::__construct($resource);
-        $this->_repoBasic = $repoGeneric;
-        $this->repoRegSignupDebit = $repoRegSignupDebit;
+        $this->_repoBasic = $daoGeneric;
+        $this->daoRegSignupDebit = $daoRegSignupDebit;
         $this->queryGetLastSignupCalcId = $queryGetLastSignupCalcId;
     }
 
@@ -193,7 +193,7 @@ class Scheme
             $ids = [];
             $calcId = $this->queryGetLastSignupCalcId->exec();
             $where = \Praxigento\BonusHybrid\Repo\Data\Registry\SignupDebit::A_CALC_REF . '=' . (int)$calcId;
-            $rs = $this->repoRegSignupDebit->get($where);
+            $rs = $this->daoRegSignupDebit->get($where);
             foreach ($rs as $one) {
                 /* TODO: use as object not as array */
                 $one = (array)$one->get();

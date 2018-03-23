@@ -23,13 +23,13 @@ class PvWriteOff
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
-    private $repoCalc;
+    private $daoCalc;
     /** @var \Praxigento\BonusBase\Repo\Dao\Log\Opers */
-    private $repoLogOper;
+    private $daoLogOper;
     /** @var  \Praxigento\Accounting\Repo\Dao\Type\Asset */
-    private $repoTypeAsset;
+    private $daoTypeAsset;
     /** @var  \Praxigento\Accounting\Repo\Dao\Type\Operation */
-    private $repoTypeOper;
+    private $daoTypeOper;
     /** @var PvWriteOff\Query\GetData\Builder */
     private $sqbGetData;
     /** @var PvWriteOff\PrepareTrans */
@@ -41,10 +41,10 @@ class PvWriteOff
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Core\Api\Helper\Date $hlpDate,
         \Praxigento\Core\Api\Helper\Period $hlpPeriod,
-        \Praxigento\Accounting\Repo\Dao\Type\Asset $repoTypeAsset,
-        \Praxigento\Accounting\Repo\Dao\Type\Operation $repoTypeOper,
-        \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
-        \Praxigento\BonusBase\Repo\Dao\Log\Opers $repoLogOper,
+        \Praxigento\Accounting\Repo\Dao\Type\Asset $daoTypeAsset,
+        \Praxigento\Accounting\Repo\Dao\Type\Operation $daoTypeOper,
+        \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
+        \Praxigento\BonusBase\Repo\Dao\Log\Opers $daoLogOper,
         \Praxigento\Accounting\Service\Operation $callOperation,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         PvWriteOff\Query\GetData\Builder $sqbGetData,
@@ -55,10 +55,10 @@ class PvWriteOff
         $this->logger = $logger;
         $this->hlpDate = $hlpDate;
         $this->hlpPeriod = $hlpPeriod;
-        $this->repoTypeAsset = $repoTypeAsset;
-        $this->repoTypeOper = $repoTypeOper;
-        $this->repoCalc = $repoCalc;
-        $this->repoLogOper = $repoLogOper;
+        $this->daoTypeAsset = $daoTypeAsset;
+        $this->daoTypeOper = $daoTypeOper;
+        $this->daoCalc = $daoCalc;
+        $this->daoLogOper = $daoLogOper;
         $this->callOperation = $callOperation;
         $this->procPeriodGet = $procPeriodGet;
         $this->sqbGetData = $sqbGetData;
@@ -114,7 +114,7 @@ class PvWriteOff
         /* register operation in log */
         $this->saveLog($operId, $calcId);
         /* mark this calculation complete */
-        $this->repoCalc->markComplete($calcId);
+        $this->daoCalc->markComplete($calcId);
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);
         $this->logger->info("PV Write Off calculation is completed.");
@@ -164,7 +164,7 @@ class PvWriteOff
      */
     private function getTransitions($dsBegin, $dsEnd)
     {
-        $assetTypeId = $this->repoTypeAsset->getIdByCode(Cfg::CODE_TYPE_ASSET_PV);
+        $assetTypeId = $this->daoTypeAsset->getIdByCode(Cfg::CODE_TYPE_ASSET_PV);
         $dateFrom = $this->hlpPeriod->getTimestampFrom($dsBegin);
         $dateTo = $this->hlpPeriod->getTimestampNextFrom($dsEnd);
 
@@ -225,6 +225,6 @@ class PvWriteOff
         $log = new ELogOper();
         $log->setCalcId($calcId);
         $log->setOperId($operIdWriteOff);
-        $this->repoLogOper->create($log);
+        $this->daoLogOper->create($log);
     }
 }

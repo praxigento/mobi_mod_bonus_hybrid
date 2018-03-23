@@ -24,25 +24,25 @@ class CalcEu
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
-    private $repoBonDwnl;
+    private $daoBonDwnl;
     /** @var \Praxigento\Downline\Repo\Dao\Customer */
-    private $repoDwnl;
+    private $daoDwnl;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Core\Api\Helper\Format $hlpFormat,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
-        \Praxigento\Downline\Repo\Dao\Customer $repoDwnl,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl
+        \Praxigento\Downline\Repo\Dao\Customer $daoDwnl,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl
     )
     {
         $this->logger = $logger;
         $this->hlpFormat = $hlpFormat;
         $this->hlpScheme = $hlpScheme;
         $this->hlpDwnlTree = $hlpDwnlTree;
-        $this->repoDwnl = $repoDwnl;
-        $this->repoBonDwnl = $repoBonDwnl;
+        $this->daoDwnl = $daoDwnl;
+        $this->daoBonDwnl = $daoBonDwnl;
     }
 
     /**
@@ -56,8 +56,8 @@ class CalcEu
         $result = [];
         /* collect additional data */
         $bonusPercent = Cfg::TEAM_BONUS_EU_PERCENT;
-        $dwnlCompress = $this->repoBonDwnl->getByCalcId($calcId);
-        $dwnlCurrent = $this->repoDwnl->get();
+        $dwnlCompress = $this->daoBonDwnl->getByCalcId($calcId);
+        $dwnlCurrent = $this->daoDwnl->get();
         /* create maps to access data */
         $mapDwnlById = $this->hlpDwnlTree->mapById($dwnlCompress, EBonDwnl::A_CUST_REF);
         $mapCustById = $this->hlpDwnlTree->mapById($dwnlCurrent, ECustomer::A_CUSTOMER_ID);

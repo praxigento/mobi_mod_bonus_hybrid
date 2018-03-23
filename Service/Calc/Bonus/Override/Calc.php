@@ -25,13 +25,13 @@ class Calc
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
-    private $repoBonDwnl;
+    private $daoBonDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Cfg\Override */
-    private $repoCfgOvrd;
+    private $daoCfgOvrd;
     /** @var \Praxigento\Downline\Repo\Dao\Customer */
-    private $repoDwnl;
+    private $daoDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Rank */
-    private $repoRank;
+    private $daoRank;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
@@ -39,10 +39,10 @@ class Calc
         \Praxigento\Downline\Api\Helper\Downline $hlpTree,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
-        \Praxigento\Downline\Repo\Dao\Customer $repoDwnl,
-        \Praxigento\BonusBase\Repo\Dao\Rank $repoRank,
-        \Praxigento\BonusHybrid\Repo\Dao\Cfg\Override $repoCfgOvrd,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl
+        \Praxigento\Downline\Repo\Dao\Customer $daoDwnl,
+        \Praxigento\BonusBase\Repo\Dao\Rank $daoRank,
+        \Praxigento\BonusHybrid\Repo\Dao\Cfg\Override $daoCfgOvrd,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl
     )
     {
         $this->logger = $logger;
@@ -50,10 +50,10 @@ class Calc
         $this->hlpTree = $hlpTree;
         $this->hlpDwnlTree = $hlpDwnlTree;
         $this->hlpScheme = $hlpScheme;
-        $this->repoDwnl = $repoDwnl;
-        $this->repoRank = $repoRank;
-        $this->repoCfgOvrd = $repoCfgOvrd;
-        $this->repoBonDwnl = $repoBonDwnl;
+        $this->daoDwnl = $daoDwnl;
+        $this->daoRank = $daoRank;
+        $this->daoCfgOvrd = $daoCfgOvrd;
+        $this->daoBonDwnl = $daoBonDwnl;
     }
 
     /**
@@ -103,8 +103,8 @@ class Calc
     {
         $result = [];
         /* collect additional data */
-        $dwnlCompress = $this->repoBonDwnl->getByCalcId($compressCalcId);
-        $dwnlPlain = $this->repoDwnl->get();
+        $dwnlCompress = $this->daoBonDwnl->getByCalcId($compressCalcId);
+        $dwnlPlain = $this->daoDwnl->get();
         $cfgOverride = $this->getCfgOverride();
         /* create maps to access data */
         $mapCmprsById = $this->hlpDwnlTree->mapById($dwnlCompress, EBonDwnl::A_CUST_REF);
@@ -115,7 +115,7 @@ class Calc
         /* scan all levels starting from the bottom and collect PV by generations */
         $mapGenerations = $this->mapByGeneration($mapByDepthDesc,
             $mapCmprsById); // [ $custId=>[$genId => $totalPv, ...], ... ]
-        $defRankId = $this->repoRank->getIdByCode(Cfg::RANK_DISTRIBUTOR);
+        $defRankId = $this->daoRank->getIdByCode(Cfg::RANK_DISTRIBUTOR);
         /* scan all customers and calculate bonus values */
         /** @var EBonDwnl $custCompress */
         foreach ($dwnlCompress as $custCompress) {
@@ -162,7 +162,7 @@ class Calc
     private function getCfgOverride()
     {
         $result = [];
-        $data = $this->repoCfgOvrd->get();
+        $data = $this->daoCfgOvrd->get();
         /** @var ECfgOvrd $one */
         foreach ($data as $one) {
             $scheme = $one->getScheme();

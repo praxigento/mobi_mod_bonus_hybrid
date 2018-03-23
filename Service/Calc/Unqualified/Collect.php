@@ -24,22 +24,22 @@ class Collect
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
-    private $repoBonDwnl;
+    private $daoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
-    private $repoCalc;
+    private $daoCalc;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Downline\Helper\Tree $hlpTree,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl,
-        \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
+        \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet
     )
     {
         $this->logger = $logger;
         $this->hlpTree = $hlpTree;
-        $this->repoBonDwnl = $repoBonDwnl;
-        $this->repoCalc = $repoCalc;
+        $this->daoBonDwnl = $daoBonDwnl;
+        $this->daoCalc = $daoCalc;
         $this->procPeriodGet = $procPeriodGet;
     }
 
@@ -80,19 +80,19 @@ class Collect
         list($writeOffCalc, $writeOffCalcPrev, $phase1Calc, $unqCollCalc) = $this->getCalcData();
         $writeOffCalcId = $writeOffCalc->getId();
         $phase1CalcId = $phase1Calc->getId();
-        $treePlain = $this->repoBonDwnl->getByCalcId($writeOffCalcId);
-        $treePhase1 = $this->repoBonDwnl->getByCalcId($phase1CalcId);
+        $treePlain = $this->daoBonDwnl->getByCalcId($writeOffCalcId);
+        $treePhase1 = $this->daoBonDwnl->getByCalcId($phase1CalcId);
         $treePlainPrev = [];
         if ($writeOffCalcPrev) {
             $writeOffCalcIdPrev = $writeOffCalcPrev->getId();
-            $treePlainPrev = $this->repoBonDwnl->getByCalcId($writeOffCalcIdPrev);
+            $treePlainPrev = $this->daoBonDwnl->getByCalcId($writeOffCalcIdPrev);
         }
         /* $treePlain will be populated with new values for unqualified months */
         $this->calc($treePlain, $treePlainPrev, $treePhase1);
         $this->saveDownline($treePlain);
         /* mark this calculation complete */
         $calcId = $unqCollCalc->getId();
-        $this->repoCalc->markComplete($calcId);
+        $this->daoCalc->markComplete($calcId);
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);
         $this->logger->info("'Unqualified Stats Collection' calculation is completed.");
@@ -153,7 +153,7 @@ class Collect
         /** @var \Praxigento\BonusHybrid\Repo\Data\Downline $one */
         foreach ($tree as $one) {
             $id = $one->getId();
-            $this->repoBonDwnl->updateById($id, $one);
+            $this->daoBonDwnl->updateById($id, $one);
         }
     }
 }

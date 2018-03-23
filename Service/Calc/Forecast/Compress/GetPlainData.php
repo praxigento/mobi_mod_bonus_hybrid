@@ -22,14 +22,14 @@ class GetPlainData
     /** @var \Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder */
     private $qbCalcGetLast;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
-    private $repoBonDwnl;
+    private $daoBonDwnl;
 
     public function __construct(
-        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
         \Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder $qbCalcGetLast
     )
     {
-        $this->repoBonDwnl = $repoBonDwnl;
+        $this->daoBonDwnl = $daoBonDwnl;
         $this->qbCalcGetLast = $qbCalcGetLast;
     }
 
@@ -43,7 +43,7 @@ class GetPlainData
          */
         $calcIdPlain = $this->getPlainCalcId();
         /** @var \Praxigento\BonusHybrid\Repo\Data\Downline[] $downline */
-        $downline = $this->repoBonDwnl->getByCalcId($calcIdPlain);
+        $downline = $this->daoBonDwnl->getByCalcId($calcIdPlain);
         foreach ($downline as $item) {
             $custId = $item->getCustomerRef();
             $pv = $item->getPv();

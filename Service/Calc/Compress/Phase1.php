@@ -27,21 +27,21 @@ class Phase1
     /** @var \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder */
     private $qbSnapOnDate;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
-    private $repoBonDwnl;
+    private $daoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
-    private $repoCalc;
+    private $daoCalc;
     /** @var \Praxigento\BonusBase\Repo\Dao\Rank */
-    private $repoRank;
+    private $daoRank;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Compression\Phase1\Transfer\Pv */
-    private $repoTransPv;
+    private $daoTransPv;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
-        \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
-        \Praxigento\BonusBase\Repo\Dao\Rank $repoRank,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl,
-        \Praxigento\BonusHybrid\Repo\Dao\Compression\Phase1\Transfer\Pv $repoTransPv,
+        \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
+        \Praxigento\BonusBase\Repo\Dao\Rank $daoRank,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
+        \Praxigento\BonusHybrid\Repo\Dao\Compression\Phase1\Transfer\Pv $daoTransPv,
         \Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder $qbGetPv,
         \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder $qbSnapOnDate,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
@@ -50,10 +50,10 @@ class Phase1
     {
         $this->logger = $logger;
         $this->hlpDwnlTree = $hlpDwnlTree;
-        $this->repoCalc = $repoCalc;
-        $this->repoRank = $repoRank;
-        $this->repoBonDwnl = $repoBonDwnl;
-        $this->repoTransPv = $repoTransPv;
+        $this->daoCalc = $daoCalc;
+        $this->daoRank = $daoRank;
+        $this->daoBonDwnl = $daoBonDwnl;
+        $this->daoTransPv = $daoTransPv;
         $this->qbGetPv = $qbGetPv;
         $this->qbSnapOnDate = $qbSnapOnDate;
         $this->procPeriodGet = $procPeriodGet;
@@ -116,7 +116,7 @@ class Phase1
         $this->saveBonusDownline($updates, $compressCalcId);
         $this->savePvTransfers($pvTransfers);
         /* mark this calculation complete */
-        $this->repoCalc->markComplete($compressCalcId);
+        $this->daoCalc->markComplete($compressCalcId);
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);
         $this->logger->info("Phase1 compression is completed.");
@@ -151,7 +151,7 @@ class Phase1
      */
     private function getDefaultRankId()
     {
-        $result = $this->repoRank->getIdByCode(Cfg::RANK_DISTRIBUTOR);
+        $result = $this->daoRank->getIdByCode(Cfg::RANK_DISTRIBUTOR);
         return $result;
     }
 
@@ -215,7 +215,7 @@ class Phase1
             $entity->setRankRef($rankId);
             $entity->setTv(0);
             $entity->setUnqMonths(0);
-            $this->repoBonDwnl->create($entity);
+            $this->daoBonDwnl->create($entity);
         }
     }
 
@@ -226,7 +226,7 @@ class Phase1
     {
         /** @var \Praxigento\BonusHybrid\Repo\Data\Compression\Phase1\Transfer\Pv $one */
         foreach ($data as $one) {
-            $this->repoTransPv->create($one);
+            $this->daoTransPv->create($one);
         }
     }
 }

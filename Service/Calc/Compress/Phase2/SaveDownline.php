@@ -24,29 +24,29 @@ class SaveDownline
     /** @var \Praxigento\BonusHybrid\Helper\IScheme */
     private $hlpScheme;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
-    private $repoBonDwnl;
+    private $daoBonDwnl;
     /** @var \Praxigento\Downline\Repo\Dao\Customer */
-    private $repoDwnlCust;
+    private $daoDwnlCust;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline\Qualification */
-    private $repoDwnlQual;
+    private $daoDwnlQual;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Compression\Phase2\Legs */
-    private $repoLegs;
+    private $daoLegs;
 
     public function __construct(
         \Praxigento\Downline\Helper\Tree $hlpDwnl,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
-        \Praxigento\Downline\Repo\Dao\Customer $repoDwnlCust,
-        \Praxigento\BonusHybrid\Repo\Dao\Compression\Phase2\Legs $repoLegs,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline\Qualification $repoDwnlQual
+        \Praxigento\Downline\Repo\Dao\Customer $daoDwnlCust,
+        \Praxigento\BonusHybrid\Repo\Dao\Compression\Phase2\Legs $daoLegs,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline\Qualification $daoDwnlQual
     )
     {
         $this->hlpDwnl = $hlpDwnl;
         $this->hlpScheme = $hlpScheme;
-        $this->repoDwnlCust = $repoDwnlCust;
-        $this->repoLegs = $repoLegs;
-        $this->repoBonDwnl = $repoBonDwnl;
-        $this->repoDwnlQual = $repoDwnlQual;
+        $this->daoDwnlCust = $daoDwnlCust;
+        $this->daoLegs = $daoLegs;
+        $this->daoBonDwnl = $daoBonDwnl;
+        $this->daoDwnlQual = $daoDwnlQual;
     }
 
     /**
@@ -69,14 +69,14 @@ class SaveDownline
      */
     private function getBonTreeByCustId($calcId)
     {
-        $tree = $this->repoBonDwnl->getByCalcId($calcId);
+        $tree = $this->daoBonDwnl->getByCalcId($calcId);
         $result = $this->hlpDwnl->mapById($tree, EBonDwnl::A_CUST_REF);
         return $result;
     }
 
     private function getCustomersById()
     {
-        $customers = $this->repoDwnlCust->get();
+        $customers = $this->daoDwnlCust->get();
         $result = $this->hlpDwnl->mapById($customers, EDwnlCust::A_CUSTOMER_ID);
         return $result;
     }
@@ -96,7 +96,7 @@ class SaveDownline
         foreach ($entries as $entry) {
             $custId = $entry->getCustomerRef();
             /* create downline entry */
-            $this->repoBonDwnl->create($entry);
+            $this->daoBonDwnl->create($entry);
             $rankId = $entry->getRankRef();
             /* check customer scheme */
             $customer = $custById[$custId];
@@ -109,14 +109,14 @@ class SaveDownline
                 $qual = new EBonDwnQual();
                 $qual->setTreeEntryRef($plainId);
                 $qual->setRankRef($rankId);
-                $this->repoDwnlQual->create($qual);
+                $this->daoDwnlQual->create($qual);
                 /* update rank in downlines (plain & compressed) */
                 $dwnlData = [EBonDwnl::A_RANK_REF => $rankId];
                 $byCust = EBonDwnl::A_CUST_REF . '=' . (int)$custId;
                 $byPlain = EBonDwnl::A_CALC_REF . '=' . (int)$plainCalcId;
                 $byCmprs = EBonDwnl::A_CALC_REF . '=' . (int)$cmprsCalcId;
                 $where = "($byCust) AND (($byPlain) OR ($byCmprs))";
-                $this->repoBonDwnl->update($dwnlData, $where);
+                $this->daoBonDwnl->update($dwnlData, $where);
             }
         }
     }
@@ -124,7 +124,7 @@ class SaveDownline
     private function saveLegs($entries)
     {
         foreach ($entries as $entry) {
-            $this->repoLegs->create($entry);
+            $this->daoLegs->create($entry);
         }
     }
 }

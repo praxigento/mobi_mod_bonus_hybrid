@@ -16,17 +16,17 @@ use Praxigento\BonusHybrid\Config as Cfg;
 class PrepareTrans
 {
     /** @var \Praxigento\Accounting\Repo\Dao\Account */
-    private $repoAcc;
+    private $daoAcc;
     /** @var \Praxigento\Accounting\Repo\Dao\Type\Asset */
-    private $repoAssetType;
+    private $daoAssetType;
 
     public function __construct(
-        \Praxigento\Accounting\Repo\Dao\Account $repoAcc,
-        \Praxigento\Accounting\Repo\Dao\Type\Asset $repoAssetType
+        \Praxigento\Accounting\Repo\Dao\Account $daoAcc,
+        \Praxigento\Accounting\Repo\Dao\Type\Asset $daoAssetType
     )
     {
-        $this->repoAcc = $repoAcc;
-        $this->repoAssetType = $repoAssetType;
+        $this->daoAcc = $daoAcc;
+        $this->daoAssetType = $daoAssetType;
     }
 
     /**
@@ -34,8 +34,8 @@ class PrepareTrans
      */
     public function exec($turnover, $dateApplied)
     {
-        $assetTypeId = $this->repoAssetType->getIdByCode(Cfg::CODE_TYPE_ASSET_PV);
-        $sysAccId = $this->repoAcc->getSystemAccountId($assetTypeId);
+        $assetTypeId = $this->daoAssetType->getIdByCode(Cfg::CODE_TYPE_ASSET_PV);
+        $sysAccId = $this->daoAcc->getSystemAccountId($assetTypeId);
         $result = [];
         foreach ($turnover as $accId => $value) {
             if ($value > Cfg::DEF_ZERO) {

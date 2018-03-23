@@ -21,23 +21,23 @@ class Process
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
-    private $repoBonDwnl;
+    private $daoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
-    private $repoCalc;
+    private $daoCalc;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Unqualified\Process\Calc */
     private $rouCalc;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl,
-        \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
+        \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\Unqualified\Process\Calc $rouCalc
     )
     {
         $this->logger = $logger;
-        $this->repoBonDwnl = $repoBonDwnl;
-        $this->repoCalc = $repoCalc;
+        $this->daoBonDwnl = $daoBonDwnl;
+        $this->daoCalc = $daoCalc;
         $this->procPeriodGet = $procPeriodGet;
         $this->rouCalc = $rouCalc;
     }
@@ -58,11 +58,11 @@ class Process
         list($writeOffCalc, $writeOffPeriod, $processCalc) = $this->getCalcData();
         $writeOffCalcId = $writeOffCalc->getId();
         $periodEnd = $writeOffPeriod->getDstampEnd();
-        $treePlain = $this->repoBonDwnl->getByCalcId($writeOffCalcId);
+        $treePlain = $this->daoBonDwnl->getByCalcId($writeOffCalcId);
         $this->rouCalc->exec($treePlain, $periodEnd);
         /* mark this calculation complete */
         $calcId = $processCalc->getId();
-        $this->repoCalc->markComplete($calcId);
+        $this->daoCalc->markComplete($calcId);
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);
         $this->logger->info("'Unqualified Process' calculation is completed.");

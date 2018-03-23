@@ -33,15 +33,15 @@ class Personal
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
-    private $repoBonDwnl;
+    private $daoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
-    private $repoCalc;
+    private $daoCalc;
     /** @var \Praxigento\Downline\Repo\Dao\Customer */
-    private $repoDwnl;
+    private $daoDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Level */
-    private $repoLevel;
+    private $daoLevel;
     /** @var \Praxigento\BonusBase\Repo\Dao\Log\Opers */
-    private $repoLogOper;
+    private $daoLogOper;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
@@ -49,11 +49,11 @@ class Personal
         \Praxigento\BonusBase\Helper\Calc $hlpCalc,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
-        \Praxigento\Downline\Repo\Dao\Customer $repoDwnl,
-        \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
-        \Praxigento\BonusBase\Repo\Dao\Level $repoLevel,
-        \Praxigento\BonusBase\Repo\Dao\Log\Opers $repoLogOper,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl,
+        \Praxigento\Downline\Repo\Dao\Customer $daoDwnl,
+        \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
+        \Praxigento\BonusBase\Repo\Dao\Level $daoLevel,
+        \Praxigento\BonusBase\Repo\Dao\Log\Opers $daoLogOper,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\A\Helper\PrepareTrans $hlpTrans,
         \Praxigento\BonusHybrid\Service\Calc\A\Helper\CreateOper $hlpOper
@@ -64,11 +64,11 @@ class Personal
         $this->hlpCalc = $hlpCalc;
         $this->hlpScheme = $hlpScheme;
         $this->hlpDwnlTree = $hlpDwnlTree;
-        $this->repoDwnl = $repoDwnl;
-        $this->repoCalc = $repoCalc;
-        $this->repoLevel = $repoLevel;
-        $this->repoLogOper = $repoLogOper;
-        $this->repoBonDwnl = $repoBonDwnl;
+        $this->daoDwnl = $daoDwnl;
+        $this->daoCalc = $daoCalc;
+        $this->daoLevel = $daoLevel;
+        $this->daoLogOper = $daoLogOper;
+        $this->daoBonDwnl = $daoBonDwnl;
         $this->procPeriodGet = $procPeriodGet;
         $this->hlpTrans = $hlpTrans;
         $this->hlpOper = $hlpOper;
@@ -121,10 +121,10 @@ class Personal
         $baseCalcId = $compressCalc->getId();
         $depCalcId = $persCalc->getId();
         /* load downlines (compressed for period & current) */
-        $dwnlCompress = $this->repoBonDwnl->getByCalcId($baseCalcId);
-        $dwnlCurrent = $this->repoDwnl->get();
+        $dwnlCompress = $this->daoBonDwnl->getByCalcId($baseCalcId);
+        $dwnlCurrent = $this->daoDwnl->get();
         /* get levels to calculate Personal bonus */
-        $levels = $this->repoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL);
+        $levels = $this->daoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL);
         /* calculate bonus*/
         $bonus = $this->calcBonus($dwnlCurrent, $dwnlCompress, $levels);
         /* convert calculated bonus to transactions */
@@ -135,7 +135,7 @@ class Personal
         /* register operation in log */
         $this->saveLog($operId, $depCalcId);
         /* mark this calculation complete */
-        $this->repoCalc->markComplete($depCalcId);
+        $this->daoCalc->markComplete($depCalcId);
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);
         $this->logger->info("Personal bonus is completed.");
@@ -187,7 +187,7 @@ class Personal
         $entity = new ELogOper();
         $entity->setOperId($operId);
         $entity->setCalcId($calcId);
-        $this->repoLogOper->create($entity);
+        $this->daoLogOper->create($entity);
     }
 
 }

@@ -21,11 +21,11 @@ class Calc
     /** @var \Praxigento\Downline\Api\Helper\Downline */
     private $hlpTree;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
-    private $repoBonDwnl;
+    private $daoBonDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Cfg\Param */
-    private $repoCfgParams;
+    private $daoCfgParams;
     /** @var \Praxigento\Downline\Repo\Dao\Customer */
-    private $repoDwnl;
+    private $daoDwnl;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
@@ -33,9 +33,9 @@ class Calc
         \Praxigento\Downline\Api\Helper\Downline $hlpTree,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
-        \Praxigento\Downline\Repo\Dao\Customer $repoDwnl,
-        \Praxigento\BonusHybrid\Repo\Dao\Cfg\Param $repoCfgParams,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl
+        \Praxigento\Downline\Repo\Dao\Customer $daoDwnl,
+        \Praxigento\BonusHybrid\Repo\Dao\Cfg\Param $daoCfgParams,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl
     )
     {
         $this->logger = $logger;
@@ -43,9 +43,9 @@ class Calc
         $this->hlpTree = $hlpTree;
         $this->hlpDwnlTree = $hlpDwnlTree;
         $this->hlpScheme = $hlpScheme;
-        $this->repoDwnl = $repoDwnl;
-        $this->repoCfgParams = $repoCfgParams;
-        $this->repoBonDwnl = $repoBonDwnl;
+        $this->daoDwnl = $daoDwnl;
+        $this->daoCfgParams = $daoCfgParams;
+        $this->daoBonDwnl = $daoBonDwnl;
     }
 
     public function exec($compressCalcId, $ovrdCalcId, $scheme)
@@ -54,8 +54,8 @@ class Calc
         $result = [];
 
         /* collect additional data */
-        $dwnlCompress = $this->repoBonDwnl->getByCalcId($compressCalcId);
-        $dwnlPlain = $this->repoDwnl->get();
+        $dwnlCompress = $this->daoBonDwnl->getByCalcId($compressCalcId);
+        $dwnlPlain = $this->daoDwnl->get();
         $cfgParams = $this->getCfgParams();
         $ibPercentMax = $this->getMaxPercentForInfinityBonus($cfgParams, $scheme);
         /* create maps to access data */
@@ -146,7 +146,7 @@ class Calc
             ECfgParam::A_LEG_MEDIUM . ' DESC',
             ECfgParam::A_LEG_MIN . ' DESC'
         ];
-        $data = $this->repoCfgParams->get($where, $order);
+        $data = $this->daoCfgParams->get($where, $order);
         /** @var ECfgParam $one */
         foreach ($data as $one) {
             $scheme = $one->getScheme();

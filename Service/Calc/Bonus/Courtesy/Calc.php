@@ -21,29 +21,29 @@ class Calc
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
-    private $repoBonDwnl;
+    private $daoBonDwnl;
     /** @var \Praxigento\Downline\Repo\Dao\Customer */
-    private $repoDwnl;
+    private $daoDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Level */
-    private $repoLevel;
+    private $daoLevel;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Core\Api\Helper\Format $hlpFormat,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
-        \Praxigento\BonusBase\Repo\Dao\Level $repoLevel,
-        \Praxigento\Downline\Repo\Dao\Customer $repoDwnl,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl
+        \Praxigento\BonusBase\Repo\Dao\Level $daoLevel,
+        \Praxigento\Downline\Repo\Dao\Customer $daoDwnl,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl
     )
     {
         $this->logger = $logger;
         $this->hlpFormat = $hlpFormat;
         $this->hlpScheme = $hlpScheme;
         $this->hlpDwnlTree = $hlpDwnlTree;
-        $this->repoLevel = $repoLevel;
-        $this->repoDwnl = $repoDwnl;
-        $this->repoBonDwnl = $repoBonDwnl;
+        $this->daoLevel = $daoLevel;
+        $this->daoDwnl = $daoDwnl;
+        $this->daoBonDwnl = $daoBonDwnl;
     }
 
     public function exec($calcId)
@@ -51,10 +51,10 @@ class Calc
         $result = [];
         /* collect additional data */
         $percentCourtesy = Cfg::COURTESY_BONUS_PERCENT;
-        $dwnlCompress = $this->repoBonDwnl->getByCalcId($calcId);
-        $dwnlCurrent = $this->repoDwnl->get();
-        $levelsPersonal = $this->repoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL);
-        $levelsTeam = $this->repoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF);
+        $dwnlCompress = $this->daoBonDwnl->getByCalcId($calcId);
+        $dwnlCurrent = $this->daoDwnl->get();
+        $levelsPersonal = $this->daoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL);
+        $levelsTeam = $this->daoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF);
         /* create maps to access data */
         $mapDataById = $this->hlpDwnlTree->mapById($dwnlCompress, EBonDwnl::A_CUST_REF);
         $mapTeams = $this->hlpDwnlTree->mapByTeams($dwnlCompress, EBonDwnl::A_CUST_REF, EBonDwnl::A_PARENT_REF);

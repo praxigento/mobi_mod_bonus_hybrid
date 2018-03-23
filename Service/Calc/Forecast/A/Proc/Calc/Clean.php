@@ -17,25 +17,25 @@ class Clean
     const IN_CALC_TYPE_CODE = 'calcTypeCode';
 
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
-    private $repoCalc;
+    private $daoCalc;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
-    private $repoDwnl;
+    private $daoDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Period */
-    private $repoPeriod;
+    private $daoPeriod;
     /** @var \Praxigento\BonusBase\Repo\Dao\Type\Calc */
-    private $repoTypeCalc;
+    private $daoTypeCalc;
 
     public function __construct(
-        \Praxigento\BonusBase\Repo\Dao\Type\Calc $repoTypeCalc,
-        \Praxigento\BonusBase\Repo\Dao\Period $repoPeriod,
-        \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoDwnl
+        \Praxigento\BonusBase\Repo\Dao\Type\Calc $daoTypeCalc,
+        \Praxigento\BonusBase\Repo\Dao\Period $daoPeriod,
+        \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $daoDwnl
     )
     {
-        $this->repoTypeCalc = $repoTypeCalc;
-        $this->repoPeriod = $repoPeriod;
-        $this->repoCalc = $repoCalc;
-        $this->repoDwnl = $repoDwnl;
+        $this->daoTypeCalc = $daoTypeCalc;
+        $this->daoPeriod = $daoPeriod;
+        $this->daoCalc = $daoCalc;
+        $this->daoDwnl = $daoDwnl;
     }
 
     public function exec(\Praxigento\Core\Data $ctx)
@@ -44,30 +44,30 @@ class Clean
         $calcTypeCode = $ctx->get(self::IN_CALC_TYPE_CODE);
 
         /* get calculation type ID by code */
-        $calcTypeId = $this->repoTypeCalc->getIdByCode($calcTypeCode);
+        $calcTypeId = $this->daoTypeCalc->getIdByCode($calcTypeCode);
         /* get all periods by calculation type */
         $where = EPeriod::A_CALC_TYPE_ID . '=' . (int)$calcTypeId;
-        $periods = $this->repoPeriod->get($where);
+        $periods = $this->daoPeriod->get($where);
         if (is_array($periods)) {
             /** @var \Praxigento\BonusBase\Repo\Data\Period $period */
             foreach ($periods as $period) {
                 /* get calculations by period */
                 $periodId = $period->getId();
                 $whereCalc = ECalc::A_PERIOD_ID . '=' . (int)$periodId;
-                $calcs = $this->repoCalc->get($whereCalc);
+                $calcs = $this->daoCalc->get($whereCalc);
                 if (is_array($calcs)) {
                     /** @var \Praxigento\BonusBase\Repo\Data\Calculation $calc */
                     foreach ($calcs as $calc) {
                         $calcId = $calc->getId();
                         /* delete all downline trees for the calculation */
                         $whereDwnl = \Praxigento\BonusHybrid\Repo\Data\Downline::A_CALC_REF . '=' . (int)$calcId;
-                        $this->repoDwnl->delete($whereDwnl);
+                        $this->daoDwnl->delete($whereDwnl);
                         /* delete calculation itself */
-                        $this->repoCalc->deleteById($calcId);
+                        $this->daoCalc->deleteById($calcId);
                     }
                 }
                 /* delete period itself */
-                $this->repoPeriod->deleteById($periodId);
+                $this->daoPeriod->deleteById($periodId);
             }
         }
     }

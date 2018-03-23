@@ -21,17 +21,17 @@ class PrepareTrans
     const REF_DONATOR_ID = 'refDonatorId';
 
     /** @var \Praxigento\Accounting\Repo\Dao\Account */
-    private $repoAcc;
+    private $daoAcc;
     /** @var \Praxigento\Accounting\Repo\Dao\Type\Asset */
-    private $repoAssetType;
+    private $daoAssetType;
 
     public function __construct(
-        \Praxigento\Accounting\Repo\Dao\Account $repoAcc,
-        \Praxigento\Accounting\Repo\Dao\Type\Asset $repoAssetType
+        \Praxigento\Accounting\Repo\Dao\Account $daoAcc,
+        \Praxigento\Accounting\Repo\Dao\Type\Asset $daoAssetType
     )
     {
-        $this->repoAcc = $repoAcc;
-        $this->repoAssetType = $repoAssetType;
+        $this->daoAcc = $daoAcc;
+        $this->daoAssetType = $daoAssetType;
     }
 
     /**
@@ -40,8 +40,8 @@ class PrepareTrans
      */
     public function exec($bonus, $dateApplied)
     {
-        $assetTypeId = $this->repoAssetType->getIdByCode(Cfg::CODE_TYPE_ASSET_WALLET);
-        $sysAccId = $this->repoAcc->getSystemAccountId($assetTypeId);
+        $assetTypeId = $this->daoAssetType->getIdByCode(Cfg::CODE_TYPE_ASSET_WALLET);
+        $sysAccId = $this->daoAcc->getSystemAccountId($assetTypeId);
         $result = [];
         /** @var DBonus $one */
         foreach ($bonus as $one) {
@@ -50,7 +50,7 @@ class PrepareTrans
             $value = $one->getValue();
             if ($value > Cfg::DEF_ZERO) {
                 /* get account ID for customer ID */
-                $acc = $this->repoAcc->getByCustomerId($custId, $assetTypeId);
+                $acc = $this->daoAcc->getByCustomerId($custId, $assetTypeId);
                 $accId = $acc->getId();
                 /* skip system account */
                 if ($accId == $sysAccId) {

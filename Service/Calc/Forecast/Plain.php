@@ -25,11 +25,11 @@ class Plain
     /** @var \Praxigento\BonusBase\Service\Period\Calc\IAdd */
     private $procPeriodAdd;
     /** @var \Praxigento\Accounting\Repo\Dao\Account */
-    private $repoAcc;
+    private $daoAcc;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
-    private $repoBonDwnl;
+    private $daoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
-    private $repoCalc;
+    private $daoCalc;
     /** @var  \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Calc */
     private $subCalc;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetDownline */
@@ -38,9 +38,9 @@ class Plain
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Core\Api\Helper\Period $hlpPeriod,
-        RAccount $repoAcc,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl,
-        \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
+        RAccount $daoAcc,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
+        \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
         \Praxigento\Accounting\Api\Service\Balance\Get\Turnover $callBalanceGetTurnover,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Calc $subCalc,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetDownline $subGetDownline,
@@ -50,9 +50,9 @@ class Plain
     {
         $this->logger = $logger;
         $this->hlpPeriod = $hlpPeriod;
-        $this->repoAcc = $repoAcc;
-        $this->repoBonDwnl = $repoBonDwnl;
-        $this->repoCalc = $repoCalc;
+        $this->daoAcc = $daoAcc;
+        $this->daoBonDwnl = $daoBonDwnl;
+        $this->daoCalc = $daoCalc;
         $this->callBalanceGetTurnover = $callBalanceGetTurnover;
         $this->subCalc = $subCalc;
         $this->subGetDownline = $subGetDownline;
@@ -86,7 +86,7 @@ class Plain
         $dwnlTree = $ctxDwnl->get(PGetDownline::CTX_OUT_DWNL);
 
         /* get system customer */
-        $custSysId = $this->repoAcc->getSystemCustomerId();
+        $custSysId = $this->daoAcc->getSystemCustomerId();
 
         /* get PV turnover for period */
         $entries = $this->getPvTurnover($dateFrom, $dateTo);
@@ -117,7 +117,7 @@ class Plain
         $this->saveDownline($dwnlTree);
 
         /* finalize calculation */
-        $this->repoCalc->markComplete($calcId);
+        $this->daoCalc->markComplete($calcId);
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);
         $this->logger->info("'Forecast Plain' calculation is completed.");
@@ -187,7 +187,7 @@ class Plain
     private function saveDownline($items)
     {
         foreach ($items as $item) {
-            $this->repoBonDwnl->create($item);
+            $this->daoBonDwnl->create($item);
         }
     }
 }

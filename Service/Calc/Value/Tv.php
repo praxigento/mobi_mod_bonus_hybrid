@@ -19,23 +19,23 @@ class Tv
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
-    private $repoBonDwnl;
+    private $daoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
-    private $repoCalc;
+    private $daoCalc;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Value\Tv\Calc */
     private $subCalc;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
-        \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl,
+        \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\Value\Tv\Calc $subCalc
     )
     {
         $this->logger = $logger;
-        $this->repoCalc = $repoCalc;
-        $this->repoBonDwnl = $repoBonDwnl;
+        $this->daoCalc = $daoCalc;
+        $this->daoBonDwnl = $daoBonDwnl;
         $this->procPeriodGet = $procPeriodGet;
         $this->subCalc = $subCalc;
     }
@@ -57,13 +57,13 @@ class Tv
         $compressCalcId = $compressCalc->getId();
         $tvCalcId = $tvCalc->getId();
         /* load compressed downlines for period */
-        $dwnlCompress = $this->repoBonDwnl->getByCalcId($compressCalcId);
+        $dwnlCompress = $this->daoBonDwnl->getByCalcId($compressCalcId);
         /* populate downline with TV data */
         $dwnlUpdated = $this->subCalc->exec($dwnlCompress);
         /* save updates into repo */
         $this->updateTv($dwnlUpdated);
         /* mark this calculation complete */
-        $this->repoCalc->markComplete($tvCalcId);
+        $this->daoCalc->markComplete($tvCalcId);
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);
         $this->logger->info("TV calculation is completed.");
@@ -107,7 +107,7 @@ class Tv
                 EBonDwnl::A_CALC_REF => $calcId,
                 EBonDwnl::A_CUST_REF => $custId
             ];
-            $this->repoBonDwnl->updateById($id, $entity);
+            $this->daoBonDwnl->updateById($id, $entity);
         }
     }
 

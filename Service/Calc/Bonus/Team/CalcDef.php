@@ -26,11 +26,11 @@ class CalcDef
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
-    private $repoBonDwnl;
+    private $daoBonDwnl;
     /** @var \Praxigento\Downline\Repo\Dao\Customer */
-    private $repoDwnl;
+    private $daoDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Level */
-    private $repoLevel;
+    private $daoLevel;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
@@ -38,9 +38,9 @@ class CalcDef
         \Praxigento\Downline\Api\Helper\Downline $hlpTree,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
-        \Praxigento\Downline\Repo\Dao\Customer $repoDwnl,
-        \Praxigento\BonusBase\Repo\Dao\Level $repoLevel,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl
+        \Praxigento\Downline\Repo\Dao\Customer $daoDwnl,
+        \Praxigento\BonusBase\Repo\Dao\Level $daoLevel,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl
     )
     {
         $this->logger = $logger;
@@ -48,9 +48,9 @@ class CalcDef
         $this->hlpTree = $hlpTree;
         $this->hlpDwnlTree = $hlpDwnlTree;
         $this->hlpScheme = $hlpScheme;
-        $this->repoDwnl = $repoDwnl;
-        $this->repoLevel = $repoLevel;
-        $this->repoBonDwnl = $repoBonDwnl;
+        $this->daoDwnl = $daoDwnl;
+        $this->daoLevel = $daoLevel;
+        $this->daoBonDwnl = $daoBonDwnl;
     }
 
     /**
@@ -63,10 +63,10 @@ class CalcDef
     {
         $result = [];
         /* collect additional data */
-        $levelsPersonal = $this->repoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL);
-        $levelsTeam = $this->repoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF);
-        $dwnlCompress = $this->repoBonDwnl->getByCalcId($calcId);
-        $dwnlCurrent = $this->repoDwnl->get();
+        $levelsPersonal = $this->daoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL);
+        $levelsTeam = $this->daoLevel->getByCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF);
+        $dwnlCompress = $this->daoBonDwnl->getByCalcId($calcId);
+        $dwnlCurrent = $this->daoDwnl->get();
         $pctPbMax = $this->getMaxPercentForPersonalBonus($levelsPersonal);
         $courtesyPct = \Praxigento\BonusHybrid\Config::COURTESY_BONUS_PERCENT;
         /* create maps to access data */

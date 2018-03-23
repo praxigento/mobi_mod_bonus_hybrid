@@ -21,13 +21,13 @@ class GetDownline
     /** @var \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder */
     private $qbSnapOnDate;
     /** @var \Praxigento\BonusBase\Repo\Dao\Rank */
-    private $repoRanks;
+    private $daoRanks;
 
     public function __construct(
-        \Praxigento\BonusBase\Repo\Dao\Rank $repoRank,
+        \Praxigento\BonusBase\Repo\Dao\Rank $daoRank,
         \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder $qbSnapOnDate
     ) {
-        $this->repoRanks = $repoRank;
+        $this->daoRanks = $daoRank;
         $this->qbSnapOnDate = $qbSnapOnDate;
     }
 
@@ -83,7 +83,7 @@ class GetDownline
      */
     private function getDefaultRankId()
     {
-        $result = $this->repoRanks->getIdByCode(Cfg::RANK_DISTRIBUTOR);
+        $result = $this->daoRanks->getIdByCode(Cfg::RANK_DISTRIBUTOR);
         return $result;
     }
 }

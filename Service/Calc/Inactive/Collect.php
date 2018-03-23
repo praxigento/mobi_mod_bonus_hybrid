@@ -30,27 +30,27 @@ class Collect
     /** @var \Praxigento\BonusHybrid\Service\Calc\Inactive\Collect\Repo\Query\GetInactiveStats */
     private $qbGetStats;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
-    private $repoBonDwnl;
+    private $daoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
-    private $repoCalc;
+    private $daoCalc;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline\Inactive */
-    private $repoInact;
+    private $daoInact;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Downline\Helper\Tree $hlpTree,
-        \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoBonDwnl,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline\Inactive $repoInact,
+        \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline\Inactive $daoInact,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         QBGetStats $qbGetStats
     )
     {
         $this->logger = $logger;
         $this->hlpTree = $hlpTree;
-        $this->repoCalc = $repoCalc;
-        $this->repoBonDwnl = $repoBonDwnl;
-        $this->repoInact = $repoInact;
+        $this->daoCalc = $daoCalc;
+        $this->daoBonDwnl = $daoBonDwnl;
+        $this->daoInact = $daoInact;
         $this->procPeriodGet = $procPeriodGet;
         $this->qbGetStats = $qbGetStats;
     }
@@ -96,7 +96,7 @@ class Collect
         /* get dependent calculation data */
         list($writeOffCalc, $writeOffCalcPrev, $collectCalc) = $this->getCalcData();
         $writeOffCalcId = $writeOffCalc->getId();
-        $tree = $this->repoBonDwnl->getByCalcId($writeOffCalcId);
+        $tree = $this->daoBonDwnl->getByCalcId($writeOffCalcId);
         $prevStat = [];
         if ($writeOffCalcPrev) {
             $writeOffCalcIdPrev = $writeOffCalcPrev->getId();
@@ -106,7 +106,7 @@ class Collect
         $this->saveStats($stats);
         /* mark this calculation complete */
         $calcId = $collectCalc->getId();
-        $this->repoCalc->markComplete($calcId);
+        $this->daoCalc->markComplete($calcId);
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);
         $this->logger->info("Inactive Stats Collection calculation is completed.");
@@ -171,7 +171,7 @@ class Collect
     {
         /** @var \Praxigento\BonusHybrid\Repo\Data\Downline\Inactive $stat */
         foreach ($stats as $stat) {
-            $this->repoInact->create($stat);
+            $this->daoInact->create($stat);
         }
     }
 }

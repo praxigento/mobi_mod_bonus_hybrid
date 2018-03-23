@@ -22,28 +22,28 @@ class SaveDownline
     /** @var \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds */
     private $hlpSignupDebitCust;
     /** @var \Praxigento\Accounting\Repo\Dao\Account */
-    private $repoAcc;
+    private $daoAcc;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
-    private $repoDwnl;
+    private $daoDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Rank */
-    private $repoRank;
+    private $daoRank;
 
     public function __construct(
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
-        \Praxigento\Accounting\Repo\Dao\Account $repoAcc,
-        \Praxigento\BonusBase\Repo\Dao\Rank $repoRank,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline $repoDwnl,
+        \Praxigento\Accounting\Repo\Dao\Account $daoAcc,
+        \Praxigento\BonusBase\Repo\Dao\Rank $daoRank,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $daoDwnl,
         \Praxigento\Downline\Service\ISnap $callDwnlSnap
     )
     {
         $this->hlpScheme = $hlpScheme;
         $this->hlpSignupDebitCust = $hlpSignupDebitCust;
         $this->hlpDwnlTree = $hlpDwnlTree;
-        $this->repoAcc = $repoAcc;
-        $this->repoRank = $repoRank;
-        $this->repoDwnl = $repoDwnl;
+        $this->daoAcc = $daoAcc;
+        $this->daoRank = $daoRank;
+        $this->daoDwnl = $daoDwnl;
         $this->callDwnlSnap = $callDwnlSnap;
     }
 
@@ -161,7 +161,7 @@ class SaveDownline
         }
         /* save data into downline registry */
         foreach ($regDwnl as $item) {
-            $this->repoDwnl->create($item);
+            $this->daoDwnl->create($item);
         }
     }
 
@@ -172,7 +172,7 @@ class SaveDownline
      */
     private function getDefaultRankId()
     {
-        $result = $this->repoRank->getIdByCode(Cfg::RANK_DISTRIBUTOR);
+        $result = $this->daoRank->getIdByCode(Cfg::RANK_DISTRIBUTOR);
         return $result;
     }
 
@@ -202,7 +202,7 @@ class SaveDownline
      */
     private function loadCustomersAccounts()
     {
-        $mapAccs = $this->repoAcc->getAllByAssetTypeCode(Cfg::CODE_TYPE_ASSET_PV);
+        $mapAccs = $this->daoAcc->getAllByAssetTypeCode(Cfg::CODE_TYPE_ASSET_PV);
         $result = [];
         foreach ($mapAccs as $one) {
             $custId = $one->getCustomerId();

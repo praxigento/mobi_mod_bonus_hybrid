@@ -26,20 +26,20 @@ class Courtesy
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
-    private $repoCalc;
+    private $daoCalc;
     /** @var \Praxigento\BonusBase\Repo\Dao\Log\Customers */
-    private $repoLogCust;
+    private $daoLogCust;
     /** @var \Praxigento\BonusBase\Repo\Dao\Log\Opers */
-    private $repoLogOper;
+    private $daoLogOper;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Courtesy\Calc */
     private $subCalc;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Core\Api\Helper\Period $hlpPeriod,
-        \Praxigento\BonusBase\Repo\Dao\Calculation $repoCalc,
-        \Praxigento\BonusBase\Repo\Dao\Log\Customers $repoLogCust,
-        \Praxigento\BonusBase\Repo\Dao\Log\Opers $repoLogOper,
+        \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
+        \Praxigento\BonusBase\Repo\Dao\Log\Customers $daoLogCust,
+        \Praxigento\BonusBase\Repo\Dao\Log\Opers $daoLogOper,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\A\Helper\PrepareTrans $hlpTrans,
         \Praxigento\BonusHybrid\Service\Calc\A\Helper\CreateOper $hlpOper,
@@ -48,9 +48,9 @@ class Courtesy
     {
         $this->logger = $logger;
         $this->hlpPeriod = $hlpPeriod;
-        $this->repoCalc = $repoCalc;
-        $this->repoLogCust = $repoLogCust;
-        $this->repoLogOper = $repoLogOper;
+        $this->daoCalc = $daoCalc;
+        $this->daoLogCust = $daoLogCust;
+        $this->daoLogOper = $daoLogOper;
         $this->procPeriodGet = $procPeriodGet;
         $this->hlpTrans = $hlpTrans;
         $this->hlpOper = $hlpOper;
@@ -89,7 +89,7 @@ class Courtesy
         /* register operation in log */
         $this->saveLogOper($operId, $courtesyCalcId);
         /* mark this calculation complete */
-        $this->repoCalc->markComplete($courtesyCalcId);
+        $this->daoCalc->markComplete($courtesyCalcId);
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);
         $this->logger->info("Courtesy bonus is completed.");
@@ -146,7 +146,7 @@ class Courtesy
     private function saveLogCustomers($transIds)
     {
         foreach ($transIds as $transId => $custId) {
-            $this->repoLogCust->create([
+            $this->daoLogCust->create([
                 ELogCust::A_TRANS_ID => $transId,
                 ELogCust::A_CUSTOMER_ID => $custId
 
@@ -165,6 +165,6 @@ class Courtesy
         $entity = new ELogOper();
         $entity->setOperId($operId);
         $entity->setCalcId($calcId);
-        $this->repoLogOper->create($entity);
+        $this->daoLogOper->create($entity);
     }
 }

@@ -43,14 +43,14 @@ class Phase1
     /** @var \Praxigento\Downline\Api\Helper\Downline */
     private $hlpTree;
     /** @var \Praxigento\Downline\Repo\Dao\Customer */
-    private $repoCustDwnl;
+    private $daoCustDwnl;
 
     public function __construct(
         \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
         \Praxigento\Downline\Api\Helper\Downline $hlpTree,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust,
-        \Praxigento\Downline\Repo\Dao\Customer $repoCustDwnl,
+        \Praxigento\Downline\Repo\Dao\Customer $daoCustDwnl,
         \Praxigento\Downline\Service\ISnap $callDwnlSnap
     )
     {
@@ -58,7 +58,7 @@ class Phase1
         $this->hlpTree = $hlpTree;
         $this->hlpDwnlTree = $hlpDwnlTree;
         $this->hlpSignupDebitCust = $hlpSignupDebitCust;
-        $this->repoCustDwnl = $repoCustDwnl;
+        $this->daoCustDwnl = $daoCustDwnl;
         $this->callDwnlSnap = $callDwnlSnap;
     }
 
@@ -220,7 +220,7 @@ class Phase1
     private function getCustomersMap()
     {
         /** @var \Praxigento\Downline\Repo\Data\Customer[] $customers */
-        $customers = $this->repoCustDwnl->get();
+        $customers = $this->daoCustDwnl->get();
         $result = $this->hlpDwnlTree->mapById($customers, ECustomer::A_CUSTOMER_ID);
         return $result;
     }
