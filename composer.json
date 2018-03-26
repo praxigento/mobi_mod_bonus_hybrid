@@ -1,8 +1,8 @@
 {
-  "name": "praxigento/mobi_mod_mage2_bonus_hybrid",
+  "name": "praxigento/mobi_mod_bonus_hybrid",
   "description": "MOBI: Praxigento_BonusHybrid module.",
   "type": "magento2-module",
-  "homepage": "https://github.com/praxigento/mobi_mod_mage2_bonus_hybrid",
+  "homepage": "https://github.com/praxigento/mobi_mod_bonus_hybrid",
   "license": "MIT",
   "authors": [
     {
@@ -21,6 +21,6 @@
     }
   },
   "require": {
-    "praxigento/mobi_mod_mage2_bonus_base": "dev-master"
+    "praxigento/mobi_mod_bonus_base": "dev-master"
   }
 }
