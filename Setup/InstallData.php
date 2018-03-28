@@ -7,6 +7,7 @@
 
 namespace Praxigento\BonusHybrid\Setup;
 
+use Praxigento\Accounting\Repo\Data\Type\Asset as TypeAsset;
 use Praxigento\Accounting\Repo\Data\Type\Operation as TypeOperation;
 use Praxigento\BonusBase\Repo\Data\Type\Calc as TypeCalc;
 use Praxigento\BonusHybrid\Config as Cfg;
@@ -15,8 +16,27 @@ class InstallData extends \Praxigento\Core\App\Setup\Data\Base
 {
     protected function _setup()
     {
-        $this->addBonusCalculationsTypes();
+        $this->addAccountingAssetsTypes();
         $this->addAccountingOperationsTypes();
+        $this->addBonusCalculationsTypes();
+    }
+
+    private function addAccountingAssetsTypes()
+    {
+        $this->_conn->insertArray(
+            $this->_resource->getTableName(TypeAsset::ENTITY_NAME),
+            [
+                TypeAsset::A_CODE,
+                TypeAsset::A_NOTE,
+                TypeAsset::A_IS_TRANSFERABLE
+            ], [
+                [
+                    Cfg::CODE_TYPE_ASSET_BONUS,
+                    'Asset to calculate bonus. This asset is aggregated and transferred to WALLET as one sum.',
+                    false
+                ]
+            ]
+        );
     }
 
     private function addAccountingOperationsTypes()

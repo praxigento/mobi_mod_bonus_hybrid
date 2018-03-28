@@ -18,6 +18,7 @@ class Config extends BonusBaseCfg
     /**
      * Asset types.
      */
+    const CODE_TYPE_ASSET_BONUS = 'BONUS';
     const CODE_TYPE_ASSET_PV = PvCfg::CODE_TYPE_ASSET_PV;
 
     /**
