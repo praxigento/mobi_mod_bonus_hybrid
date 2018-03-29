@@ -14,12 +14,10 @@ use Praxigento\Downline\Repo\Data\Customer;
  * Hybrid bonus configuration parameters.
  */
 class Scheme
-    extends \Praxigento\Core\App\Repo\Def\Db
     implements \Praxigento\BonusHybrid\Api\Helper\Scheme
 {
     const A_RANK_ID = 'RankId';
     const A_SCHEME = 'Scheme';
-
 
     /**
      * There are 3 customer with forced qualifications and ranks in Santegra project.
@@ -34,23 +32,27 @@ class Scheme
     /**
      * @var array of the customers with forced qualification.
      */
-    private $_cachedForcedCustomerIds = null;
+    private $cacheForcedCustomerIds = null;
     /**
      * Cached values for customers with forced ranks. Each customer can be ranked in all schemes.
      *
      * @var array [$custId=>[$schema=>[A_RANK_ID=>$rankId, A_CFG_PARAMS=>[...]], ...], ...]
      */
-    private $_cachedForcedRanks = null;
-    /** @var \Praxigento\Core\App\Repo\IGeneric */
-    private $daoGeneric;
+    private $cacheForcedRanks = null;
     /**
      * @var array of customers with forced qualification from 'Sign Up Volume Debit' (MOBI-635)
      */
-    private $cachedSignUpDebitCustIds = null;
+    private $cacheSignUpDebitCustIds = null;
+    /** @var  \Magento\Framework\DB\Adapter\AdapterInterface */
+    private $conn;
+    /** @var \Praxigento\Core\App\Repo\IGeneric */
+    private $daoGeneric;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Registry\SignUpDebit */
     private $daoRegSignUpDebit;
     /** @var \Praxigento\BonusHybrid\Repo\Query\SignUpDebit\GetLastCalcIdForPeriod */
-    private $queryGetLastSignupCalcId;
+    private $queryGetLastSignUpCalcId;
+    /** @var \Magento\Framework\App\ResourceConnection */
+    private $resource;
 
     /**
      * Scheme constructor.
@@ -59,12 +61,13 @@ class Scheme
         \Magento\Framework\App\ResourceConnection $resource,
         \Praxigento\Core\App\Repo\IGeneric $daoGeneric,
         \Praxigento\BonusHybrid\Repo\Dao\Registry\SignUpDebit $daoRegSignUpDebit,
-        \Praxigento\BonusHybrid\Repo\Query\SignUpDebit\GetLastCalcIdForPeriod $queryGetLastSignupCalcId
+        \Praxigento\BonusHybrid\Repo\Query\SignUpDebit\GetLastCalcIdForPeriod $queryGetLastSignUpCalcId
     ) {
-        parent::__construct($resource);
+        $this->resource = $resource;
+        $this->conn = $resource->getConnection();
         $this->daoGeneric = $daoGeneric;
         $this->daoRegSignUpDebit = $daoRegSignUpDebit;
-        $this->queryGetLastSignupCalcId = $queryGetLastSignupCalcId;
+        $this->queryGetLastSignUpCalcId = $queryGetLastSignUpCalcId;
     }
 
 
@@ -80,7 +83,7 @@ class Scheme
      *
      * @return array [$rankCode => [$scheme=>[$data], ...], ...]
      */
-    private function _getCfgParamsByRanks()
+    private function getCfgParamsByRanks()
     {
         /* aliases and tables */
         $asParams = 'pbhcp';
@@ -110,7 +113,7 @@ class Scheme
      *
      * @return array [[Customer::A_CUSTOMER_ID=>..., Customer::A_MLM_ID=>...], ...]
      */
-    private function _getForcedCustomersIds()
+    private function getForcedCustomersIds()
     {
         $mlmIds = array_keys($this->QUALIFIED_CUSTOMERS);
         $where = '';
@@ -132,8 +135,8 @@ class Scheme
         $result = $pv;
         /* be sure to have _cached data */
         $this->getForcedQualificationCustomers();
-        if (in_array($custId, $this->_cachedForcedCustomerIds)) {
-            $custData = $this->_cachedForcedRanks[$custId];
+        if (in_array($custId, $this->cacheForcedCustomerIds)) {
+            $custData = $this->cacheForcedRanks[$custId];
             $qpv = $custData[$scheme][CfgParam::A_QUALIFY_PV];
             if ($result < $qpv) {
                 $result = $qpv;
@@ -149,29 +152,29 @@ class Scheme
      */
     public function getForcedQualificationCustomers()
     {
-        if (is_null($this->_cachedForcedRanks)) {
+        if (is_null($this->cacheForcedRanks)) {
             /* get Customer IDs from DB to map ranks to Mage IDs instead of MLM IDs */
-            $custIds = $this->_getForcedCustomersIds();
+            $custIds = $this->getForcedCustomersIds();
             /* get all ranks with configuration parameters for all schemes */
-            $ranks = $this->_getCfgParamsByRanks();
-            $this->_cachedForcedRanks = [];
+            $ranks = $this->getCfgParamsByRanks();
+            $this->cacheForcedRanks = [];
             foreach ($custIds as $item) {
                 $custId = $item[Customer::A_CUSTOMER_ID];
                 $ref = $item[Customer::A_MLM_ID];
                 $rankCode = $this->QUALIFIED_CUSTOMERS[$ref][1];
                 $cfgParamsWithSchemes = $ranks[$rankCode];
-                $this->_cachedForcedRanks[$custId] = $cfgParamsWithSchemes;
+                $this->cacheForcedRanks[$custId] = $cfgParamsWithSchemes;
             }
             /* compose map from customer IDs for quick search */
-            $this->_cachedForcedCustomerIds = array_keys($this->_cachedForcedRanks);
+            $this->cacheForcedCustomerIds = array_keys($this->cacheForcedRanks);
         }
-        return $this->_cachedForcedRanks;
+        return $this->cacheForcedRanks;
     }
 
     public function getForcedQualificationCustomersIds()
     {
         $this->getForcedQualificationCustomers();
-        return $this->_cachedForcedCustomerIds;
+        return $this->cacheForcedCustomerIds;
     }
 
     public function getForcedQualificationRank($custId, $scheme)
@@ -189,19 +192,19 @@ class Scheme
      */
     protected function getForcedSignUpDebitCustIds()
     {
-        if (is_null($this->cachedSignUpDebitCustIds)) {
+        if (is_null($this->cacheSignUpDebitCustIds)) {
             $ids = [];
-            $calcId = $this->queryGetLastSignupCalcId->exec();
+            $calcId = $this->queryGetLastSignUpCalcId->exec();
             $where = \Praxigento\BonusHybrid\Repo\Data\Registry\SignUpDebit::A_CALC_REF . '=' . (int)$calcId;
             $rs = $this->daoRegSignUpDebit->get($where);
+            /** @var \Praxigento\BonusHybrid\Repo\Data\Registry\SignUpDebit $one */
             foreach ($rs as $one) {
-                /* TODO: use as object not as array */
-                $one = (array)$one->get();
-                $ids[] = $one[\Praxigento\BonusHybrid\Repo\Data\Registry\SignUpDebit::A_CUST_REF];
+                $custRef = $one->getCustomerRef();
+                $ids[] = $custRef;
             }
-            $this->cachedSignUpDebitCustIds = $ids;
+            $this->cacheSignUpDebitCustIds = $ids;
         }
-        return $this->cachedSignUpDebitCustIds;
+        return $this->cacheSignUpDebitCustIds;
 
     }
 
@@ -210,8 +213,8 @@ class Scheme
         $result = $tv;
         /* be sure to have _cached data */
         $this->getForcedQualificationCustomers();
-        if (in_array($custId, $this->_cachedForcedCustomerIds)) {
-            $custData = $this->_cachedForcedRanks[$custId];
+        if (in_array($custId, $this->cacheForcedCustomerIds)) {
+            $custData = $this->cacheForcedRanks[$custId];
             $qpv = $custData[$scheme][CfgParam::A_QUALIFY_TV];
             if ($result < $qpv) {
                 $result = $qpv;

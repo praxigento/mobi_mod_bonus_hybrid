@@ -11,10 +11,10 @@ use Praxigento\BonusBase\Repo\Data\Log\Opers as LogOpers;
 use Praxigento\BonusBase\Repo\Data\Log\Sales as LogSales;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Registry\SignUpDebit as RegSignup;
-use Praxigento\BonusHybrid\Repo\Query\SignUpDebit\GetOrders\Builder as Query;
+use Praxigento\BonusHybrid\Service\Calc\SignUpDebit\A\Repo\Query\GetOrders as QGetOrders;
 
 /**
- * Debit 100 PV from customer & add 34.00 AMNT to parent's wallet.
+ * Debit 100 PV from customer & add 34.00 AMNT to parent's bonus.
  */
 class ProcessOrders
 {
@@ -26,8 +26,8 @@ class ProcessOrders
      * Should be 2 chars length.
      */
     const PREFIX_PV = 'pv';
-    const PREFIX_WALLET_FATHER = 'wf';
-    const PREFIX_WALLET_GRAND = 'wg';
+    const PREFIX_BONUS_FATHER = 'wf';
+    const PREFIX_BONUS_GRAND = 'wg';
 
     /** @var \Praxigento\BonusBase\Repo\Dao\Log\Customers */
     private $daoLogCust;
@@ -73,7 +73,7 @@ class ProcessOrders
         $calcId = $opts[self::OPT_CALC_ID];
         /* get system accounts */
         $accPvSys = $this->getAccSys(Cfg::CODE_TYPE_ASSET_PV);
-        $accWalletSys = $this->getAccSys(Cfg::CODE_TYPE_ASSET_BONUS);
+        $accBonusSys = $this->getAccSys(Cfg::CODE_TYPE_ASSET_BONUS);
         /* Create one operation for all transactions */
         $req = new \Praxigento\Accounting\Api\Service\Operation\Request();
         $req->setOperationTypeCode(Cfg::CODE_TYPE_OPER_BONUS_SIGNUP_DEBIT);
@@ -82,16 +82,17 @@ class ProcessOrders
         /* prepare transactions */
         $trans = [];
         foreach ($orders as $one) {
-            $custId = $one[Query::A_CUST_ID];
-            $parentId = $one[Query::A_PARENT_ID];
-            $grandId = $one[Query::A_PARENT_GRAND_ID];
-            $orderId = $one[Query::A_ORDER_ID];
+            $custId = $one[QGetOrders::A_CUST_ID];
+            $parentId = $one[QGetOrders::A_PARENT_ID];
+            $grandId = $one[QGetOrders::A_PARENT_GRAND_ID];
+            $orderId = $one[QGetOrders::A_ORDER_ID];
             $scheme = $this->hlpScheme->getSchemeByCustomer($one);
+            /** Sign Up Debit bonus is applied for EU customers only */
             if ($scheme == Cfg::SCHEMA_EU) {
                 /* prepare data for transactions */
                 $accPvCust = $this->getAccCust(Cfg::CODE_TYPE_ASSET_PV, $custId);
-                $accWalletParent = $this->getAccCust(Cfg::CODE_TYPE_ASSET_BONUS, $parentId);
-                $accWalletGrand = $this->getAccCust(Cfg::CODE_TYPE_ASSET_BONUS, $grandId);
+                $accBonusParent = $this->getAccCust(Cfg::CODE_TYPE_ASSET_BONUS, $parentId);
+                $accBonusGrand = $this->getAccCust(Cfg::CODE_TYPE_ASSET_BONUS, $grandId);
                 /* add PV transaction */
                 $tranPvOff = [
                     Trans::A_DEBIT_ACC_ID => $accPvCust,
@@ -101,24 +102,24 @@ class ProcessOrders
                     $transRef => self::PREFIX_PV . $orderId
                 ];
                 $trans[] = $tranPvOff;
-                /* add Wallet transaction for "father" */
-                $tranWalletFatherOn = [
-                    Trans::A_DEBIT_ACC_ID => $accWalletSys,
-                    Trans::A_CREDIT_ACC_ID => $accWalletParent,
+                /* add BONUS transaction for "father" */
+                $tranBonusFatherOn = [
+                    Trans::A_DEBIT_ACC_ID => $accBonusSys,
+                    Trans::A_CREDIT_ACC_ID => $accBonusParent,
                     Trans::A_DATE_APPLIED => $dateApplied,
-                    Trans::A_VALUE => Cfg::SIGNUP_DEBIT_WALLET_FATHER,
-                    $transRef => self::PREFIX_WALLET_FATHER . $orderId
+                    Trans::A_VALUE => Cfg::SIGNUP_DEBIT_BONUS_FATHER,
+                    $transRef => self::PREFIX_BONUS_FATHER . $orderId
                 ];
-                $trans[] = $tranWalletFatherOn;
-                /* add Wallet transaction for "grand" */
-                $tranWalletFatherOn = [
-                    Trans::A_DEBIT_ACC_ID => $accWalletSys,
-                    Trans::A_CREDIT_ACC_ID => $accWalletGrand,
+                $trans[] = $tranBonusFatherOn;
+                /* add BONUS transaction for "grand" */
+                $tranBonusFatherOn = [
+                    Trans::A_DEBIT_ACC_ID => $accBonusSys,
+                    Trans::A_CREDIT_ACC_ID => $accBonusGrand,
                     Trans::A_DATE_APPLIED => $dateApplied,
-                    Trans::A_VALUE => Cfg::SIGNUP_DEBIT_WALLET_GRAND,
-                    $transRef => self::PREFIX_WALLET_GRAND . $orderId
+                    Trans::A_VALUE => Cfg::SIGNUP_DEBIT_BONUS_GRAND,
+                    $transRef => self::PREFIX_BONUS_GRAND . $orderId
                 ];
-                $trans[] = $tranWalletFatherOn;
+                $trans[] = $tranBonusFatherOn;
             }
         }
         $req->setTransactions($trans);
@@ -134,8 +135,8 @@ class ProcessOrders
         ]);
         /* save customers into Sign Up Registry */
         foreach ($orders as $one) {
-            $custId = $one[Query::A_CUST_ID];
-            $orderId = $one[Query::A_ORDER_ID];
+            $custId = $one[QGetOrders::A_CUST_ID];
+            $orderId = $one[QGetOrders::A_ORDER_ID];
             $this->daoRegSignUpDebit->create([
                 RegSignup::A_CALC_REF => $calcId,
                 RegSignup::A_CUST_REF => $custId,
@@ -189,7 +190,7 @@ class ProcessOrders
             $orderId = str_replace($pref, '', $one);
             if ($pref == self::PREFIX_PV) {
                 /* log PV off & order itself*/
-                $custId = $orders[$orderId][Query::A_CUST_ID];
+                $custId = $orders[$orderId][QGetOrders::A_CUST_ID];
                 $this->daoLogCust->create([
                     LogCust::A_TRANS_ID => $tranId,
                     LogCust::A_CUSTOMER_ID => $custId
@@ -198,16 +199,16 @@ class ProcessOrders
                     LogSales::A_TRANS_ID => $tranId,
                     LogSales::A_SALE_ORDER_ID => $orderId
                 ]);
-            } elseif ($pref == self::PREFIX_WALLET_FATHER) {
-                /* log Wallet Father On */
-                $custId = $orders[$orderId][Query::A_PARENT_ID];
+            } elseif ($pref == self::PREFIX_BONUS_FATHER) {
+                /* log BONUS Father On */
+                $custId = $orders[$orderId][QGetOrders::A_PARENT_ID];
                 $this->daoLogCust->create([
                     LogCust::A_TRANS_ID => $tranId,
                     LogCust::A_CUSTOMER_ID => $custId
                 ]);
             } else {
-                /* log Wallet Grand On */
-                $custId = $orders[$orderId][Query::A_PARENT_GRAND_ID];
+                /* log BONUS Grand On */
+                $custId = $orders[$orderId][QGetOrders::A_PARENT_GRAND_ID];
                 $this->daoLogCust->create([
                     LogCust::A_TRANS_ID => $tranId,
                     LogCust::A_CUSTOMER_ID => $custId
