@@ -77,7 +77,10 @@ class ProcessOrders
         /* Create one operation for all transactions */
         $req = new \Praxigento\Accounting\Api\Service\Operation\Request();
         $req->setOperationTypeCode(Cfg::CODE_TYPE_OPER_BONUS_SIGNUP_DEBIT);
-        $req->setOperationNote('SignUp Debit Bonus');
+        $period = substr($dateApplied, 0, 7);
+        $period = str_replace('-', '', $period);
+        $note = "Sign Up Debit ($period)";
+        $req->setOperationNote($note);
         $transRef = 'ref';
         $req->setAsTransRef($transRef);
         /* prepare transactions */

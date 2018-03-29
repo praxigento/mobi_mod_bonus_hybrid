@@ -36,9 +36,12 @@ class PrepareTrans
 
     /**
      * @param DBonus[] $bonus
-     * @param $dateApplied
+     * @param string $dateApplied
+     * @param string $note transaction note
+     * @return array
+     * @throws \Exception
      */
-    public function exec($bonus, $dateApplied)
+    public function exec($bonus, $dateApplied, $note)
     {
         $assetTypeId = $this->daoAssetType->getIdByCode(Cfg::CODE_TYPE_ASSET_BONUS);
         $sysAccId = $this->daoAcc->getSystemAccountId($assetTypeId);
@@ -61,6 +64,7 @@ class PrepareTrans
                 $tran->setCreditAccId($accId);
                 $tran->setDateApplied($dateApplied);
                 $tran->setValue($value);
+                $tran->setNote($note);
                 $tran->set(self::REF_DONATOR_ID, $donatorId);
                 $result[] = $tran;
             } else {

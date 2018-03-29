@@ -172,7 +172,9 @@ class Personal
     {
         $dsEnd = $period->getDstampEnd();
         $dateApplied = $this->hlpPeriod->getTimestampUpTo($dsEnd);
-        $result = $this->hlpTrans->exec($bonus, $dateApplied);
+        $yyyymm = substr($dsEnd, 0, 6);
+        $note = "Personal ($yyyymm)";
+        $result = $this->hlpTrans->exec($bonus, $dateApplied, $note);
         return $result;
     }
 

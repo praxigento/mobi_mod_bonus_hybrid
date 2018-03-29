@@ -10,32 +10,36 @@ use Praxigento\BonusHybrid\Config as Cfg;
 
 /**
  * Prepare transaction data to register "PV Write Off" operation.
- *
- * TODO: merge with \Praxigento\BonusHybrid\Service\Calc\Personal\PrepareTrans
  */
 class PrepareTrans
 {
     /** @var \Praxigento\Accounting\Repo\Dao\Account */
     private $daoAcc;
     /** @var \Praxigento\Accounting\Repo\Dao\Type\Asset */
-    private $daoAssetType;
+    private $daoTypeAsset;
 
     public function __construct(
         \Praxigento\Accounting\Repo\Dao\Account $daoAcc,
-        \Praxigento\Accounting\Repo\Dao\Type\Asset $daoAssetType
+        \Praxigento\Accounting\Repo\Dao\Type\Asset $daoTypeAsset
     )
     {
         $this->daoAcc = $daoAcc;
-        $this->daoAssetType = $daoAssetType;
+        $this->daoTypeAsset = $daoTypeAsset;
     }
 
     /**
      * @param array $turnover [$accId => $turnover]; see ..\PvWriteOff::groupPvTrans
+     * @param string $dateApplied '2017-01-31 23:59:59'
+     * @return array
+     * @throws \Exception
      */
     public function exec($turnover, $dateApplied)
     {
-        $assetTypeId = $this->daoAssetType->getIdByCode(Cfg::CODE_TYPE_ASSET_PV);
+        $assetTypeId = $this->daoTypeAsset->getIdByCode(Cfg::CODE_TYPE_ASSET_PV);
         $sysAccId = $this->daoAcc->getSystemAccountId($assetTypeId);
+        $period = substr($dateApplied, 0, 7);
+        $period = str_replace('-', '', $period);
+        $note = "PV Write Off ($period)";
         $result = [];
         foreach ($turnover as $accId => $value) {
             if ($value > Cfg::DEF_ZERO) {
@@ -47,6 +51,7 @@ class PrepareTrans
                 $tran->setDebitAccId($accId);
                 $tran->setCreditAccId($sysAccId);
                 $tran->setDateApplied($dateApplied);
+                $tran->setNote($note);
                 $tran->setValue($value);
                 $result[] = $tran;
             } else {

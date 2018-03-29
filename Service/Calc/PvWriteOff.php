@@ -13,7 +13,7 @@ class PvWriteOff
     implements \Praxigento\Core\App\Service\IProcess
 {
     /** @var \Praxigento\Accounting\Service\Operation */
-    private $callOperation;
+    private $servOperation;
     /** @var \Praxigento\Core\Api\Helper\Date */
     private $hlpDate;
     /** @var  \Praxigento\Core\Api\Helper\Period */
@@ -21,7 +21,7 @@ class PvWriteOff
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
-    private $procPeriodGet;
+    private $servPeriodGet;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $daoCalc;
     /** @var \Praxigento\BonusBase\Repo\Dao\Log\Opers */
@@ -31,11 +31,11 @@ class PvWriteOff
     /** @var  \Praxigento\Accounting\Repo\Dao\Type\Operation */
     private $daoTypeOper;
     /** @var \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Query\GetData\Builder */
-    private $sqbGetData;
+    private $qbGetData;
     /** @var \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\PrepareTrans */
-    private $subPrepareTrans;
+    private $ownPrepareTrans;
     /** @var \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\SaveDownline */
-    private $subSaveDownline;
+    private $ownSaveDownline;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
@@ -45,11 +45,11 @@ class PvWriteOff
         \Praxigento\Accounting\Repo\Dao\Type\Operation $daoTypeOper,
         \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
         \Praxigento\BonusBase\Repo\Dao\Log\Opers $daoLogOper,
-        \Praxigento\Accounting\Service\Operation $callOperation,
-        \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
-        \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Query\GetData\Builder $sqbGetData,
-        \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\PrepareTrans $subPrepareTrans,
-        \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\SaveDownline $subSaveDownline
+        \Praxigento\Accounting\Service\Operation $servOperation,
+        \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $servPeriodGet,
+        \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Query\GetData\Builder $qbGetData,
+        \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\PrepareTrans $ownPrepareTrans,
+        \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\SaveDownline $ownSaveDownline
     )
     {
         $this->logger = $logger;
@@ -59,11 +59,11 @@ class PvWriteOff
         $this->daoTypeOper = $daoTypeOper;
         $this->daoCalc = $daoCalc;
         $this->daoLogOper = $daoLogOper;
-        $this->callOperation = $callOperation;
-        $this->procPeriodGet = $procPeriodGet;
-        $this->sqbGetData = $sqbGetData;
-        $this->subPrepareTrans = $subPrepareTrans;
-        $this->subSaveDownline = $subSaveDownline;
+        $this->servOperation = $servOperation;
+        $this->servPeriodGet = $servPeriodGet;
+        $this->qbGetData = $qbGetData;
+        $this->ownPrepareTrans = $ownPrepareTrans;
+        $this->ownSaveDownline = $ownSaveDownline;
     }
 
     /**
@@ -71,20 +71,20 @@ class PvWriteOff
      *
      * @param \Praxigento\Accounting\Repo\Data\Transaction[] $trans
      * @param string $dsBegin
-     * @param string $dsEnd
      * @return int operation ID
      * @throws \Exception
      */
-    private function createOperation($trans, $dsBegin, $dsEnd)
+    private function createOperation($trans, $dsBegin)
     {
         $datePerformed = $this->hlpDate->getUtcNowForDb();
         $req = new \Praxigento\Accounting\Api\Service\Operation\Request();
         $req->setOperationTypeCode(Cfg::CODE_TYPE_OPER_PV_WRITE_OFF);
         $req->setDatePerformed($datePerformed);
         $req->setTransactions($trans);
-        $note = "PV Write Off ($dsBegin-$dsEnd)";
+        $period = substr($dsBegin, 0, 6);
+        $note = "PV Write Off ($period)";
         $req->setOperationNote($note);
-        $resp = $this->callOperation->exec($req);
+        $resp = $this->servOperation->exec($req);
         $result = $resp->getOperationId();
         return $result;
     }
@@ -110,7 +110,7 @@ class PvWriteOff
         /* create 'PV Write Off' operation */
         $operId = $this->createOperation($trans, $dsBegin, $dsEnd);
         /* calculate PV/TV/OV and save plain downline */
-        $this->subSaveDownline->exec($calcId, $dsEnd, $balances);
+        $this->ownSaveDownline->exec($calcId, $dsEnd, $balances);
         /* register operation in log */
         $this->saveLog($operId, $calcId);
         /* mark this calculation complete */
@@ -129,13 +129,13 @@ class PvWriteOff
     {
         /* get period & calc data */
         $ctx = new \Praxigento\Core\Data();
-        $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_BONUS_SIGN_UP_DEBIT);
-        $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
-        $this->procPeriodGet->exec($ctx);
+        $ctx->set($this->servPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_BONUS_SIGN_UP_DEBIT);
+        $ctx->set($this->servPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
+        $this->servPeriodGet->exec($ctx);
         /** @var \Praxigento\BonusBase\Repo\Data\Period $periodData */
-        $periodData = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_PERIOD_DATA);
+        $periodData = $ctx->get($this->servPeriodGet::CTX_OUT_DEP_PERIOD_DATA);
         /** @var \Praxigento\BonusBase\Repo\Data\Calculation $calcData */
-        $calcData = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
+        $calcData = $ctx->get($this->servPeriodGet::CTX_OUT_DEP_CALC_DATA);
         $result = [$periodData, $calcData];
         return $result;
     }
@@ -150,7 +150,7 @@ class PvWriteOff
     private function getTransactions($turnover, $dsEnd)
     {
         $dateApplied = $this->hlpPeriod->getTimestampUpTo($dsEnd);
-        $result = $this->subPrepareTrans->exec($turnover, $dateApplied);
+        $result = $this->ownPrepareTrans->exec($turnover, $dateApplied);
         return $result;
     }
 
@@ -168,11 +168,11 @@ class PvWriteOff
         $dateFrom = $this->hlpPeriod->getTimestampFrom($dsBegin);
         $dateTo = $this->hlpPeriod->getTimestampNextFrom($dsEnd);
 
-        $query = $this->sqbGetData->build();
+        $query = $this->qbGetData->build();
         $bind = [
-            $this->sqbGetData::BND_ASSET_TYPE_ID => $assetTypeId,
-            $this->sqbGetData::BND_DATE_FROM => $dateFrom,
-            $this->sqbGetData::BND_DATE_TO => $dateTo
+            $this->qbGetData::BND_ASSET_TYPE_ID => $assetTypeId,
+            $this->qbGetData::BND_DATE_FROM => $dateFrom,
+            $this->qbGetData::BND_DATE_TO => $dateTo
         ];
 
         $conn = $query->getConnection();
