@@ -13,7 +13,11 @@ use Praxigento\BonusHybrid\Config as Cfg;
  * Calculate Team Bonus.
  */
 class Team
+    implements \Praxigento\Core\App\Service\IProcess
 {
+    /** Calculation scheme (DEFAULT or EU) */
+    const CTX_IN_SCHEME = 'in.scheme';
+
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Helper\CreateOper */
     private $hlpOper;
     /** @var  \Praxigento\Core\Api\Helper\Period */

@@ -12,6 +12,7 @@ use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase1 as PPhase1;
 use Praxigento\Downline\Repo\Query\Snap\OnDate\Builder as QBSnap;
 
 class Phase1
+    implements \Praxigento\Core\App\Service\IProcess
 {
     /** @var \Praxigento\Downline\Helper\Tree */
     private $hlpDwnlTree;

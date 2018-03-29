@@ -8,6 +8,7 @@ namespace Praxigento\BonusHybrid\Service\Calc;
 use Praxigento\BonusHybrid\Config as Cfg;
 
 class SignUpDebit
+    implements \Praxigento\Core\App\Service\IProcess
 {
     /** @var  \Praxigento\Core\Api\Helper\Period */
     private $hlpPeriod;

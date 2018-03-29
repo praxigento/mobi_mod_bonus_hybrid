@@ -10,6 +10,7 @@ use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Data\Trans as DTrans;
 
 class PvWriteOff
+    implements \Praxigento\Core\App\Service\IProcess
 {
     /** @var \Praxigento\Accounting\Service\Operation */
     private $callOperation;
@@ -178,7 +179,7 @@ class PvWriteOff
         $rs = $conn->fetchAll($query, $bind);
         $result = [];
         foreach ($rs as $one) {
-            $item = new PvWriteOff\Data\Trans($one);
+            $item = new \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Data\Trans($one);
             $result[] = $item;
         }
         return $result;
@@ -187,7 +188,7 @@ class PvWriteOff
     /**
      * Collect PV transitions on accounts and get PV turnover for period.
      *
-     * @param PvWriteOff\Data\Trans[] $transData
+     * @param \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Data\Trans[] $transData
      * @return array [accId => pvTurnover]
      */
     private function groupPvTrans($transData)

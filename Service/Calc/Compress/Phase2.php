@@ -9,7 +9,10 @@ use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase2 as PCpmrsPhase2;
 
 class Phase2
+    implements \Praxigento\Core\App\Service\IProcess
 {
+    /** Calculation scheme (DEFAULT or EU) */
+    const CTX_IN_SCHEME = 'in.scheme';
 
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;

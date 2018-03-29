@@ -17,6 +17,7 @@ use Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\GetPlainData as PGetPl
 use Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\UpdateDwnl as PUpdateDwnl;
 
 class Compress
+    implements \Praxigento\Core\App\Service\IProcess
 {
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;

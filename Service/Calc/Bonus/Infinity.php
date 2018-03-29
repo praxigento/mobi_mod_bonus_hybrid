@@ -13,6 +13,7 @@ use Praxigento\BonusHybrid\Config as Cfg;
  * Calculate Infinity Bonus.
  */
 class Infinity
+    implements \Praxigento\Core\App\Service\IProcess
 {
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Helper\CreateOper */
     private $hlpOper;
