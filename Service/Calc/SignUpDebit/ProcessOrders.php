@@ -64,7 +64,7 @@ class ProcessOrders
 
     /**
      * @param array $opts
-     * @return array
+     * @throws \Exception
      */
     public function exec($opts)
     {
@@ -77,6 +77,7 @@ class ProcessOrders
         /* Create one operation for all transactions */
         $req = new \Praxigento\Accounting\Api\Service\Operation\Request();
         $req->setOperationTypeCode(Cfg::CODE_TYPE_OPER_BONUS_SIGNUP_DEBIT);
+        $req->setOperationNote('SignUp Debit Bonus');
         $transRef = 'ref';
         $req->setAsTransRef($transRef);
         /* prepare transactions */
@@ -93,12 +94,14 @@ class ProcessOrders
                 $accPvCust = $this->getAccCust(Cfg::CODE_TYPE_ASSET_PV, $custId);
                 $accBonusParent = $this->getAccCust(Cfg::CODE_TYPE_ASSET_BONUS, $parentId);
                 $accBonusGrand = $this->getAccCust(Cfg::CODE_TYPE_ASSET_BONUS, $grandId);
+                $note = 'Sign Up Debit bonus for order #' . $orderId;
                 /* add PV transaction */
                 $tranPvOff = [
                     Trans::A_DEBIT_ACC_ID => $accPvCust,
                     Trans::A_CREDIT_ACC_ID => $accPvSys,
                     Trans::A_DATE_APPLIED => $dateApplied,
                     Trans::A_VALUE => Cfg::SIGNUP_DEBIT_PV,
+                    Trans::A_NOTE => $note,
                     $transRef => self::PREFIX_PV . $orderId
                 ];
                 $trans[] = $tranPvOff;
@@ -108,6 +111,7 @@ class ProcessOrders
                     Trans::A_CREDIT_ACC_ID => $accBonusParent,
                     Trans::A_DATE_APPLIED => $dateApplied,
                     Trans::A_VALUE => Cfg::SIGNUP_DEBIT_BONUS_FATHER,
+                    Trans::A_NOTE => $note,
                     $transRef => self::PREFIX_BONUS_FATHER . $orderId
                 ];
                 $trans[] = $tranBonusFatherOn;

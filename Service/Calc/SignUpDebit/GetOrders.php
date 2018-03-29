@@ -28,8 +28,8 @@ class GetOrders
         $query = $this->qbuildGetOrders->build();
         $conn = $query->getConnection();
         $rs = $conn->fetchAll($query, [
-            \Praxigento\BonusHybrid\Service\Calc\SignUpDebit\A\Repo\Query\GetOrders::BIND_DATE_FROM => $dateFrom,
-            \Praxigento\BonusHybrid\Service\Calc\SignUpDebit\A\Repo\Query\GetOrders::BIND_DATE_TO => $dateTo
+            \Praxigento\BonusHybrid\Service\Calc\SignUpDebit\A\Repo\Query\GetOrders::BND_DATE_FROM => $dateFrom,
+            \Praxigento\BonusHybrid\Service\Calc\SignUpDebit\A\Repo\Query\GetOrders::BND_DATE_TO => $dateTo
         ]);
         /* leave first order for customer */
         $result = [];
