@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv;
+namespace Praxigento\BonusHybrid\Service\Calc\Compress\Z\Repo\Query;
 
 use Praxigento\Accounting\Repo\Data\Account as EAcc;
 use Praxigento\Accounting\Repo\Data\Operation as EOper;
@@ -14,16 +14,16 @@ use Praxigento\BonusHybrid\Config as Cfg;
 /**
  * Build query to get PV data for phase 1 compression.
  */
-class Builder
+class GetPhase1Pv
     extends \Praxigento\Core\App\Repo\Query\Builder
 {
     /**
      * Tables aliases.
      */
-    const AS_TBL_ACC = 'acc';
-    const AS_TBL_LOG = 'log';
-    const AS_TBL_OPER = 'oper';
-    const AS_TBL_TRANS = 'trans';
+    const AS_ACC = 'acc';
+    const AS_LOG = 'log';
+    const AS_OPER = 'oper';
+    const AS_TRANS = 'trans';
     /**
      * Attributes aliases.
      */
@@ -33,7 +33,7 @@ class Builder
     /**
      * Bound variables names
      */
-    const BIND_CALC_ID = 'calcId';
+    const BND_CALC_ID = 'calcId';
 
     /** @var  \Praxigento\Accounting\Repo\Dao\Type\Operation */
     private $daoTypeOper;
@@ -53,10 +53,10 @@ class Builder
         $result = $this->conn->select(); // this is root builder
 
         /* define tables aliases */
-        $asAcc = self::AS_TBL_ACC;
-        $asLog = self::AS_TBL_LOG;
-        $asOper = self::AS_TBL_OPER;
-        $asTrans = self::AS_TBL_TRANS;
+        $asAcc = self::AS_ACC;
+        $asLog = self::AS_LOG;
+        $asOper = self::AS_OPER;
+        $asTrans = self::AS_TRANS;
 
         /* SELECT FROM prxgt_bon_base_log_opers */
         $tbl = $this->resource->getTableName(ELogOpers::ENTITY_NAME);
@@ -91,7 +91,7 @@ class Builder
 
         // where
         $operTypeId = (int)$this->getPvWriteOffOperTypeId();
-        $whereByCalcId = "($asLog." . ELogOpers::A_CALC_ID . '=:' . self::BIND_CALC_ID . ')';
+        $whereByCalcId = "($asLog." . ELogOpers::A_CALC_ID . '=:' . self::BND_CALC_ID . ')';
         $whereByOperType = "($asOper." . EOper::A_TYPE_ID . "=$operTypeId)";
         $result->where("$whereByOperType AND $whereByCalcId");
 

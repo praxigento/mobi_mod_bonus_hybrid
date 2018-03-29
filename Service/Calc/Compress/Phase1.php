@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Compress;
 
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
-use Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder as QBldGetPv;
+use Praxigento\BonusHybrid\Service\Calc\Compress\Z\Repo\Query\GetPhase1Pv as QBldGetPv;
 use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase1 as PPhase1;
 use Praxigento\Downline\Repo\Query\Snap\OnDate\Builder as QBSnap;
 
@@ -22,7 +22,7 @@ class Phase1
     private $procPeriodGet;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase1 */
     private $procPhase1;
-    /** @var \Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder */
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\Z\Repo\Query\GetPhase1Pv */
     private $qbGetPv;
     /** @var \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder */
     private $qbSnapOnDate;
@@ -42,7 +42,7 @@ class Phase1
         \Praxigento\BonusBase\Repo\Dao\Rank $daoRank,
         \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
         \Praxigento\BonusHybrid\Repo\Dao\Compression\Phase1\Transfer\Pv $daoTransPv,
-        \Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder $qbGetPv,
+        \Praxigento\BonusHybrid\Service\Calc\Compress\Z\Repo\Query\GetPhase1Pv $qbGetPv,
         \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder $qbSnapOnDate,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase1 $procPhase1
@@ -181,7 +181,7 @@ class Phase1
     {
         $query = $this->qbGetPv->build();
         $conn = $query->getConnection();
-        $bind = [QBldGetPv::BIND_CALC_ID => $calcId];
+        $bind = [QBldGetPv::BND_CALC_ID => $calcId];
         $data = $conn->fetchAll($query, $bind);
         $result = $this->hlpDwnlTree->mapValueById($data, QBldGetPv::A_CUST_ID, QBldGetPv::A_PV);
         return $result;
