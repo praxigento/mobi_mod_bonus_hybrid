@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Helper\Data;
+namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Data;
 /**
  * Data object to structure results of the team bonus calculation.
  *

@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Courtesy;
 
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
-use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Helper\Data\Bonus as DBonus;
+use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Data\Bonus as DBonus;
 use Praxigento\Downline\Repo\Data\Customer as ECustomer;
 
 class Calc

@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Bonus;
 
 use Praxigento\BonusBase\Repo\Data\Log\Opers as ELogOper;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Helper\Data\Bonus as DBonus;
+use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Data\Bonus as DBonus;
 use Praxigento\Downline\Repo\Data\Customer as ECustomer;
 
 /**

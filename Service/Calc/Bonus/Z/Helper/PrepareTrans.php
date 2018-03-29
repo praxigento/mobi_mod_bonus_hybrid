@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Helper;
 
 use Praxigento\Accounting\Repo\Data\Transaction as ETrans;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Helper\Data\Bonus as DBonus;
+use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Data\Bonus as DBonus;
 
 /**
  * Prepare transaction data to register bonus operation.

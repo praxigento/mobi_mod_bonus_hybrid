@@ -110,7 +110,7 @@ class Calc
                         $percent = ($ibPercent <= $ibPercentDelta) ? $ibPercent : $ibPercentDelta;
                         $bonus = $this->hlpFormat->roundBonus($pv * $percent);
                         /* add new bonus entry to results */
-                        $entry = new \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Helper\Data\Bonus();
+                        $entry = new \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Data\Bonus();
                         $entry->setCustomerRef($parentId);
                         $entry->setValue($bonus);
                         $entry->setDonatorRef($custId);
