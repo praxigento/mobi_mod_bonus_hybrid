@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Service\Calc\SignUpDebit;
+namespace Praxigento\BonusHybrid\Service\Calc\SignUpDebit\A;
 
 use Praxigento\Accounting\Repo\Data\Transaction as Trans;
 use Praxigento\BonusBase\Repo\Data\Log\Customers as LogCust;
@@ -21,6 +21,7 @@ class ProcessOrders
     const OPT_CALC_ID = 'calc_id';
     const OPT_DATE_APPLIED = 'date_applied';
     const OPT_ORDERS = 'orders';
+
     /**
      * Prefixes to map transactions to orders to log relations on operation post.
      * Should be 2 chars length.
@@ -63,14 +64,13 @@ class ProcessOrders
     }
 
     /**
-     * @param array $opts
+     * @param array $orders
+     * @param string $dateApplied
+     * @param int $calcId
      * @throws \Exception
      */
-    public function exec($opts)
+    public function exec($orders, $dateApplied, $calcId)
     {
-        $orders = $opts[self::OPT_ORDERS];
-        $dateApplied = $opts[self::OPT_DATE_APPLIED];
-        $calcId = $opts[self::OPT_CALC_ID];
         /* get system accounts */
         $accPvSys = $this->getAccSys(Cfg::CODE_TYPE_ASSET_PV);
         $accBonusSys = $this->getAccSys(Cfg::CODE_TYPE_ASSET_BONUS);
@@ -111,7 +111,7 @@ class ProcessOrders
                     Trans::A_CREDIT_ACC_ID => $accBonusParent,
                     Trans::A_DATE_APPLIED => $dateApplied,
                     Trans::A_VALUE => Cfg::SIGNUP_DEBIT_BONUS_FATHER,
-                    Trans::A_NOTE => $note,
+                    Trans::A_NOTE => $note . ' (level 1)',
                     $transRef => self::PREFIX_BONUS_FATHER . $orderId
                 ];
                 $trans[] = $tranBonusFatherOn;
@@ -121,6 +121,7 @@ class ProcessOrders
                     Trans::A_CREDIT_ACC_ID => $accBonusGrand,
                     Trans::A_DATE_APPLIED => $dateApplied,
                     Trans::A_VALUE => Cfg::SIGNUP_DEBIT_BONUS_GRAND,
+                    Trans::A_NOTE => $note . ' (level 2)',
                     $transRef => self::PREFIX_BONUS_GRAND . $orderId
                 ];
                 $trans[] = $tranBonusFatherOn;

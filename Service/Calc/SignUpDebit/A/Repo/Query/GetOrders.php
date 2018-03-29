@@ -10,7 +10,8 @@ use Praxigento\Downline\Repo\Data\Customer as EDwnlCust;
 use Praxigento\Pv\Repo\Data\Sale as EPvSale;
 
 /**
- * Query to get data to process 'Sign Up Volume Debit' bonus (signed customers with first order more then 100 PV).
+ * Query to get data to process 'Sign Up Volume Debit' bonus
+ * (this month's signed customers with first order more then 100 PV).
  */
 class GetOrders
     extends \Praxigento\Core\App\Repo\Query\Builder

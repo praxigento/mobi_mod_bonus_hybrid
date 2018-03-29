@@ -6,38 +6,39 @@
 namespace Praxigento\BonusHybrid\Service\Calc;
 
 use Praxigento\BonusHybrid\Config as Cfg;
+use Praxigento\BonusHybrid\Service\Calc\SignUpDebit\A\Repo\Query\GetOrders as QBGetOrders;
 
 class SignUpDebit
     implements \Praxigento\Core\App\Service\IProcess
 {
+    /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
+    private $daoCalc;
     /** @var  \Praxigento\Core\Api\Helper\Period */
     private $hlpPeriod;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
+    /** @var  \Praxigento\BonusHybrid\Service\Calc\SignUpDebit\A\ProcessOrders */
+    private $ownProcessOrders;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\SignUpDebit\A\Repo\Query\GetOrders */
+    private $qbGetOrders;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IBasis */
-    private $procPeriodGetBasis;
-    /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
-    private $daoCalc;
-    /** @var  \Praxigento\BonusHybrid\Service\Calc\SignUpDebit\GetOrders */
-    private $subGetOrders;
-    /** @var  \Praxigento\BonusHybrid\Service\Calc\SignUpDebit\ProcessOrders */
-    private $subProcessOrders;
+    private $servPeriodGetBasis;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
-        \Praxigento\BonusBase\Service\Period\Calc\Get\IBasis $procPeriodGetBasis,
-        \Praxigento\BonusHybrid\Service\Calc\SignUpDebit\GetOrders $subGetOrders,
-        \Praxigento\BonusHybrid\Service\Calc\SignUpDebit\ProcessOrders $subProcessOrders
+        \Praxigento\BonusHybrid\Service\Calc\SignUpDebit\A\Repo\Query\GetOrders $qbGetOrders,
+        \Praxigento\BonusBase\Service\Period\Calc\Get\IBasis $servPeriodGetBasis,
+        \Praxigento\BonusHybrid\Service\Calc\SignUpDebit\A\ProcessOrders $ownProcessOrders
     )
     {
         $this->logger = $logger;
         $this->hlpPeriod = $hlpPeriod;
         $this->daoCalc = $daoCalc;
-        $this->procPeriodGetBasis = $procPeriodGetBasis;
-        $this->subGetOrders = $subGetOrders;
-        $this->subProcessOrders = $subProcessOrders;
+        $this->qbGetOrders = $qbGetOrders;
+        $this->servPeriodGetBasis = $servPeriodGetBasis;
+        $this->ownProcessOrders = $ownProcessOrders;
     }
 
     public function exec(\Praxigento\Core\Data $ctx)
@@ -58,15 +59,8 @@ class SignUpDebit
         if ($calcState != Cfg::CALC_STATE_COMPLETE) {
             $dateApplied = $this->hlpPeriod->getTimestampUpTo($periodEnd);
             /* get first orders for just signed up customers */
-            $reqGetOrders = new \Praxigento\BonusHybrid\Service\Calc\SignUpDebit\GetOrders\Request();
-            $reqGetOrders->dateFrom = $this->hlpPeriod->getTimestampFrom($periodBegin);
-            $reqGetOrders->dateTo = $this->hlpPeriod->getTimestampTo($periodEnd);
-            $orders = $this->subGetOrders->exec($reqGetOrders);
-            $this->subProcessOrders->exec([
-                \Praxigento\BonusHybrid\Service\Calc\SignUpDebit\ProcessOrders::OPT_CALC_ID => $calcId,
-                \Praxigento\BonusHybrid\Service\Calc\SignUpDebit\ProcessOrders::OPT_ORDERS => $orders,
-                \Praxigento\BonusHybrid\Service\Calc\SignUpDebit\ProcessOrders::OPT_DATE_APPLIED => $dateApplied
-            ]);
+            $orders = $this->getOrders($periodBegin, $periodEnd);
+            $this->ownProcessOrders->exec($orders, $dateApplied, $calcId);
             /* mark this calculation complete */
             $this->daoCalc->markComplete($calcId);
             /* mark process as successful */
@@ -79,18 +73,44 @@ class SignUpDebit
      * Get data for dependent calculation.
      *
      * @return array [$periodData, $calcData]
+     * @throws \Exception
      */
     private function getCalcData()
     {
         /* get period & calc data (first calc in the chain) */
         $ctx = new \Praxigento\Core\Data();
-        $ctx->set($this->procPeriodGetBasis::CTX_IN_CALC_CODE, Cfg::CODE_TYPE_CALC_BONUS_SIGN_UP_DEBIT);
-        $ctx->set($this->procPeriodGetBasis::CTX_IN_ASSET_TYPE_CODE, Cfg::CODE_TYPE_ASSET_PV);
-        $ctx->set($this->procPeriodGetBasis::CTX_IN_PERIOD_TYPE, \Praxigento\Core\Api\Helper\Period::TYPE_MONTH);
-        $this->procPeriodGetBasis->exec($ctx);
-        $periodData = $ctx->get($this->procPeriodGetBasis::CTX_OUT_PERIOD_DATA);
-        $calcData = $ctx->get($this->procPeriodGetBasis::CTX_OUT_CALC_DATA);
+        $ctx->set($this->servPeriodGetBasis::CTX_IN_CALC_CODE, Cfg::CODE_TYPE_CALC_BONUS_SIGN_UP_DEBIT);
+        $ctx->set($this->servPeriodGetBasis::CTX_IN_ASSET_TYPE_CODE, Cfg::CODE_TYPE_ASSET_PV);
+        $ctx->set($this->servPeriodGetBasis::CTX_IN_PERIOD_TYPE, \Praxigento\Core\Api\Helper\Period::TYPE_MONTH);
+        $this->servPeriodGetBasis->exec($ctx);
+        $periodData = $ctx->get($this->servPeriodGetBasis::CTX_OUT_PERIOD_DATA);
+        $calcData = $ctx->get($this->servPeriodGetBasis::CTX_OUT_CALC_DATA);
         $result = [$periodData, $calcData];
+        return $result;
+    }
+
+    /**
+     * @param string $dateFrom
+     * @param string $dateTo
+     * @return array
+     */
+    private function getOrders($dateFrom, $dateTo)
+    {
+        /** @var  $query */
+        $query = $this->qbGetOrders->build();
+        $conn = $query->getConnection();
+        $rs = $conn->fetchAll($query, [
+            QBGetOrders::BND_DATE_FROM => $dateFrom,
+            QBGetOrders::BND_DATE_TO => $dateTo
+        ]);
+        /* only customer's first order should be included in the result set (apply to the bonus) */
+        $result = [];
+        foreach ($rs as $one) {
+            $orderId = $one[QBGetOrders::A_ORDER_ID];
+            if (!isset($result[$orderId])) {
+                $result[$orderId] = $one;
+            }
+        }
         return $result;
     }
 }
