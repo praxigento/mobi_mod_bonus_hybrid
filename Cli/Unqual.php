@@ -29,8 +29,8 @@ class Unqual
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Magento\Framework\App\ResourceConnection $resource,
         \Praxigento\BonusHybrid\Service\Calc\Inactive\Collect $procInactCollect,
-        \Praxigento\BonusHybrid\Service\Calc\Unqualified\Collect $procUnqualCollect,
-        \Praxigento\BonusHybrid\Service\Calc\Unqualified\Process $procUnqualProcess
+        \Praxigento\BonusHybrid\Service\Calc\Unqualified\Collect $servUnqualCollect,
+        \Praxigento\BonusHybrid\Service\Calc\Unqualified\Process $servUnqualProcess
     )
     {
         parent::__construct(
@@ -41,8 +41,8 @@ class Unqual
         $this->resource = $resource;
         $this->conn = $this->resource->getConnection();
         $this->procInactCollect = $procInactCollect;
-        $this->procUnqualCollect = $procUnqualCollect;
-        $this->procUnqualProcess = $procUnqualProcess;
+        $this->procUnqualCollect = $servUnqualCollect;
+        $this->procUnqualProcess = $servUnqualProcess;
     }
 
     private function calcInactCollect()

@@ -11,14 +11,14 @@ use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 /**
  * Calculate OV on the compressed downline tree.
  *
- * @deprecated use \Praxigento\BonusHybrid\Service\Calc\A\Proc\Ov
+ * @deprecated use \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Ov
  */
 class Calc
 {
     /** @var \Praxigento\Downline\Helper\Tree */
     private $hlpDwnlTree;
-    /** @var \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds */
-    private $hlpSignupDebitCust;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Z\Helper\GetCustomersIds */
+    private $hlpSignUpDebitCust;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
@@ -26,13 +26,13 @@ class Calc
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
-        \Praxigento\BonusHybrid\Helper\SignupDebit\GetCustomersIds $hlpSignupDebitCust,
+        \Praxigento\BonusHybrid\Service\Calc\Z\Helper\GetCustomersIds $hlpSignUpDebitCust,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl
     )
     {
         $this->logger = $logger;
-        $this->hlpSignupDebitCust = $hlpSignupDebitCust;
+        $this->hlpSignUpDebitCust = $hlpSignUpDebitCust;
         $this->hlpDwnlTree = $hlpDwnlTree;
         $this->daoBonDwnl = $daoBonDwnl;
     }
@@ -52,7 +52,7 @@ class Calc
         $mapById = $this->hlpDwnlTree->mapById($dwnlCompress, EBonDwnl::A_CUST_REF);
         $mapDepth = $this->hlpDwnlTree->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::A_CUST_REF, EBonDwnl::A_DEPTH);
         $mapTeams = $this->hlpDwnlTree->mapByTeams($dwnlCompress, EBonDwnl::A_CUST_REF, EBonDwnl::A_PARENT_REF);
-        $signupDebitCustomers = $this->hlpSignupDebitCust->exec();
+        $signupDebitCustomers = $this->hlpSignUpDebitCust->exec();
         /**
          * Scan downline by level from bottom to top
          */
@@ -63,8 +63,8 @@ class Calc
                 /** @var EBonDwnl $entity */
                 $entity = $mapById[$custId];
                 $ov = $entity->getPv(); // initial OV equals to customer's own PV
-                $isSignupDebit = in_array($custId, $signupDebitCustomers);
-                if ($isSignupDebit) {
+                $isSignUpDebit = in_array($custId, $signupDebitCustomers);
+                if ($isSignUpDebit) {
                     /* add written-off PV if customer was qualified to Sign Up Debit bonus */
                     $ov += Cfg::SIGNUP_DEBIT_PV;
                 }

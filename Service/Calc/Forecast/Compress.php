@@ -7,17 +7,16 @@ namespace Praxigento\BonusHybrid\Service\Calc\Forecast;
 
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
-use Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase1 as PCpmrsPhase1;
-use Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2 as PCpmrsPhase2;
-use Praxigento\BonusHybrid\Service\Calc\A\Proc\Ov as POv;
-use Praxigento\BonusHybrid\Service\Calc\A\Proc\Tv as PTv;
+use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase1 as PCpmrsPhase1;
+use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase2 as PCpmrsPhase2;
+use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Ov as POv;
+use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Tv as PTv;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Clean as PCalcClean;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Register as PCalcReg;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\GetPlainData as PGetPlainData;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\UpdateDwnl as PUpdateDwnl;
 
 class Compress
-    implements \Praxigento\BonusHybrid\Service\Calc\Forecast\ICompress
 {
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
@@ -25,15 +24,15 @@ class Compress
     private $procCalcClean;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Register */
     private $procCalcReg;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase1 */
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase1 */
     private $procCmprsPhase1;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2 */
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase2 */
     private $procCmprsPhase2;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\GetPlainData */
     private $procGetPlainData;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\A\Proc\Ov */
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Ov */
     private $procOv;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\A\Proc\Tv */
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Tv */
     private $procTv;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\UpdateDwnl */
     private $procUpdateDwnl;
@@ -46,10 +45,10 @@ class Compress
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
         \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
-        \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase1 $procCmprsPhase1,
-        \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase2 $procCmprsPhase2,
-        \Praxigento\BonusHybrid\Service\Calc\A\Proc\Tv $procTv,
-        \Praxigento\BonusHybrid\Service\Calc\A\Proc\Ov $procOv,
+        \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase1 $procCmprsPhase1,
+        \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase2 $procCmprsPhase2,
+        \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Tv $procTv,
+        \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Ov $procOv,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Clean $procCalcClean,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Register $procCalcReg,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\GetPlainData $procGetPlainData,

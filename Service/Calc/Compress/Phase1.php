@@ -8,11 +8,10 @@ namespace Praxigento\BonusHybrid\Service\Calc\Compress;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder as QBldGetPv;
-use Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase1 as PPhase1;
+use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase1 as PPhase1;
 use Praxigento\Downline\Repo\Query\Snap\OnDate\Builder as QBSnap;
 
 class Phase1
-    implements \Praxigento\BonusHybrid\Service\Calc\Compress\IPhase1
 {
     /** @var \Praxigento\Downline\Helper\Tree */
     private $hlpDwnlTree;
@@ -20,7 +19,7 @@ class Phase1
     private $logger;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $procPeriodGet;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase1 */
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase1 */
     private $procPhase1;
     /** @var \Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder */
     private $qbGetPv;
@@ -45,7 +44,7 @@ class Phase1
         \Praxigento\BonusHybrid\Repo\Query\Compress\Phase1\GetPv\Builder $qbGetPv,
         \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder $qbSnapOnDate,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
-        \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase1 $procPhase1
+        \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase1 $procPhase1
     )
     {
         $this->logger = $logger;
@@ -189,7 +188,7 @@ class Phase1
 
     /**
      * @param array $snap snap data with PV (see
-     *     \Praxigento\BonusHybrid\Service\Calc\A\Proc\Compress\Phase1::populateCompressedSnapWithPv)
+     *     \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase1::populateCompressedSnapWithPv)
      * @param int $calcId
      */
     private function saveBonusDownline($snap, $calcId)

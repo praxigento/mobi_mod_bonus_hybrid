@@ -21,7 +21,7 @@ class SaveDownline
 {
     /** @var \Praxigento\Downline\Helper\Tree */
     private $hlpDwnl;
-    /** @var \Praxigento\BonusHybrid\Helper\IScheme */
+    /** @var \Praxigento\BonusHybrid\Api\Helper\Scheme */
     private $hlpScheme;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $daoBonDwnl;
@@ -34,7 +34,7 @@ class SaveDownline
 
     public function __construct(
         \Praxigento\Downline\Helper\Tree $hlpDwnl,
-        \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
+        \Praxigento\BonusHybrid\Api\Helper\Scheme $hlpScheme,
         \Praxigento\Downline\Repo\Dao\Customer $daoDwnlCust,
         \Praxigento\BonusHybrid\Repo\Dao\Compression\Phase2\Legs $daoLegs,
         \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,

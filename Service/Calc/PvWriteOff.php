@@ -7,10 +7,9 @@ namespace Praxigento\BonusHybrid\Service\Calc;
 
 use Praxigento\BonusBase\Repo\Data\Log\Opers as ELogOper;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Service\Calc\PvWriteOff\Data\Trans as DTrans;
+use Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Data\Trans as DTrans;
 
 class PvWriteOff
-    implements IPvWriteOff
 {
     /** @var \Praxigento\Accounting\Service\Operation */
     private $callOperation;
@@ -30,11 +29,11 @@ class PvWriteOff
     private $daoTypeAsset;
     /** @var  \Praxigento\Accounting\Repo\Dao\Type\Operation */
     private $daoTypeOper;
-    /** @var PvWriteOff\Query\GetData\Builder */
+    /** @var \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Query\GetData\Builder */
     private $sqbGetData;
-    /** @var PvWriteOff\PrepareTrans */
+    /** @var \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\PrepareTrans */
     private $subPrepareTrans;
-    /** @var PvWriteOff\SaveDownline */
+    /** @var \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\SaveDownline */
     private $subSaveDownline;
 
     public function __construct(
@@ -47,9 +46,9 @@ class PvWriteOff
         \Praxigento\BonusBase\Repo\Dao\Log\Opers $daoLogOper,
         \Praxigento\Accounting\Service\Operation $callOperation,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
-        PvWriteOff\Query\GetData\Builder $sqbGetData,
-        PvWriteOff\PrepareTrans $subPrepareTrans,
-        PvWriteOff\SaveDownline $subSaveDownline
+        \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Query\GetData\Builder $sqbGetData,
+        \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\PrepareTrans $subPrepareTrans,
+        \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\SaveDownline $subSaveDownline
     )
     {
         $this->logger = $logger;

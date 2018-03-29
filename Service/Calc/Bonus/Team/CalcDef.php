@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Team;
 
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
-use Praxigento\BonusHybrid\Service\Calc\A\Data\Bonus as DBonus;
+use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Helper\Data\Bonus as DBonus;
 use Praxigento\Downline\Repo\Data\Customer as ECustomer;
 
 /**
@@ -19,7 +19,7 @@ class CalcDef
     private $hlpDwnlTree;
     /** @var \Praxigento\Core\Api\Helper\Format */
     private $hlpFormat;
-    /** @var  \Praxigento\BonusHybrid\Helper\IScheme */
+    /** @var  \Praxigento\BonusHybrid\Api\Helper\Scheme */
     private $hlpScheme;
     /** @var \Praxigento\Downline\Api\Helper\Downline */
     private $hlpTree;
@@ -37,7 +37,7 @@ class CalcDef
         \Praxigento\Core\Api\Helper\Format $hlpFormat,
         \Praxigento\Downline\Api\Helper\Downline $hlpTree,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
-        \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
+        \Praxigento\BonusHybrid\Api\Helper\Scheme $hlpScheme,
         \Praxigento\Downline\Repo\Dao\Customer $daoDwnl,
         \Praxigento\BonusBase\Repo\Dao\Level $daoLevel,
         \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl

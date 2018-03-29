@@ -11,7 +11,6 @@ use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 
 class Tv
-    implements \Praxigento\BonusHybrid\Service\Calc\Value\ITv
 {
 
     /** @var \Praxigento\Core\Api\App\Logger\Main */

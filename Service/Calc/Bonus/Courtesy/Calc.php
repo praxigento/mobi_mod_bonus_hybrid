@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Courtesy;
 
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
-use Praxigento\BonusHybrid\Service\Calc\A\Data\Bonus as DBonus;
+use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Helper\Data\Bonus as DBonus;
 use Praxigento\Downline\Repo\Data\Customer as ECustomer;
 
 class Calc
@@ -16,7 +16,7 @@ class Calc
     private $hlpDwnlTree;
     /** @var \Praxigento\Core\Api\Helper\Format */
     private $hlpFormat;
-    /** @var  \Praxigento\BonusHybrid\Helper\IScheme */
+    /** @var  \Praxigento\BonusHybrid\Api\Helper\Scheme */
     private $hlpScheme;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
@@ -30,7 +30,7 @@ class Calc
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Core\Api\Helper\Format $hlpFormat,
-        \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
+        \Praxigento\BonusHybrid\Api\Helper\Scheme $hlpScheme,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusBase\Repo\Dao\Level $daoLevel,
         \Praxigento\Downline\Repo\Dao\Customer $daoDwnl,

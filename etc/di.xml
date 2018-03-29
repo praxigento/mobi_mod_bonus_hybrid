@@ -16,46 +16,11 @@
         </arguments>
     </type>
 
-    <!-- **** -->
-    <!-- Repo -->
-    <!-- **** -->
-
-    <!-- None -->
-
-    <!-- ******** -->
-    <!-- Services -->
-    <!-- ******** -->
-    <preference for="\Praxigento\BonusHybrid\Service\Calc\Bonus\ICourtesy"
-                type="\Praxigento\BonusHybrid\Service\Calc\Bonus\Courtesy"/>
-    <preference for="\Praxigento\BonusHybrid\Service\Calc\Bonus\IInfinity"
-                type="\Praxigento\BonusHybrid\Service\Calc\Bonus\Infinity"/>
-    <preference for="\Praxigento\BonusHybrid\Service\Calc\Bonus\IOverride"
-                type="\Praxigento\BonusHybrid\Service\Calc\Bonus\Override"/>
-    <preference for="\Praxigento\BonusHybrid\Service\Calc\Bonus\IPersonal"
-                type="\Praxigento\BonusHybrid\Service\Calc\Bonus\Personal"/>
-    <preference for="\Praxigento\BonusHybrid\Service\Calc\Bonus\ITeam"
-                type="\Praxigento\BonusHybrid\Service\Calc\Bonus\Team"/>
-    <preference for="\Praxigento\BonusHybrid\Service\Calc\Compress\IPhase1"
-                type="\Praxigento\BonusHybrid\Service\Calc\Compress\Phase1"/>
-    <preference for="\Praxigento\BonusHybrid\Service\Calc\Compress\IPhase2"
-                type="\Praxigento\BonusHybrid\Service\Calc\Compress\Phase2"/>
-    <preference for="\Praxigento\BonusHybrid\Service\Calc\Forecast\ICompress"
-                type="\Praxigento\BonusHybrid\Service\Calc\Forecast\Compress"/>
-    <preference for="\Praxigento\BonusHybrid\Service\Calc\Forecast\IPlain"
-                type="\Praxigento\BonusHybrid\Service\Calc\Forecast\Plain"/>
-    <preference for="\Praxigento\BonusHybrid\Service\Calc\IPvWriteOff"
-                type="\Praxigento\BonusHybrid\Service\Calc\PvWriteOff"/>
-    <preference for="\Praxigento\BonusHybrid\Service\Calc\ISignupDebit"
-                type="\Praxigento\BonusHybrid\Service\Calc\SignupDebit"/>
-    <preference for="\Praxigento\BonusHybrid\Service\Calc\Value\IOv"
-                type="\Praxigento\BonusHybrid\Service\Calc\Value\Ov"/>
-    <preference for="\Praxigento\BonusHybrid\Service\Calc\Value\ITv"
-                type="\Praxigento\BonusHybrid\Service\Calc\Value\Tv"/>
 
     <!-- ***** -->
     <!-- Tools -->
     <!-- ***** -->
-    <preference for="Praxigento\BonusHybrid\Helper\IScheme"
+    <preference for="Praxigento\BonusHybrid\Api\Helper\Scheme"
             type="Praxigento\BonusHybrid\Helper\Scheme"/>
 
 </config>

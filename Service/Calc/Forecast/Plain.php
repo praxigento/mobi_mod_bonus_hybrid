@@ -12,7 +12,6 @@ use Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Calc as SubCalc;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetDownline as PGetDownline;
 
 class Plain
-    implements \Praxigento\BonusHybrid\Service\Calc\Forecast\IPlain
 {
     /** @var \Praxigento\Accounting\Api\Service\Balance\Get\Turnover */
     private $callBalanceGetTurnover;

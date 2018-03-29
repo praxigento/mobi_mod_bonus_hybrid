@@ -13,13 +13,12 @@ use Praxigento\BonusHybrid\Config as Cfg;
  * Calculate Team Bonus.
  */
 class Team
-    implements \Praxigento\BonusHybrid\Service\Calc\Bonus\ITeam
 {
-    /** @var \Praxigento\BonusHybrid\Service\Calc\A\Helper\CreateOper */
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Helper\CreateOper */
     private $hlpOper;
     /** @var  \Praxigento\Core\Api\Helper\Period */
     private $hlpPeriod;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\A\Helper\PrepareTrans */
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Helper\PrepareTrans */
     private $hlpTrans;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
@@ -43,8 +42,8 @@ class Team
         \Praxigento\BonusBase\Repo\Dao\Log\Customers $daoLogCust,
         \Praxigento\BonusBase\Repo\Dao\Log\Opers $daoLogOper,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
-        \Praxigento\BonusHybrid\Service\Calc\A\Helper\PrepareTrans $hlpTrans,
-        \Praxigento\BonusHybrid\Service\Calc\A\Helper\CreateOper $hlpOper,
+        \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Helper\PrepareTrans $hlpTrans,
+        \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Helper\CreateOper $hlpOper,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Team\CalcDef $subCalcDef,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Team\CalcEu $subCalcEu
     )

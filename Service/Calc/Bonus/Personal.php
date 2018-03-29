@@ -7,26 +7,25 @@ namespace Praxigento\BonusHybrid\Service\Calc\Bonus;
 
 use Praxigento\BonusBase\Repo\Data\Log\Opers as ELogOper;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Service\Calc\A\Data\Bonus as DBonus;
+use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Helper\Data\Bonus as DBonus;
 use Praxigento\Downline\Repo\Data\Customer as ECustomer;
 
 /**
  * Calculate Personal Bonus.
  */
 class Personal
-    implements \Praxigento\BonusHybrid\Service\Calc\Bonus\IPersonal
 {
     /** @var \Praxigento\BonusBase\Helper\Calc */
     private $hlpCalc;
     /** @var \Praxigento\Downline\Helper\Tree */
     private $hlpDwnlTree;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\A\Helper\CreateOper */
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Helper\CreateOper */
     private $hlpOper;
     /** @var  \Praxigento\Core\Api\Helper\Period */
     private $hlpPeriod;
-    /** @var  \Praxigento\BonusHybrid\Helper\IScheme */
+    /** @var  \Praxigento\BonusHybrid\Api\Helper\Scheme */
     private $hlpScheme;
-    /** @var  \Praxigento\BonusHybrid\Service\Calc\A\Helper\PrepareTrans */
+    /** @var  \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Helper\PrepareTrans */
     private $hlpTrans;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
@@ -47,7 +46,7 @@ class Personal
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         \Praxigento\BonusBase\Helper\Calc $hlpCalc,
-        \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
+        \Praxigento\BonusHybrid\Api\Helper\Scheme $hlpScheme,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
         \Praxigento\Downline\Repo\Dao\Customer $daoDwnl,
         \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
@@ -55,8 +54,8 @@ class Personal
         \Praxigento\BonusBase\Repo\Dao\Log\Opers $daoLogOper,
         \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
-        \Praxigento\BonusHybrid\Service\Calc\A\Helper\PrepareTrans $hlpTrans,
-        \Praxigento\BonusHybrid\Service\Calc\A\Helper\CreateOper $hlpOper
+        \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Helper\PrepareTrans $hlpTrans,
+        \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Helper\CreateOper $hlpOper
     )
     {
         $this->logger = $logger;

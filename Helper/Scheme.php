@@ -11,11 +11,11 @@ use Praxigento\BonusHybrid\Repo\Data\Cfg\Param as CfgParam;
 use Praxigento\Downline\Repo\Data\Customer;
 
 /**
- * TODO: move this tool to Repo section or extract DB related methods to standalone class.
+ * Hybrid bonus configuration parameters.
  */
 class Scheme
     extends \Praxigento\Core\App\Repo\Def\Db
-    implements \Praxigento\BonusHybrid\Helper\IScheme
+    implements \Praxigento\BonusHybrid\Api\Helper\Scheme
 {
     const A_RANK_ID = 'RankId';
     const A_SCHEME = 'Scheme';
@@ -42,15 +42,15 @@ class Scheme
      */
     private $_cachedForcedRanks = null;
     /** @var \Praxigento\Core\App\Repo\IGeneric */
-    protected $_repoBasic;
+    private $daoGeneric;
     /**
      * @var array of customers with forced qualification from 'Sign Up Volume Debit' (MOBI-635)
      */
-    private $cachedSignupDebitCustIds = null;
-    /** @var \Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetLastCalcIdForPeriod */
-    protected $queryGetLastSignupCalcId;
-    /** @var \Praxigento\BonusHybrid\Repo\Dao\Registry\SignupDebit */
-    protected $daoRegSignupDebit;
+    private $cachedSignUpDebitCustIds = null;
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Registry\SignUpDebit */
+    private $daoRegSignUpDebit;
+    /** @var \Praxigento\BonusHybrid\Repo\Query\SignUpDebit\GetLastCalcIdForPeriod */
+    private $queryGetLastSignupCalcId;
 
     /**
      * Scheme constructor.
@@ -58,12 +58,12 @@ class Scheme
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resource,
         \Praxigento\Core\App\Repo\IGeneric $daoGeneric,
-        \Praxigento\BonusHybrid\Repo\Dao\Registry\SignupDebit $daoRegSignupDebit,
-        \Praxigento\BonusHybrid\Repo\Query\SignupDebit\GetLastCalcIdForPeriod $queryGetLastSignupCalcId
+        \Praxigento\BonusHybrid\Repo\Dao\Registry\SignUpDebit $daoRegSignUpDebit,
+        \Praxigento\BonusHybrid\Repo\Query\SignUpDebit\GetLastCalcIdForPeriod $queryGetLastSignupCalcId
     ) {
         parent::__construct($resource);
-        $this->_repoBasic = $daoGeneric;
-        $this->daoRegSignupDebit = $daoRegSignupDebit;
+        $this->daoGeneric = $daoGeneric;
+        $this->daoRegSignUpDebit = $daoRegSignUpDebit;
         $this->queryGetLastSignupCalcId = $queryGetLastSignupCalcId;
     }
 
@@ -123,7 +123,7 @@ class Scheme
             $where .= Customer::A_MLM_ID . "=\"$quoted\"";
         }
         $cols = [Customer::A_CUSTOMER_ID, Customer::A_MLM_ID];
-        $result = $this->_repoBasic->getEntities(Customer::ENTITY_NAME, $cols, $where);
+        $result = $this->daoGeneric->getEntities(Customer::ENTITY_NAME, $cols, $where);
         return $result;
     }
 
@@ -187,21 +187,21 @@ class Scheme
     /**
      * MOBI-635: get customers w/o 100 PV from Sign Up Volume Debit
      */
-    protected function getForcedSignupDebitCustIds()
+    protected function getForcedSignUpDebitCustIds()
     {
-        if (is_null($this->cachedSignupDebitCustIds)) {
+        if (is_null($this->cachedSignUpDebitCustIds)) {
             $ids = [];
             $calcId = $this->queryGetLastSignupCalcId->exec();
-            $where = \Praxigento\BonusHybrid\Repo\Data\Registry\SignupDebit::A_CALC_REF . '=' . (int)$calcId;
-            $rs = $this->daoRegSignupDebit->get($where);
+            $where = \Praxigento\BonusHybrid\Repo\Data\Registry\SignUpDebit::A_CALC_REF . '=' . (int)$calcId;
+            $rs = $this->daoRegSignUpDebit->get($where);
             foreach ($rs as $one) {
                 /* TODO: use as object not as array */
                 $one = (array)$one->get();
-                $ids[] = $one[\Praxigento\BonusHybrid\Repo\Data\Registry\SignupDebit::A_CUST_REF];
+                $ids[] = $one[\Praxigento\BonusHybrid\Repo\Data\Registry\SignUpDebit::A_CUST_REF];
             }
-            $this->cachedSignupDebitCustIds = $ids;
+            $this->cachedSignUpDebitCustIds = $ids;
         }
-        return $this->cachedSignupDebitCustIds;
+        return $this->cachedSignUpDebitCustIds;
 
     }
 

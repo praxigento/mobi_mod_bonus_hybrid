@@ -14,47 +14,47 @@ use Praxigento\Core\App\Service\IProcess as IProcess;
 class Calc
     extends \Praxigento\Core\App\Cli\Cmd\Base
 {
-    /** @var  \Praxigento\BonusHybrid\Service\Calc\ISignupDebit */
-    private $callBonusSignup;
     /** @var \Magento\Framework\DB\Adapter\AdapterInterface */
     private $conn;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\ICourtesy */
-    private $procBonusCourtesy;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\IInfinity */
-    private $procBonusInfinity;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\IOverride */
-    private $procBonusOvrd;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\IPersonal */
-    private $procBonusPers;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\ITeam */
-    private $procBonusTeam;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\IPhase1 */
-    private $procCompressPhase1;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\IPhase2 */
-    private $procCompressPhase2;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Value\IOv */
-    private $procOv;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\IPvWriteOff */
-    private $procPvWriteOff;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Value\ITv */
-    private $procTv;
     /** @var \Magento\Framework\App\ResourceConnection */
     private $resource;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Courtesy */
+    private $servBonusCourtesy;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Infinity */
+    private $servBonusInfinity;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Override */
+    private $servBonusOvrd;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Personal */
+    private $servBonusPers;
+    /** @var  \Praxigento\BonusHybrid\Service\Calc\SignUpDebit */
+    private $servBonusSignup;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Team */
+    private $servBonusTeam;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\Phase1 */
+    private $servCompressPhase1;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\Phase2 */
+    private $servCompressPhase2;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Value\Ov */
+    private $servOv;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\PvWriteOff */
+    private $servPvWriteOff;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Value\Tv */
+    private $servTv;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Magento\Framework\App\ResourceConnection $resource,
-        \Praxigento\BonusHybrid\Service\Calc\ISignupDebit $callBonusSignup,
-        \Praxigento\BonusHybrid\Service\Calc\Bonus\ICourtesy $procBonusCourtesy,
-        \Praxigento\BonusHybrid\Service\Calc\Bonus\IInfinity $procBonusInfinity,
-        \Praxigento\BonusHybrid\Service\Calc\Bonus\IOverride $procBonusOvrd,
-        \Praxigento\BonusHybrid\Service\Calc\Bonus\IPersonal $procBonusPers,
-        \Praxigento\BonusHybrid\Service\Calc\Bonus\ITeam $procBonusTeam,
-        \Praxigento\BonusHybrid\Service\Calc\Compress\IPhase1 $procCompressPhase1,
-        \Praxigento\BonusHybrid\Service\Calc\Compress\IPhase2 $procCompressPhase2,
-        \Praxigento\BonusHybrid\Service\Calc\IPvWriteOff $procPvWriteOff,
-        \Praxigento\BonusHybrid\Service\Calc\Value\IOv $procOv,
-        \Praxigento\BonusHybrid\Service\Calc\Value\ITv $procTv
+        \Praxigento\BonusHybrid\Service\Calc\SignUpDebit $servBonusSignup,
+        \Praxigento\BonusHybrid\Service\Calc\Bonus\Courtesy $servBonusCourtesy,
+        \Praxigento\BonusHybrid\Service\Calc\Bonus\Infinity $servBonusInfinity,
+        \Praxigento\BonusHybrid\Service\Calc\Bonus\Override $servBonusOvrd,
+        \Praxigento\BonusHybrid\Service\Calc\Bonus\Personal $servBonusPers,
+        \Praxigento\BonusHybrid\Service\Calc\Bonus\Team $servBonusTeam,
+        \Praxigento\BonusHybrid\Service\Calc\Compress\Phase1 $servCompressPhase1,
+        \Praxigento\BonusHybrid\Service\Calc\Compress\Phase2 $servCompressPhase2,
+        \Praxigento\BonusHybrid\Service\Calc\PvWriteOff $servPvWriteOff,
+        \Praxigento\BonusHybrid\Service\Calc\Value\Ov $servOv,
+        \Praxigento\BonusHybrid\Service\Calc\Value\Tv $servTv
     )
     {
         parent::__construct(
@@ -64,23 +64,23 @@ class Calc
         );
         $this->resource = $resource;
         $this->conn = $this->resource->getConnection();
-        $this->callBonusSignup = $callBonusSignup;
-        $this->procBonusCourtesy = $procBonusCourtesy;
-        $this->procBonusInfinity = $procBonusInfinity;
-        $this->procBonusOvrd = $procBonusOvrd;
-        $this->procBonusPers = $procBonusPers;
-        $this->procBonusTeam = $procBonusTeam;
-        $this->procCompressPhase1 = $procCompressPhase1;
-        $this->procCompressPhase2 = $procCompressPhase2;
-        $this->procOv = $procOv;
-        $this->procPvWriteOff = $procPvWriteOff;
-        $this->procTv = $procTv;
+        $this->servBonusSignup = $servBonusSignup;
+        $this->servBonusCourtesy = $servBonusCourtesy;
+        $this->servBonusInfinity = $servBonusInfinity;
+        $this->servBonusOvrd = $servBonusOvrd;
+        $this->servBonusPers = $servBonusPers;
+        $this->servBonusTeam = $servBonusTeam;
+        $this->servCompressPhase1 = $servCompressPhase1;
+        $this->servCompressPhase2 = $servCompressPhase2;
+        $this->servOv = $servOv;
+        $this->servPvWriteOff = $servPvWriteOff;
+        $this->servTv = $servTv;
     }
 
     private function calcBonusCourtesy()
     {
         $ctx = new \Praxigento\Core\Data();
-        $this->procBonusCourtesy->exec($ctx);
+        $this->servBonusCourtesy->exec($ctx);
         $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
@@ -88,8 +88,8 @@ class Calc
     private function calcBonusInfinity($schema)
     {
         $ctx = new \Praxigento\Core\Data();
-        $ctx->set($this->procBonusInfinity::CTX_IN_SCHEME, $schema);
-        $this->procBonusInfinity->exec($ctx);
+        $ctx->set($this->servBonusInfinity::CTX_IN_SCHEME, $schema);
+        $this->servBonusInfinity->exec($ctx);
         $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
@@ -97,8 +97,8 @@ class Calc
     private function calcBonusOverride($schema)
     {
         $ctx = new \Praxigento\Core\Data();
-        $ctx->set($this->procBonusOvrd::CTX_IN_SCHEME, $schema);
-        $this->procBonusOvrd->exec($ctx);
+        $ctx->set($this->servBonusOvrd::CTX_IN_SCHEME, $schema);
+        $this->servBonusOvrd->exec($ctx);
         $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
@@ -106,7 +106,7 @@ class Calc
     private function calcBonusPersonal()
     {
         $ctx = new \Praxigento\Core\Data();
-        $this->procBonusPers->exec($ctx);
+        $this->servBonusPers->exec($ctx);
         $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
@@ -114,8 +114,8 @@ class Calc
     private function calcBonusTeamDef()
     {
         $ctx = new \Praxigento\Core\Data();
-        $ctx->set($this->procBonusTeam::CTX_IN_SCHEME, Cfg::SCHEMA_DEFAULT);
-        $this->procBonusTeam->exec($ctx);
+        $ctx->set($this->servBonusTeam::CTX_IN_SCHEME, Cfg::SCHEMA_DEFAULT);
+        $this->servBonusTeam->exec($ctx);
         $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
@@ -123,8 +123,8 @@ class Calc
     private function calcBonusTeamEu()
     {
         $ctx = new \Praxigento\Core\Data();
-        $ctx->set($this->procBonusTeam::CTX_IN_SCHEME, Cfg::SCHEMA_EU);
-        $this->procBonusTeam->exec($ctx);
+        $ctx->set($this->servBonusTeam::CTX_IN_SCHEME, Cfg::SCHEMA_EU);
+        $this->servBonusTeam->exec($ctx);
         $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
@@ -132,7 +132,7 @@ class Calc
     private function calcCompressPhase1()
     {
         $ctx = new \Praxigento\Core\Data();
-        $this->procCompressPhase1->exec($ctx);
+        $this->servCompressPhase1->exec($ctx);
         $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
@@ -140,8 +140,8 @@ class Calc
     private function calcCompressPhase2($schema)
     {
         $ctx = new \Praxigento\Core\Data();
-        $ctx->set($this->procCompressPhase2::CTX_IN_SCHEME, $schema);
-        $this->procCompressPhase2->exec($ctx);
+        $ctx->set($this->servCompressPhase2::CTX_IN_SCHEME, $schema);
+        $this->servCompressPhase2->exec($ctx);
         $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
@@ -149,15 +149,15 @@ class Calc
     private function calcPvWriteOff()
     {
         $ctx = new \Praxigento\Core\Data();
-        $this->procPvWriteOff->exec($ctx);
+        $this->servPvWriteOff->exec($ctx);
         $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
 
-    private function calcSignupDebit()
+    private function calcSignUpDebit()
     {
         $ctx = new \Praxigento\Core\Data();
-        $this->callBonusSignup->exec($ctx);
+        $this->servBonusSignup->exec($ctx);
         $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
@@ -165,7 +165,7 @@ class Calc
     private function calcValueOv()
     {
         $ctx = new \Praxigento\Core\Data();
-        $this->procOv->exec($ctx);
+        $this->servOv->exec($ctx);
         $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
@@ -173,7 +173,7 @@ class Calc
     private function calcValueTv()
     {
         $ctx = new \Praxigento\Core\Data();
-        $this->procTv->exec($ctx);
+        $this->servTv->exec($ctx);
         $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
@@ -186,7 +186,7 @@ class Calc
         $output->writeln("<info>Start bonus calculation.<info>");
         $this->conn->beginTransaction();
         try {
-            $canContinue = $this->calcSignupDebit();
+            $canContinue = $this->calcSignUpDebit();
             if ($canContinue) {
                 $output->writeln("<info>'Sign Up Volume Debit' calculation is completed.<info>");
                 $canContinue = $this->calcPvWriteOff();

@@ -15,9 +15,9 @@ class Forecast
     private $conn;
     /** @var \Magento\Framework\App\ResourceConnection */
     private $resource;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\ICompress */
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress */
     private $servCalcCompress;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\IPlain */
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain */
     private $servCalcPlain;
     /** @var \Praxigento\Downline\Api\Service\Snap\Clean */
     private $servDwnlClean;
@@ -29,8 +29,8 @@ class Forecast
         \Magento\Framework\App\ResourceConnection $resource,
         \Praxigento\Downline\Service\ISnap $servSnap,
         \Praxigento\Downline\Api\Service\Snap\Clean $servDwnlClean,
-        \Praxigento\BonusHybrid\Service\Calc\Forecast\IPlain $servCalcPlain,
-        \Praxigento\BonusHybrid\Service\Calc\Forecast\ICompress $servCalcCompress
+        \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain $servCalcPlain,
+        \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress $servCalcCompress
     )
     {
         parent::__construct(

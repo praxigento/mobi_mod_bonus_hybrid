@@ -13,7 +13,7 @@ use Praxigento\BonusHybrid\Repo\Data\Compression\Phase2\Legs as Phase2Legs;
 use Praxigento\BonusHybrid\Repo\Data\Downline as Dwnl;
 use Praxigento\BonusHybrid\Repo\Data\Downline\Inactive as DwnlInact;
 use Praxigento\BonusHybrid\Repo\Data\Downline\Qualification as DwnlQual;
-use Praxigento\BonusHybrid\Repo\Data\Registry\SignupDebit as SignupDebit;
+use Praxigento\BonusHybrid\Repo\Data\Registry\SignUpDebit as SignUpDebit;
 
 class InstallSchema
     extends \Praxigento\Core\App\Setup\Schema\Base
@@ -39,7 +39,7 @@ class InstallSchema
 
         /* Registry Sign Up Volume Debit */
         $demEntity = $demPackage->get('package/Registry/entity/SignUpVolumeDebit');
-        $this->toolDem->createEntity(SignupDebit::ENTITY_NAME, $demEntity);
+        $this->toolDem->createEntity(SignUpDebit::ENTITY_NAME, $demEntity);
 
         /* Compression / Phase I / Transfer / PV */
         $demEntity = $demPackage->get('package/Compression/package/Phase1/package/Transfer/entity/Pv');

@@ -16,7 +16,7 @@ class Calc
     private $hlpDwnlTree;
     /** @var \Praxigento\Core\Api\Helper\Format */
     private $hlpFormat;
-    /** @var  \Praxigento\BonusHybrid\Helper\IScheme */
+    /** @var  \Praxigento\BonusHybrid\Api\Helper\Scheme */
     private $hlpScheme;
     /** @var \Praxigento\Downline\Api\Helper\Downline */
     private $hlpTree;
@@ -32,7 +32,7 @@ class Calc
         \Praxigento\Core\Api\Helper\Format $hlpFormat,
         \Praxigento\Downline\Api\Helper\Downline $hlpTree,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
-        \Praxigento\BonusHybrid\Helper\IScheme $hlpScheme,
+        \Praxigento\BonusHybrid\Api\Helper\Scheme $hlpScheme,
         \Praxigento\Downline\Repo\Dao\Customer $daoDwnl,
         \Praxigento\BonusHybrid\Repo\Dao\Cfg\Param $daoCfgParams,
         \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl
@@ -110,7 +110,7 @@ class Calc
                         $percent = ($ibPercent <= $ibPercentDelta) ? $ibPercent : $ibPercentDelta;
                         $bonus = $this->hlpFormat->roundBonus($pv * $percent);
                         /* add new bonus entry to results */
-                        $entry = new \Praxigento\BonusHybrid\Service\Calc\A\Data\Bonus();
+                        $entry = new \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Helper\Data\Bonus();
                         $entry->setCustomerRef($parentId);
                         $entry->setValue($bonus);
                         $entry->setDonatorRef($custId);
