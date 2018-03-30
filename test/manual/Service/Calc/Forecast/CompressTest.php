@@ -3,11 +3,11 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Service\Calc\Forecast;
+namespace Test\Praxigento\BonusHybrid\Service\Calc\Forecast;
 
 include_once(__DIR__ . '/../../../phpunit_bootstrap.php');
 
-class Compress_Test
+class CompressTest
     extends \Praxigento\Core\Test\BaseCase\Manual
 {
 

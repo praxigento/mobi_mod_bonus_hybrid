@@ -3,11 +3,11 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Service\Calc\Inactive;
+namespace Test\Praxigento\BonusHybrid\Service\Calc\Inactive;
 
 include_once(__DIR__ . '/../../../phpunit_bootstrap.php');
 
-class Collect_Test
+class CollectTest
     extends \Praxigento\Core\Test\BaseCase\Manual
 {
 

@@ -24,6 +24,7 @@ class Config extends BonusBaseCfg
     /**
      * Calculation types. Suffix DEF & EU are for DEFAULT & EU1 calculations schemas.
      */
+    const CODE_TYPE_CALC_BONUS_AGGREGATE = 'HYBRID_BON_AGGREGATE';
     const CODE_TYPE_CALC_BONUS_COURTESY = 'HYBRID_BON_COURTESY';
     const CODE_TYPE_CALC_BONUS_INFINITY_DEF = 'HYBRID_BON_INFINITY_DEF';
     const CODE_TYPE_CALC_BONUS_INFINITY_EU = 'HYBRID_BON_INFINITY_EU';

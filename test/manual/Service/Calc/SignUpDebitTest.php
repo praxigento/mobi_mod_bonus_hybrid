@@ -2,12 +2,14 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
-namespace Praxigento\BonusHybrid\Service\Calc;
+
+namespace Test\Praxigento\BonusHybrid\Service\Calc;
 
 
 include_once(__DIR__ . '/../../phpunit_bootstrap.php');
 
-class SignUpDebit_ManualTest extends \Praxigento\Core\Test\BaseCase\Mockery
+class SignUpDebitTest
+    extends \Praxigento\Core\Test\BaseCase\Manual
 {
 
 

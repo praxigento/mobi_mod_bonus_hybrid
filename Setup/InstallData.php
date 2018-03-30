@@ -94,6 +94,7 @@ class InstallData extends \Praxigento\Core\App\Setup\Data\Base
                 [Cfg::CODE_TYPE_CALC_BONUS_OVERRIDE_EU, 'Override bonus calculation (EU scheme).'],
                 [Cfg::CODE_TYPE_CALC_BONUS_INFINITY_DEF, 'Infinity bonus calculation (DEFAULT scheme).'],
                 [Cfg::CODE_TYPE_CALC_BONUS_INFINITY_EU, 'Infinity bonus calculation (EU scheme).'],
+                [Cfg::CODE_TYPE_CALC_BONUS_AGGREGATE, 'Aggregate all bonus payments in one check.'],
                 [Cfg::CODE_TYPE_CALC_INACTIVE_COLLECT, 'Inactive customers stats collection.'],
                 [Cfg::CODE_TYPE_CALC_INACTIVE_PROCESS, 'Inactive customers stats processing.'],
                 [Cfg::CODE_TYPE_CALC_UNQUALIFIED_COLLECT, 'Unqualified customers stats collection.'],
