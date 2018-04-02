@@ -18,6 +18,8 @@ class Calc
     private $conn;
     /** @var \Magento\Framework\App\ResourceConnection */
     private $resource;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Aggregate */
+    private $servAgg;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Courtesy */
     private $servBonusCourtesy;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Infinity */
@@ -26,25 +28,25 @@ class Calc
     private $servBonusOvrd;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Personal */
     private $servBonusPers;
-    /** @var  \Praxigento\BonusHybrid\Service\Calc\SignUpDebit */
-    private $servBonusSignup;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Team */
     private $servBonusTeam;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\Phase1 */
     private $servCompressPhase1;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\Phase2 */
     private $servCompressPhase2;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Value\Ov */
-    private $servOv;
     /** @var \Praxigento\BonusHybrid\Service\Calc\PvWriteOff */
     private $servPvWriteOff;
+    /** @var  \Praxigento\BonusHybrid\Service\Calc\SignUpDebit */
+    private $servSignup;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Value\Ov */
+    private $servValueOv;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Value\Tv */
-    private $servTv;
+    private $servValueTv;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Magento\Framework\App\ResourceConnection $resource,
-        \Praxigento\BonusHybrid\Service\Calc\SignUpDebit $servBonusSignup,
+        \Praxigento\BonusHybrid\Service\Calc\Aggregate $servAgg,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Courtesy $servBonusCourtesy,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Infinity $servBonusInfinity,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Override $servBonusOvrd,
@@ -53,10 +55,10 @@ class Calc
         \Praxigento\BonusHybrid\Service\Calc\Compress\Phase1 $servCompressPhase1,
         \Praxigento\BonusHybrid\Service\Calc\Compress\Phase2 $servCompressPhase2,
         \Praxigento\BonusHybrid\Service\Calc\PvWriteOff $servPvWriteOff,
-        \Praxigento\BonusHybrid\Service\Calc\Value\Ov $servOv,
-        \Praxigento\BonusHybrid\Service\Calc\Value\Tv $servTv
-    )
-    {
+        \Praxigento\BonusHybrid\Service\Calc\SignUpDebit $servSignup,
+        \Praxigento\BonusHybrid\Service\Calc\Value\Ov $servValueOv,
+        \Praxigento\BonusHybrid\Service\Calc\Value\Tv $servValueTv
+    ) {
         parent::__construct(
             $manObj,
             'prxgt:bonus:calc',
@@ -64,7 +66,7 @@ class Calc
         );
         $this->resource = $resource;
         $this->conn = $this->resource->getConnection();
-        $this->servBonusSignup = $servBonusSignup;
+        $this->servAgg = $servAgg;
         $this->servBonusCourtesy = $servBonusCourtesy;
         $this->servBonusInfinity = $servBonusInfinity;
         $this->servBonusOvrd = $servBonusOvrd;
@@ -72,9 +74,19 @@ class Calc
         $this->servBonusTeam = $servBonusTeam;
         $this->servCompressPhase1 = $servCompressPhase1;
         $this->servCompressPhase2 = $servCompressPhase2;
-        $this->servOv = $servOv;
         $this->servPvWriteOff = $servPvWriteOff;
-        $this->servTv = $servTv;
+        $this->servSignup = $servSignup;
+        $this->servValueOv = $servValueOv;
+        $this->servValueTv = $servValueTv;
+    }
+
+    private function calcAggregate()
+    {
+        $req = new \Praxigento\BonusHybrid\Service\Calc\Aggregate\Request();
+        $resp = $this->servAgg->exec($req);
+        $err = $resp->getErrorCode();
+        $result = $err == \Praxigento\Core\App\Service\IResponse::ERR_NO_ERROR;
+        return $result;
     }
 
     private function calcBonusCourtesy()
@@ -157,7 +169,7 @@ class Calc
     private function calcSignUpDebit()
     {
         $ctx = new \Praxigento\Core\Data();
-        $this->servBonusSignup->exec($ctx);
+        $this->servSignup->exec($ctx);
         $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
@@ -165,7 +177,7 @@ class Calc
     private function calcValueOv()
     {
         $ctx = new \Praxigento\Core\Data();
-        $this->servOv->exec($ctx);
+        $this->servValueOv->exec($ctx);
         $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
@@ -173,7 +185,7 @@ class Calc
     private function calcValueTv()
     {
         $ctx = new \Praxigento\Core\Data();
-        $this->servTv->exec($ctx);
+        $this->servValueTv->exec($ctx);
         $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
@@ -181,8 +193,7 @@ class Calc
     protected function execute(
         \Symfony\Component\Console\Input\InputInterface $input,
         \Symfony\Component\Console\Output\OutputInterface $output
-    )
-    {
+    ) {
         $output->writeln("<info>Start bonus calculation.<info>");
         $this->conn->beginTransaction();
         try {
@@ -245,6 +256,10 @@ class Calc
             }
             if ($canContinue) {
                 $output->writeln("<info>Infinity bonus (EU) is calculated.<info>");
+                $canContinue = $this->calcAggregate();
+            }
+            if ($canContinue) {
+                $output->writeln("<info>Bonus aggregation is calculated.<info>");
                 $this->conn->commit();
                 $output->writeln("<info>All data is committed.<info>");
             } else {

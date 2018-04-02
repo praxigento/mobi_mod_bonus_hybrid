@@ -5,6 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc;
 
+use Praxigento\BonusBase\Repo\Data\Log\Opers as ELogOper;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Service\Calc\Aggregate\A\Data\Total as DTotal;
 use Praxigento\BonusHybrid\Service\Calc\Aggregate\A\Repo\Query\GetBonusTotals as QBGetTotals;
@@ -16,6 +17,8 @@ use Praxigento\BonusHybrid\Service\Calc\Aggregate\Response as AResponse;
  */
 class Aggregate
 {
+    /** @var \Praxigento\BonusBase\Repo\Dao\Log\Opers */
+    private $daoLogOper;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Aggregate\A\CreateOper */
@@ -27,11 +30,13 @@ class Aggregate
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
+        \Praxigento\BonusBase\Repo\Dao\Log\Opers $daoLogOper,
         \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent $servPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\Aggregate\A\Repo\Query\GetBonusTotals $qbGetBonusTotals,
         \Praxigento\BonusHybrid\Service\Calc\Aggregate\A\CreateOper $ownCreateOper
     ) {
         $this->logger = $logger;
+        $this->daoLogOper = $daoLogOper;
         $this->servPeriodGet = $servPeriodGet;
         $this->qbGetBonusTotals = $qbGetBonusTotals;
         $this->ownCreateOper = $ownCreateOper;
@@ -57,13 +62,15 @@ class Aggregate
         list($periodData, $calcData) = $this->getCalcData();
         $dsBegin = $periodData->getDstampBegin();
         $dsEnd = $periodData->getDstampEnd();
-
+        $calcId = $calcData->getId();
         $totals = $this->getBonusTotals($dsBegin, $dsEnd);
-
         $operId = $this->ownCreateOper->exec($totals, $dsEnd);
+        $this->saveLog($operId, $calcId);
         /** compose result */
         $this->logger->info("Bonus aggregation calculation is completed.");
         $result = new AResponse();
+        $result->setOperId($operId);
+        $result->setErrorCode(AResponse::ERR_NO_ERROR);
         return $result;
     }
 
@@ -118,5 +125,20 @@ class Aggregate
         $calcData = $resp->getDepCalcData();
         $result = [$periodData, $calcData];
         return $result;
+    }
+
+    /**
+     * Bind operation with calculation.
+     *
+     * @param int $operId
+     * @param int $calcId
+     * @throws \Exception
+     */
+    private function saveLog($operId, $calcId)
+    {
+        $entity = new ELogOper();
+        $entity->setOperId($operId);
+        $entity->setCalcId($calcId);
+        $this->daoLogOper->create($entity);
     }
 }
