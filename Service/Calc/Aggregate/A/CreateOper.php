@@ -104,7 +104,7 @@ class CreateOper
     private function formatPeriod($datestamp)
     {
         $year = substr($datestamp, 0, 4);
-        $month = substr($datestamp, 5, 2);
+        $month = substr($datestamp, 4, 2);
         $result = "$year/$month";
         return $result;
     }
