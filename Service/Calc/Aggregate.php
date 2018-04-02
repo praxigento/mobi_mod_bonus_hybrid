@@ -6,6 +6,7 @@
 namespace Praxigento\BonusHybrid\Service\Calc;
 
 use Praxigento\BonusHybrid\Config as Cfg;
+use Praxigento\BonusHybrid\Service\Calc\Aggregate\A\Data\Total as DTotal;
 use Praxigento\BonusHybrid\Service\Calc\Aggregate\A\Repo\Query\GetBonusTotals as QBGetTotals;
 use Praxigento\BonusHybrid\Service\Calc\Aggregate\Request as ARequest;
 use Praxigento\BonusHybrid\Service\Calc\Aggregate\Response as AResponse;
@@ -17,6 +18,8 @@ class Aggregate
 {
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Aggregate\A\CreateOper */
+    private $ownCreateOper;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Aggregate\A\Repo\Query\GetBonusTotals */
     private $qbGetBonusTotals;
     /** @var \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent */
@@ -25,11 +28,13 @@ class Aggregate
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent $servPeriodGet,
-        \Praxigento\BonusHybrid\Service\Calc\Aggregate\A\Repo\Query\GetBonusTotals $qbGetBonusTotals
+        \Praxigento\BonusHybrid\Service\Calc\Aggregate\A\Repo\Query\GetBonusTotals $qbGetBonusTotals,
+        \Praxigento\BonusHybrid\Service\Calc\Aggregate\A\CreateOper $ownCreateOper
     ) {
         $this->logger = $logger;
         $this->servPeriodGet = $servPeriodGet;
         $this->qbGetBonusTotals = $qbGetBonusTotals;
+        $this->ownCreateOper = $ownCreateOper;
     }
 
     /**
@@ -55,6 +60,7 @@ class Aggregate
 
         $totals = $this->getBonusTotals($dsBegin, $dsEnd);
 
+        $operId = $this->ownCreateOper->exec($totals, $dsEnd);
         /** compose result */
         $this->logger->info("Bonus aggregation calculation is completed.");
         $result = new AResponse();
@@ -66,6 +72,7 @@ class Aggregate
      *
      * @param $dsBegin
      * @param $dsEnd
+     * @return DTotal[]
      */
     private function getBonusTotals($dsBegin, $dsEnd)
     {
@@ -76,11 +83,20 @@ class Aggregate
             QBGetTotals::BND_PERIOD_END => $dsEnd
         ];
         $rs = $conn->fetchAll($query, $bind);
+        $result = [];
         foreach ($rs as $one) {
             $accId = $one[QBGetTotals::A_ACC_ID];
             $custId = $one[QBGetTotals::A_CUST_ID];
             $total = $one[QBGetTotals::A_TOTAL];
+            if ($custId) {
+                $item = new DTotal();
+                $item->accountId = $accId;
+                $item->customerId = $custId;
+                $item->total = $total;
+                $result[$custId] = $item;
+            }
         }
+        return $result;
     }
 
     /**
