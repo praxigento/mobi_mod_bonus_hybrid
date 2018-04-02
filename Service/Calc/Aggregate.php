@@ -27,15 +27,19 @@ class Aggregate
     private $qbGetBonusTotals;
     /** @var \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent */
     private $servPeriodGet;
+    /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
+    private $daoCalc;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
+        \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
         \Praxigento\BonusBase\Repo\Dao\Log\Opers $daoLogOper,
         \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent $servPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\Aggregate\A\Repo\Query\GetBonusTotals $qbGetBonusTotals,
         \Praxigento\BonusHybrid\Service\Calc\Aggregate\A\CreateOper $ownCreateOper
     ) {
         $this->logger = $logger;
+        $this->daoCalc = $daoCalc;
         $this->daoLogOper = $daoLogOper;
         $this->servPeriodGet = $servPeriodGet;
         $this->qbGetBonusTotals = $qbGetBonusTotals;
@@ -65,7 +69,10 @@ class Aggregate
         $calcId = $calcData->getId();
         $totals = $this->getBonusTotals($dsBegin, $dsEnd);
         $operId = $this->ownCreateOper->exec($totals, $dsEnd);
+        /* register operation in log */
         $this->saveLog($operId, $calcId);
+        /* mark this calculation complete */
+        $this->daoCalc->markComplete($calcId);
         /** compose result */
         $this->logger->info("Bonus aggregation calculation is completed.");
         $result = new AResponse();
