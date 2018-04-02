@@ -61,7 +61,12 @@ class Aggregate
         return $result;
     }
 
-
+    /**
+     * Get summary for all bonus credits for all operation for period.
+     *
+     * @param $dsBegin
+     * @param $dsEnd
+     */
     private function getBonusTotals($dsBegin, $dsEnd)
     {
         $query = $this->qbGetBonusTotals->build();
@@ -71,6 +76,11 @@ class Aggregate
             QBGetTotals::BND_PERIOD_END => $dsEnd
         ];
         $rs = $conn->fetchAll($query, $bind);
+        foreach ($rs as $one) {
+            $accId = $one[QBGetTotals::A_ACC_ID];
+            $custId = $one[QBGetTotals::A_CUST_ID];
+            $total = $one[QBGetTotals::A_TOTAL];
+        }
     }
 
     /**
