@@ -57,7 +57,6 @@ class Aggregate
         assert($request instanceof ARequest);
         $this->logger->info("Bonus aggregation calculation is started.");
 
-
         /** perform processing */
         /**
          * @var \Praxigento\BonusBase\Repo\Data\Period $periodData
@@ -73,11 +72,12 @@ class Aggregate
         $this->saveLog($operId, $calcId);
         /* mark this calculation complete */
         $this->daoCalc->markComplete($calcId);
+
         /** compose result */
         $this->logger->info("Bonus aggregation calculation is completed.");
         $result = new AResponse();
         $result->setOperId($operId);
-        $result->setErrorCode(AResponse::ERR_NO_ERROR);
+        $result->markSucceed();
         return $result;
     }
 
