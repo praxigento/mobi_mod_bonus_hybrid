@@ -10,7 +10,7 @@ use Praxigento\BonusBase\Repo\Data\Type\Calc as TypeCalc;
 use Praxigento\BonusHybrid\Config as Cfg;
 
 class GetLastCalcIdForPeriod
-    extends \Praxigento\Core\App\Repo\Def\Db
+    extends \Praxigento\Core\App\Repo\Db
 {
     const BIND_CODE = 'calcTypeCode';
     const BIND_STATE = 'calcState';

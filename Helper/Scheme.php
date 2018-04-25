@@ -45,7 +45,7 @@ class Scheme
     private $cacheSignUpDebitCustIds = null;
     /** @var  \Magento\Framework\DB\Adapter\AdapterInterface */
     private $conn;
-    /** @var \Praxigento\Core\App\Repo\IGeneric */
+    /** @var \Praxigento\Core\Api\App\Repo\Generic */
     private $daoGeneric;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Registry\SignUpDebit */
     private $daoRegSignUpDebit;
@@ -59,7 +59,7 @@ class Scheme
      */
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resource,
-        \Praxigento\Core\App\Repo\IGeneric $daoGeneric,
+        \Praxigento\Core\Api\App\Repo\Generic $daoGeneric,
         \Praxigento\BonusHybrid\Repo\Dao\Registry\SignUpDebit $daoRegSignUpDebit,
         \Praxigento\BonusHybrid\Repo\Query\SignUpDebit\GetLastCalcIdForPeriod $queryGetLastSignUpCalcId
     ) {
