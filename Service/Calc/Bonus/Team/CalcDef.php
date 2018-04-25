@@ -15,6 +15,12 @@ use Praxigento\Downline\Repo\Data\Customer as ECustomer;
  */
 class CalcDef
 {
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
+    private $daoBonDwnl;
+    /** @var \Praxigento\Downline\Repo\Dao\Customer */
+    private $daoDwnl;
+    /** @var \Praxigento\BonusBase\Repo\Dao\Level */
+    private $daoLevel;
     /** @var \Praxigento\Downline\Helper\Tree */
     private $hlpDwnlTree;
     /** @var \Praxigento\Core\Api\Helper\Format */
@@ -25,32 +31,26 @@ class CalcDef
     private $hlpTree;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
-    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
-    private $daoBonDwnl;
-    /** @var \Praxigento\Downline\Repo\Dao\Customer */
-    private $daoDwnl;
-    /** @var \Praxigento\BonusBase\Repo\Dao\Level */
-    private $daoLevel;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
+        \Praxigento\Downline\Repo\Dao\Customer $daoDwnl,
+        \Praxigento\BonusBase\Repo\Dao\Level $daoLevel,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
         \Praxigento\Core\Api\Helper\Format $hlpFormat,
         \Praxigento\Downline\Api\Helper\Downline $hlpTree,
         \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
-        \Praxigento\BonusHybrid\Api\Helper\Scheme $hlpScheme,
-        \Praxigento\Downline\Repo\Dao\Customer $daoDwnl,
-        \Praxigento\BonusBase\Repo\Dao\Level $daoLevel,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl
+        \Praxigento\BonusHybrid\Api\Helper\Scheme $hlpScheme
     )
     {
         $this->logger = $logger;
+        $this->daoDwnl = $daoDwnl;
+        $this->daoLevel = $daoLevel;
+        $this->daoBonDwnl = $daoBonDwnl;
         $this->hlpFormat = $hlpFormat;
         $this->hlpTree = $hlpTree;
         $this->hlpDwnlTree = $hlpDwnlTree;
         $this->hlpScheme = $hlpScheme;
-        $this->daoDwnl = $daoDwnl;
-        $this->daoLevel = $daoLevel;
-        $this->daoBonDwnl = $daoBonDwnl;
     }
 
     /**
@@ -58,6 +58,7 @@ class CalcDef
      *
      * @param int $calcId ID of the compression calculation to get downline.
      * @return Data[]
+     * @throws \Exception
      */
     public function exec($calcId)
     {
@@ -132,8 +133,8 @@ class CalcDef
                             if ($parentScheme != Cfg::SCHEMA_DEFAULT) {
                                 if ($isFather) {
                                     /* Courtesy bonus will calculate in other process, just decrease % left */
-                                    $pctPbLeft = number_format($pctPbLeft - $courtesyPct, 2);
-                                    $pctPbDone = number_format($pctPbDone + $courtesyPct, 2);
+                                    $pctPbLeft = $this->hlpFormat->toNumber($pctPbLeft - $courtesyPct);
+                                    $pctPbDone = $this->hlpFormat->toNumber($pctPbDone + $courtesyPct);
                                     $this->logger->debug("TB: Customer #$parentId (ref. #$parentMlmId) has "
                                         . "scheme=$parentScheme and is 'father' for #$custId ($custMlmId). "
                                         . "Decrease %TB on %courtesy=$courtesyPct to %left=$pctPbLeft, %done=$pctPbDone.");
@@ -163,8 +164,8 @@ class CalcDef
                                         . "downline customer #$custId ($custMlmId) with PV=$pv and "
                                         . "%PB=$pctPb because he is not from DEFAULT scheme.");
                                 }
-                                $pctPbLeft = number_format($pctPbLeft - $pctTbAvlbDelta, 2);
-                                $pctPbDone = number_format($pctPbDone + $pctTbAvlbDelta, 2);
+                                $pctPbLeft = $this->hlpFormat->toNumber($pctPbLeft - $pctTbAvlbDelta);
+                                $pctPbDone = $this->hlpFormat->toNumber($pctPbDone + $pctTbAvlbDelta);
                                 $this->logger->debug("TB: All bonus is distributed (%left=$pctPbLeft, %done=$pctPbDone).");
                                 break;
                             } else {
@@ -176,15 +177,15 @@ class CalcDef
                                     $entry->setDonatorRef($custId);
                                     $entry->setValue($bonus);
                                     $result[] = $entry;
-                                    $pctPbLeft = number_format($pctPbLeft - $pctTbAvlbDelta, 2);
-                                    $pctPbDone = number_format($pctPbDone + $pctTbAvlbDelta, 2);
+                                    $pctPbLeft = $this->hlpFormat->toNumber($pctPbLeft - $pctTbAvlbDelta);
+                                    $pctPbDone = $this->hlpFormat->toNumber($pctPbDone + $pctTbAvlbDelta);
                                     $this->logger->debug("TB: Customer #$parentId ($parentMlmId) has TV=$tv, %TB=$pctTb,"
                                         . " and get '$bonus' ($pctTbAvlbDelta%) as DEFAULT Team Bonus from "
                                         . "downline customer #$custId ($custMlmId) with PV=$pv and "
                                         . "%PB=$pctPb, %left=$pctPbLeft%, %done=$pctPbDone.");
                                 } else {
-                                    $pctPbLeft = number_format($pctPbLeft - $pctTbAvlbDelta, 2);
-                                    $pctPbDone = number_format($pctPbDone + $pctTbAvlbDelta, 2);
+                                    $pctPbLeft = $this->hlpFormat->toNumber($pctPbLeft - $pctTbAvlbDelta);
+                                    $pctPbDone = $this->hlpFormat->toNumber($pctPbDone + $pctTbAvlbDelta);
                                     $this->logger->debug("TB: Customer #$parentId ($parentMlmId) has TV=$tv, %TB=$pctTb,"
                                         . " but cannot get DEFAULT Team Bonus from "
                                         . "downline customer #$custId ($custMlmId) with PV=$pv and "
@@ -200,8 +201,8 @@ class CalcDef
                                 . "get Team Bonus from #$custId ($custMlmId).");
                             if ($isFather) {
                                 /* reduce delta to courtesy bonus percent if parent is not "father" */
-                                $pctPbLeft = number_format($pctPbLeft - $courtesyPct, 2);
-                                $pctPbDone = number_format($pctPbDone + $courtesyPct, 2);
+                                $pctPbLeft = $this->hlpFormat->toNumber($pctPbLeft - $courtesyPct);
+                                $pctPbDone = $this->hlpFormat->toNumber($pctPbDone + $courtesyPct);
                                 $this->logger->debug("Customer #$parentId ($parentMlmId) is 'father' for the "
                                     . "customer #$custId ($custMlmId) %left is decreased on "
                                     . "Courtesy Bonus percent (new value: $pctPbLeft, %done=$pctPbDone).");
