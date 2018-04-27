@@ -11,7 +11,7 @@ use Praxigento\BonusBase\Service\Period\Calc\IAdd as PPeriodAdd;
  * Local process to register new period & calculation for forecast calculations (plain & compressed).
  */
 class Register
-    implements \Praxigento\Core\App\Service\IProcess
+    implements \Praxigento\Core\Api\App\Service\Process
 {
     /** string  */
     const IN_CALC_TYPE_CODE = 'calcTypeCode';

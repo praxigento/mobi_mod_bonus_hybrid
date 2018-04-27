@@ -15,7 +15,7 @@ use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
  * This is internal service (for this module only), so it has no own interface.
  */
 class Collect
-    implements \Praxigento\Core\App\Service\IProcess
+    implements \Praxigento\Core\Api\App\Service\Process
 {
     /** @var \Praxigento\Downline\Helper\Tree */
     private $hlpTree;

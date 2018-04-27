@@ -12,7 +12,7 @@ use Praxigento\BonusHybrid\Config as Cfg;
  * Get plain downline for forecast calculation and all customers with none-zero PV.
  */
 class GetPlainData
-    implements \Praxigento\Core\App\Service\IProcess
+    implements \Praxigento\Core\Api\App\Service\Process
 {
     /** \Praxigento\BonusHybrid\Repo\Data\Downline[] */
     const OUT_DWNL = 'downline';

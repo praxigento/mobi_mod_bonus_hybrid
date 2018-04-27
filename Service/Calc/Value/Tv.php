@@ -11,7 +11,7 @@ use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 
 class Tv
-    implements \Praxigento\Core\App\Service\IProcess
+    implements \Praxigento\Core\Api\App\Service\Process
 {
 
     /** @var \Praxigento\Core\Api\App\Logger\Main */

@@ -11,7 +11,7 @@ use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
  * Calculate TV on the compressed downline tree.
  */
 class Tv
-    implements \Praxigento\Core\App\Service\IProcess
+    implements \Praxigento\Core\Api\App\Service\Process
 {
     /** \Praxigento\BonusHybrid\Repo\Data\Downline[] downline with PV */
     const IN_DWNL = 'downline';

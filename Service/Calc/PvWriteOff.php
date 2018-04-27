@@ -10,7 +10,7 @@ use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Data\Trans as DTrans;
 
 class PvWriteOff
-    implements \Praxigento\Core\App\Service\IProcess
+    implements \Praxigento\Core\Api\App\Service\Process
 {
     /** @var \Praxigento\Accounting\Service\Operation */
     private $servOperation;

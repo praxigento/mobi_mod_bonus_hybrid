@@ -6,7 +6,7 @@
 namespace Praxigento\BonusHybrid\Cli;
 
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\Core\App\Service\IProcess as IProcess;
+use Praxigento\Core\Api\App\Service\Process as IProcess;
 
 /**
  * Calculate hybrid bonus.

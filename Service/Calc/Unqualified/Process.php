@@ -14,7 +14,7 @@ use Praxigento\BonusHybrid\Config as Cfg;
  * This is internal service (for this module only), so it has no own interface.
  */
 class Process
-    implements \Praxigento\Core\App\Service\IProcess
+    implements \Praxigento\Core\Api\App\Service\Process
 {
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;

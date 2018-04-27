@@ -9,7 +9,7 @@ use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Service\Calc\SignUpDebit\A\Repo\Query\GetOrders as QBGetOrders;
 
 class SignUpDebit
-    implements \Praxigento\Core\App\Service\IProcess
+    implements \Praxigento\Core\Api\App\Service\Process
 {
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $daoCalc;

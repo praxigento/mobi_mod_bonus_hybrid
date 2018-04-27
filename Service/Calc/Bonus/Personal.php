@@ -14,7 +14,7 @@ use Praxigento\Downline\Repo\Data\Customer as ECustomer;
  * Calculate Personal Bonus.
  */
 class Personal
-    implements \Praxigento\Core\App\Service\IProcess
+    implements \Praxigento\Core\Api\App\Service\Process
 {
     /** @var \Praxigento\BonusBase\Helper\Calc */
     private $hlpCalc;

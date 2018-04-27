@@ -12,7 +12,7 @@ use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
  * Calculate OV on the compressed downline tree.
  */
 class Ov
-    implements \Praxigento\Core\App\Service\IProcess
+    implements \Praxigento\Core\Api\App\Service\Process
 {
     /** \Praxigento\BonusHybrid\Repo\Data\Downline[] downline with PV & TV */
     const IN_DWNL = 'downline';

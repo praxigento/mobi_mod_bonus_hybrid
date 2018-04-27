@@ -13,7 +13,7 @@ use Praxigento\BonusHybrid\Config as Cfg;
  * Calculate Infinity Bonus.
  */
 class Infinity
-    implements \Praxigento\Core\App\Service\IProcess
+    implements \Praxigento\Core\Api\App\Service\Process
 {
     /** Calculation scheme (DEFAULT or EU) */
     const CTX_IN_SCHEME = 'in.scheme';

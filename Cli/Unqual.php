@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Cli;
 
-use Praxigento\Core\App\Service\IProcess as IProcess;
+use Praxigento\Core\Api\App\Service\Process as IProcess;
 use Praxigento\Core\Data as AData;
 
 /**

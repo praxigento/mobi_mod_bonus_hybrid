@@ -11,7 +11,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Inactive;
  * This is internal service (for this module only), so it has no own interface.
  */
 class Process
-    implements \Praxigento\Core\App\Service\IProcess
+    implements \Praxigento\Core\Api\App\Service\Process
 {
     public function exec(\Praxigento\Core\Data $ctx)
     {

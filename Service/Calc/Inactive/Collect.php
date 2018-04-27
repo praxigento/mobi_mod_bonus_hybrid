@@ -17,7 +17,7 @@ use Praxigento\BonusHybrid\Service\Calc\Inactive\Collect\Repo\Query\GetInactiveS
  * This is internal service (for this module only), so it has no own interface.
  */
 class Collect
-    implements \Praxigento\Core\App\Service\IProcess
+    implements \Praxigento\Core\Api\App\Service\Process
 {
     /** Maximal end of base period to get data for (TODO: not used in regular activity, just for development/phpUnits) */
     const CTX_IN_PERIOD_END = 'in.periodEnd';

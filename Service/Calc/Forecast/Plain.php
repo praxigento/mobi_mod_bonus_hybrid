@@ -12,7 +12,7 @@ use Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Calc as SubCalc;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetDownline as PGetDownline;
 
 class Plain
-    implements \Praxigento\Core\App\Service\IProcess
+    implements \Praxigento\Core\Api\App\Service\Process
 {
     /** string 'YYYY', 'YYYYMM' or 'YYYYMMDD' */
     const CTX_IN_PERIOD = 'in.period';
