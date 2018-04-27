@@ -10,7 +10,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Aggregate;
  * @method void setOperId(int $data)
  */
 class Response
-    extends \Praxigento\Core\App\Service\Base\Response
+    extends \Praxigento\Core\App\Service\Response
 {
 
 }

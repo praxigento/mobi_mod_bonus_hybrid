@@ -85,7 +85,7 @@ class Calc
         $req = new \Praxigento\BonusHybrid\Service\Calc\Aggregate\Request();
         $resp = $this->servAgg->exec($req);
         $err = $resp->getErrorCode();
-        $result = $err == \Praxigento\Core\App\Service\IResponse::ERR_NO_ERROR;
+        $result = $err == \Praxigento\Core\Api\App\Service\Response::ERR_NO_ERROR;
         return $result;
     }
 
