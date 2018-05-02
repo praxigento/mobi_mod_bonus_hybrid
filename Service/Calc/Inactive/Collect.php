@@ -21,7 +21,7 @@ class Collect
 {
     /** Maximal end of base period to get data for (TODO: not used in regular activity, just for development/phpUnits) */
     const CTX_IN_PERIOD_END = 'in.periodEnd';
-    /** @var \Praxigento\Downline\Helper\Tree */
+    /** @var \Praxigento\Downline\Api\Helper\Tree */
     private $hlpTree;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
@@ -38,7 +38,7 @@ class Collect
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
-        \Praxigento\Downline\Helper\Tree $hlpTree,
+        \Praxigento\Downline\Api\Helper\Tree $hlpTree,
         \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
         \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
         \Praxigento\BonusHybrid\Repo\Dao\Downline\Inactive $daoInact,

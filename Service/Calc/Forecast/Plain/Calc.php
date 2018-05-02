@@ -15,11 +15,11 @@ class Calc
     const KEY_TREE_ENTITY = \Praxigento\BonusHybrid\Repo\Data\Downline::A_CUST_REF;
     const KEY_TREE_PARENT = \Praxigento\BonusHybrid\Repo\Data\Downline::A_PARENT_REF;
 
-    /** @var \Praxigento\Downline\Helper\Tree */
+    /** @var \Praxigento\Downline\Api\Helper\Tree */
     private $hlpDwnlTree;
 
     public function __construct(
-        \Praxigento\Downline\Helper\Tree $hlpDwnlTree
+        \Praxigento\Downline\Api\Helper\Tree $hlpDwnlTree
     )
     {
         $this->hlpDwnlTree = $hlpDwnlTree;

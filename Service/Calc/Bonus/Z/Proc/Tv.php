@@ -18,11 +18,11 @@ class Tv
     /** \Praxigento\BonusHybrid\Repo\Data\Downline[] updated downline with TV*/
     const OUT_DWNL = 'downline';
 
-    /** @var \Praxigento\Downline\Helper\Tree */
+    /** @var \Praxigento\Downline\Api\Helper\Tree */
     private $hlpDwnlTree;
 
     public function __construct(
-        \Praxigento\Downline\Helper\Tree $hlpDwnlTree
+        \Praxigento\Downline\Api\Helper\Tree $hlpDwnlTree
     )
     {
         $this->hlpDwnlTree = $hlpDwnlTree;

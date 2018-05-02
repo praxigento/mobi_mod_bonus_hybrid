@@ -23,7 +23,7 @@ class UpdateDwnl
     const IN_DWNL_PHASE2_EU = 'dwnlPhase2Eu';
     /** \Praxigento\BonusHybrid\Repo\Data\Downline[] */
     const OUT_DWNL_PHASE1 = 'dwnlPhase1';
-    /** @var \Praxigento\Downline\Helper\Tree */
+    /** @var \Praxigento\Downline\Api\Helper\Tree */
     private $hlpDwnlTree;
     /** @var \Praxigento\BonusHybrid\Api\Helper\Scheme */
     private $hlpScheme;
@@ -32,7 +32,7 @@ class UpdateDwnl
 
     public function __construct(
         \Praxigento\BonusHybrid\Api\Helper\Scheme $hlpScheme,
-        \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
+        \Praxigento\Downline\Api\Helper\Tree $hlpDwnlTree,
         \Praxigento\Downline\Repo\Dao\Customer $daoCustDwnl
     )
     {

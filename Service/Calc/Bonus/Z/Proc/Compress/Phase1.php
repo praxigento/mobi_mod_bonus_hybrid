@@ -34,7 +34,7 @@ class Phase1
 
     /** @var    \Praxigento\Downline\Service\ISnap */
     private $callDwnlSnap;
-    /** @var \Praxigento\Downline\Helper\Tree */
+    /** @var \Praxigento\Downline\Api\Helper\Tree */
     private $hlpDwnlTree;
     /** @var  \Praxigento\BonusHybrid\Api\Helper\Scheme */
     private $hlpScheme;
@@ -48,7 +48,7 @@ class Phase1
     public function __construct(
         \Praxigento\BonusHybrid\Api\Helper\Scheme $hlpScheme,
         \Praxigento\Downline\Api\Helper\Downline $hlpTree,
-        \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
+        \Praxigento\Downline\Api\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusHybrid\Service\Calc\Z\Helper\GetCustomersIds $hlpSignUpDebitCust,
         \Praxigento\Downline\Repo\Dao\Customer $daoCustDwnl,
         \Praxigento\Downline\Service\ISnap $callDwnlSnap

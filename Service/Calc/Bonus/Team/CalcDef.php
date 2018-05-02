@@ -21,7 +21,7 @@ class CalcDef
     private $daoDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Level */
     private $daoLevel;
-    /** @var \Praxigento\Downline\Helper\Tree */
+    /** @var \Praxigento\Downline\Api\Helper\Tree */
     private $hlpDwnlTree;
     /** @var \Praxigento\Core\Api\Helper\Format */
     private $hlpFormat;
@@ -39,7 +39,7 @@ class CalcDef
         \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
         \Praxigento\Core\Api\Helper\Format $hlpFormat,
         \Praxigento\Downline\Api\Helper\Downline $hlpTree,
-        \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
+        \Praxigento\Downline\Api\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusHybrid\Api\Helper\Scheme $hlpScheme
     )
     {

@@ -19,7 +19,7 @@ use Praxigento\Downline\Repo\Data\Customer as EDwnlCust;
  */
 class SaveDownline
 {
-    /** @var \Praxigento\Downline\Helper\Tree */
+    /** @var \Praxigento\Downline\Api\Helper\Tree */
     private $hlpDwnl;
     /** @var \Praxigento\BonusHybrid\Api\Helper\Scheme */
     private $hlpScheme;
@@ -33,7 +33,7 @@ class SaveDownline
     private $daoLegs;
 
     public function __construct(
-        \Praxigento\Downline\Helper\Tree $hlpDwnl,
+        \Praxigento\Downline\Api\Helper\Tree $hlpDwnl,
         \Praxigento\BonusHybrid\Api\Helper\Scheme $hlpScheme,
         \Praxigento\Downline\Repo\Dao\Customer $daoDwnlCust,
         \Praxigento\BonusHybrid\Repo\Dao\Compression\Phase2\Legs $daoLegs,

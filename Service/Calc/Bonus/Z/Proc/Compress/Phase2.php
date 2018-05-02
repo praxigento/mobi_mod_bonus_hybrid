@@ -36,7 +36,7 @@ class Phase2
     const OUT_LEGS = 'legs';
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase2\Fun\Act\Qualify */
     private $actQualify;
-    /** @var \Praxigento\Downline\Helper\Tree */
+    /** @var \Praxigento\Downline\Api\Helper\Tree */
     private $hlpDwnlTree;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase2\IsQualified */
     private $hlpIsQualified;
@@ -57,7 +57,7 @@ class Phase2
 
     public function __construct(
         \Praxigento\Downline\Api\Helper\Downline $hlpTree,
-        \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
+        \Praxigento\Downline\Api\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusHybrid\Api\Helper\Scheme $hlpScheme,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase2\IsQualified $hlpIsQualified,
         \Praxigento\BonusBase\Repo\Dao\Rank $daoRank,

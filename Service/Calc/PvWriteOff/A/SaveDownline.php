@@ -15,7 +15,7 @@ class SaveDownline
 {
     /** @var \Praxigento\Downline\Service\ISnap */
     private $callDwnlSnap;
-    /** @var \Praxigento\Downline\Helper\Tree */
+    /** @var \Praxigento\Downline\Api\Helper\Tree */
     private $hlpDwnlTree;
     /** @var  \Praxigento\BonusHybrid\Api\Helper\Scheme */
     private $hlpScheme;
@@ -31,7 +31,7 @@ class SaveDownline
     public function __construct(
         \Praxigento\BonusHybrid\Api\Helper\Scheme $hlpScheme,
         \Praxigento\BonusHybrid\Service\Calc\Z\Helper\GetCustomersIds $hlpSignUpDebitCust,
-        \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
+        \Praxigento\Downline\Api\Helper\Tree $hlpDwnlTree,
         \Praxigento\Accounting\Repo\Dao\Account $daoAcc,
         \Praxigento\BonusBase\Repo\Dao\Rank $daoRank,
         \Praxigento\BonusHybrid\Repo\Dao\Downline $daoDwnl,

@@ -12,13 +12,13 @@ use Praxigento\BonusHybrid\Service\Calc\Compress\Z\Repo\Query\GetPhase1Pv as QBl
  */
 class GetPv
 {
-    /** @var \Praxigento\Downline\Helper\Tree */
+    /** @var \Praxigento\Downline\Api\Helper\Tree */
     private $hlpTree;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\Z\Repo\Query\GetPhase1Pv */
     private $qbGetPv;
 
     public function __construct(
-        \Praxigento\Downline\Helper\Tree $hlpTree,
+        \Praxigento\Downline\Api\Helper\Tree $hlpTree,
         \Praxigento\BonusHybrid\Service\Calc\Compress\Z\Repo\Query\GetPhase1Pv $qbGetPv
     )
     {

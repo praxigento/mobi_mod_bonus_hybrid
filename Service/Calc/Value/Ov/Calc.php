@@ -15,7 +15,7 @@ use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
  */
 class Calc
 {
-    /** @var \Praxigento\Downline\Helper\Tree */
+    /** @var \Praxigento\Downline\Api\Helper\Tree */
     private $hlpDwnlTree;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Z\Helper\GetCustomersIds */
     private $hlpSignUpDebitCust;
@@ -27,7 +27,7 @@ class Calc
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\BonusHybrid\Service\Calc\Z\Helper\GetCustomersIds $hlpSignUpDebitCust,
-        \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
+        \Praxigento\Downline\Api\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl
     )
     {

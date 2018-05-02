@@ -14,11 +14,11 @@ use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
  */
 class Calc
 {
-    /** @var \Praxigento\Downline\Helper\Tree */
+    /** @var \Praxigento\Downline\Api\Helper\Tree */
     private $hlpDwnlTree;
 
     public function __construct(
-        \Praxigento\Downline\Helper\Tree $hlpDwnlTree
+        \Praxigento\Downline\Api\Helper\Tree $hlpDwnlTree
     )
     {
         $this->hlpDwnlTree = $hlpDwnlTree;

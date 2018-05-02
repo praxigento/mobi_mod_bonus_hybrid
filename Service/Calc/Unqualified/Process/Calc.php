@@ -20,14 +20,14 @@ class Calc
     const MAX_UNQ_MONTHS = 6;
     /** @var \Praxigento\Downline\Service\ICustomer */
     private $callDwnlCust;
-    /** @var \Praxigento\Downline\Helper\Tree */
+    /** @var \Praxigento\Downline\Api\Helper\Tree */
     private $hlpDwnlTree;
     /** @var \Praxigento\Core\Api\Helper\Period */
     private $hlpPeriod;
 
     public function __construct(
         \Praxigento\Core\Api\Helper\Period $hlpPeriod,
-        \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
+        \Praxigento\Downline\Api\Helper\Tree $hlpDwnlTree,
         \Praxigento\Downline\Service\ICustomer $callDwnlCust
     )
     {

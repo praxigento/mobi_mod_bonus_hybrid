@@ -21,7 +21,7 @@ class Ov
     /** \Praxigento\BonusHybrid\Repo\Data\Downline[] updated downline with OV*/
     const OUT_DWNL = 'downline';
 
-    /** @var \Praxigento\Downline\Helper\Tree */
+    /** @var \Praxigento\Downline\Api\Helper\Tree */
     private $hlpDwnlTree;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Z\Helper\GetCustomersIds */
     private $hlpSignUpDebitCust;
@@ -31,7 +31,7 @@ class Ov
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\BonusHybrid\Service\Calc\Z\Helper\GetCustomersIds $hlpSignUpDebitCust,
-        \Praxigento\Downline\Helper\Tree $hlpDwnlTree
+        \Praxigento\Downline\Api\Helper\Tree $hlpDwnlTree
     )
     {
         $this->logger = $logger;

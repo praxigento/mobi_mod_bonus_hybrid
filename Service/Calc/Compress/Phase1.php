@@ -14,7 +14,7 @@ use Praxigento\Downline\Repo\Query\Snap\OnDate\Builder as QBSnap;
 class Phase1
     implements \Praxigento\Core\Api\App\Service\Process
 {
-    /** @var \Praxigento\Downline\Helper\Tree */
+    /** @var \Praxigento\Downline\Api\Helper\Tree */
     private $hlpDwnlTree;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
@@ -37,7 +37,7 @@ class Phase1
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
-        \Praxigento\Downline\Helper\Tree $hlpDwnlTree,
+        \Praxigento\Downline\Api\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
         \Praxigento\BonusBase\Repo\Dao\Rank $daoRank,
         \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
