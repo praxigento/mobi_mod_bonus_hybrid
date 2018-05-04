@@ -7,6 +7,8 @@ namespace Praxigento\BonusHybrid\Repo\Data\Downline;
 
 /**
  * Customer qualification data for downline trees.
+ *
+ * TODO: do we really need this entity? See \Praxigento\BonusHybrid\Repo\Data\Downline::A_RANK_REF
  */
 class Qualification
     extends \Praxigento\Core\App\Repo\Data\Entity\Base

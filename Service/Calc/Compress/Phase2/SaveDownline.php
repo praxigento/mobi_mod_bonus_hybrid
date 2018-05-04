@@ -106,6 +106,7 @@ class SaveDownline
                 $plainEntry = $plainByCust[$custId];
                 $plainId = $plainEntry->getId();
                 /* create qualification entry */
+                /* TODO: do we really need this entity? See \Praxigento\BonusHybrid\Repo\Data\Downline::A_RANK_REF */
                 $qual = new EBonDwnQual();
                 $qual->setTreeEntryRef($plainId);
                 $qual->setRankRef($rankId);
