@@ -18,31 +18,32 @@ class Calc
 {
     /** Max count of the unq. months in a row allowed for distributors. */
     const MAX_UNQ_MONTHS = 6;
-    /** @var \Praxigento\Downline\Service\ICustomer */
-    private $callDwnlCust;
+
     /** @var \Praxigento\Downline\Api\Helper\Tree */
     private $hlpDwnlTree;
     /** @var \Praxigento\Core\Api\Helper\Period */
     private $hlpPeriod;
+    /** @var \Praxigento\Downline\Api\Service\Customer\ChangeParent */
+    private $servDwnlChangeParent;
 
     public function __construct(
         \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         \Praxigento\Downline\Api\Helper\Tree $hlpDwnlTree,
-        \Praxigento\Downline\Service\ICustomer $callDwnlCust
+        \Praxigento\Downline\Api\Service\Customer\ChangeParent $servDwnlChangeParent
     )
     {
         $this->hlpPeriod = $hlpPeriod;
         $this->hlpDwnlTree = $hlpDwnlTree;
-        $this->callDwnlCust = $callDwnlCust;
+        $this->servDwnlChangeParent = $servDwnlChangeParent;
     }
 
     private function changeParent($custId, $parentId, $dateChanged)
     {
-        $req = new \Praxigento\Downline\Service\Customer\Request\ChangeParent();
+        $req = new \Praxigento\Downline\Api\Service\Customer\ChangeParent\Request();
         $req->setCustomerId($custId);
         $req->setNewParentId($parentId);
         $req->setDate($dateChanged);
-        $this->callDwnlCust->changeParent($req);
+        $this->servDwnlChangeParent->exec($req);
     }
 
     /**
