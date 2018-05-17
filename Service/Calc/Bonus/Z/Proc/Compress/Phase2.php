@@ -37,13 +37,11 @@ class Phase2
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase2\Fun\Act\Qualify */
     private $actQualify;
     /** @var \Praxigento\Downline\Api\Helper\Tree */
-    private $hlpDwnlTree;
+    private $hlpTree;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase2\IsQualified */
     private $hlpIsQualified;
     /** @var \Praxigento\BonusHybrid\Api\Helper\Scheme */
     private $hlpScheme;
-    /** @var \Praxigento\Downline\Api\Helper\Downline */
-    private $hlpTree;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $daoBonDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Cfg\Param */
@@ -56,8 +54,7 @@ class Phase2
     private $rouComposeLegs;
 
     public function __construct(
-        \Praxigento\Downline\Api\Helper\Downline $hlpTree,
-        \Praxigento\Downline\Api\Helper\Tree $hlpDwnlTree,
+        \Praxigento\Downline\Api\Helper\Tree $hlpTree,
         \Praxigento\BonusHybrid\Api\Helper\Scheme $hlpScheme,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase2\IsQualified $hlpIsQualified,
         \Praxigento\BonusBase\Repo\Dao\Rank $daoRank,
@@ -69,7 +66,6 @@ class Phase2
     )
     {
         $this->hlpTree = $hlpTree;
-        $this->hlpDwnlTree = $hlpDwnlTree;
         $this->hlpScheme = $hlpScheme;
         $this->hlpIsQualified = $hlpIsQualified;
         $this->daoRank = $daoRank;
@@ -99,11 +95,11 @@ class Phase2
         /**
          * perform processing
          */
-        $mapByIdCompress = $this->hlpDwnlTree->mapById($dwnlCompress, EBonDwnl::A_CUST_REF);
-        $mapByTeamCompress = $this->hlpDwnlTree->mapByTeams($dwnlCompress, EBonDwnl::A_CUST_REF, EBonDwnl::A_PARENT_REF);
-        $mapByDepthCompress = $this->hlpDwnlTree->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::A_CUST_REF, EBonDwnl::A_DEPTH);
-        $mapByIdPlain = $this->hlpDwnlTree->mapById($dwnlPlain, EBonDwnl::A_CUST_REF);
-        $mapByTeamPlain = $this->hlpDwnlTree->mapByTeams($dwnlPlain, EBonDwnl::A_CUST_REF, EBonDwnl::A_PARENT_REF);
+        $mapByIdCompress = $this->hlpTree->mapById($dwnlCompress, EBonDwnl::A_CUST_REF);
+        $mapByTeamCompress = $this->hlpTree->mapByTeams($dwnlCompress, EBonDwnl::A_CUST_REF, EBonDwnl::A_PARENT_REF);
+        $mapByDepthCompress = $this->hlpTree->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::A_CUST_REF, EBonDwnl::A_DEPTH);
+        $mapByIdPlain = $this->hlpTree->mapById($dwnlPlain, EBonDwnl::A_CUST_REF);
+        $mapByTeamPlain = $this->hlpTree->mapByTeams($dwnlPlain, EBonDwnl::A_CUST_REF, EBonDwnl::A_PARENT_REF);
         $rankIdMgr = $this->daoRank->getIdByCode(Cfg::RANK_MANAGER);
         /* MOBI-629: add init rank for un-ranked entries */
         $rankIdDistr = $this->daoRank->getIdByCode(Cfg::RANK_DISTRIBUTOR);;

@@ -32,34 +32,30 @@ class Phase1
     /** Compressed PV transfers to save in DB */
     const OUT_PV_TRANSFERS = 'pvTransfers';
 
-    /** @var    \Praxigento\Downline\Service\ISnap */
-    private $callDwnlSnap;
-    /** @var \Praxigento\Downline\Api\Helper\Tree */
-    private $hlpDwnlTree;
+    /** @var \Praxigento\Downline\Repo\Dao\Customer */
+    private $daoCustDwnl;
     /** @var  \Praxigento\BonusHybrid\Api\Helper\Scheme */
     private $hlpScheme;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Z\Helper\GetCustomersIds */
     private $hlpSignUpDebitCust;
-    /** @var \Praxigento\Downline\Api\Helper\Downline */
+    /** @var \Praxigento\Downline\Api\Helper\Tree */
     private $hlpTree;
-    /** @var \Praxigento\Downline\Repo\Dao\Customer */
-    private $daoCustDwnl;
+    /** @var    \Praxigento\Downline\Service\ISnap */
+    private $servDwnlSnap;
 
     public function __construct(
         \Praxigento\BonusHybrid\Api\Helper\Scheme $hlpScheme,
-        \Praxigento\Downline\Api\Helper\Downline $hlpTree,
-        \Praxigento\Downline\Api\Helper\Tree $hlpDwnlTree,
+        \Praxigento\Downline\Api\Helper\Tree $hlpTree,
         \Praxigento\BonusHybrid\Service\Calc\Z\Helper\GetCustomersIds $hlpSignUpDebitCust,
         \Praxigento\Downline\Repo\Dao\Customer $daoCustDwnl,
-        \Praxigento\Downline\Service\ISnap $callDwnlSnap
+        \Praxigento\Downline\Service\ISnap $servDwnlSnap
     )
     {
         $this->hlpScheme = $hlpScheme;
         $this->hlpTree = $hlpTree;
-        $this->hlpDwnlTree = $hlpDwnlTree;
         $this->hlpSignUpDebitCust = $hlpSignUpDebitCust;
         $this->daoCustDwnl = $daoCustDwnl;
-        $this->callDwnlSnap = $callDwnlSnap;
+        $this->servDwnlSnap = $servDwnlSnap;
     }
 
     /**
@@ -76,7 +72,7 @@ class Phase1
         }
         $req = new \Praxigento\Downline\Service\Snap\Request\ExpandMinimal();
         $req->setTree($converted);
-        $resp = $this->callDwnlSnap->expandMinimal($req);
+        $resp = $this->servDwnlSnap->expandMinimal($req);
         unset($converted);
         $snap = $resp->getSnapData();
         /* convert 2D array to array of entities */
@@ -113,9 +109,9 @@ class Phase1
 
         /* prepare intermediary structures for calculation */
         $mapCustomer = $this->getCustomersMap();
-        $mapPlain = $this->hlpDwnlTree->mapById($plain, $keyCustId);
-        $mapDepth = $this->hlpDwnlTree->mapByTreeDepthDesc($plain, $keyCustId, $keyDepth);
-        $mapTeams = $this->hlpDwnlTree->mapByTeams($plain, $keyCustId, $keyParentId);
+        $mapPlain = $this->hlpTree->mapById($plain, $keyCustId);
+        $mapDepth = $this->hlpTree->mapByTreeDepthDesc($plain, $keyCustId, $keyDepth);
+        $mapTeams = $this->hlpTree->mapByTeams($plain, $keyCustId, $keyParentId);
 
         /**
          * perform processing
@@ -221,7 +217,7 @@ class Phase1
     {
         /** @var \Praxigento\Downline\Repo\Data\Customer[] $customers */
         $customers = $this->daoCustDwnl->get();
-        $result = $this->hlpDwnlTree->mapById($customers, ECustomer::A_CUSTOMER_ID);
+        $result = $this->hlpTree->mapById($customers, ECustomer::A_CUSTOMER_ID);
         return $result;
     }
 

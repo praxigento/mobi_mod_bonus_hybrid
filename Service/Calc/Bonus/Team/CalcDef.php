@@ -21,13 +21,11 @@ class CalcDef
     private $daoDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Level */
     private $daoLevel;
-    /** @var \Praxigento\Downline\Api\Helper\Tree */
-    private $hlpDwnlTree;
     /** @var \Praxigento\Core\Api\Helper\Format */
     private $hlpFormat;
     /** @var  \Praxigento\BonusHybrid\Api\Helper\Scheme */
     private $hlpScheme;
-    /** @var \Praxigento\Downline\Api\Helper\Downline */
+    /** @var \Praxigento\Downline\Api\Helper\Tree */
     private $hlpTree;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
@@ -38,8 +36,7 @@ class CalcDef
         \Praxigento\BonusBase\Repo\Dao\Level $daoLevel,
         \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
         \Praxigento\Core\Api\Helper\Format $hlpFormat,
-        \Praxigento\Downline\Api\Helper\Downline $hlpTree,
-        \Praxigento\Downline\Api\Helper\Tree $hlpDwnlTree,
+        \Praxigento\Downline\Api\Helper\Tree $hlpTree,
         \Praxigento\BonusHybrid\Api\Helper\Scheme $hlpScheme
     )
     {
@@ -49,7 +46,6 @@ class CalcDef
         $this->daoBonDwnl = $daoBonDwnl;
         $this->hlpFormat = $hlpFormat;
         $this->hlpTree = $hlpTree;
-        $this->hlpDwnlTree = $hlpDwnlTree;
         $this->hlpScheme = $hlpScheme;
     }
 
@@ -71,9 +67,9 @@ class CalcDef
         $pctPbMax = $this->getMaxPercentForPersonalBonus($levelsPersonal);
         $courtesyPct = \Praxigento\BonusHybrid\Config::COURTESY_BONUS_PERCENT;
         /* create maps to access data */
-        $mapDwnlById = $this->hlpDwnlTree->mapById($dwnlCompress, EBonDwnl::A_CUST_REF);
-        $mapTeams = $this->hlpDwnlTree->mapByTeams($dwnlCompress, EBonDwnl::A_CUST_REF, EBonDwnl::A_PARENT_REF);
-        $mapCustById = $this->hlpDwnlTree->mapById($dwnlCurrent, ECustomer::A_CUSTOMER_ID);
+        $mapDwnlById = $this->hlpTree->mapById($dwnlCompress, EBonDwnl::A_CUST_REF);
+        $mapTeams = $this->hlpTree->mapByTeams($dwnlCompress, EBonDwnl::A_CUST_REF, EBonDwnl::A_PARENT_REF);
+        $mapCustById = $this->hlpTree->mapById($dwnlCurrent, ECustomer::A_CUSTOMER_ID);
         /**
          * Go through all customers from compressed tree and calculate bonus.
          *

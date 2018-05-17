@@ -8,22 +8,12 @@ namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Override;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Cfg\Override as ECfgOvrd;
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
-use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Data\Bonus as DBonus;
 use Praxigento\BonusHybrid\Service\Calc\Bonus\Override\Calc\Entry as DEntry;
+use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Data\Bonus as DBonus;
 use Praxigento\Downline\Repo\Data\Customer as ECustomer;
 
 class Calc
 {
-    /** @var \Praxigento\Downline\Api\Helper\Tree */
-    private $hlpDwnlTree;
-    /** @var \Praxigento\Core\Api\Helper\Format */
-    private $hlpFormat;
-    /** @var  \Praxigento\BonusHybrid\Api\Helper\Scheme */
-    private $hlpScheme;
-    /** @var \Praxigento\Downline\Api\Helper\Downline */
-    private $hlpTree;
-    /** @var \Praxigento\Core\Api\App\Logger\Main */
-    private $logger;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $daoBonDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Cfg\Override */
@@ -32,12 +22,19 @@ class Calc
     private $daoDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Rank */
     private $daoRank;
+    /** @var \Praxigento\Core\Api\Helper\Format */
+    private $hlpFormat;
+    /** @var  \Praxigento\BonusHybrid\Api\Helper\Scheme */
+    private $hlpScheme;
+    /** @var \Praxigento\Downline\Api\Helper\Tree */
+    private $hlpTree;
+    /** @var \Praxigento\Core\Api\App\Logger\Main */
+    private $logger;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Core\Api\Helper\Format $hlpFormat,
-        \Praxigento\Downline\Api\Helper\Downline $hlpTree,
-        \Praxigento\Downline\Api\Helper\Tree $hlpDwnlTree,
+        \Praxigento\Downline\Api\Helper\Tree $hlpTree,
         \Praxigento\BonusHybrid\Api\Helper\Scheme $hlpScheme,
         \Praxigento\Downline\Repo\Dao\Customer $daoDwnl,
         \Praxigento\BonusBase\Repo\Dao\Rank $daoRank,
@@ -48,7 +45,6 @@ class Calc
         $this->logger = $logger;
         $this->hlpFormat = $hlpFormat;
         $this->hlpTree = $hlpTree;
-        $this->hlpDwnlTree = $hlpDwnlTree;
         $this->hlpScheme = $hlpScheme;
         $this->daoDwnl = $daoDwnl;
         $this->daoRank = $daoRank;
@@ -107,11 +103,11 @@ class Calc
         $dwnlPlain = $this->daoDwnl->get();
         $cfgOverride = $this->getCfgOverride();
         /* create maps to access data */
-        $mapCmprsById = $this->hlpDwnlTree->mapById($dwnlCompress, EBonDwnl::A_CUST_REF);
-        $mapPlainById = $this->hlpDwnlTree->mapById($dwnlPlain, ECustomer::A_CUSTOMER_ID);
-        $mapTeams = $this->hlpDwnlTree->mapByTeams($dwnlCompress, EBonDwnl::A_CUST_REF, EBonDwnl::A_PARENT_REF);
+        $mapCmprsById = $this->hlpTree->mapById($dwnlCompress, EBonDwnl::A_CUST_REF);
+        $mapPlainById = $this->hlpTree->mapById($dwnlPlain, ECustomer::A_CUSTOMER_ID);
+        $mapTeams = $this->hlpTree->mapByTeams($dwnlCompress, EBonDwnl::A_CUST_REF, EBonDwnl::A_PARENT_REF);
         /* populate compressed data with depth & path values */
-        $mapByDepthDesc = $this->hlpDwnlTree->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::A_CUST_REF, EBonDwnl::A_DEPTH);
+        $mapByDepthDesc = $this->hlpTree->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::A_CUST_REF, EBonDwnl::A_DEPTH);
         /* scan all levels starting from the bottom and collect PV by generations */
         $mapGenerations = $this->mapByGeneration($mapByDepthDesc,
             $mapCmprsById); // [ $custId=>[$genId => $totalPv, ...], ... ]

@@ -12,26 +12,25 @@ use Praxigento\Downline\Repo\Data\Customer as ECustomer;
 
 class Calc
 {
-    /** @var \Praxigento\Downline\Api\Helper\Tree */
-    private $hlpDwnlTree;
-    /** @var \Praxigento\Core\Api\Helper\Format */
-    private $hlpFormat;
-    /** @var  \Praxigento\BonusHybrid\Api\Helper\Scheme */
-    private $hlpScheme;
-    /** @var \Praxigento\Downline\Api\Helper\Downline */
-    private $hlpTree;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $daoBonDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Cfg\Param */
     private $daoCfgParams;
     /** @var \Praxigento\Downline\Repo\Dao\Customer */
     private $daoDwnl;
+    /** @var \Praxigento\Core\Api\Helper\Format */
+    private $hlpFormat;
+    /** @var  \Praxigento\BonusHybrid\Api\Helper\Scheme */
+    private $hlpScheme;
+    /** @var \Praxigento\Downline\Api\Helper\Tree */
+    private $hlpTree;
+    /** @var \Praxigento\Core\Api\App\Logger\Main  */
+    private $logger;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Core\Api\Helper\Format $hlpFormat,
-        \Praxigento\Downline\Api\Helper\Downline $hlpTree,
-        \Praxigento\Downline\Api\Helper\Tree $hlpDwnlTree,
+        \Praxigento\Downline\Api\Helper\Tree $hlpTree,
         \Praxigento\BonusHybrid\Api\Helper\Scheme $hlpScheme,
         \Praxigento\Downline\Repo\Dao\Customer $daoDwnl,
         \Praxigento\BonusHybrid\Repo\Dao\Cfg\Param $daoCfgParams,
@@ -41,7 +40,6 @@ class Calc
         $this->logger = $logger;
         $this->hlpFormat = $hlpFormat;
         $this->hlpTree = $hlpTree;
-        $this->hlpDwnlTree = $hlpDwnlTree;
         $this->hlpScheme = $hlpScheme;
         $this->daoDwnl = $daoDwnl;
         $this->daoCfgParams = $daoCfgParams;
@@ -59,8 +57,8 @@ class Calc
         $cfgParams = $this->getCfgParams();
         $ibPercentMax = $this->getMaxPercentForInfinityBonus($cfgParams, $scheme);
         /* create maps to access data */
-        $mapById = $this->hlpDwnlTree->mapById($dwnlCompress, EBonDwnl::A_CUST_REF);
-        $mapPlainById = $this->hlpDwnlTree->mapById($dwnlPlain, ECustomer::A_CUSTOMER_ID);
+        $mapById = $this->hlpTree->mapById($dwnlCompress, EBonDwnl::A_CUST_REF);
+        $mapPlainById = $this->hlpTree->mapById($dwnlPlain, ECustomer::A_CUSTOMER_ID);
         /**
          * Process downline tree
          * @var EBonDwnl $custCompress
