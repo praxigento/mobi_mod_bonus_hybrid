@@ -64,8 +64,12 @@ class PrepareTrans
                 $tran->setCreditAccId($accId);
                 $tran->setDateApplied($dateApplied);
                 $tran->setValue($value);
-                $tran->setNote($note . ': cust. #' . $donatorId);
-                $tran->set(self::REF_DONATOR_ID, $donatorId);
+                if (empty($donatorId)) {
+                    $tran->setNote($note);
+                } else {
+                    $tran->setNote($note . ': cust. #' . $donatorId);
+                    $tran->set(self::REF_DONATOR_ID, $donatorId);
+                }
                 $result[] = $tran;
             } else {
                 /* skip zero amounts */
