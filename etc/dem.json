@@ -707,6 +707,87 @@
                     "alias": "reg",
                     "comment": "Registry for additional data.",
                     "entity": {
+                      "Refund": {
+                        "alias": "refund",
+                        "comment": "Registry for refund links (bonus transfer to upline).",
+                        "attribute": {
+                          "CustFromRef": {
+                            "alias": "cust_from_ref",
+                            "comment": "Reference to the customer for whom debit is applied.",
+                            "nullable": false,
+                            "type": {
+                              "integer": {
+                                "unsigned": true
+                              }
+                            }
+                          },
+                          "CustToRef": {
+                            "alias": "cust_to_ref",
+                            "comment": "Reference to the customer for whom credit is applied.",
+                            "nullable": false,
+                            "type": {
+                              "integer": {
+                                "unsigned": true
+                              }
+                            }
+                          }
+                        },
+                        "index": {
+                          "primary": {
+                            "type": "primary",
+                            "aliases": [
+                              "cust_from_ref",
+                              "cust_to_ref"
+                            ]
+                          },
+                          "uniqueFrom": {
+                            "type": "unique",
+                            "aliases": [
+                              "cust_from_ref"
+                            ]
+                          }
+                        },
+                        "relation": {
+                          "toCustomerFrom": {
+                            "own": {
+                              "aliases": [
+                                "cust_from_ref"
+                              ]
+                            },
+                            "reference": {
+                              "entity": {
+                                "completeAlias": "prxgt_dwnl_customer"
+                              },
+                              "aliases": [
+                                "customer_ref"
+                              ]
+                            },
+                            "action": {
+                              "delete": "cascade",
+                              "update": "restrict"
+                            }
+                          },
+                          "toCustomerTo": {
+                            "own": {
+                              "aliases": [
+                                "cust_to_ref"
+                              ]
+                            },
+                            "reference": {
+                              "entity": {
+                                "completeAlias": "prxgt_dwnl_customer"
+                              },
+                              "aliases": [
+                                "customer_ref"
+                              ]
+                            },
+                            "action": {
+                              "delete": "cascade",
+                              "update": "restrict"
+                            }
+                          }
+                        }
+                      },
                       "SignUpVolumeDebit": {
                         "alias": "signup",
                         "comment": "Registry for Sign Up Volume Debit calc.",

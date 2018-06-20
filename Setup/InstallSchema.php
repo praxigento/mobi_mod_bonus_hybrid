@@ -13,6 +13,7 @@ use Praxigento\BonusHybrid\Repo\Data\Compression\Phase2\Legs as Phase2Legs;
 use Praxigento\BonusHybrid\Repo\Data\Downline as Dwnl;
 use Praxigento\BonusHybrid\Repo\Data\Downline\Inactive as DwnlInact;
 use Praxigento\BonusHybrid\Repo\Data\Downline\Qualification as DwnlQual;
+use Praxigento\BonusHybrid\Repo\Data\Registry\Refund as Refund;
 use Praxigento\BonusHybrid\Repo\Data\Registry\SignUpDebit as SignUpDebit;
 
 class InstallSchema
@@ -36,6 +37,10 @@ class InstallSchema
         /* Config Param */
         $demEntity = $demPackage->get('package/Config/entity/Parameter');
         $this->toolDem->createEntity(CfgParam::ENTITY_NAME, $demEntity);
+
+        /* Registry Refund */
+        $demEntity = $demPackage->get('package/Registry/entity/Refund');
+        $this->toolDem->createEntity(Refund::ENTITY_NAME, $demEntity);
 
         /* Registry Sign Up Volume Debit */
         $demEntity = $demPackage->get('package/Registry/entity/SignUpVolumeDebit');
