@@ -97,12 +97,13 @@ class Config extends BonusBaseCfg
      */
     const SCHEMA_DEFAULT = 'DEFAULT';
     const SCHEMA_EU = 'EU';
+
     /**
      * Sign Up Volume Debit parameters: PV Off & Wallet On values.
      */
-    const SIGNUP_DEBIT_PV = 100;
     const SIGNUP_DEBIT_BONUS_FATHER = 34;
     const SIGNUP_DEBIT_BONUS_GRAND = 18;
+    const SIGNUP_DEBIT_PV = 100;
 
     const TEAM_BONUS_EU_PERCENT = 0.05;
 
