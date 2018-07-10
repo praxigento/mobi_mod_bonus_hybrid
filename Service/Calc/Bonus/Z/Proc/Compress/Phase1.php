@@ -6,7 +6,7 @@
 namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress;
 
 use Praxigento\Downline\Repo\Data\Customer as ECustomer;
-
+use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 /**
  * Process to calculate Phase1 compression.
  */
@@ -197,7 +197,19 @@ class Phase1
         $cmprsSnap = $this->composeTree($compression);
 
         /* re-build result tree (compressed) from source tree (plain) */
-        $cmprsResult = $this->rebuildTree($calcId, $cmprsSnap, $mapPlain, $keyCalcId, $keyParentId, $keyDepth, $keyPath);
+        $cmprsResultDirty = $this->rebuildTree($calcId, $cmprsSnap, $mapPlain, $keyCalcId, $keyParentId, $keyDepth, $keyPath);
+        /* then unset items IDs after plain tree (MOBI-1502) */
+        $cmprsResult=[];
+        /**
+         * @var int $key
+         * @var EBonDwnl $item
+         */
+        foreach ($cmprsResultDirty as $key => $item) {
+            $cloned = clone $item;
+            $cloned->setId(null);
+            $cmprsResult[$key] = $cloned;
+        }
+
 
         /* add compressed PV data */
         $cmprsSnap = $this->populateCompressedSnapWithPv($cmprsResult, $compression, $keyPv);
