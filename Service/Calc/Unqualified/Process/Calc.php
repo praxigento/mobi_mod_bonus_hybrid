@@ -23,13 +23,13 @@ class Calc
     private $hlpDwnlTree;
     /** @var \Praxigento\Core\Api\Helper\Period */
     private $hlpPeriod;
-    /** @var \Praxigento\Downline\Api\Service\Customer\ChangeParent */
+    /** @var \Praxigento\Downline\Api\Service\Customer\Parent\Change */
     private $servDwnlChangeParent;
 
     public function __construct(
         \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         \Praxigento\Downline\Api\Helper\Tree $hlpDwnlTree,
-        \Praxigento\Downline\Api\Service\Customer\ChangeParent $servDwnlChangeParent
+        \Praxigento\Downline\Api\Service\Customer\Parent\Change $servDwnlChangeParent
     )
     {
         $this->hlpPeriod = $hlpPeriod;
@@ -39,7 +39,7 @@ class Calc
 
     private function changeParent($custId, $parentId, $dateChanged)
     {
-        $req = new \Praxigento\Downline\Api\Service\Customer\ChangeParent\Request();
+        $req = new \Praxigento\Downline\Api\Service\Customer\Parent\Change\Request();
         $req->setCustomerId($custId);
         $req->setNewParentId($parentId);
         $req->setDate($dateChanged);
