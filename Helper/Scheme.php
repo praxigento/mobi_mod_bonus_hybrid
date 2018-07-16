@@ -244,7 +244,8 @@ class Scheme
         if (
             ($code == 'AT') ||
             ($code == 'DE') ||
-            ($code == 'ES')
+            ($code == 'ES') ||
+            ($code == 'LU')
         ) {
             $result = Cfg::SCHEMA_EU;
         }
