@@ -15,6 +15,8 @@ class Register
 {
     /** string  */
     const IN_CALC_TYPE_CODE = 'calcTypeCode';
+    const IN_PERIOD = 'period';
+
     /** int */
     const OUT_CALC_ID = 'calcId';
 
@@ -36,9 +38,10 @@ class Register
     {
         /* get working data from context */
         $calcTypeCode = $ctx->get(self::IN_CALC_TYPE_CODE);
+        $period = $ctx->get(self::IN_PERIOD);
 
         /* get calculation period (begin, end dates) */
-        list($dateFrom, $dateTo) = $this->getPeriod();
+        list($dateFrom, $dateTo) = $this->getPeriod($period);
 
         /* register new calculation for period */
         $calcId = $this->registerNewCalc($dateFrom, $dateTo, $calcTypeCode);
@@ -51,16 +54,23 @@ class Register
     /**
      * Return 2 dates (period being/end): first day of the month and yesterday.
      *
+     * @param string|null $period 'YYYYMM'
      * @return array
      */
-    private function getPeriod()
+    private function getPeriod($period)
     {
         /* get current month as MONTH period */
-        $month = $this->hlpPeriod->getPeriodCurrent(null, 0, \Praxigento\Core\Api\Helper\Period::TYPE_MONTH);
-        /* get current date then get yesterday date (end of period) */
-        $today = $this->hlpPeriod->getPeriodCurrent();
-        $end = $this->hlpPeriod->getPeriodPrev($today);
-        $begin = $this->hlpPeriod->getPeriodFirstDate($month);
+        if (!$period) {
+            $month = $this->hlpPeriod->getPeriodCurrent(null, 0, \Praxigento\Core\Api\Helper\Period::TYPE_MONTH);
+            /* get current date then get yesterday date as end of period */
+            $begin = $this->hlpPeriod->getPeriodFirstDate($month);
+            $today = $this->hlpPeriod->getPeriodCurrent();
+            $end = $this->hlpPeriod->getPeriodPrev($today);
+        } else {
+            $month = $period;
+            $begin = $this->hlpPeriod->getPeriodFirstDate($month);
+            $end = $this->hlpPeriod->getPeriodLastDate($month);
+        }
         $result = [$begin, $end];
         return $result;
     }

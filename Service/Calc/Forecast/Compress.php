@@ -19,6 +19,7 @@ use Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\UpdateDwnl as PUpdateD
 class Compress
     implements \Praxigento\Core\Api\App\Service\Process
 {
+    const CTX_IN_PERIOD = \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain::CTX_IN_PERIOD;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Clean */
@@ -149,8 +150,9 @@ class Compress
         $this->logger->info("'Forecast Compress' calculation is started.");
 
         /* clean up existing calculation data and register new one */
-        $this->cleanCalc();
-        $calcId = $this->registerCalc();
+        $period = $ctx->get(self::CTX_IN_PERIOD);
+        $this->cleanCalc($period);
+        $calcId = $this->registerCalc($period);
 
         /* perform Phase1 compression */
         $dwnlPhase1 = $this->compressPhase1($calcId);
@@ -191,12 +193,14 @@ class Compress
     /**
      * Register new compression calculation.
      *
+     * @param string $period
      * @return int calculation ID.
      */
-    private function registerCalc()
+    private function registerCalc($period)
     {
         $ctx = new \Praxigento\Core\Data();
         $ctx->set(PCalcReg::IN_CALC_TYPE_CODE, Cfg::CODE_TYPE_CALC_FORECAST_PHASE1);
+        $ctx->set(PCalcReg::IN_PERIOD, $period);
         /** @var \Praxigento\Core\Data $res */
         $res = $this->procCalcReg->exec($ctx);
         $result = $res->get(PCalcReg::OUT_CALC_ID);
