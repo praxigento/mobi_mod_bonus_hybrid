@@ -74,13 +74,14 @@ class Forecast
         \Symfony\Component\Console\Input\InputInterface $input,
         \Symfony\Component\Console\Output\OutputInterface $output
     ) {
-        $output->writeln("<info>Start forecast calculations.<info>");
+        $period = $input->getOption(self::OPT_PERIOD_NAME);
+        $output->writeln("<info>Start forecast calculations ($period).<info>");
         /* DDL statement TRUNCATE cannot be used inside transaction. */
         $this->cleanSnaps();
         /* perform the main processing */
         $this->conn->beginTransaction();
         try {
-            $period = $input->getOption(self::OPT_PERIOD_NAME);
+
             $ctx = new \Praxigento\Core\Data();
             $ctx->set(APlain::CTX_IN_PERIOD, $period);
             /* MOBI-1026: re-build downline snaps before calculations */

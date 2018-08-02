@@ -72,6 +72,7 @@ class Plain
         /* clean up existing forecast calculation data */
         $ctxClean = new \Praxigento\Core\Data();
         $ctxClean->set(PCleanCalcData::IN_CALC_TYPE_CODE, Cfg::CODE_TYPE_CALC_FORECAST_PLAIN);
+        $ctxClean->set(PCleanCalcData::IN_PERIOD, $period);
         $this->procCleanCalc->exec($ctxClean);
 
         /* get calculation period (begin, end dates) */

@@ -99,11 +99,13 @@ class Compress
 
     /**
      * Clean up existing forecast calculation data.
+     * @param string $period
      */
-    private function cleanCalc()
+    private function cleanCalc($period)
     {
         $ctx = new \Praxigento\Core\Data();
         $ctx->set(PCalcClean::IN_CALC_TYPE_CODE, Cfg::CODE_TYPE_CALC_FORECAST_PHASE1);
+        $ctx->set(PCalcClean::IN_PERIOD, $period);
         $this->procCalcClean->exec($ctx);
     }
 
