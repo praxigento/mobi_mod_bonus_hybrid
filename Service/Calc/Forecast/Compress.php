@@ -109,10 +109,11 @@ class Compress
         $this->procCalcClean->exec($ctx);
     }
 
-    private function compressPhase1($calcId)
+    private function compressPhase1($calcId, $period)
     {
         /* get the last forecast plain calculation and extract collected PV */
         $inPv = new \Praxigento\Core\Data();
+        $inPv->set(PGetPlainData::IN_PERIOD, $period);
         $outPv = $this->procGetPlainData->exec($inPv);
         $pv = $outPv->get(PGetPlainData::OUT_PV);
         $downline = $outPv->get(PGetPlainData::OUT_DWNL);
@@ -133,9 +134,9 @@ class Compress
         return $result;
     }
 
-    private function compressPhase2($calcId, $scheme, $dwnlPhase1)
+    private function compressPhase2($calcId, $scheme, $dwnlPhase1, $period)
     {
-        list($pv, $dwnlPlain) = $this->getDwnlPlain();
+        list($pv, $dwnlPlain) = $this->getDwnlPlain($period);
         $ctx = new \Praxigento\Core\Data();
         $ctx->set(PCpmrsPhase2::IN_CALC_ID_PHASE2, $calcId);
         $ctx->set(PCpmrsPhase2::IN_MAP_PV, $pv);
@@ -157,15 +158,15 @@ class Compress
         $calcId = $this->registerCalc($period);
 
         /* perform Phase1 compression */
-        $dwnlPhase1 = $this->compressPhase1($calcId);
+        $dwnlPhase1 = $this->compressPhase1($calcId, $period);
 
         /* calculate TV & OV on compressed tree */
         $dwnlPhase1 = $this->calcTv($dwnlPhase1);
         $dwnlPhase1 = $this->calcOv($dwnlPhase1);
 
         /* calculate phase 2 compression for both schemes */
-        $dwnlPhase2Def = $this->compressPhase2($calcId, Cfg::SCHEMA_DEFAULT, $dwnlPhase1);
-        $dwnlPhase2Eu = $this->compressPhase2($calcId, Cfg::SCHEMA_EU, $dwnlPhase1);
+        $dwnlPhase2Def = $this->compressPhase2($calcId, Cfg::SCHEMA_DEFAULT, $dwnlPhase1, $period);
+        $dwnlPhase2Eu = $this->compressPhase2($calcId, Cfg::SCHEMA_EU, $dwnlPhase1, $period);
 
         /* ... then populate Phase1 downline with ranks from Phase2 downlines */
         $dwnlPhase1 = $this->updateDwnl($dwnlPhase1, $dwnlPhase2Def, $dwnlPhase2Eu);
@@ -181,10 +182,11 @@ class Compress
         $this->logger->info("'Forecast Compress' calculation is completed.");
     }
 
-    private function getDwnlPlain()
+    private function getDwnlPlain($period)
     {
         /* get the last forecast plain calculation and extract collected PV */
         $in = new \Praxigento\Core\Data();
+        $in->set(PGetPlainData::IN_PERIOD, $period);
         $out = $this->procGetPlainData->exec($in);
         $pv = $out->get(PGetPlainData::OUT_PV);
         $downline = $out->get(PGetPlainData::OUT_DWNL);
