@@ -5,8 +5,9 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress;
 
-use Praxigento\Downline\Repo\Data\Customer as ECustomer;
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
+use Praxigento\Downline\Repo\Data\Customer as ECustomer;
+
 /**
  * Process to calculate Phase1 compression.
  */
@@ -205,8 +206,13 @@ class Phase1
          * @var EBonDwnl $item
          */
         foreach ($cmprsResultDirty as $key => $item) {
-            $cloned = clone $item;
-            $cloned->setId(null);
+            if (is_array($item)) {
+                $cloned = $item;
+                $cloned[EBonDwnl::A_ID] = null;
+            } else {
+                $cloned = clone $item;
+                $cloned->setId(null);
+            }
             $cmprsResult[$key] = $cloned;
         }
 

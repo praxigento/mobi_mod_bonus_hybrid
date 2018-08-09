@@ -99,14 +99,20 @@ class SignUpDebit
         /** @var  $query */
         $query = $this->qbGetOrders->build();
         $conn = $query->getConnection();
+        /** TODO: fix backward dependency for customer group ID
+         * (bonus module should not be dependent from project module - \Praxigento\Santegra\Helper\...)
+         */
+        $from = $this->hlpPeriod->getTimestampFrom($dateFrom);
+        $upTo = $this->hlpPeriod->getTimestampNextFrom($dateTo);
         $rs = $conn->fetchAll($query, [
-            QBGetOrders::BND_DATE_FROM => $dateFrom,
-            QBGetOrders::BND_DATE_TO => $dateTo
+            QBGetOrders::BND_DATE_FROM => $from,
+            QBGetOrders::BND_DATE_TO => $upTo,
+            QBGetOrders::BND_CUST_GROUP_ID => \Praxigento\Santegra\Helper\Odoo\BusinessCodes::M_CUST_GROUP_DISTRIBUTOR
         ]);
         /* only customer's first order should be included in the result set (apply to the bonus) */
         $result = [];
         foreach ($rs as $one) {
-            $orderId = $one[QBGetOrders::A_ORDER_ID];
+            $orderId = $one[QBGetOrders::A_SALE_ID];
             if (!isset($result[$orderId])) {
                 $result[$orderId] = $one;
             }

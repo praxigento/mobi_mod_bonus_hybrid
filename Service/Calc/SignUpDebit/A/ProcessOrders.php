@@ -89,7 +89,7 @@ class ProcessOrders
             $custId = $one[QGetOrders::A_CUST_ID];
             $parentId = $one[QGetOrders::A_PARENT_ID];
             $grandId = $one[QGetOrders::A_PARENT_GRAND_ID];
-            $orderId = $one[QGetOrders::A_ORDER_ID];
+            $orderId = $one[QGetOrders::A_SALE_ID];
             $scheme = $this->hlpScheme->getSchemeByCustomer($one);
             /** Sign Up Debit bonus is applied for EU customers only */
             if ($scheme == Cfg::SCHEMA_EU) {
@@ -144,7 +144,7 @@ class ProcessOrders
         /* save customers into Sign Up Registry */
         foreach ($orders as $one) {
             $custId = $one[QGetOrders::A_CUST_ID];
-            $orderId = $one[QGetOrders::A_ORDER_ID];
+            $orderId = $one[QGetOrders::A_SALE_ID];
             $this->daoRegSignUpDebit->create([
                 RegSignup::A_CALC_REF => $calcId,
                 RegSignup::A_CUST_REF => $custId,
