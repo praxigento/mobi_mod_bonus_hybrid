@@ -50,7 +50,7 @@ class CalcDef
     }
 
     /**
-     * Walk trough the compressed downline & calculate team bonus for EU scheme.
+     * Walk trough the compressed downline & calculate team bonus for DEFAULT scheme.
      *
      * @param int $calcId ID of the compression calculation to get downline.
      * @return Data[]
