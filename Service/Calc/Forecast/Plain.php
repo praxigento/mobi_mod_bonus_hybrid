@@ -95,17 +95,17 @@ class Plain
         /* get PV turnover for period */
         $entries = $this->getPvTurnover($dateFrom, $dateTo);
 
-        /* extract only positive turnovers */
-        $positiveTurnover = [];
+        /* extract only not zero turnovers */
+        $filteredTurnover = [];
         /** @var \Praxigento\Accounting\Api\Service\Balance\Get\Turnover\Response\Entry $entry */
         foreach ($entries as $entry) {
             $turnover = $entry->turnover;
             $customerId = $entry->customerId;
             if (
-                ($turnover > Cfg::DEF_ZERO) &&
+                (abs($turnover) > Cfg::DEF_ZERO) &&
                 ($customerId != $custSysId)
             ) {
-                $positiveTurnover[$customerId] = $entry;
+                $filteredTurnover[$customerId] = $entry;
                 /** @var \Praxigento\BonusHybrid\Repo\Data\Downline $dwnlEntry */
                 $dwnlEntry = $dwnlTree[$customerId];
                 $dwnlEntry->setPv($turnover);
@@ -135,21 +135,9 @@ class Plain
      */
     private function getPeriod($requested)
     {
-        if ($requested) {
-            /* convert $requested to MONTH period */
-            $month = $this->hlpPeriod->getPeriodNext($requested, \Praxigento\Core\Api\Helper\Period::TYPE_MONTH);
-            $month = $this->hlpPeriod->getPeriodPrev($month, \Praxigento\Core\Api\Helper\Period::TYPE_MONTH);
-            /* get period end */
-            $end = $this->hlpPeriod->getPeriodLastDate($month);
-        } else {
-            /* get current month as MONTH period */
-            $month = $this->hlpPeriod->getPeriodCurrent(null, 0, \Praxigento\Core\Api\Helper\Period::TYPE_MONTH);
-            /* get current date then get yesterday date (end of period) */
-            $today = $this->hlpPeriod->getPeriodCurrent();
-//            $end = $this->hlpPeriod->getPeriodPrev($today);
-            $end = $today;
-        }
+        $month = substr($requested, 0, 6);
         $begin = $this->hlpPeriod->getPeriodFirstDate($month);
+        $end = $this->hlpPeriod->getPeriodLastDate($month);
         $result = [$begin, $end];
         return $result;
     }
