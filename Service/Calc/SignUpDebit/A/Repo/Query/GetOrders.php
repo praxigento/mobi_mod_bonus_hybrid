@@ -5,6 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\SignUpDebit\A\Repo\Query;
 
+use Magento\Sales\Model\Order as MSaleOrder;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\Downline\Repo\Data\Customer as EDwnlCust;
 use Praxigento\Pv\Repo\Data\Sale as EPvSale;
@@ -103,11 +104,19 @@ class GetOrders
         $result->joinLeft([$as => $tbl], $cond, $cols);
 
         /* WHERE */
+        $conn = $this->resource->getConnection();
         $byCreatedAfter = $asCust . '.' . Cfg::E_CUSTOMER_A_CREATED_AT . '>=:' . self::BND_DATE_FROM;
         $byCreatedBefore = $asCust . '.' . Cfg::E_CUSTOMER_A_CREATED_AT . '<:' . self::BND_DATE_TO;
         $byCustGroup = $asCust . '.' . Cfg::E_CUSTOMER_A_GROUP_ID . '=:' . self::BND_CUST_GROUP_ID;
         $byPv = $asPv . '.' . EPvSale::A_TOTAL . ' >= 100';
-        $where = "($byCreatedAfter) AND ($byCreatedBefore) AND ($byCustGroup) AND ($byPv)";
+        $quoted = $conn->quote(MSaleOrder::STATE_PROCESSING);
+        $byStateProcessing = $asSale . '.' . Cfg::E_SALE_ORDER_A_STATE . "=$quoted";
+        $quoted = $conn->quote(MSaleOrder::STATE_COMPLETE);
+        $byStateComplete = $asSale . '.' . Cfg::E_SALE_ORDER_A_STATE . "=$quoted";
+        $byState = "($byStateProcessing) OR ($byStateComplete)";
+        $bySaleCreated = $asSale . '.' . Cfg::E_SALE_ORDER_A_CREATED_AT . '<:' . self::BND_DATE_TO;
+        $where = "($byCreatedAfter) AND ($byCreatedBefore) AND ($byCustGroup) AND ($byPv) "
+            . "AND ($byState) AND ($bySaleCreated)";
         $result->where($where);
 
         /* ORDER by sale id */
