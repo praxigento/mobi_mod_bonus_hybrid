@@ -33,10 +33,10 @@ class PvWriteOff
     /** @var \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Query\GetData\Builder */
     private $qbGetData;
     /** @var \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\PrepareTrans */
-    private $ownPrepareTrans;
+    private $aPrepareTrans;
     /** @var \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\SaveDownline */
-    private $ownSaveDownline;
-
+    private $aSaveDownline;
+    private $aValidate;
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Core\Api\Helper\Date $hlpDate,
@@ -48,8 +48,9 @@ class PvWriteOff
         \Praxigento\Accounting\Service\Operation $servOperation,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $servPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Query\GetData\Builder $qbGetData,
-        \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\PrepareTrans $ownPrepareTrans,
-        \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\SaveDownline $ownSaveDownline
+        \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\PrepareTrans $aPrepareTrans,
+        \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\SaveDownline $aSaveDownline,
+        \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Validate $aValidate
     )
     {
         $this->logger = $logger;
@@ -62,8 +63,9 @@ class PvWriteOff
         $this->servOperation = $servOperation;
         $this->servPeriodGet = $servPeriodGet;
         $this->qbGetData = $qbGetData;
-        $this->ownPrepareTrans = $ownPrepareTrans;
-        $this->ownSaveDownline = $ownSaveDownline;
+        $this->aPrepareTrans = $aPrepareTrans;
+        $this->aSaveDownline = $aSaveDownline;
+        $this->aValidate = $aValidate;
     }
 
     /**
@@ -105,12 +107,14 @@ class PvWriteOff
         $transitions = $this->getTransitions($dsBegin, $dsEnd);
         /* group PV transitions by account */
         $balances = $this->groupPvTrans($transitions);
+        /* look up fo accounts with negative balance, compose list & throw exception */
+        $this->aValidate->exec($balances);
         /* compose transactions for the operation */
         $trans = $this->getTransactions($balances, $dsEnd);
         /* create 'PV Write Off' operation */
         $operId = $this->createOperation($trans, $dsBegin, $dsEnd);
         /* calculate PV/TV/OV and save plain downline */
-        $this->ownSaveDownline->exec($calcId, $dsEnd, $balances);
+        $this->aSaveDownline->exec($calcId, $dsEnd, $balances);
         /* register operation in log */
         $this->saveLog($operId, $calcId);
         /* mark this calculation complete */
@@ -150,10 +154,13 @@ class PvWriteOff
     private function getTransactions($turnover, $dsEnd)
     {
         $dateApplied = $this->hlpPeriod->getTimestampUpTo($dsEnd);
-        $result = $this->ownPrepareTrans->exec($turnover, $dateApplied);
+        $result = $this->aPrepareTrans->exec($turnover, $dateApplied);
         return $result;
     }
 
+    private function validateBalances()
+    {
+    }
     /**
      * Get PV transitions data for period.
      *
