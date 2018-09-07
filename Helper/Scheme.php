@@ -26,7 +26,6 @@ class Scheme
      */
     private $QUALIFIED_CUSTOMERS = [
         '770000001' => [Cfg::SCHEMA_DEFAULT, Cfg::RANK_PRESIDENT],
-        '777163048' => [Cfg::SCHEMA_DEFAULT, Cfg::RANK_EXEC_DIRECTOR],
         '777017725' => [Cfg::SCHEMA_DEFAULT, Cfg::RANK_PRESIDENT]
     ];
     /**
