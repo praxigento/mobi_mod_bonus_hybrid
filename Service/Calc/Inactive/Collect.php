@@ -21,6 +21,15 @@ class Collect
 {
     /** Maximal end of base period to get data for (TODO: not used in regular activity, just for development/phpUnits) */
     const CTX_IN_PERIOD_END = 'in.periodEnd';
+
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
+    private $daoBonDwnl;
+    /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
+    private $daoCalc;
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline\Inactive */
+    private $daoInact;
+    /** @var \Praxigento\BonusHybrid\Api\Helper\Scheme */
+    private $hlpScheme;
     /** @var \Praxigento\Downline\Api\Helper\Tree */
     private $hlpTree;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
@@ -29,28 +38,24 @@ class Collect
     private $procPeriodGet;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Inactive\Collect\Repo\Query\GetInactiveStats */
     private $qbGetStats;
-    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
-    private $daoBonDwnl;
-    /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
-    private $daoCalc;
-    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline\Inactive */
-    private $daoInact;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
-        \Praxigento\Downline\Api\Helper\Tree $hlpTree,
         \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
         \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
         \Praxigento\BonusHybrid\Repo\Dao\Downline\Inactive $daoInact,
+        \Praxigento\Downline\Api\Helper\Tree $hlpTree,
+        \Praxigento\BonusHybrid\Api\Helper\Scheme $hlpScheme,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
         QBGetStats $qbGetStats
     )
     {
         $this->logger = $logger;
-        $this->hlpTree = $hlpTree;
         $this->daoCalc = $daoCalc;
         $this->daoBonDwnl = $daoBonDwnl;
         $this->daoInact = $daoInact;
+        $this->hlpTree = $hlpTree;
+        $this->hlpScheme = $hlpScheme;
         $this->procPeriodGet = $procPeriodGet;
         $this->qbGetStats = $qbGetStats;
     }
@@ -63,6 +68,8 @@ class Collect
     private function calc($tree, $prevStat)
     {
         $result = [];
+        /* get customers with forced qualification */
+        $forced = $this->hlpScheme->getForcedQualificationCustomersIds();
         /* map inactive statistics by customer ID */
         $mapMonths = $this->hlpTree->mapValueById($prevStat, QBGetStats::A_CUST_REF, QBGetStats::A_MONTHS_INACT);
         foreach ($tree as $item) {
@@ -70,6 +77,8 @@ class Collect
             if ($pv < Cfg::DEF_ZERO) {
                 /* this customer is inactive in this period */
                 $custId = $item->getCustomerRef();
+                /* skip customers with forced qualification */
+                if (in_array($custId, $forced)) continue;
                 $treeEntryId = $item->getId();
                 if (isset($mapMonths[$custId])) {
                     $prevMonths = $mapMonths[$custId];

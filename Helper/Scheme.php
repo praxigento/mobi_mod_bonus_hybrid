@@ -20,7 +20,7 @@ class Scheme
     const A_SCHEME = 'Scheme';
 
     /**
-     * There are 3 customer with forced qualifications and ranks in Santegra project.
+     * There are 2 customers with forced qualifications and ranks in Santegra project.
      *
      * @var array [$mlmId=>[$schema, $rankCode], ...]
      */
