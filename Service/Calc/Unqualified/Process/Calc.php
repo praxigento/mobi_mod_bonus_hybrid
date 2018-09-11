@@ -19,21 +19,29 @@ class Calc
     /** Max count of the unq. months in a row allowed for distributors. */
     const MAX_UNQ_MONTHS = 6;
 
+    /** @var \Praxigento\BonusHybrid\Helper\Config */
+    private $hlpCfg;
     /** @var \Praxigento\Downline\Api\Helper\Tree */
     private $hlpDwnlTree;
     /** @var \Praxigento\Core\Api\Helper\Period */
     private $hlpPeriod;
+    /** @var \Magento\Customer\Api\CustomerRepositoryInterface */
+    private $repoCust;
     /** @var \Praxigento\Downline\Api\Service\Customer\Parent\Change */
     private $servDwnlChangeParent;
 
     public function __construct(
+        \Magento\Customer\Api\CustomerRepositoryInterface $repoCust,
         \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         \Praxigento\Downline\Api\Helper\Tree $hlpDwnlTree,
+        \Praxigento\BonusHybrid\Helper\Config $hlpCfg,
         \Praxigento\Downline\Api\Service\Customer\Parent\Change $servDwnlChangeParent
     )
     {
+        $this->repoCust = $repoCust;
         $this->hlpPeriod = $hlpPeriod;
         $this->hlpDwnlTree = $hlpDwnlTree;
+        $this->hlpCfg = $hlpCfg;
         $this->servDwnlChangeParent = $servDwnlChangeParent;
     }
 
@@ -52,6 +60,8 @@ class Calc
      */
     public function exec($tree, $period)
     {
+        /* group ID for unqualified customers */
+        $groupIdUnq = $this->hlpCfg->getDowngradeGroupUnqual();
         /* register changes by the last date of the period */
         $dateChanged = $this->hlpPeriod->getTimestampTo($period);
         /* collect teams by customer */
@@ -59,7 +69,7 @@ class Calc
         /** @var EBonDwnl $item */
         foreach ($tree as $item) {
             $unqMonths = $item->getUnqMonths();
-            if ($unqMonths > self::MAX_UNQ_MONTHS) {
+            if ($unqMonths >= self::MAX_UNQ_MONTHS) {
                 /* we need to rebuild downline tree to pull up unqualified customer's downline to his parent */
                 $custId = $item->getCustomerRef();
                 $parentId = $item->getParentRef();
@@ -69,6 +79,10 @@ class Calc
                         $this->changeParent($childId, $parentId, $dateChanged);
                     }
                 }
+                /*... then we should change customer group */
+                $cust = $this->repoCust->getById($custId);
+                $cust->setGroupId($groupIdUnq);
+                $this->repoCust->save($cust);
             }
         }
     }
