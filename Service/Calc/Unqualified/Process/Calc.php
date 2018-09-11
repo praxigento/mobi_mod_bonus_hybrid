@@ -29,8 +29,10 @@ class Calc
     private $repoCust;
     /** @var \Praxigento\Downline\Api\Service\Customer\Parent\Change */
     private $servDwnlChangeParent;
-
+    /** @var \Psr\Log\LoggerInterface */
+    private $logger;
     public function __construct(
+        \Praxigento\Core\Api\App\Logger\Main $logger,
         \Magento\Customer\Api\CustomerRepositoryInterface $repoCust,
         \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         \Praxigento\Downline\Api\Helper\Tree $hlpDwnlTree,
@@ -38,6 +40,7 @@ class Calc
         \Praxigento\Downline\Api\Service\Customer\Parent\Change $servDwnlChangeParent
     )
     {
+        $this->logger = $logger;
         $this->repoCust = $repoCust;
         $this->hlpPeriod = $hlpPeriod;
         $this->hlpDwnlTree = $hlpDwnlTree;
@@ -80,9 +83,13 @@ class Calc
                     }
                 }
                 /*... then we should change customer group */
-                $cust = $this->repoCust->getById($custId);
-                $cust->setGroupId($groupIdUnq);
-                $this->repoCust->save($cust);
+                try {
+                    $cust = $this->repoCust->getById($custId);
+                    $cust->setGroupId($groupIdUnq);
+                    $this->repoCust->save($cust);
+                } catch (\Throwable $e) {
+                    $this->logger->error("Cannot update customer group on unqualified customer ($custId) downgrade.");
+                }
             }
         }
     }
