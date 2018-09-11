@@ -39,12 +39,16 @@ class Validate
     public function exec($balances)
     {
         $found = [];
+        $sysAccId = $this->daoAcc->getSystemAccountIdByAssetCode(Cfg::CODE_TYPE_ASSET_PV);
         foreach ($balances as $accId => $amount) {
             if (
-                abs($amount > Cfg::DEF_ZERO) &&
-                ($amount < 0)
-            ) {
                 /* don't catch negative "almost zero amounts" (-4.53453453*10-17), just real negatives */
+                (abs($amount) > Cfg::DEF_ZERO) &&
+                ($amount < 0) &&
+                /* and don't catch system account PV */
+                ($accId != $sysAccId)
+            ) {
+
                 $found[$accId] = $amount;
             }
         }
