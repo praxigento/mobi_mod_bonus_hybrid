@@ -18,17 +18,25 @@ class GetDownline
     const CTX_IN_DATE_ON = 'dateOn';
     const CTX_OUT_DWNL = 'downline';
 
-    /** @var \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder */
-    private $qbSnapOnDate;
+    /** @var \Praxigento\Core\Api\App\Repo\Generic */
+    private $daoGeneric;
     /** @var \Praxigento\BonusBase\Repo\Dao\Rank */
     private $daoRanks;
+    /** @var \Praxigento\BonusHybrid\Helper\Config */
+    private $hlpCfg;
+    /** @var \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder */
+    private $qbSnapOnDate;
 
     public function __construct(
+        \Praxigento\Core\Api\App\Repo\Generic $daoGeneric,
         \Praxigento\BonusBase\Repo\Dao\Rank $daoRank,
-        \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder $qbSnapOnDate
+        \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder $qbSnapOnDate,
+        \Praxigento\BonusHybrid\Helper\Config $hlpCfg
     ) {
+        $this->daoGeneric = $daoGeneric;
         $this->daoRanks = $daoRank;
         $this->qbSnapOnDate = $qbSnapOnDate;
+        $this->hlpCfg = $hlpCfg;
     }
 
     /**
@@ -45,8 +53,8 @@ class GetDownline
         $conn = $query->getConnection();
         $bind = [QBSnapOnDate::BND_ON_DATE => $dateOn];
         $rows = $conn->fetchAll($query, $bind);
-        /* ... and default rank ID */
-        $rankIdDef = $this->getDefaultRankId();
+        /* ... and default & unqualified ranks IDs */
+        $mapRanks = $this->mapDefRanksByCustId();
 
         /* convert downline data to the entity (prxgt_bon_hyb_dwnl) */
         $result = [];
@@ -68,6 +76,7 @@ class GetDownline
             $item->setTv(0);
             $item->setOv(0);
             /* init ranks and unqualified months count */
+            $rankIdDef = $mapRanks[$customerId];
             $item->setRankRef($rankIdDef);
             $item->setUnqMonths(0);
             $result[$customerId] = $item;
@@ -78,12 +87,29 @@ class GetDownline
     }
 
     /**
-     * Get ID for rank with code DISTRIBUTOR.
-     * @return int
+     * @return array [custId => rankId]
      */
-    private function getDefaultRankId()
+    private function mapDefRanksByCustId()
     {
-        $result = $this->daoRanks->getIdByCode(Cfg::RANK_DISTRIBUTOR);
+        $result = [];
+        /* unqual. customer's group ID & rank */
+        $groupIdUnqual = $this->hlpCfg->getDowngradeGroupUnqual();
+        $rankIdUnranked = $this->daoRanks->getIdByCode(Cfg::RANK_UNRANKED);
+        $rankIdDefault = $this->daoRanks->getIdByCode(Cfg::RANK_DISTRIBUTOR);
+
+        /* get all customers & map ranks by groups */
+        $entity = Cfg::ENTITY_MAGE_CUSTOMER;
+        $cols = [
+            Cfg::E_CUSTOMER_A_ENTITY_ID,
+            Cfg::E_CUSTOMER_A_GROUP_ID
+        ];
+        $all = $this->daoGeneric->getEntities($entity, $cols);
+        foreach ($all as $one) {
+            $custId = $one[Cfg::E_CUSTOMER_A_ENTITY_ID];
+            $groupId = $one[Cfg::E_CUSTOMER_A_GROUP_ID];
+            $rankId = ($groupId == $groupIdUnqual) ? $rankIdUnranked : $rankIdDefault;
+            $result[$custId] = $rankId;
+        }
         return $result;
     }
 }

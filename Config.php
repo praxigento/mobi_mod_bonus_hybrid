@@ -88,6 +88,8 @@ class Config extends BonusBaseCfg
     const RANK_SEN_MANAGER = 'SENIOR MANAGER';
     const RANK_SEN_VICE = 'SENIOR VICE';
     const RANK_SUPERVISOR = 'SUPERVISOR';
+    const RANK_UNRANKED = 'UNRANKED';
+
     /**
      * Rebate bonus percent for qualified distributors (Personal bonus in EU).
      */
