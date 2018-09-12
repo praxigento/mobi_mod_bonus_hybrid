@@ -5,50 +5,48 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Forecast;
 
-use Praxigento\Accounting\Repo\Dao\Account as RAccount;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Clean as PCleanCalcData;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Calc as SubCalc;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetDownline as PGetDownline;
+use Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Clean as PCleanCalcData;
 
 class Plain
     implements \Praxigento\Core\Api\App\Service\Process
 {
     /** string 'YYYY', 'YYYYMM' or 'YYYYMMDD' */
     const CTX_IN_PERIOD = 'in.period';
-
-    /** @var \Praxigento\Accounting\Api\Service\Balance\Get\Turnover */
-    private $callBalanceGetTurnover;
-    /** @var  \Praxigento\Core\Api\Helper\Period */
-    private $hlpPeriod;
-    /** @var \Praxigento\Core\Api\App\Logger\Main */
-    private $logger;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Clean */
-    private $procCleanCalc;
-    /** @var \Praxigento\BonusBase\Service\Period\Calc\IAdd */
-    private $procPeriodAdd;
     /** @var \Praxigento\Accounting\Repo\Dao\Account */
     private $daoAcc;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $daoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $daoCalc;
+    /** @var  \Praxigento\Core\Api\Helper\Period */
+    private $hlpPeriod;
+    /** @var \Praxigento\Core\Api\App\Logger\Main */
+    private $logger;
+    /** @var \Praxigento\Accounting\Api\Service\Balance\Get\Turnover */
+    private $servBalanceGetTurnover;
+    /** @var \Praxigento\BonusBase\Service\Period\Calc\IAdd */
+    private $servPeriodAdd;
     /** @var  \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Calc */
     private $subCalc;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetDownline */
     private $subGetDownline;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Clean */
+    private $zCleanCalc;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Core\Api\Helper\Period $hlpPeriod,
-        RAccount $daoAcc,
+        \Praxigento\Accounting\Repo\Dao\Account $daoAcc,
         \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
         \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
-        \Praxigento\Accounting\Api\Service\Balance\Get\Turnover $callBalanceGetTurnover,
+        \Praxigento\Accounting\Api\Service\Balance\Get\Turnover $servBalanceGetTurnover,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Calc $subCalc,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetDownline $subGetDownline,
-        \Praxigento\BonusBase\Service\Period\Calc\IAdd $procPeriodAdd,
-        \Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Clean $procCleanCalc
+        \Praxigento\BonusBase\Service\Period\Calc\IAdd $servPeriodAdd,
+        \Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Clean $zCleanCalc
     )
     {
         $this->logger = $logger;
@@ -56,11 +54,11 @@ class Plain
         $this->daoAcc = $daoAcc;
         $this->daoBonDwnl = $daoBonDwnl;
         $this->daoCalc = $daoCalc;
-        $this->callBalanceGetTurnover = $callBalanceGetTurnover;
+        $this->servBalanceGetTurnover = $servBalanceGetTurnover;
         $this->subCalc = $subCalc;
         $this->subGetDownline = $subGetDownline;
-        $this->procPeriodAdd = $procPeriodAdd;
-        $this->procCleanCalc = $procCleanCalc;
+        $this->servPeriodAdd = $servPeriodAdd;
+        $this->zCleanCalc = $zCleanCalc;
     }
 
     public function exec(\Praxigento\Core\Data $ctx)
@@ -73,7 +71,7 @@ class Plain
         $ctxClean = new \Praxigento\Core\Data();
         $ctxClean->set(PCleanCalcData::IN_CALC_TYPE_CODE, Cfg::CODE_TYPE_CALC_FORECAST_PLAIN);
         $ctxClean->set(PCleanCalcData::IN_PERIOD, $period);
-        $this->procCleanCalc->exec($ctxClean);
+        $this->zCleanCalc->exec($ctxClean);
 
         /* get calculation period (begin, end dates) */
         list($dateFrom, $dateTo) = $this->getPeriod($period);
@@ -148,7 +146,7 @@ class Plain
         $reqTurnover->assetTypeCode = Cfg::CODE_TYPE_ASSET_PV;
         $reqTurnover->dateFrom = $dateFrom;
         $reqTurnover->dateTo = $dateTo;
-        $respTurnover = $this->callBalanceGetTurnover->exec($reqTurnover);
+        $respTurnover = $this->servBalanceGetTurnover->exec($reqTurnover);
         $result = $respTurnover->entries;
         return $result;
     }
@@ -165,13 +163,13 @@ class Plain
     {
         $result = null;
         $ctx = new \Praxigento\Core\Data();
-        $ctx->set($this->procPeriodAdd::CTX_IN_DSTAMP_BEGIN, $from);
-        $ctx->set($this->procPeriodAdd::CTX_IN_DSTAMP_END, $to);
-        $ctx->set($this->procPeriodAdd::CTX_IN_CALC_TYPE_CODE, Cfg::CODE_TYPE_CALC_FORECAST_PLAIN);
-        $this->procPeriodAdd->exec($ctx);
-        $success = $ctx->get($this->procPeriodAdd::CTX_OUT_SUCCESS);
+        $ctx->set($this->servPeriodAdd::CTX_IN_DSTAMP_BEGIN, $from);
+        $ctx->set($this->servPeriodAdd::CTX_IN_DSTAMP_END, $to);
+        $ctx->set($this->servPeriodAdd::CTX_IN_CALC_TYPE_CODE, Cfg::CODE_TYPE_CALC_FORECAST_PLAIN);
+        $this->servPeriodAdd->exec($ctx);
+        $success = $ctx->get($this->servPeriodAdd::CTX_OUT_SUCCESS);
         if ($success) {
-            $result = $ctx->get($this->procPeriodAdd::CTX_OUT_CALC_ID);
+            $result = $ctx->get($this->servPeriodAdd::CTX_OUT_CALC_ID);
         }
         return $result;
     }
