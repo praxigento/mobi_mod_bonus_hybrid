@@ -11,8 +11,8 @@ use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase1 as PCpmrsPh
 use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase2 as PCpmrsPhase2;
 use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Ov as POv;
 use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Tv as PTv;
-use Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Clean as PCalcClean;
-use Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Register as PCalcReg;
+use Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Clean as PCalcClean;
+use Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Register as PCalcReg;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\GetPlainData as PGetPlainData;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\UpdateDwnl as PUpdateDwnl;
 
@@ -22,9 +22,9 @@ class Compress
     const CTX_IN_PERIOD = \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain::CTX_IN_PERIOD;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Clean */
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Clean */
     private $procCalcClean;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Register */
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Register */
     private $procCalcReg;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase1 */
     private $procCmprsPhase1;
@@ -51,8 +51,8 @@ class Compress
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase2 $procCmprsPhase2,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Tv $procTv,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Ov $procOv,
-        \Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Clean $procCalcClean,
-        \Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Register $procCalcReg,
+        \Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Clean $procCalcClean,
+        \Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Register $procCalcReg,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\GetPlainData $procGetPlainData,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\UpdateDwnl $procUpdateDwnl
     )

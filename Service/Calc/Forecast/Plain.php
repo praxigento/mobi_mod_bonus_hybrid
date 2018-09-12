@@ -7,7 +7,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Forecast;
 
 use Praxigento\Accounting\Repo\Dao\Account as RAccount;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Clean as PCleanCalcData;
+use Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Clean as PCleanCalcData;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Calc as SubCalc;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetDownline as PGetDownline;
 
@@ -23,7 +23,7 @@ class Plain
     private $hlpPeriod;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Clean */
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Clean */
     private $procCleanCalc;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\IAdd */
     private $procPeriodAdd;
@@ -48,7 +48,7 @@ class Plain
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Calc $subCalc,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetDownline $subGetDownline,
         \Praxigento\BonusBase\Service\Period\Calc\IAdd $procPeriodAdd,
-        \Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc\Clean $procCleanCalc
+        \Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Clean $procCleanCalc
     )
     {
         $this->logger = $logger;

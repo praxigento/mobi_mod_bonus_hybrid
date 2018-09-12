@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Service\Calc\Forecast\A\Proc\Calc;
+namespace Praxigento\BonusHybrid\Service\Calc\Forecast\Z;
 
 use Praxigento\BonusBase\Repo\Data\Calculation as ECalc;
 use Praxigento\BonusBase\Repo\Data\Period as EPeriod;
