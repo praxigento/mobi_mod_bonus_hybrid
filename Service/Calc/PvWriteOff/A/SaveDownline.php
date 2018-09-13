@@ -15,36 +15,44 @@ class SaveDownline
 {
     /** @var \Praxigento\Downline\Service\ISnap */
     private $callDwnlSnap;
+    /** @var \Praxigento\Accounting\Repo\Dao\Account */
+    private $daoAcc;
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
+    private $daoDwnl;
+    /** @var \Praxigento\Core\Api\App\Repo\Generic */
+    private $daoGeneric;
+    /** @var \Praxigento\BonusBase\Repo\Dao\Rank */
+    private $daoRanks;
+    /** @var \Praxigento\BonusHybrid\Helper\Config */
+    private $hlpCfg;
     /** @var \Praxigento\Downline\Api\Helper\Tree */
     private $hlpDwnlTree;
     /** @var  \Praxigento\BonusHybrid\Api\Helper\Scheme */
     private $hlpScheme;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Z\Helper\GetCustomersIds */
     private $hlpSignUpDebitCust;
-    /** @var \Praxigento\Accounting\Repo\Dao\Account */
-    private $daoAcc;
-    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
-    private $daoDwnl;
-    /** @var \Praxigento\BonusBase\Repo\Dao\Rank */
-    private $daoRank;
 
     public function __construct(
-        \Praxigento\BonusHybrid\Api\Helper\Scheme $hlpScheme,
-        \Praxigento\BonusHybrid\Service\Calc\Z\Helper\GetCustomersIds $hlpSignUpDebitCust,
-        \Praxigento\Downline\Api\Helper\Tree $hlpDwnlTree,
+        \Praxigento\Core\Api\App\Repo\Generic $daoGeneric,
         \Praxigento\Accounting\Repo\Dao\Account $daoAcc,
         \Praxigento\BonusBase\Repo\Dao\Rank $daoRank,
         \Praxigento\BonusHybrid\Repo\Dao\Downline $daoDwnl,
-        \Praxigento\Downline\Service\ISnap $callDwnlSnap
+        \Praxigento\BonusHybrid\Api\Helper\Scheme $hlpScheme,
+        \Praxigento\BonusHybrid\Service\Calc\Z\Helper\GetCustomersIds $hlpSignUpDebitCust,
+        \Praxigento\Downline\Api\Helper\Tree $hlpDwnlTree,
+        \Praxigento\BonusHybrid\Helper\Config $hlpCfg,
+        \Praxigento\Downline\Service\ISnap $servDwnlSnap
     )
     {
+        $this->daoGeneric = $daoGeneric;
+        $this->daoAcc = $daoAcc;
+        $this->daoRanks = $daoRank;
+        $this->daoDwnl = $daoDwnl;
         $this->hlpScheme = $hlpScheme;
         $this->hlpSignUpDebitCust = $hlpSignUpDebitCust;
         $this->hlpDwnlTree = $hlpDwnlTree;
-        $this->daoAcc = $daoAcc;
-        $this->daoRank = $daoRank;
-        $this->daoDwnl = $daoDwnl;
-        $this->callDwnlSnap = $callDwnlSnap;
+        $this->hlpCfg = $hlpCfg;
+        $this->callDwnlSnap = $servDwnlSnap;
     }
 
     public function exec($calcId, $periodEnd, $updates)
@@ -61,8 +69,9 @@ class SaveDownline
             \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::A_CUST_ID,
             \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::A_DEPTH
         );
-        /* default rank for the customers */
-        $defRankId = $this->getDefaultRankId();
+        /* default & unqualified ranks IDs */
+        $mapRanks = $this->mapDefRanksByCustId();
+
         /* create registries for collected data */
         $regDwnl = [];
         $regTeam = [];      // custId => [teamCustId, ...]
@@ -108,7 +117,8 @@ class SaveDownline
                 $dwnlData->setDepth($custDepth);
                 $dwnlData->setPath($custPath);
                 $dwnlData->setPv($custPv);
-                $dwnlData->setRankRef($defRankId);
+                $rankIdDef = $mapRanks[$custId];
+                $dwnlData->setRankRef($rankIdDef);
                 $dwnlData->setTv(0);
                 $dwnlData->setUnqMonths(0);
                 $regDwnl[$custId] = $dwnlData;
@@ -165,14 +175,31 @@ class SaveDownline
         }
     }
 
+
     /**
-     * Get ID for default rank.
-     *
-     * @return int
+     * @return array [custId => rankId]
      */
-    private function getDefaultRankId()
+    private function mapDefRanksByCustId()
     {
-        $result = $this->daoRank->getIdByCode(Cfg::RANK_DISTRIBUTOR);
+        $result = [];
+        /* unqual. customer's group ID & rank */
+        $groupIdUnqual = $this->hlpCfg->getDowngradeGroupUnqual();
+        $rankIdUnranked = $this->daoRanks->getIdByCode(Cfg::RANK_UNRANKED);
+        $rankIdDefault = $this->daoRanks->getIdByCode(Cfg::RANK_DISTRIBUTOR);
+
+        /* get all customers & map ranks by groups */
+        $entity = Cfg::ENTITY_MAGE_CUSTOMER;
+        $cols = [
+            Cfg::E_CUSTOMER_A_ENTITY_ID,
+            Cfg::E_CUSTOMER_A_GROUP_ID
+        ];
+        $all = $this->daoGeneric->getEntities($entity, $cols);
+        foreach ($all as $one) {
+            $custId = $one[Cfg::E_CUSTOMER_A_ENTITY_ID];
+            $groupId = $one[Cfg::E_CUSTOMER_A_GROUP_ID];
+            $rankId = ($groupId == $groupIdUnqual) ? $rankIdUnranked : $rankIdDefault;
+            $result[$custId] = $rankId;
+        }
         return $result;
     }
 

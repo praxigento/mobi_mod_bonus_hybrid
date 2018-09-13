@@ -194,6 +194,7 @@ class Phase1
      */
     private function saveBonusDownline($snap, $calcId)
     {
+        /* 'distributor' is the minimal rank in compressed trees */
         $rankId = $this->getDefaultRankId();
 
         foreach ($snap as $one) {

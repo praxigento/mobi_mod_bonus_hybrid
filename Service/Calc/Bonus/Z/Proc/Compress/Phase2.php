@@ -101,7 +101,7 @@ class Phase2
         $mapByIdPlain = $this->hlpTree->mapById($dwnlPlain, EBonDwnl::A_CUST_REF);
         $mapByTeamPlain = $this->hlpTree->mapByTeams($dwnlPlain, EBonDwnl::A_CUST_REF, EBonDwnl::A_PARENT_REF);
         $rankIdMgr = $this->daoRank->getIdByCode(Cfg::RANK_MANAGER);
-        /* MOBI-629: add init rank for un-ranked entries */
+        /* MOBI-629: add init rank for un-ranked entries ('distributor' is the minimal rank in compressed trees) */
         $rankIdDistr = $this->daoRank->getIdByCode(Cfg::RANK_DISTRIBUTOR);;
         /* run though the compressed tree from bottom to top and collect OV */
         foreach ($mapByDepthCompress as $level) {

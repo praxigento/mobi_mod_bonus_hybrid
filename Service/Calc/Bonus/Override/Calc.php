@@ -111,6 +111,7 @@ class Calc
         /* scan all levels starting from the bottom and collect PV by generations */
         $mapGenerations = $this->mapByGeneration($mapByDepthDesc,
             $mapCmprsById); // [ $custId=>[$genId => $totalPv, ...], ... ]
+        /* 'distributor' is the minimal rank in compressed trees */
         $defRankId = $this->daoRank->getIdByCode(Cfg::RANK_DISTRIBUTOR);
         /* scan all customers and calculate bonus values */
         /** @var EBonDwnl $custCompress */

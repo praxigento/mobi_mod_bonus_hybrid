@@ -12,37 +12,36 @@ use Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Data\Trans as DTrans;
 class PvWriteOff
     implements \Praxigento\Core\Api\App\Service\Process
 {
-    /** @var \Praxigento\Accounting\Service\Operation */
-    private $servOperation;
-    /** @var \Praxigento\Core\Api\Helper\Date */
-    private $hlpDate;
-    /** @var  \Praxigento\Core\Api\Helper\Period */
-    private $hlpPeriod;
-    /** @var \Praxigento\Core\Api\App\Logger\Main */
-    private $logger;
-    /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
-    private $servPeriodGet;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\PrepareTrans */
+    private $aPrepareTrans;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\SaveDownline */
+    private $aSaveDownline;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Validate */
+    private $aValidate;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $daoCalc;
     /** @var \Praxigento\BonusBase\Repo\Dao\Log\Opers */
     private $daoLogOper;
     /** @var  \Praxigento\Accounting\Repo\Dao\Type\Asset */
     private $daoTypeAsset;
-    /** @var  \Praxigento\Accounting\Repo\Dao\Type\Operation */
-    private $daoTypeOper;
+    /** @var \Praxigento\Core\Api\Helper\Date */
+    private $hlpDate;
+    /** @var  \Praxigento\Core\Api\Helper\Period */
+    private $hlpPeriod;
+    /** @var \Praxigento\Core\Api\App\Logger\Main */
+    private $logger;
     /** @var \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Query\GetData\Builder */
     private $qbGetData;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\PrepareTrans */
-    private $aPrepareTrans;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\SaveDownline */
-    private $aSaveDownline;
-    private $aValidate;
+    /** @var \Praxigento\Accounting\Service\Operation */
+    private $servOperation;
+    /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
+    private $servPeriodGet;
+
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Core\Api\Helper\Date $hlpDate,
         \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         \Praxigento\Accounting\Repo\Dao\Type\Asset $daoTypeAsset,
-        \Praxigento\Accounting\Repo\Dao\Type\Operation $daoTypeOper,
         \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
         \Praxigento\BonusBase\Repo\Dao\Log\Opers $daoLogOper,
         \Praxigento\Accounting\Service\Operation $servOperation,
@@ -57,7 +56,6 @@ class PvWriteOff
         $this->hlpDate = $hlpDate;
         $this->hlpPeriod = $hlpPeriod;
         $this->daoTypeAsset = $daoTypeAsset;
-        $this->daoTypeOper = $daoTypeOper;
         $this->daoCalc = $daoCalc;
         $this->daoLogOper = $daoLogOper;
         $this->servOperation = $servOperation;
@@ -158,9 +156,6 @@ class PvWriteOff
         return $result;
     }
 
-    private function validateBalances()
-    {
-    }
     /**
      * Get PV transitions data for period.
      *
