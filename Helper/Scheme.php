@@ -44,6 +44,8 @@ class Scheme
     private $cacheSignUpDebitCustIds = null;
     /** @var  \Magento\Framework\DB\Adapter\AdapterInterface */
     private $conn;
+    /** @var \Praxigento\Downline\Repo\Dao\Customer */
+    private $daoDwnlCust;
     /** @var \Praxigento\Core\Api\App\Repo\Generic */
     private $daoGeneric;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Registry\SignUpDebit */
@@ -59,12 +61,14 @@ class Scheme
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resource,
         \Praxigento\Core\Api\App\Repo\Generic $daoGeneric,
+        \Praxigento\Downline\Repo\Dao\Customer $daoDwnlCust,
         \Praxigento\BonusHybrid\Repo\Dao\Registry\SignUpDebit $daoRegSignUpDebit,
         \Praxigento\BonusHybrid\Repo\Query\SignUpDebit\GetLastCalcIdForPeriod $queryGetLastSignUpCalcId
     ) {
         $this->resource = $resource;
         $this->conn = $resource->getConnection();
         $this->daoGeneric = $daoGeneric;
+        $this->daoDwnlCust = $daoDwnlCust;
         $this->daoRegSignUpDebit = $daoRegSignUpDebit;
         $this->queryGetLastSignUpCalcId = $queryGetLastSignUpCalcId;
     }
@@ -248,6 +252,13 @@ class Scheme
         ) {
             $result = Cfg::SCHEMA_EU;
         }
+        return $result;
+    }
+
+    public function getSchemeByCustomerId($id)
+    {
+        $data = $this->daoDwnlCust->getById($id);
+        $result = $this->getSchemeByCustomer($data);
         return $result;
     }
 }

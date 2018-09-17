@@ -67,4 +67,12 @@ interface Scheme {
      * @return string
      */
     public function getSchemeByCustomer($data);
+
+    /**
+     * Analyze customer data and return code of the calculation scheme used for this customer.
+     *
+     * @param int $id
+     * @return string
+     */
+    public function getSchemeByCustomerId($id);
 }
