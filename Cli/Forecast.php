@@ -5,6 +5,7 @@
 
 namespace Praxigento\BonusHybrid\Cli;
 
+use Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder as QGetLastCalc;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\Plain as APlain;
 
 /**
@@ -23,10 +24,13 @@ class Forecast
     private $servCalcPlain;
     /** @var \Praxigento\Downline\Api\Service\Snap\Calc */
     private $servSnapCalc;
+    /** @var \Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder */
+    private $qGetLastCalc;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Praxigento\Core\Api\App\Repo\Transaction\Manager $manTrans,
+        \Praxigento\BonusBase\Repo\Query\Period\Calcs\GetLast\ByCalcTypeCode\Builder $qGetLastCalc,
         \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         \Praxigento\Downline\Api\Service\Snap\Calc $servSnapCalc,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain $servCalcPlain,
@@ -38,16 +42,17 @@ class Forecast
             'Daily calculations to forecast results on final bonus calc.'
         );
         $this->manTrans = $manTrans;
+        $this->qGetLastCalc = $qGetLastCalc;
         $this->hlpPeriod = $hlpPeriod;
         $this->servSnapCalc = $servSnapCalc;
         $this->servCalcPlain = $servCalcPlain;
         $this->servCalcCompress = $servCalcCompress;
-
     }
 
     private function calcPeriods()
     {
-
+        $query = $this->qGetLastCalc->build();
+        QGetLastCalc::A_CALC_ID;
     }
 
     protected function execute(
