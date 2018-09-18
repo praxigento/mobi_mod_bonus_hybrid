@@ -13,27 +13,22 @@ use Praxigento\BonusHybrid\Service\Calc\Forecast\Plain as APlain;
 class Forecast
     extends \Praxigento\Core\App\Cli\Cmd\Base
 {
-    const OPT_PERIOD_NAME = 'period';
-    const OPT_PERIOD_SHORT = 'p';
-
-    /** @var \Magento\Framework\DB\Adapter\AdapterInterface */
-    private $conn;
-    /** @var \Magento\Framework\App\ResourceConnection */
-    private $resource;
+    /** @var \Praxigento\Core\Api\Helper\Period */
+    private $hlpPeriod;
+    /** @var \Praxigento\Core\Api\App\Repo\Transaction\Manager */
+    private $manTrans;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress */
     private $servCalcCompress;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain */
     private $servCalcPlain;
-    /** @var \Praxigento\Downline\Api\Service\Snap\Clean */
-    private $servDwnlClean;
-    /** @var \Praxigento\Downline\Service\ISnap */
-    private $servSnap;
+    /** @var \Praxigento\Downline\Api\Service\Snap\Calc */
+    private $servSnapCalc;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
-        \Magento\Framework\App\ResourceConnection $resource,
-        \Praxigento\Downline\Service\ISnap $servSnap,
-        \Praxigento\Downline\Api\Service\Snap\Clean $servDwnlClean,
+        \Praxigento\Core\Api\App\Repo\Transaction\Manager $manTrans,
+        \Praxigento\Core\Api\Helper\Period $hlpPeriod,
+        \Praxigento\Downline\Api\Service\Snap\Calc $servSnapCalc,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain $servCalcPlain,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress $servCalcCompress
     ) {
@@ -42,60 +37,69 @@ class Forecast
             'prxgt:bonus:forecast',
             'Daily calculations to forecast results on final bonus calc.'
         );
-        $this->resource = $resource;
-        $this->conn = $this->resource->getConnection();
-        $this->servSnap = $servSnap;
-        $this->servDwnlClean = $servDwnlClean;
+        $this->manTrans = $manTrans;
+        $this->hlpPeriod = $hlpPeriod;
+        $this->servSnapCalc = $servSnapCalc;
         $this->servCalcPlain = $servCalcPlain;
         $this->servCalcCompress = $servCalcCompress;
 
-        $this->addOption(
-            self::OPT_PERIOD_NAME,
-            self::OPT_PERIOD_SHORT,
-            \Symfony\Component\Console\Input\InputOption::VALUE_OPTIONAL,
-            'Period forcalculation (201701, 201702, ...).'
-        );
     }
 
-    private function buildSnaps()
+    private function calcPeriods()
     {
-        $req = new \Praxigento\Downline\Service\Snap\Request\Calc();
-        $this->servSnap->calc($req);
-    }
 
-    private function cleanSnaps()
-    {
-        /* Clean up berfore rebuild. TODO: remove it after the last day of the snap will be processed correctly */
-        $req = new \Praxigento\Downline\Api\Service\Snap\Clean\Request();
-        $this->servDwnlClean->exec($req);
     }
 
     protected function execute(
         \Symfony\Component\Console\Input\InputInterface $input,
         \Symfony\Component\Console\Output\OutputInterface $output
     ) {
-        $period = $input->getOption(self::OPT_PERIOD_NAME);
-        $output->writeln("<info>Start forecast calculations ($period).<info>");
-        /* DDL statement TRUNCATE cannot be used inside transaction. */
-        $this->cleanSnaps();
+        $output->writeln("<info>Start forecast calculations.<info>");
         /* perform the main processing */
-        $this->conn->beginTransaction();
+        $def = $this->manTrans->begin();
         try {
-
+            /* rebuild downline snaps for the last day */
+            $this->rebuildDwnlSnaps();
+            /* should we calculate one or two periods? */
+            list($periodPrev, $periodCurr) = $this->calcPeriods();
+            /* if previous period is not closed yet */
+            if ($periodPrev) {
+                $ctx = new \Praxigento\Core\Data();
+                $ctx->set(APlain::CTX_IN_PERIOD, $periodPrev);
+                /* ... then perform forecast calculations */
+                $this->servCalcPlain->exec($ctx);
+                $this->servCalcCompress->exec($ctx);
+            }
+            /* calculation for current period */
             $ctx = new \Praxigento\Core\Data();
-            $ctx->set(APlain::CTX_IN_PERIOD, $period);
-            /* MOBI-1026: re-build downline snaps before calculations */
-            $this->buildSnaps();
+            $ctx->set(APlain::CTX_IN_PERIOD, $periodCurr);
             /* ... then perform forecast calculations */
             $this->servCalcPlain->exec($ctx);
             $this->servCalcCompress->exec($ctx);
-            $this->conn->commit();
+
+            $this->manTrans->commit($def);
         } catch (\Throwable $e) {
             $msg = $e->getMessage();
             $trace = $e->getTraceAsString();
             $output->writeln("<error>$msg<error>\n$trace");
-            $this->conn->rollBack();
+            $this->manTrans->rollback($def);
         }
         $output->writeln('<info>Command is completed.<info>');
+    }
+
+    /**
+     * MOBI-1026: re-build downline snaps before calculations.
+     *
+     * Clean up downline tree snaps for the last 2 days then rebuild it.
+     * The last day of the snap would contain incomplete information.
+     *
+     * ATTENTION: clean up service uses TRUNCATE statement and cannot be performed inside transaction.
+     *
+     * TODO: remove it after the last day of the snap will be processed correctly.
+     */
+    private function rebuildDwnlSnaps()
+    {
+        $req = new \Praxigento\Downline\Api\Service\Snap\Calc\Request();
+        $this->servSnapCalc->exec($req);
     }
 }
