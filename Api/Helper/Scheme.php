@@ -36,7 +36,7 @@ interface Scheme {
      * @param int $custId
      * @param string $scheme
      *
-     * @return null|int
+     * @return int|null
      */
     public function getForcedQualificationRank($custId, $scheme);
 
