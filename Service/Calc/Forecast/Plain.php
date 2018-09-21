@@ -8,7 +8,6 @@ namespace Praxigento\BonusHybrid\Service\Calc\Forecast;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Calc as SubCalc;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetDownline as PGetDownline;
-use Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Clean as PCleanCalcData;
 
 class Plain
     implements \Praxigento\Core\Api\App\Service\Process
@@ -33,8 +32,6 @@ class Plain
     private $subCalc;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetDownline */
     private $subGetDownline;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Clean */
-    private $zCleanCalc;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
@@ -45,8 +42,7 @@ class Plain
         \Praxigento\Accounting\Api\Service\Balance\Get\Turnover $servBalanceGetTurnover,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\Calc $subCalc,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain\GetDownline $subGetDownline,
-        \Praxigento\BonusBase\Service\Period\Calc\IAdd $servPeriodAdd,
-        \Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Clean $zCleanCalc
+        \Praxigento\BonusBase\Service\Period\Calc\IAdd $servPeriodAdd
     )
     {
         $this->logger = $logger;
@@ -58,7 +54,6 @@ class Plain
         $this->subCalc = $subCalc;
         $this->subGetDownline = $subGetDownline;
         $this->servPeriodAdd = $servPeriodAdd;
-        $this->zCleanCalc = $zCleanCalc;
     }
 
     public function exec(\Praxigento\Core\Data $ctx)
@@ -66,12 +61,6 @@ class Plain
         $this->logger->info("'Forecast Plain' calculation is started.");
 
         $period = $ctx->get(self::CTX_IN_PERIOD);
-
-        /* clean up existing forecast calculation data */
-        $ctxClean = new \Praxigento\Core\Data();
-        $ctxClean->set(PCleanCalcData::IN_CALC_TYPE_CODE, Cfg::CODE_TYPE_CALC_FORECAST_PLAIN);
-        $ctxClean->set(PCleanCalcData::IN_PERIOD, $period);
-        $this->zCleanCalc->exec($ctxClean);
 
         /* get calculation period (begin, end dates) */
         list($dateFrom, $dateTo) = $this->getPeriod($period);

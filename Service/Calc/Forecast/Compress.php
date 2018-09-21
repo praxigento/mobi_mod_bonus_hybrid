@@ -11,10 +11,9 @@ use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase1 as PCpmrsPh
 use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase2 as PCpmrsPhase2;
 use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Ov as POv;
 use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Tv as PTv;
-use Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Clean as PCalcClean;
-use Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Register as PCalcReg;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\GetPlainData as PGetPlainData;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\UpdateDwnl as PUpdateDwnl;
+use Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Register as PCalcReg;
 
 class Compress
     implements \Praxigento\Core\Api\App\Service\Process
@@ -22,8 +21,6 @@ class Compress
     const CTX_IN_PERIOD = \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain::CTX_IN_PERIOD;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Clean */
-    private $zCalcClean;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Register */
     private $zCalcReg;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase1 */
@@ -51,7 +48,6 @@ class Compress
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase2 $procCmprsPhase2,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Tv $procTv,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Ov $procOv,
-        \Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Clean $zCalcClean,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Register $zCalcReg,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\GetPlainData $procGetPlainData,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\UpdateDwnl $procUpdateDwnl
@@ -65,7 +61,6 @@ class Compress
         $this->procCmprsPhase2 = $procCmprsPhase2;
         $this->procTv = $procTv;
         $this->procOv = $procOv;
-        $this->zCalcClean = $zCalcClean;
         $this->zCalcReg = $zCalcReg;
         $this->procGetPlainData = $procGetPlainData;
         $this->procUpdateDwnl = $procUpdateDwnl;
@@ -96,18 +91,6 @@ class Compress
         $out = $this->procTv->exec($in);
         $result = $out->get(PTv::OUT_DWNL);
         return $result;
-    }
-
-    /**
-     * Clean up existing forecast calculation data.
-     * @param string $period
-     */
-    private function cleanCalc($period)
-    {
-        $ctx = new \Praxigento\Core\Data();
-        $ctx->set(PCalcClean::IN_CALC_TYPE_CODE, Cfg::CODE_TYPE_CALC_FORECAST_PHASE1);
-        $ctx->set(PCalcClean::IN_PERIOD, $period);
-        $this->zCalcClean->exec($ctx);
     }
 
     private function compressPhase1($calcId, $period)
@@ -155,7 +138,6 @@ class Compress
 
         /* clean up existing calculation data and register new one */
         $period = $ctx->get(self::CTX_IN_PERIOD);
-        $this->cleanCalc($period);
         $calcId = $this->registerCalc($period);
 
         /* perform Phase1 compression */
