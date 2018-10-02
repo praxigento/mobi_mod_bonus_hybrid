@@ -42,7 +42,7 @@ class ProcessOrders
     private $hlpScheme;
     /** @var \Praxigento\Accounting\Api\Service\Account\Get */
     private $servAccount;
-    /** @var \Praxigento\Accounting\Api\Service\Operation */
+    /** @var \Praxigento\Accounting\Api\Service\Operation\Create */
     private $servOper;
 
     public function __construct(
@@ -52,7 +52,7 @@ class ProcessOrders
         \Praxigento\BonusBase\Repo\Dao\Log\Sales $daoLogSale,
         \Praxigento\BonusHybrid\Repo\Dao\Registry\SignUpDebit $daoRegSignUpDebit,
         \Praxigento\Accounting\Api\Service\Account\Get $servAccount,
-        \Praxigento\Accounting\Api\Service\Operation $servOper
+        \Praxigento\Accounting\Api\Service\Operation\Create $servOper
     ) {
         $this->hlpScheme = $hlpScheme;
         $this->daoLogCust = $daoLogCust;
@@ -75,7 +75,7 @@ class ProcessOrders
         $accPvSys = $this->getAccSys(Cfg::CODE_TYPE_ASSET_PV);
         $accBonusSys = $this->getAccSys(Cfg::CODE_TYPE_ASSET_BONUS);
         /* Create one operation for all transactions */
-        $req = new \Praxigento\Accounting\Api\Service\Operation\Request();
+        $req = new \Praxigento\Accounting\Api\Service\Operation\Create\Request();
         $req->setOperationTypeCode(Cfg::CODE_TYPE_OPER_BONUS_SIGNUP_DEBIT);
         $period = substr($dateApplied, 0, 7);
         $period = str_replace('-', '', $period);

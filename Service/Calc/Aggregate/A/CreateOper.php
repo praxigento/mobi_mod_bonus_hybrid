@@ -6,7 +6,7 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Aggregate\A;
 
-use Praxigento\Accounting\Api\Service\Operation\Request as ARequest;
+use Praxigento\Accounting\Api\Service\Operation\Create\Request as ARequest;
 use Praxigento\Accounting\Repo\Data\Transaction as ETrans;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Service\Calc\Aggregate\A\Data\Total as DTotal;

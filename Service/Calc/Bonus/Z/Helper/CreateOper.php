@@ -40,7 +40,7 @@ class CreateOper
         $dsBegin = $period->getDstampBegin();
         $dsEnd = $period->getDstampEnd();
         $datePerformed = $this->hlpDate->getUtcNowForDb();
-        $req = new \Praxigento\Accounting\Api\Service\Operation\Request();
+        $req = new \Praxigento\Accounting\Api\Service\Operation\Create\Request();
         $req->setOperationTypeCode($calcTypeCode);
         $req->setDatePerformed($datePerformed);
         $req->setTransactions($trans);

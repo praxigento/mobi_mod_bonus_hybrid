@@ -77,7 +77,7 @@ class PvWriteOff
     private function createOperation($trans, $dsBegin)
     {
         $datePerformed = $this->hlpDate->getUtcNowForDb();
-        $req = new \Praxigento\Accounting\Api\Service\Operation\Request();
+        $req = new \Praxigento\Accounting\Api\Service\Operation\Create\Request();
         $req->setOperationTypeCode(Cfg::CODE_TYPE_OPER_PV_WRITE_OFF);
         $req->setDatePerformed($datePerformed);
         $req->setTransactions($trans);
