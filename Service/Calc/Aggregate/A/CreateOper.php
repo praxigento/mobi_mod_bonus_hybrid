@@ -13,7 +13,7 @@ use Praxigento\BonusHybrid\Service\Calc\Aggregate\A\Data\Total as DTotal;
 
 class CreateOper
 {
-    /** @var \Praxigento\Accounting\Service\Operation */
+    /** @var \Praxigento\Accounting\Service\Operation\Create */
     private $callOper;
     /** @var \Praxigento\Accounting\Repo\Dao\Account */
     private $daoAcc;
@@ -29,7 +29,7 @@ class CreateOper
         \Praxigento\Accounting\Repo\Dao\Type\Asset $daoAssetType,
         \Praxigento\Core\Api\Helper\Date $hlpDate,
         \Praxigento\Core\Api\Helper\Period $hlpPeriod,
-        \Praxigento\Accounting\Service\Operation $callOper
+        \Praxigento\Accounting\Service\Operation\Create $callOper
     ) {
         $this->daoAcc = $daoAcc;
         $this->daoAssetType = $daoAssetType;

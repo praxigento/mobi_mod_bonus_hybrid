@@ -32,7 +32,7 @@ class PvWriteOff
     private $logger;
     /** @var \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Query\GetData\Builder */
     private $qbGetData;
-    /** @var \Praxigento\Accounting\Service\Operation */
+    /** @var \Praxigento\Accounting\Service\Operation\Create */
     private $servOperation;
     /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
     private $servPeriodGet;
@@ -44,7 +44,7 @@ class PvWriteOff
         \Praxigento\Accounting\Repo\Dao\Type\Asset $daoTypeAsset,
         \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
         \Praxigento\BonusBase\Repo\Dao\Log\Opers $daoLogOper,
-        \Praxigento\Accounting\Service\Operation $servOperation,
+        \Praxigento\Accounting\Service\Operation\Create $servOperation,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $servPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Query\GetData\Builder $qbGetData,
         \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\PrepareTrans $aPrepareTrans,

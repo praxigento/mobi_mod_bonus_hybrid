@@ -13,14 +13,14 @@ use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Helper\CreateOper\Result as DRes
  */
 class CreateOper
 {
-    /** @var \Praxigento\Accounting\Service\Operation */
+    /** @var \Praxigento\Accounting\Service\Operation\Create */
     private $callOper;
     /** @var \Praxigento\Core\Api\Helper\Date */
     private $hlpDate;
 
     public function __construct(
         \Praxigento\Core\Api\Helper\Date $hlpDate,
-        \Praxigento\Accounting\Service\Operation $callOper
+        \Praxigento\Accounting\Service\Operation\Create $callOper
     )
     {
         $this->hlpDate = $hlpDate;
