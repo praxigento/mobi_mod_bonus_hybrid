@@ -112,9 +112,9 @@ class SignUpDebit
         /* only customer's first order should be included in the result set (apply to the bonus) */
         $result = [];
         foreach ($rs as $one) {
-            $orderId = $one[QBGetOrders::A_CUST_ID];
-            if (!isset($result[$orderId])) {
-                $result[$orderId] = $one;
+            $custId = $one[QBGetOrders::A_CUST_ID];
+            if (!isset($result[$custId])) {
+                $result[$custId] = $one;
             }
         }
         return $result;

@@ -193,12 +193,18 @@ class ProcessOrders
      */
     private function saveTransLogs($orders, $transIds)
     {
+        /* re-map orders from with saleId key */
+        $bySaleId = [];
+        foreach ($orders as $custId => $order) {
+            $saleId = $order[QGetOrders::A_SALE_ID];
+            $bySaleId[$saleId] = $order;
+        }
         foreach ($transIds as $tranId => $one) {
             $pref = substr($one, 0, 2);
             $orderId = str_replace($pref, '', $one);
             if ($pref == self::PREFIX_PV) {
                 /* log PV off & order itself*/
-                $custId = $orders[$orderId][QGetOrders::A_CUST_ID];
+                $custId = $bySaleId[$orderId][QGetOrders::A_CUST_ID];
                 $this->daoLogCust->create([
                     LogCust::A_TRANS_ID => $tranId,
                     LogCust::A_CUSTOMER_ID => $custId
@@ -209,14 +215,14 @@ class ProcessOrders
                 ]);
             } elseif ($pref == self::PREFIX_BONUS_FATHER) {
                 /* log BONUS Father On */
-                $custId = $orders[$orderId][QGetOrders::A_PARENT_ID];
+                $custId = $bySaleId[$orderId][QGetOrders::A_PARENT_ID];
                 $this->daoLogCust->create([
                     LogCust::A_TRANS_ID => $tranId,
                     LogCust::A_CUSTOMER_ID => $custId
                 ]);
             } else {
                 /* log BONUS Grand On */
-                $custId = $orders[$orderId][QGetOrders::A_PARENT_GRAND_ID];
+                $custId = $bySaleId[$orderId][QGetOrders::A_PARENT_GRAND_ID];
                 $this->daoLogCust->create([
                     LogCust::A_TRANS_ID => $tranId,
                     LogCust::A_CUSTOMER_ID => $custId
