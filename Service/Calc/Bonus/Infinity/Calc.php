@@ -50,6 +50,8 @@ class Calc
     {
 
         $result = [];
+        $totalPv = 0;
+        $unallocatedPv = 0;
 
         /* collect additional data */
         $dwnlCompress = $this->daoBonDwnl->getByCalcId($compressCalcId);
@@ -69,6 +71,7 @@ class Calc
             $custMlmId = $custPlain->getMlmId();
             $pv = $custCompress->getPv();
             if ($pv > Cfg::DEF_ZERO) {
+                $totalPv += $pv;
                 $path = $custCompress->getPath();
                 $parents = $this->hlpTree->getParentsFromPathReversed($path);
                 $prevParentIbPercent = 0;
@@ -121,12 +124,17 @@ class Calc
                     }
                     $isFirstGen = false;
                 }
+                if ($ibPercentDelta > Cfg::DEF_ZERO) {
+                    $unallocatedPv += $pv;
+                    $this->logger->info("BON/INF/$scheme: unallocated PV (MLM ID: $custMlmId; PV: $pv; delta: $ibPercentDelta).");
+                }
             }
         }
         /* clean and return */
         unset($mapTreeExp);
         unset($mapById);
 
+        $this->logger->info("BON/INF/$scheme: total PV: $totalPv; unallocated: $unallocatedPv;");
 
         return $result;
     }
