@@ -29,9 +29,9 @@
     <!-- ******* -->
     <type name="Magento\Customer\Model\ResourceModel\CustomerRepository">
         <!-- Remove customer related data from Bonus Hybrid tables on customer delete from adminhtml. -->
-        <plugin name="praxigento_bonhyb"
+        <plugin name="prxgt_bon_hyb_plugin"
                 type="Praxigento\BonusHybrid\Plugin\Magento\Customer\Model\ResourceModel\CustomerRepository"
-                sortOrder="100" disabled="false"/>
+                sortOrder="700" disabled="false"/>
     </type>
 
 </config>
