@@ -3,6 +3,13 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
+    <!-- *********** -->
+    <!-- API Helpers -->
+    <!-- *********** -->
+    <preference for="Praxigento\BonusHybrid\Api\Helper\Scheme"
+            type="Praxigento\BonusHybrid\Helper\Scheme"/>
+
+
     <!-- ********************** -->
     <!-- Console (CLI Commands) -->
     <!-- ********************** -->
@@ -17,10 +24,14 @@
     </type>
 
 
-    <!-- ***** -->
-    <!-- Tools -->
-    <!-- ***** -->
-    <preference for="Praxigento\BonusHybrid\Api\Helper\Scheme"
-            type="Praxigento\BonusHybrid\Helper\Scheme"/>
+    <!-- ******* -->
+    <!-- PLUGINS -->
+    <!-- ******* -->
+    <type name="Magento\Customer\Model\ResourceModel\CustomerRepository">
+        <!-- Remove customer related data from Bonus Hybrid tables on customer delete from adminhtml. -->
+        <plugin name="praxigento_bonhyb"
+                type="Praxigento\BonusHybrid\Plugin\Magento\Customer\Model\ResourceModel\CustomerRepository"
+                sortOrder="100" disabled="false"/>
+    </type>
 
 </config>
