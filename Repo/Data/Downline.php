@@ -69,11 +69,6 @@ class Downline
         return $result;
     }
 
-    /**
-     * Complex primary key for the entity (calc_ref & cust_ref).
-     *
-     * @inheritdoc
-     */
     public static function getPrimaryKeyAttrs()
     {
         return [self::A_ID];

@@ -19,10 +19,15 @@ class Compress
     implements \Praxigento\Core\Api\App\Service\Process
 {
     const CTX_IN_PERIOD = \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain::CTX_IN_PERIOD;
+
+    /** @var array [period => [ [PV by custId], [plain tree] ] ] */
+    private $cacheDwnlPlainData;
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
+    private $daoBonDwnl;
+    /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
+    private $daoCalc;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Register */
-    private $zCalcReg;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase1 */
     private $procCmprsPhase1;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase2 */
@@ -35,10 +40,8 @@ class Compress
     private $procTv;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\UpdateDwnl */
     private $procUpdateDwnl;
-    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
-    private $daoBonDwnl;
-    /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
-    private $daoCalc;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Register */
+    private $zCalcReg;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
@@ -157,6 +160,9 @@ class Compress
         /* save updated Phase1 compression */
         $this->saveDownline($dwnlPhase1);
 
+        /* populate plain downline tree with ranks data */
+        $this->saveRanksToPlainTree($period, $dwnlPhase1);
+
         /* finalize calculation */
         $this->daoCalc->markComplete($calcId);
 
@@ -167,13 +173,19 @@ class Compress
 
     private function getDwnlPlain($period)
     {
-        /* get the last forecast plain calculation and extract collected PV */
-        $in = new \Praxigento\Core\Data();
-        $in->set(PGetPlainData::IN_PERIOD, $period);
-        $out = $this->procGetPlainData->exec($in);
-        $pv = $out->get(PGetPlainData::OUT_PV);
-        $downline = $out->get(PGetPlainData::OUT_DWNL);
-        $result = [$pv, $downline];
+        if (is_null($this->cacheDwnlPlainData)) {
+            $this->cacheDwnlPlainData = [];
+        }
+        if (!isset($this->cacheDwnlPlainData[$period])) {
+            /* get the last forecast plain calculation and extract collected PV */
+            $in = new \Praxigento\Core\Data();
+            $in->set(PGetPlainData::IN_PERIOD, $period);
+            $out = $this->procGetPlainData->exec($in);
+            $pv = $out->get(PGetPlainData::OUT_PV);
+            $downline = $out->get(PGetPlainData::OUT_DWNL);
+            $this->cacheDwnlPlainData[$period] = [$pv, $downline];
+        }
+        $result = $this->cacheDwnlPlainData[$period];
         return $result;
     }
 
@@ -203,6 +215,26 @@ class Compress
                 $this->daoBonDwnl->updateById($entryId, $item);
             } else {
                 $this->daoBonDwnl->create($item);
+            }
+        }
+    }
+
+    /**
+     * @param string $period
+     * @param EBonDwnl[] $dwnlPhase1
+     */
+    private function saveRanksToPlainTree($period, $dwnlPhase1)
+    {
+        list($unused, $plainTree) = $this->getDwnlPlain($period);
+        /** @var EBonDwnl $one */
+        foreach ($plainTree as $one) {
+            $custId = $one->getCustomerRef();
+            if (isset($dwnlPhase1[$custId])) {
+                $zipItem = $dwnlPhase1[$custId];
+                $rankId = $zipItem->getRankRef();
+                $one->setRankRef($rankId);
+                $itemId = $one->getId();
+                $this->daoBonDwnl->updateById($itemId, $one);
             }
         }
     }
