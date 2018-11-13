@@ -67,6 +67,7 @@ class Plain
 
         /* register new calculation for period */
         $calcId = $this->registerNewCalc($dateFrom, $dateTo);
+        $this->logger->info("New 'Forecast Plain' calculation is registered: #$calcId ($dateFrom-$dateTo).");
 
         /* get customers downline for $dateTo */
         $ctxDwnl = new \Praxigento\Core\Data();
@@ -84,6 +85,7 @@ class Plain
 
         /* extract only not zero turnovers */
         $filteredTurnover = [];
+        $totalPvPositive = $totalPvNegative = 0;
         /** @var \Praxigento\Accounting\Api\Service\Balance\Get\Turnover\Response\Entry $entry */
         foreach ($entries as $entry) {
             $turnover = $entry->turnover;
@@ -96,8 +98,15 @@ class Plain
                 /** @var \Praxigento\BonusHybrid\Repo\Data\Downline $dwnlEntry */
                 $dwnlEntry = $dwnlTree[$customerId];
                 $dwnlEntry->setPv($turnover);
+                if ($turnover > 0) {
+                    $totalPvPositive += $turnover;
+                } else {
+                    $totalPvNegative += $turnover;
+                }
             }
         }
+        $this->logger->info("Total positive turnover: $totalPvPositive PV; total negative turnover: $totalPvNegative PV.");
+
 
         /* perform calculation */
         $ctx = new \Praxigento\Core\Data();

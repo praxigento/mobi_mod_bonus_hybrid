@@ -34,7 +34,11 @@ class Forecast
     private $daoPeriod;
     /** @var \Praxigento\BonusBase\Repo\Dao\Type\Calc */
     private $daoTypeCalc;
+    /** @var \Psr\Log\LoggerInterface */
+    private $logger;
+
     public function __construct(
+        \Praxigento\Core\Api\App\Logger\Main $logger,
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Praxigento\Core\Api\App\Repo\Transaction\Manager $manTrans,
         \Praxigento\BonusBase\Repo\Dao\Period $daoPeriod,
@@ -50,6 +54,7 @@ class Forecast
             'prxgt:bonus:forecast',
             'Daily calculations to forecast results on final bonus calc.'
         );
+        $this->logger = $logger;
         $this->manTrans = $manTrans;
         $this->daoPeriod = $daoPeriod;
         $this->daoTypeCalc = $daoTypeCalc;
@@ -84,7 +89,9 @@ class Forecast
         \Symfony\Component\Console\Input\InputInterface $input,
         \Symfony\Component\Console\Output\OutputInterface $output
     ) {
-        $output->writeln("<info>Start forecast calculations.<info>");
+        $msg = 'Start forecast calculations.';
+        $output->writeln("<info>$msg<info>");
+        $this->logger->info($msg);
         /* perform the main processing */
         $def = $this->manTrans->begin();
         try {
@@ -114,9 +121,12 @@ class Forecast
             $msg = $e->getMessage();
             $trace = $e->getTraceAsString();
             $output->writeln("<error>$msg<error>\n$trace");
+            $this->logger->error($msg);
             $this->manTrans->rollback($def);
         }
-        $output->writeln('<info>Command is completed.<info>');
+        $msg = 'Command is completed.';
+        $output->writeln("<info>$msg<info>");
+        $this->logger->info($msg);
     }
 
     private function cleanForecastCalcs()
