@@ -17,7 +17,7 @@ use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 class Calc
 {
     /** Max count of the unq. months in a row allowed for distributors. */
-    const MAX_UNQ_MONTHS = 6;
+    private const MAX_UNQ_MONTHS = 6;
 
     /** @var \Praxigento\BonusHybrid\Helper\Config */
     private $hlpCfg;
@@ -85,8 +85,12 @@ class Calc
                 /*... then we should change customer group */
                 try {
                     $cust = $this->repoCust->getById($custId);
-                    $cust->setGroupId($groupIdUnq);
-                    $this->repoCust->save($cust);
+                    $groupId = $cust->getGroupId();
+                    if ($groupId != $groupIdUnq) {
+                        $cust->setGroupId($groupIdUnq);
+                        $this->repoCust->save($cust);
+                        $this->logger->info("Customer #$custId is downgraded ( from group $groupId to #$groupIdUnq).");
+                    }
                 } catch (\Throwable $e) {
                     $this->logger->error("Cannot update customer group on unqualified customer ($custId) downgrade.");
                 }
