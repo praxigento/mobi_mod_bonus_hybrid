@@ -7,14 +7,14 @@ namespace Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A;
 
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
+use Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\SaveDownline\A\Repo\Query\GetSnap as QGetSnap;
+use Praxigento\Downline\Repo\Data\Snap as ESnap;
 
 /**
  * Process PV Write Offs and calculate PV/TV/OV values for plain downline tree.
  */
 class SaveDownline
 {
-    /** @var \Praxigento\Downline\Service\ISnap */
-    private $callDwnlSnap;
     /** @var \Praxigento\Accounting\Repo\Dao\Account */
     private $daoAcc;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
@@ -31,6 +31,8 @@ class SaveDownline
     private $hlpScheme;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Z\Helper\GetCustomersIds */
     private $hlpSignUpDebitCust;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\SaveDownline\A\Repo\Query\GetSnap */
+    private $qDwnlSnap;
 
     public function __construct(
         \Praxigento\Core\Api\App\Repo\Generic $daoGeneric,
@@ -41,7 +43,7 @@ class SaveDownline
         \Praxigento\BonusHybrid\Service\Calc\Z\Helper\GetCustomersIds $hlpSignUpDebitCust,
         \Praxigento\Downline\Api\Helper\Tree $hlpDwnlTree,
         \Praxigento\BonusHybrid\Helper\Config $hlpCfg,
-        \Praxigento\Downline\Service\ISnap $servDwnlSnap
+        \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\SaveDownline\A\Repo\Query\GetSnap $qDwnlSnap
     )
     {
         $this->daoGeneric = $daoGeneric;
@@ -52,7 +54,7 @@ class SaveDownline
         $this->hlpSignUpDebitCust = $hlpSignUpDebitCust;
         $this->hlpDwnlTree = $hlpDwnlTree;
         $this->hlpCfg = $hlpCfg;
-        $this->callDwnlSnap = $servDwnlSnap;
+        $this->qDwnlSnap = $qDwnlSnap;
     }
 
     public function exec($calcId, $periodEnd, $updates)
@@ -66,8 +68,8 @@ class SaveDownline
         $tree = $this->loadDownline($periodEnd);
         $mapByDepth = $this->hlpDwnlTree->mapByTreeDepthDesc(
             $tree,
-            \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::A_CUST_ID,
-            \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::A_DEPTH
+            QGetSnap::A_CUST_ID,
+            QGetSnap::A_DEPTH
         );
         /* default & unqualified ranks IDs */
         $mapRanks = $this->mapDefRanksByCustId();
@@ -83,9 +85,9 @@ class SaveDownline
             /* process all customers from one level of the downline tree */
             foreach ($customers as $custId) {
                 $custData = $tree[$custId];
-                $custParentId = $custData[\Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::A_PARENT_ID];
-                $custDepth = $custData[\Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::A_DEPTH];
-                $custPath = $custData[\Praxigento\Downline\Repo\Query\Snap\OnDate\Builder::A_PATH];
+                $custParentId = $custData->get(QGetSnap::A_PARENT_ID);
+                $custDepth = $custData->get(QGetSnap::A_DEPTH);
+                $custPath = $custData->get(QGetSnap::A_PATH);
                 $custScheme = $this->hlpScheme->getSchemeByCustomer($custData);
                 /* register current customer in the parent's team */
                 if (!isset($regTeam[$custParentId])) $regTeam[$custParentId] = [];
@@ -175,34 +177,6 @@ class SaveDownline
         }
     }
 
-
-    /**
-     * @return array [custId => rankId]
-     */
-    private function mapDefRanksByCustId()
-    {
-        $result = [];
-        /* unqual. customer's group ID & rank */
-        $groupIdUnqual = $this->hlpCfg->getDowngradeGroupUnqual();
-        $rankIdUnranked = $this->daoRanks->getIdByCode(Cfg::RANK_UNRANKED);
-        $rankIdDefault = $this->daoRanks->getIdByCode(Cfg::RANK_DISTRIBUTOR);
-
-        /* get all customers & map ranks by groups */
-        $entity = Cfg::ENTITY_MAGE_CUSTOMER;
-        $cols = [
-            Cfg::E_CUSTOMER_A_ENTITY_ID,
-            Cfg::E_CUSTOMER_A_GROUP_ID
-        ];
-        $all = $this->daoGeneric->getEntities($entity, $cols);
-        foreach ($all as $one) {
-            $custId = $one[Cfg::E_CUSTOMER_A_ENTITY_ID];
-            $groupId = $one[Cfg::E_CUSTOMER_A_GROUP_ID];
-            $rankId = ($groupId == $groupIdUnqual) ? $rankIdUnranked : $rankIdDefault;
-            $result[$custId] = $rankId;
-        }
-        return $result;
-    }
-
     /**
      * Get PV for customer (real PV from 'PV Write Off' calculation adjusted for 'Sign Up Debit' customers).
      */
@@ -240,11 +214,45 @@ class SaveDownline
 
     private function loadDownline($periodEnd)
     {
-        $reqTree = new \Praxigento\Downline\Service\Snap\Request\GetStateOnDate();
-        $reqTree->setDatestamp($periodEnd);
-        $reqTree->setAddCountryCode(true);
-        $respTree = $this->callDwnlSnap->getStateOnDate($reqTree, true);
-        $result = $respTree->get();
+        $result = [];
+        $query = $this->qDwnlSnap->build();
+        $conn = $query->getConnection();
+        $bind = [
+            QGetSnap::BND_ON_DATE => $periodEnd
+        ];
+        $rows = $conn->fetchAll($query, $bind);
+        foreach ($rows as $one) {
+            $item = new ESnap($one);
+            $custId = $item->getCustomerId();
+            $result[$custId] = $item;
+        }
+        return $result;
+    }
+
+    /**
+     * @return array [custId => rankId]
+     */
+    private function mapDefRanksByCustId()
+    {
+        $result = [];
+        /* unqual. customer's group ID & rank */
+        $groupIdUnqual = $this->hlpCfg->getDowngradeGroupUnqual();
+        $rankIdUnranked = $this->daoRanks->getIdByCode(Cfg::RANK_UNRANKED);
+        $rankIdDefault = $this->daoRanks->getIdByCode(Cfg::RANK_DISTRIBUTOR);
+
+        /* get all customers & map ranks by groups */
+        $entity = Cfg::ENTITY_MAGE_CUSTOMER;
+        $cols = [
+            Cfg::E_CUSTOMER_A_ENTITY_ID,
+            Cfg::E_CUSTOMER_A_GROUP_ID
+        ];
+        $all = $this->daoGeneric->getEntities($entity, $cols);
+        foreach ($all as $one) {
+            $custId = $one[Cfg::E_CUSTOMER_A_ENTITY_ID];
+            $groupId = $one[Cfg::E_CUSTOMER_A_GROUP_ID];
+            $rankId = ($groupId == $groupIdUnqual) ? $rankIdUnranked : $rankIdDefault;
+            $result[$custId] = $rankId;
+        }
         return $result;
     }
 

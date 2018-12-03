@@ -41,22 +41,17 @@ class Phase1
     private $hlpSignUpDebitCust;
     /** @var \Praxigento\Downline\Api\Helper\Tree */
     private $hlpTree;
-    /** @var    \Praxigento\Downline\Service\ISnap */
-    private $servDwnlSnap;
 
     public function __construct(
         \Praxigento\BonusHybrid\Api\Helper\Scheme $hlpScheme,
         \Praxigento\Downline\Api\Helper\Tree $hlpTree,
         \Praxigento\BonusHybrid\Service\Calc\Z\Helper\GetCustomersIds $hlpSignUpDebitCust,
-        \Praxigento\Downline\Repo\Dao\Customer $daoCustDwnl,
-        \Praxigento\Downline\Service\ISnap $servDwnlSnap
-    )
-    {
+        \Praxigento\Downline\Repo\Dao\Customer $daoCustDwnl
+    ) {
         $this->hlpScheme = $hlpScheme;
         $this->hlpTree = $hlpTree;
         $this->hlpSignUpDebitCust = $hlpSignUpDebitCust;
         $this->daoCustDwnl = $daoCustDwnl;
-        $this->servDwnlSnap = $servDwnlSnap;
     }
 
     /**
@@ -71,11 +66,8 @@ class Phase1
             /* 0 - PV, 1 - parentId */
             $converted[$custId] = $data[1];
         }
-        $req = new \Praxigento\Downline\Service\Snap\Request\ExpandMinimal();
-        $req->setTree($converted);
-        $resp = $this->servDwnlSnap->expandMinimal($req);
+        $snap = $this->hlpTree->expandMinimal($converted);
         unset($converted);
-        $snap = $resp->getSnapData();
         /* convert 2D array to array of entities */
         $result = [];
         foreach ($snap as $one) {
@@ -200,7 +192,7 @@ class Phase1
         /* re-build result tree (compressed) from source tree (plain) */
         $cmprsResultDirty = $this->rebuildTree($calcId, $cmprsSnap, $mapPlain, $keyCalcId, $keyParentId, $keyDepth, $keyPath);
         /* then unset items IDs after plain tree (MOBI-1502) */
-        $cmprsResult=[];
+        $cmprsResult = [];
         /**
          * @var int $key
          * @var EBonDwnl $item
