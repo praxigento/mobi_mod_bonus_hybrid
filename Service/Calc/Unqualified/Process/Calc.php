@@ -93,6 +93,7 @@ class Calc
                     }
                 } catch (\Throwable $e) {
                     $this->logger->error("Cannot update customer group on unqualified customer ($custId) downgrade.");
+                    throw $e;
                 }
             }
         }

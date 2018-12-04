@@ -74,7 +74,7 @@ class Unqual
         \Symfony\Component\Console\Output\OutputInterface $output
     )
     {
-        $output->writeln("<info>Start inactive/unqualified customers processing.<info>");
+        $output->writeln("<info>Command '" . $this->getName() . "'<info>");
         $this->conn->beginTransaction();
         try {
             $canContinue = $this->calcInactCollect();
@@ -101,8 +101,7 @@ class Unqual
             $output->writeln("<error>$msg<error>\n$trace");
             $this->conn->rollBack();
         }
-        $output->writeln('<info>Command is completed.<info>');
-
+        $output->writeln('<info>Command \'' . $this->getName() . '\' is completed.<info>');
     }
 
 }
