@@ -23,8 +23,8 @@ class SaveDownline
     private $daoGeneric;
     /** @var \Praxigento\BonusBase\Repo\Dao\Rank */
     private $daoRanks;
-    /** @var \Praxigento\BonusHybrid\Helper\Config */
-    private $hlpCfg;
+    /** @var \Praxigento\Downline\Api\Helper\Config */
+    private $hlpCfgDwnl;
     /** @var \Praxigento\Downline\Api\Helper\Tree */
     private $hlpDwnlTree;
     /** @var  \Praxigento\BonusHybrid\Api\Helper\Scheme */
@@ -42,7 +42,7 @@ class SaveDownline
         \Praxigento\BonusHybrid\Api\Helper\Scheme $hlpScheme,
         \Praxigento\BonusHybrid\Service\Calc\Z\Helper\GetCustomersIds $hlpSignUpDebitCust,
         \Praxigento\Downline\Api\Helper\Tree $hlpDwnlTree,
-        \Praxigento\BonusHybrid\Helper\Config $hlpCfg,
+        \Praxigento\Downline\Api\Helper\Config $hlpCfgDwnl,
         \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\SaveDownline\A\Repo\Query\GetSnap $qDwnlSnap
     )
     {
@@ -53,7 +53,7 @@ class SaveDownline
         $this->hlpScheme = $hlpScheme;
         $this->hlpSignUpDebitCust = $hlpSignUpDebitCust;
         $this->hlpDwnlTree = $hlpDwnlTree;
-        $this->hlpCfg = $hlpCfg;
+        $this->hlpCfgDwnl = $hlpCfgDwnl;
         $this->qDwnlSnap = $qDwnlSnap;
     }
 
@@ -236,7 +236,7 @@ class SaveDownline
     {
         $result = [];
         /* unqual. customer's group ID & rank */
-        $groupIdUnqual = $this->hlpCfg->getDowngradeGroupUnqual();
+        $groupIdUnqual = $this->hlpCfgDwnl->getDowngradeGroupUnqual();
         $rankIdUnranked = $this->daoRanks->getIdByCode(Cfg::RANK_UNRANKED);
         $rankIdDefault = $this->daoRanks->getIdByCode(Cfg::RANK_DISTRIBUTOR);
 

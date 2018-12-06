@@ -22,8 +22,8 @@ class GetDownline
     private $daoGeneric;
     /** @var \Praxigento\BonusBase\Repo\Dao\Rank */
     private $daoRanks;
-    /** @var \Praxigento\BonusHybrid\Helper\Config */
-    private $hlpCfg;
+    /** @var \Praxigento\Downline\Api\Helper\Config */
+    private $hlpCfgDwnl;
     /** @var \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder */
     private $qbSnapOnDate;
 
@@ -31,12 +31,12 @@ class GetDownline
         \Praxigento\Core\Api\App\Repo\Generic $daoGeneric,
         \Praxigento\BonusBase\Repo\Dao\Rank $daoRank,
         \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder $qbSnapOnDate,
-        \Praxigento\BonusHybrid\Helper\Config $hlpCfg
+        \Praxigento\Downline\Api\Helper\Config $hlpCfgDwnl
     ) {
         $this->daoGeneric = $daoGeneric;
         $this->daoRanks = $daoRank;
         $this->qbSnapOnDate = $qbSnapOnDate;
-        $this->hlpCfg = $hlpCfg;
+        $this->hlpCfgDwnl = $hlpCfgDwnl;
     }
 
     /**
@@ -93,7 +93,7 @@ class GetDownline
     {
         $result = [];
         /* unqual. customer's group ID & rank */
-        $groupIdUnqual = $this->hlpCfg->getDowngradeGroupUnqual();
+        $groupIdUnqual = $this->hlpCfgDwnl->getDowngradeGroupUnqual();
         $rankIdUnranked = $this->daoRanks->getIdByCode(Cfg::RANK_UNRANKED);
         $rankIdDefault = $this->daoRanks->getIdByCode(Cfg::RANK_DISTRIBUTOR);
 

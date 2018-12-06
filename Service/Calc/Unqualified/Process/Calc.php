@@ -19,8 +19,8 @@ class Calc
     /** Max count of the unq. months in a row allowed for distributors. */
     private const MAX_UNQ_MONTHS = 6;
 
-    /** @var \Praxigento\BonusHybrid\Helper\Config */
-    private $hlpCfg;
+    /** @var \Praxigento\Downline\Api\Helper\Config */
+    private $hlpCfgDwnl;
     /** @var \Praxigento\Downline\Api\Helper\Tree */
     private $hlpDwnlTree;
     /** @var \Praxigento\Core\Api\Helper\Period */
@@ -36,7 +36,7 @@ class Calc
         \Magento\Customer\Api\CustomerRepositoryInterface $repoCust,
         \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         \Praxigento\Downline\Api\Helper\Tree $hlpDwnlTree,
-        \Praxigento\BonusHybrid\Helper\Config $hlpCfg,
+        \Praxigento\Downline\Api\Helper\Config $hlpCfgDwnl,
         \Praxigento\Downline\Api\Service\Customer\Parent\Change $servDwnlChangeParent
     )
     {
@@ -44,7 +44,7 @@ class Calc
         $this->repoCust = $repoCust;
         $this->hlpPeriod = $hlpPeriod;
         $this->hlpDwnlTree = $hlpDwnlTree;
-        $this->hlpCfg = $hlpCfg;
+        $this->hlpCfgDwnl = $hlpCfgDwnl;
         $this->servDwnlChangeParent = $servDwnlChangeParent;
     }
 
@@ -64,7 +64,7 @@ class Calc
     public function exec($tree, $period)
     {
         /* group ID for unqualified customers */
-        $groupIdUnq = $this->hlpCfg->getDowngradeGroupUnqual();
+        $groupIdUnq = $this->hlpCfgDwnl->getDowngradeGroupUnqual();
         /* register changes by the last date of the period */
         $dateChanged = $this->hlpPeriod->getTimestampTo($period);
         /* collect teams by customer */
