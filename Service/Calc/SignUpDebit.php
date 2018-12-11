@@ -107,6 +107,7 @@ class SignUpDebit
         $rs = $conn->fetchAll($query, [
             QBGetOrders::BND_DATE_FROM => $from,
             QBGetOrders::BND_DATE_TO => $upTo,
+            /* TODO: reversed dependency from project module (create helper for the group ID)*/
             QBGetOrders::BND_CUST_GROUP_ID => \Praxigento\Santegra\Helper\Odoo\BusinessCodes::M_CUST_GROUP_DISTRIBUTOR
         ]);
         /* only customer's first order should be included in the result set (apply to the bonus) */
