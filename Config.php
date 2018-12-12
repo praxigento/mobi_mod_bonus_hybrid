@@ -69,6 +69,8 @@ class Config extends BonusBaseCfg
     const COURTESY_BONUS_PERCENT = 0.05;
     const DTPS = DownlineCfg::DTPS;
     const DT_DEPTH_INIT = DownlineCfg::INIT_DEPTH;
+    /** Max count of the unq. months in a row allowed for distributors before downgrade. */
+    const MAX_UNQ_MONTHS = 6;
     const MODULE = 'Praxigento_BonusHybrid';
     /**
      * Default qualification levels to compress downline tree in Santegra project.
@@ -89,7 +91,6 @@ class Config extends BonusBaseCfg
     const RANK_SEN_VICE = 'SENIOR VICE';
     const RANK_SUPERVISOR = 'SUPERVISOR';
     const RANK_UNRANKED = 'UNRANKED';
-
     /**
      * Rebate bonus percent for qualified distributors (Personal bonus in EU).
      */
@@ -99,15 +100,11 @@ class Config extends BonusBaseCfg
      */
     const SCHEMA_DEFAULT = 'DEFAULT';
     const SCHEMA_EU = 'EU';
-
     /**
      * Sign Up Volume Debit parameters: PV Off & Wallet On values.
      */
     const SIGNUP_DEBIT_BONUS_FATHER = 34;
     const SIGNUP_DEBIT_BONUS_GRAND = 18;
     const SIGNUP_DEBIT_PV = 100;
-
     const TEAM_BONUS_EU_PERCENT = 0.05;
-
-
 }

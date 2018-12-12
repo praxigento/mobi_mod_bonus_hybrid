@@ -5,7 +5,6 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Inactive;
 
-use Praxigento\BonusBase\Service\Period\Calc\Get\IDependent as SPeriodGetDep;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Repo\Data\Downline\Inactive as EInact;
@@ -19,9 +18,6 @@ use Praxigento\BonusHybrid\Service\Calc\Inactive\Collect\Repo\Query\GetInactiveS
 class Collect
     implements \Praxigento\Core\Api\App\Service\Process
 {
-    /** Maximal end of base period to get data for (TODO: not used in regular activity, just for development/phpUnits) */
-    const CTX_IN_PERIOD_END = 'in.periodEnd';
-
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $daoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
@@ -34,10 +30,10 @@ class Collect
     private $hlpTree;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
-    /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
-    private $procPeriodGet;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Inactive\Collect\Repo\Query\GetInactiveStats */
     private $qbGetStats;
+    /** @var \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent */
+    private $servGetDepend;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
@@ -46,7 +42,7 @@ class Collect
         \Praxigento\BonusHybrid\Repo\Dao\Downline\Inactive $daoInact,
         \Praxigento\Downline\Api\Helper\Tree $hlpTree,
         \Praxigento\BonusHybrid\Api\Helper\Scheme $hlpScheme,
-        \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
+        \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent $servGetDepend,
         QBGetStats $qbGetStats
     )
     {
@@ -56,7 +52,7 @@ class Collect
         $this->daoInact = $daoInact;
         $this->hlpTree = $hlpTree;
         $this->hlpScheme = $hlpScheme;
-        $this->procPeriodGet = $procPeriodGet;
+        $this->servGetDepend = $servGetDepend;
         $this->qbGetStats = $qbGetStats;
     }
 
@@ -64,6 +60,7 @@ class Collect
      * @param EBonDwnl[] $tree
      * @param $prevStat
      * @return array
+     * @throws \Exception
      */
     private function calc($tree, $prevStat)
     {
@@ -125,32 +122,33 @@ class Collect
      * Get related calculations data for this calculation.
      *
      * @return array [$writeOffCalc, $writeOffCalcPrev, $collectCalc]
+     * @throws \Exception
      */
     private function getCalcData()
     {
         /* get period & calc data */
-        $ctx = new \Praxigento\Core\Data();
-        $ctx->set(SPeriodGetDep::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
-        $ctx->set(SPeriodGetDep::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_INACTIVE_COLLECT);
-        $this->procPeriodGet->exec($ctx);
+        $req = new \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Request();
+        $req->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
+        $req->setDepCalcTypeCode(Cfg::CODE_TYPE_CALC_INACTIVE_COLLECT);
+        $resp = $this->servGetDepend->exec($req);
         /** @var \Praxigento\BonusBase\Repo\Data\Period $writeOffPeriod */
-        $writeOffPeriod = $ctx->get(SPeriodGetDep::CTX_OUT_BASE_PERIOD_DATA);
+        $writeOffPeriod = $resp->getBasePeriodData();
         /** @var \Praxigento\BonusBase\Repo\Data\Calculation $writeOffCalc */
-        $writeOffCalc = $ctx->get(SPeriodGetDep::CTX_OUT_BASE_CALC_DATA);
+        $writeOffCalc = $resp->getBaseCalcData();
         /** @var \Praxigento\BonusBase\Repo\Data\Calculation $collectCalc */
-        $collectCalc = $ctx->get(SPeriodGetDep::CTX_OUT_DEP_CALC_DATA);
+        $collectCalc = $resp->getDepCalcData();
         /**
          * Get previous write off period to access inactive stats history.
          */
         $periodPrev = $writeOffPeriod->getDstampBegin();
-        $ctx = new \Praxigento\Core\Data();
-        $ctx->set(SPeriodGetDep::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
-        $ctx->set(SPeriodGetDep::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_INACTIVE_COLLECT);
-        $ctx->set(SPeriodGetDep::CTX_IN_PERIOD_END, $periodPrev);
-        $ctx->set(SPeriodGetDep::CTX_IN_DEP_IGNORE_COMPLETE, true);
-        $this->procPeriodGet->exec($ctx);
+        $req = new \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Request();
+        $req->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
+        $req->setDepCalcTypeCode(Cfg::CODE_TYPE_CALC_INACTIVE_COLLECT);
+        $req->setPeriodEnd($periodPrev);
+        $req->setDepIgnoreComplete(true);
+        $resp = $this->servGetDepend->exec($req);
         /** @var \Praxigento\BonusBase\Repo\Data\Calculation $writeOffCalcPrev */
-        $writeOffCalcPrev = $ctx->get(SPeriodGetDep::CTX_OUT_BASE_CALC_DATA);
+        $writeOffCalcPrev = $resp->getBaseCalcData();
         /**
          * Compose result.
          */

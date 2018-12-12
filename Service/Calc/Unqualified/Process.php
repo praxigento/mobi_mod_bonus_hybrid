@@ -24,22 +24,22 @@ class Process
     private $daoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $daoCalc;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Unqualified\Process\Calc */
-    private $rouCalc;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Unqualified\Process\A\Calc */
+    private $ownCalc;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
         \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
-        \Praxigento\BonusHybrid\Service\Calc\Unqualified\Process\Calc $rouCalc
+        \Praxigento\BonusHybrid\Service\Calc\Unqualified\Process\A\Calc $ownCalc
     )
     {
         $this->logger = $logger;
         $this->daoBonDwnl = $daoBonDwnl;
         $this->daoCalc = $daoCalc;
         $this->procPeriodGet = $procPeriodGet;
-        $this->rouCalc = $rouCalc;
+        $this->ownCalc = $ownCalc;
     }
 
     public function exec(\Praxigento\Core\Data $ctx)
@@ -59,7 +59,7 @@ class Process
         $writeOffCalcId = $writeOffCalc->getId();
         $periodEnd = $writeOffPeriod->getDstampEnd();
         $treePlain = $this->daoBonDwnl->getByCalcId($writeOffCalcId);
-        $this->rouCalc->exec($treePlain, $periodEnd);
+        $this->ownCalc->exec($treePlain, $periodEnd);
         /* mark this calculation complete */
         $calcId = $processCalc->getId();
         $this->daoCalc->markComplete($calcId);
