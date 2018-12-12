@@ -130,7 +130,9 @@ class PvWriteOff
      */
     private function getCalcData()
     {
-        /* get period & calc data */
+        /**
+         * Get period & calc data.
+         */
         $req = new AGetPeriodRequest();
         $req->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_SIGN_UP_DEBIT);
         $req->setDepCalcTypeCode(Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
@@ -140,6 +142,9 @@ class PvWriteOff
         $periodData = $resp->getDepPeriodData();
         /** @var \Praxigento\BonusBase\Repo\Data\Calculation $calcData */
         $calcData = $resp->getDepCalcData();
+        /**
+         * Compose result.
+         */
         $result = [$periodData, $calcData];
         return $result;
     }

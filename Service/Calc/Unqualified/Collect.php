@@ -5,7 +5,8 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Unqualified;
 
-use Praxigento\BonusBase\Service\Period\Calc\Get\IDependent as SPeriodGetDep;
+use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Request as AGetPeriodRequest;
+use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Response as AGetPeriodResponse;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 
@@ -21,8 +22,8 @@ class Collect
     private $hlpTree;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
-    /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
-    private $procPeriodGet;
+    /** @var \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent */
+    private $servPeriodGet;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $daoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
@@ -33,14 +34,14 @@ class Collect
         \Praxigento\Downline\Api\Helper\Tree $hlpTree,
         \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
         \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
-        \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet
+        \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent $servPeriodGet
     )
     {
         $this->logger = $logger;
         $this->hlpTree = $hlpTree;
         $this->daoBonDwnl = $daoBonDwnl;
         $this->daoCalc = $daoCalc;
-        $this->procPeriodGet = $procPeriodGet;
+        $this->servPeriodGet = $servPeriodGet;
     }
 
     /**
@@ -102,42 +103,46 @@ class Collect
      * Get data for periods & calculations.
      *
      * @return array [$writeOffCalc, $writeOffCalcPrev, $phase1Calc, $unqCollCalc]
+     * @throws \Exception
      */
     private function getCalcData()
     {
         /**
          * Get PW Write Off data & Phase1 Compression data - to access plain tree & qualified customers data.
          */
-        $ctx = new \Praxigento\Core\Data();
-        $ctx->set(SPeriodGetDep::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
-        $ctx->set(SPeriodGetDep::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
-        $ctx->set(SPeriodGetDep::CTX_IN_DEP_IGNORE_COMPLETE, true);
-        $this->procPeriodGet->exec($ctx);
+        $req = new AGetPeriodRequest();
+        $req->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
+        $req->setDepCalcTypeCode(Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
+        $req->setDepIgnoreComplete(true);
+        /** @var AGetPeriodResponse $resp */
+        $resp = $this->servPeriodGet->exec($req);
         /** @var \Praxigento\BonusBase\Repo\Data\Calculation $writeOffCalc */
-        $writeOffCalc = $ctx->get(SPeriodGetDep::CTX_OUT_BASE_CALC_DATA);
-        $pwWriteOffPeriod = $ctx->get(SPeriodGetDep::CTX_OUT_BASE_PERIOD_DATA);
-        $phase1Calc = $ctx->get(SPeriodGetDep::CTX_OUT_DEP_CALC_DATA);
+        $writeOffCalc = $resp->getBaseCalcData();
+        $pwWriteOffPeriod = $resp->getBasePeriodData();
+        $phase1Calc = $resp->getDepCalcData();
         /**
          * Create Unqualified Collection calculation.
          */
-        $ctx = new \Praxigento\Core\Data();
-        $ctx->set(SPeriodGetDep::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
-        $ctx->set(SPeriodGetDep::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_UNQUALIFIED_COLLECT);
-        $this->procPeriodGet->exec($ctx);
-        /** @var \Praxigento\BonusBase\Repo\Data\Calculation $pwWriteOffCalc */
-        $unqCollCalc = $ctx->get(SPeriodGetDep::CTX_OUT_DEP_CALC_DATA);
+        $req = new AGetPeriodRequest();
+        $req->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
+        $req->setDepCalcTypeCode(Cfg::CODE_TYPE_CALC_UNQUALIFIED_COLLECT);
+        /** @var AGetPeriodResponse $resp */
+        $resp = $this->servPeriodGet->exec($req);
+        /** @var \Praxigento\BonusBase\Repo\Data\Calculation $unqCollCalc */
+        $unqCollCalc = $resp->getDepCalcData();
         /**
          * Get previous PV Write Off data to access stats history.
          */
         $periodPrev = $pwWriteOffPeriod->getDstampBegin();
-        $ctx = new \Praxigento\Core\Data();
-        $ctx->set(SPeriodGetDep::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
-        $ctx->set(SPeriodGetDep::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
-        $ctx->set(SPeriodGetDep::CTX_IN_PERIOD_END, $periodPrev);
-        $ctx->set(SPeriodGetDep::CTX_IN_DEP_IGNORE_COMPLETE, true);
-        $this->procPeriodGet->exec($ctx);
+        $req = new AGetPeriodRequest();
+        $req->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
+        $req->setDepCalcTypeCode(Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
+        $req->setPeriodEnd($periodPrev);
+        $req->setDepIgnoreComplete(true);
+        /** @var AGetPeriodResponse $resp */
+        $resp = $this->servPeriodGet->exec($req);
         /** @var \Praxigento\BonusBase\Repo\Data\Calculation $phase1CalcPrev */
-        $writeOffCalcPrev = $ctx->get(SPeriodGetDep::CTX_OUT_BASE_CALC_DATA);
+        $writeOffCalcPrev = $resp->getBaseCalcData();
         /**
          * Compose result.
          */

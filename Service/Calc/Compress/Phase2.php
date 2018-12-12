@@ -5,6 +5,8 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Compress;
 
+use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Request as AGetPeriodRequest;
+use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Response as AGetPeriodResponse;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase2 as PCpmrsPhase2;
 
@@ -18,8 +20,8 @@ class Phase2
     private $logger;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase2 */
     private $procCmprsPhase2;
-    /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
-    private $procPeriodGet;
+    /** @var \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent */
+    private $servPeriodGet;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $daoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
@@ -33,16 +35,15 @@ class Phase2
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
         \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
-        \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
+        \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent $servPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase2 $procCmprsPhase2,
         \Praxigento\BonusHybrid\Service\Calc\Compress\Phase2\GetPv $rouGetPv,
         \Praxigento\BonusHybrid\Service\Calc\Compress\Phase2\SaveDownline $rouSaveDwnl
-    )
-    {
+    ) {
         $this->logger = $logger;
         $this->daoCalc = $daoCalc;
         $this->daoBonDwnl = $daoBonDwnl;
-        $this->procPeriodGet = $procPeriodGet;
+        $this->servPeriodGet = $servPeriodGet;
         $this->procCmprsPhase2 = $procCmprsPhase2;
         $this->rouGetPv = $rouGetPv;
         $this->rouSaveDwnl = $rouSaveDwnl;
@@ -125,28 +126,30 @@ class Phase2
         /**
          * Get data for phase2 compression and OV (base) calculations
          */
-        $ctx = new \Praxigento\Core\Data();
-        $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_VALUE_OV);
-        $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, $calcTypeCode);
-        $this->procPeriodGet->exec($ctx);
+        $req = new AGetPeriodRequest();
+        $req->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_VALUE_OV);
+        $req->setDepCalcTypeCode($calcTypeCode);
+        /** @var AGetPeriodResponse $resp */
+        $resp = $this->servPeriodGet->exec($req);
         /** @var \Praxigento\BonusBase\Repo\Data\Period $phase2Period */
-        $phase2Period = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_PERIOD_DATA);
+        $phase2Period = $resp->getDepPeriodData();
         /** @var \Praxigento\BonusBase\Repo\Data\Calculation $phaseCalc */
-        $phaseCalc = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
+        $phaseCalc = $resp->getDepCalcData();
         /**
          * Get data for PV Write Off & phase1 compression calculations
          */
-        $ctx = new \Praxigento\Core\Data();
-        $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
-        $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
-        $ctx->set($this->procPeriodGet::CTX_IN_DEP_IGNORE_COMPLETE, true);
-        $this->procPeriodGet->exec($ctx);
+        $req = new AGetPeriodRequest();
+        $req->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
+        $req->setDepCalcTypeCode(Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
+        $req->setDepIgnoreComplete(true);
+        /** @var AGetPeriodResponse $resp */
+        $resp = $this->servPeriodGet->exec($req);
         /** @var \Praxigento\BonusBase\Repo\Data\Calculation $writeOffCalc */
-        $writeOffCalc = $ctx->get($this->procPeriodGet::CTX_OUT_BASE_CALC_DATA);
+        $writeOffCalc = $resp->getBaseCalcData();
         /** @var \Praxigento\BonusBase\Repo\Data\Calculation $phase1Calc */
-        $phase1Calc = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
+        $phase1Calc = $resp->getDepCalcData();
         /**
-         * Compose results vector.
+         * Compose results.
          */
         $result = [$writeOffCalc, $phase1Calc, $phaseCalc, $phase2Period];
         return $result;

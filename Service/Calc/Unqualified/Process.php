@@ -5,7 +5,8 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Unqualified;
 
-use Praxigento\BonusBase\Service\Period\Calc\Get\IDependent as SPeriodGetDep;
+use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Request as AGetPeriodRequest;
+use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Response as AGetPeriodResponse;
 use Praxigento\BonusHybrid\Config as Cfg;
 
 /**
@@ -18,28 +19,28 @@ class Process
 {
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
-    /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
-    private $procPeriodGet;
+    /** @var \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent */
+    private $servPeriodGet;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $daoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $daoCalc;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Unqualified\Process\A\Calc */
-    private $ownCalc;
+    private $aCalc;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
         \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
-        \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
-        \Praxigento\BonusHybrid\Service\Calc\Unqualified\Process\A\Calc $ownCalc
+        \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent $servPeriodGet,
+        \Praxigento\BonusHybrid\Service\Calc\Unqualified\Process\A\Calc $aCalc
     )
     {
         $this->logger = $logger;
         $this->daoBonDwnl = $daoBonDwnl;
         $this->daoCalc = $daoCalc;
-        $this->procPeriodGet = $procPeriodGet;
-        $this->ownCalc = $ownCalc;
+        $this->servPeriodGet = $servPeriodGet;
+        $this->aCalc = $aCalc;
     }
 
     public function exec(\Praxigento\Core\Data $ctx)
@@ -59,7 +60,7 @@ class Process
         $writeOffCalcId = $writeOffCalc->getId();
         $periodEnd = $writeOffPeriod->getDstampEnd();
         $treePlain = $this->daoBonDwnl->getByCalcId($writeOffCalcId);
-        $this->ownCalc->exec($treePlain, $periodEnd);
+        $this->aCalc->exec($treePlain, $periodEnd);
         /* mark this calculation complete */
         $calcId = $processCalc->getId();
         $this->daoCalc->markComplete($calcId);
@@ -72,30 +73,33 @@ class Process
      * Get data for periods & calculations.
      *
      * @return array [$writeOffCalc, $writeOffPeriod, $processCalc]
+     * @throws \Exception
      */
     private function getCalcData()
     {
         /**
          * Get PV Write Off data - to access plain tree & qualified customers data.
          */
-        $ctx = new \Praxigento\Core\Data();
-        $ctx->set(SPeriodGetDep::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
-        $ctx->set(SPeriodGetDep::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_UNQUALIFIED_COLLECT);
-        $ctx->set(SPeriodGetDep::CTX_IN_DEP_IGNORE_COMPLETE, true);
-        $this->procPeriodGet->exec($ctx);
+        $req = new AGetPeriodRequest();
+        $req->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
+        $req->setDepCalcTypeCode(Cfg::CODE_TYPE_CALC_UNQUALIFIED_COLLECT);
+        $req->setDepIgnoreComplete(true);
+        /** @var AGetPeriodResponse $resp */
+        $resp = $this->servPeriodGet->exec($req);
         /** @var \Praxigento\BonusBase\Repo\Data\Calculation $writeOffCalc */
-        $writeOffCalc = $ctx->get(SPeriodGetDep::CTX_OUT_BASE_CALC_DATA);
+        $writeOffCalc = $resp->getBaseCalcData();
         /** @var \Praxigento\BonusBase\Repo\Data\Period $writeOffPeriod */
-        $writeOffPeriod = $ctx->get(SPeriodGetDep::CTX_OUT_BASE_PERIOD_DATA);
+        $writeOffPeriod = $resp->getBasePeriodData();
         /**
          * Create Unqualified Process calculation.
          */
-        $ctx = new \Praxigento\Core\Data();
-        $ctx->set(SPeriodGetDep::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_UNQUALIFIED_COLLECT);
-        $ctx->set(SPeriodGetDep::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_UNQUALIFIED_PROCESS);
-        $this->procPeriodGet->exec($ctx);
+        $req = new AGetPeriodRequest();
+        $req->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_UNQUALIFIED_COLLECT);
+        $req->setDepCalcTypeCode(Cfg::CODE_TYPE_CALC_UNQUALIFIED_PROCESS);
+        /** @var AGetPeriodResponse $resp */
+        $resp = $this->servPeriodGet->exec($req);
         /** @var \Praxigento\BonusBase\Repo\Data\Calculation $pwWriteOffCalc */
-        $processCalc = $ctx->get(SPeriodGetDep::CTX_OUT_DEP_CALC_DATA);
+        $processCalc = $resp->getDepCalcData();
         /**
          * Compose result.
          */

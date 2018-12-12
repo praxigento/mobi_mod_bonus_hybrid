@@ -5,10 +5,12 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Compress;
 
+use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Request as AGetPeriodRequest;
+use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Response as AGetPeriodResponse;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
-use Praxigento\BonusHybrid\Service\Calc\Compress\Z\Repo\Query\GetPhase1Pv as QBldGetPv;
 use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase1 as PPhase1;
+use Praxigento\BonusHybrid\Service\Calc\Compress\Z\Repo\Query\GetPhase1Pv as QBldGetPv;
 use Praxigento\Downline\Repo\Query\Snap\OnDate\Builder as QBSnap;
 
 class Phase1
@@ -18,8 +20,8 @@ class Phase1
     private $hlpDwnlTree;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
-    /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
-    private $procPeriodGet;
+    /** @var \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent */
+    private $servPeriodGet;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase1 */
     private $procPhase1;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\Z\Repo\Query\GetPhase1Pv */
@@ -44,10 +46,9 @@ class Phase1
         \Praxigento\BonusHybrid\Repo\Dao\Compression\Phase1\Transfer\Pv $daoTransPv,
         \Praxigento\BonusHybrid\Service\Calc\Compress\Z\Repo\Query\GetPhase1Pv $qbGetPv,
         \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder $qbSnapOnDate,
-        \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
+        \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent $servPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase1 $procPhase1
-    )
-    {
+    ) {
         $this->logger = $logger;
         $this->hlpDwnlTree = $hlpDwnlTree;
         $this->daoCalc = $daoCalc;
@@ -56,7 +57,7 @@ class Phase1
         $this->daoTransPv = $daoTransPv;
         $this->qbGetPv = $qbGetPv;
         $this->qbSnapOnDate = $qbSnapOnDate;
-        $this->procPeriodGet = $procPeriodGet;
+        $this->servPeriodGet = $servPeriodGet;
         $this->procPhase1 = $procPhase1;
     }
 
@@ -125,21 +126,28 @@ class Phase1
     /**
      * Get data for calculations/periods.
      *
-     * @return array $writeOffCalc, $compressPeriod, $compressCalc
+     * @return array [$writeOffCalc, $compressPeriod, $compressCalc]
+     * @throws \Exception
      */
     private function getCalcData()
     {
-        /* get data for compression & PV write off calculations */
-        $ctx = new \Praxigento\Core\Data();
-        $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
-        $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
-        $this->procPeriodGet->exec($ctx);
+        /**
+         * Get data for compression & PV write off calculations.
+         */
+        $req = new AGetPeriodRequest();
+        $req->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
+        $req->setDepCalcTypeCode(Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
+        /** @var AGetPeriodResponse $resp */
+        $resp = $this->servPeriodGet->exec($req);
         /** @var \Praxigento\BonusBase\Repo\Data\Calculation $compressCalc */
-        $writeOffCalc = $ctx->get($this->procPeriodGet::CTX_OUT_BASE_CALC_DATA);
+        $writeOffCalc = $resp->getBaseCalcData();
         /** @var \Praxigento\BonusBase\Repo\Data\Period $compressPeriod */
-        $compressPeriod = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_PERIOD_DATA);
+        $compressPeriod = $resp->getDepPeriodData();
         /** @var \Praxigento\BonusBase\Repo\Data\Calculation $depCalcData */
-        $compressCalc = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
+        $compressCalc = $resp->getDepCalcData();
+        /**
+         * Compose result.
+         */
         $result = [$writeOffCalc, $compressPeriod, $compressCalc];
         return $result;
     }

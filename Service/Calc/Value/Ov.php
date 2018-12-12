@@ -5,7 +5,8 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Value;
 
-use Praxigento\BonusBase\Service\Period\Calc\Get\IDependent as PGetPeriodDep;
+use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Request as AGetPeriodRequest;
+use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Response as AGetPeriodResponse;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 
@@ -15,8 +16,8 @@ class Ov
 
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
-    /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
-    private $procPeriodGet;
+    /** @var \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent */
+    private $servPeriodGet;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $daoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
@@ -28,14 +29,14 @@ class Ov
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
         \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
-        \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
+        \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent $servPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\Value\Ov\Calc $subCalc
     )
     {
         $this->logger = $logger;
         $this->daoCalc = $daoCalc;
         $this->daoBonDwnl = $daoBonDwnl;
-        $this->procPeriodGet = $procPeriodGet;
+        $this->servPeriodGet = $servPeriodGet;
         $this->subCalc = $subCalc;
     }
 
@@ -64,18 +65,25 @@ class Ov
      * Get data for periods/calculations.
      *
      * @return array [$compressCalc, $ovCalc]
+     * @throws \Exception
      */
     private function getCalcData()
     {
-        /* get period & calc data */
-        $ctx = new \Praxigento\Core\Data();
-        $ctx->set(PGetPeriodDep::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
-        $ctx->set(PGetPeriodDep::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_VALUE_OV);
-        $this->procPeriodGet->exec($ctx);
+        /**
+         * Get period & calc data.
+         */
+        $req = new AGetPeriodRequest();
+        $req->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
+        $req->setDepCalcTypeCode(Cfg::CODE_TYPE_CALC_VALUE_OV);
+        /** @var AGetPeriodResponse $resp */
+        $resp = $this->servPeriodGet->exec($req);
         /** @var \Praxigento\BonusBase\Repo\Data\Calculation $compressCalc */
-        $compressCalc = $ctx->get(PGetPeriodDep::CTX_OUT_BASE_CALC_DATA);
+        $compressCalc = $resp->getBaseCalcData();
         /** @var \Praxigento\BonusBase\Repo\Data\Calculation $ovCalc */
-        $ovCalc = $ctx->get(PGetPeriodDep::CTX_OUT_DEP_CALC_DATA);
+        $ovCalc = $resp->getDepCalcData();
+        /**
+         * Compose result.
+         */
         $result = [$compressCalc, $ovCalc];
         return $result;
     }
