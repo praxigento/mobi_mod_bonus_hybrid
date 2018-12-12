@@ -5,6 +5,8 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Bonus;
 
+use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Request as AGetPeriodRequest;
+use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Response as AGetPeriodResponse;
 use Praxigento\BonusBase\Repo\Data\Log\Customers as ELogCust;
 use Praxigento\BonusBase\Repo\Data\Log\Opers as ELogOper;
 use Praxigento\BonusHybrid\Config as Cfg;
@@ -23,8 +25,8 @@ class Courtesy
     private $hlpTrans;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
-    /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
-    private $procPeriodGet;
+    /** @var \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent */
+    private $servPeriodGet;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $daoCalc;
     /** @var \Praxigento\BonusBase\Repo\Dao\Log\Customers */
@@ -40,23 +42,21 @@ class Courtesy
         \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
         \Praxigento\BonusBase\Repo\Dao\Log\Customers $daoLogCust,
         \Praxigento\BonusBase\Repo\Dao\Log\Opers $daoLogOper,
-        \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
+        \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent $servPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Helper\PrepareTrans $hlpTrans,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Helper\CreateOper $hlpOper,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Courtesy\Calc $subCalc
-    )
-    {
+    ) {
         $this->logger = $logger;
         $this->hlpPeriod = $hlpPeriod;
         $this->daoCalc = $daoCalc;
         $this->daoLogCust = $daoLogCust;
         $this->daoLogOper = $daoLogOper;
-        $this->procPeriodGet = $procPeriodGet;
+        $this->servPeriodGet = $servPeriodGet;
         $this->hlpTrans = $hlpTrans;
         $this->hlpOper = $hlpOper;
         $this->subCalc = $subCalc;
     }
-
 
 
     public function exec(\Praxigento\Core\Data $ctx)
@@ -99,26 +99,36 @@ class Courtesy
      * Get period and calculation data for all related calculation types.
      *
      * @return array [$compressCalc, $courtesyPeriod, $courtesyCalc]
+     * @throws \Exception
      */
     private function getCalcData()
     {
-        /* get period & calc data for Courtesy based on TV */
-        $ctx = new \Praxigento\Core\Data();
-        $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_VALUE_TV);
-        $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_BONUS_COURTESY);
-        $this->procPeriodGet->exec($ctx);
+        /**
+         * Get period & calc data for Courtesy based on TV.
+         */
+        $req = new AGetPeriodRequest();
+        $req->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_VALUE_TV);
+        $req->setDepCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_COURTESY);
+        /** @var AGetPeriodResponse $resp */
+        $resp = $this->servPeriodGet->exec($req);
         /** @var \Praxigento\BonusBase\Repo\Data\Period $courtesyPeriod */
-        $courtesyPeriod = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_PERIOD_DATA);
+        $courtesyPeriod = $resp->getDepPeriodData();
         /** @var \Praxigento\BonusBase\Repo\Data\Calculation $courtesyCalc */
-        $courtesyCalc = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
-        /* get period and calc data for compression calc (basic for TV volumes) */
-        $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
-        $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_VALUE_TV);
-        $ctx->set($this->procPeriodGet::CTX_IN_DEP_IGNORE_COMPLETE, true);
-        $this->procPeriodGet->exec($ctx);
+        $courtesyCalc = $resp->getDepCalcData();
+        /**
+         * Get period and calc data for compression calc (basic for TV volumes).
+         */
+        $req = new AGetPeriodRequest();
+        $req->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
+        $req->setDepCalcTypeCode(Cfg::CODE_TYPE_CALC_VALUE_TV);
+        $req->setDepIgnoreComplete(true);
+        /** @var AGetPeriodResponse $resp */
+        $resp = $this->servPeriodGet->exec($req);
         /** @var \Praxigento\BonusBase\Repo\Data\Calculation $compressCalc */
-        $compressCalc = $ctx->get($this->procPeriodGet::CTX_OUT_BASE_CALC_DATA);
-        /* composer result */
+        $compressCalc = $resp->getBaseCalcData();
+        /**
+         * Compose result.
+         */
         $result = [$compressCalc, $courtesyPeriod, $courtesyCalc];
         return $result;
     }

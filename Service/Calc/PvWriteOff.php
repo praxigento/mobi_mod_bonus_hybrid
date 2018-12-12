@@ -5,6 +5,8 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc;
 
+use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Request as AGetPeriodRequest;
+use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Response as AGetPeriodResponse;
 use Praxigento\BonusBase\Repo\Data\Log\Opers as ELogOper;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Data\Trans as DTrans;
@@ -14,6 +16,8 @@ class PvWriteOff
 {
     /** @var \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\PrepareTrans */
     private $aPrepareTrans;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Query\GetData\Builder */
+    private $aQGetData;
     /** @var \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\SaveDownline */
     private $aSaveDownline;
     /** @var \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Validate */
@@ -30,11 +34,9 @@ class PvWriteOff
     private $hlpPeriod;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Query\GetData\Builder */
-    private $qbGetData;
     /** @var \Praxigento\Accounting\Service\Operation\Create */
     private $servOperation;
-    /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
+    /** @var \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent */
     private $servPeriodGet;
 
     public function __construct(
@@ -45,13 +47,12 @@ class PvWriteOff
         \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
         \Praxigento\BonusBase\Repo\Dao\Log\Opers $daoLogOper,
         \Praxigento\Accounting\Service\Operation\Create $servOperation,
-        \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $servPeriodGet,
-        \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Query\GetData\Builder $qbGetData,
+        \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent $servPeriodGet,
+        \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Query\GetData\Builder $aQGetData,
         \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\PrepareTrans $aPrepareTrans,
         \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\SaveDownline $aSaveDownline,
         \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Validate $aValidate
-    )
-    {
+    ) {
         $this->logger = $logger;
         $this->hlpDate = $hlpDate;
         $this->hlpPeriod = $hlpPeriod;
@@ -60,7 +61,7 @@ class PvWriteOff
         $this->daoLogOper = $daoLogOper;
         $this->servOperation = $servOperation;
         $this->servPeriodGet = $servPeriodGet;
-        $this->qbGetData = $qbGetData;
+        $this->aQGetData = $aQGetData;
         $this->aPrepareTrans = $aPrepareTrans;
         $this->aSaveDownline = $aSaveDownline;
         $this->aValidate = $aValidate;
@@ -130,14 +131,15 @@ class PvWriteOff
     private function getCalcData()
     {
         /* get period & calc data */
-        $ctx = new \Praxigento\Core\Data();
-        $ctx->set($this->servPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_BONUS_SIGN_UP_DEBIT);
-        $ctx->set($this->servPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
-        $this->servPeriodGet->exec($ctx);
+        $req = new AGetPeriodRequest();
+        $req->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_SIGN_UP_DEBIT);
+        $req->setDepCalcTypeCode(Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
+        /** @var AGetPeriodResponse $resp */
+        $resp = $this->servPeriodGet->exec($req);
         /** @var \Praxigento\BonusBase\Repo\Data\Period $periodData */
-        $periodData = $ctx->get($this->servPeriodGet::CTX_OUT_DEP_PERIOD_DATA);
+        $periodData = $resp->getDepPeriodData();
         /** @var \Praxigento\BonusBase\Repo\Data\Calculation $calcData */
-        $calcData = $ctx->get($this->servPeriodGet::CTX_OUT_DEP_CALC_DATA);
+        $calcData = $resp->getDepCalcData();
         $result = [$periodData, $calcData];
         return $result;
     }
@@ -170,11 +172,11 @@ class PvWriteOff
         $dateFrom = $this->hlpPeriod->getTimestampFrom($dsBegin);
         $dateTo = $this->hlpPeriod->getTimestampNextFrom($dsEnd);
 
-        $query = $this->qbGetData->build();
+        $query = $this->aQGetData->build();
         $bind = [
-            $this->qbGetData::BND_ASSET_TYPE_ID => $assetTypeId,
-            $this->qbGetData::BND_DATE_FROM => $dateFrom,
-            $this->qbGetData::BND_DATE_TO => $dateTo
+            $this->aQGetData::BND_ASSET_TYPE_ID => $assetTypeId,
+            $this->aQGetData::BND_DATE_FROM => $dateFrom,
+            $this->aQGetData::BND_DATE_TO => $dateTo
         ];
 
         $conn = $query->getConnection();

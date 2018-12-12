@@ -5,6 +5,8 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Bonus;
 
+use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Request as AGetPeriodRequest;
+use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Response as AGetPeriodResponse;
 use Praxigento\BonusBase\Repo\Data\Log\Opers as ELogOper;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Data\Bonus as DBonus;
@@ -16,6 +18,16 @@ use Praxigento\Downline\Repo\Data\Customer as ECustomer;
 class Personal
     implements \Praxigento\Core\Api\App\Service\Process
 {
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
+    private $daoBonDwnl;
+    /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
+    private $daoCalc;
+    /** @var \Praxigento\Downline\Repo\Dao\Customer */
+    private $daoDwnl;
+    /** @var \Praxigento\BonusBase\Repo\Dao\Level */
+    private $daoLevel;
+    /** @var \Praxigento\BonusBase\Repo\Dao\Log\Opers */
+    private $daoLogOper;
     /** @var \Praxigento\BonusBase\Helper\Calc */
     private $hlpCalc;
     /** @var \Praxigento\Downline\Api\Helper\Tree */
@@ -30,18 +42,8 @@ class Personal
     private $hlpTrans;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
-    /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
-    private $procPeriodGet;
-    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
-    private $daoBonDwnl;
-    /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
-    private $daoCalc;
-    /** @var \Praxigento\Downline\Repo\Dao\Customer */
-    private $daoDwnl;
-    /** @var \Praxigento\BonusBase\Repo\Dao\Level */
-    private $daoLevel;
-    /** @var \Praxigento\BonusBase\Repo\Dao\Log\Opers */
-    private $daoLogOper;
+    /** @var \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent */
+    private $servPeriodGet;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
@@ -54,11 +56,10 @@ class Personal
         \Praxigento\BonusBase\Repo\Dao\Level $daoLevel,
         \Praxigento\BonusBase\Repo\Dao\Log\Opers $daoLogOper,
         \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
-        \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
+        \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent $servPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Helper\PrepareTrans $hlpTrans,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Helper\CreateOper $hlpOper
-    )
-    {
+    ) {
         $this->logger = $logger;
         $this->hlpPeriod = $hlpPeriod;
         $this->hlpCalc = $hlpCalc;
@@ -69,7 +70,7 @@ class Personal
         $this->daoLevel = $daoLevel;
         $this->daoLogOper = $daoLogOper;
         $this->daoBonDwnl = $daoBonDwnl;
-        $this->procPeriodGet = $procPeriodGet;
+        $this->servPeriodGet = $servPeriodGet;
         $this->hlpTrans = $hlpTrans;
         $this->hlpOper = $hlpOper;
     }
@@ -148,17 +149,23 @@ class Personal
      */
     private function getCalcData()
     {
-        /* get period & calc data */
-        $ctx = new \Praxigento\Core\Data();
-        $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
-        $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_BONUS_PERSONAL);
-        $this->procPeriodGet->exec($ctx);
+        /**
+         * Get period & calc data.
+         */
+        $req = new AGetPeriodRequest();
+        $req->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
+        $req->setDepCalcTypeCode(Cfg::CODE_TYPE_CALC_BONUS_PERSONAL);
+        /** @var AGetPeriodResponse $resp */
+        $resp = $this->servPeriodGet->exec($req);
         /** @var \Praxigento\BonusBase\Repo\Data\Calculation $compressCalc */
-        $compressCalc = $ctx->get($this->procPeriodGet::CTX_OUT_BASE_CALC_DATA);
+        $compressCalc = $resp->getBaseCalcData();
         /** @var \Praxigento\BonusBase\Repo\Data\Period $persPeriod */
-        $persPeriod = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_PERIOD_DATA);
+        $persPeriod = $resp->getDepPeriodData();
         /** @var \Praxigento\BonusBase\Repo\Data\Calculation $persCalc */
-        $persCalc = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
+        $persCalc = $resp->getDepCalcData();
+        /**
+         * Compose result.
+         */
         $result = [$compressCalc, $persPeriod, $persCalc];
         return $result;
     }

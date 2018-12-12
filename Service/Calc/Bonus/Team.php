@@ -5,6 +5,8 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Bonus;
 
+use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Request as AGetPeriodRequest;
+use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Response as AGetPeriodResponse;
 use Praxigento\BonusBase\Repo\Data\Log\Customers as ELogCust;
 use Praxigento\BonusBase\Repo\Data\Log\Opers as ELogOper;
 use Praxigento\BonusHybrid\Config as Cfg;
@@ -26,8 +28,8 @@ class Team
     private $hlpTrans;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
-    /** @var \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent */
-    private $procPeriodGet;
+    /** @var \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent */
+    private $servPeriodGet;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $daoCalc;
     /** @var \Praxigento\BonusBase\Repo\Dao\Log\Customers */
@@ -45,19 +47,18 @@ class Team
         \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
         \Praxigento\BonusBase\Repo\Dao\Log\Customers $daoLogCust,
         \Praxigento\BonusBase\Repo\Dao\Log\Opers $daoLogOper,
-        \Praxigento\BonusBase\Service\Period\Calc\Get\IDependent $procPeriodGet,
+        \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent $servPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Helper\PrepareTrans $hlpTrans,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Helper\CreateOper $hlpOper,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Team\CalcDef $subCalcDef,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Team\CalcEu $subCalcEu
-    )
-    {
+    ) {
         $this->logger = $logger;
         $this->hlpPeriod = $hlpPeriod;
         $this->daoCalc = $daoCalc;
         $this->daoLogCust = $daoLogCust;
         $this->daoLogOper = $daoLogOper;
-        $this->procPeriodGet = $procPeriodGet;
+        $this->servPeriodGet = $servPeriodGet;
         $this->hlpTrans = $hlpTrans;
         $this->hlpOper = $hlpOper;
         $this->subCalcDef = $subCalcDef;
@@ -111,29 +112,39 @@ class Team
      *
      * @param string $scheme see \Praxigento\BonusHybrid\Config::SCHEMA_XXX
      * @return array [$compressCalc, $teamPeriod, $teamCalc]
+     * @throws \Exception
      */
     private function getCalcData($scheme)
     {
         $calcTypeCode = ($scheme == Cfg::SCHEMA_EU)
             ? Cfg::CODE_TYPE_CALC_BONUS_TEAM_EU
             : Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF;
-        /* get period & calc data for Team bonus & TV Volumes Calculation */
-        $ctx = new \Praxigento\Core\Data();
-        $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_VALUE_TV);
-        $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, $calcTypeCode);
-        $this->procPeriodGet->exec($ctx);
+        /**
+         * Get period & calc data for Team bonus & TV Volumes Calculation.
+         */
+        $req = new AGetPeriodRequest();
+        $req->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_VALUE_TV);
+        $req->setDepCalcTypeCode($calcTypeCode);
+        /** @var AGetPeriodResponse $resp */
+        $resp = $this->servPeriodGet->exec($req);
         /** @var \Praxigento\BonusBase\Repo\Data\Period $teamPeriod */
-        $teamPeriod = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_PERIOD_DATA);
+        $teamPeriod = $resp->getDepPeriodData();
         /** @var \Praxigento\BonusBase\Repo\Data\Calculation $teamCalc */
-        $teamCalc = $ctx->get($this->procPeriodGet::CTX_OUT_DEP_CALC_DATA);
-        /* get period and calc data for compression calc (basic for TV volumes) */
-        $ctx->set($this->procPeriodGet::CTX_IN_BASE_TYPE_CODE, Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
-        $ctx->set($this->procPeriodGet::CTX_IN_DEP_TYPE_CODE, Cfg::CODE_TYPE_CALC_VALUE_TV);
-        $ctx->set($this->procPeriodGet::CTX_IN_DEP_IGNORE_COMPLETE, true);
-        $this->procPeriodGet->exec($ctx);
+        $teamCalc = $resp->getDepCalcData($this->servPeriodGet::CTX_OUT_DEP_CALC_DATA);
+        /**
+         * Get period and calc data for compression calc (basic for TV volumes).
+         */
+        $req = new AGetPeriodRequest();
+        $req->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
+        $req->setDepCalcTypeCode(Cfg::CODE_TYPE_CALC_VALUE_TV);
+        $req->setDepIgnoreComplete(true);
+        /** @var AGetPeriodResponse $resp */
+        $resp = $this->servPeriodGet->exec($req);
         /** @var \Praxigento\BonusBase\Repo\Data\Calculation $compressCalc */
-        $compressCalc = $ctx->get($this->procPeriodGet::CTX_OUT_BASE_CALC_DATA);
-        /* compose result */
+        $compressCalc = $resp->getBaseCalcData();
+        /**
+         * Compose result.
+         */
         $result = [$compressCalc, $teamPeriod, $teamCalc];
         return $result;
     }

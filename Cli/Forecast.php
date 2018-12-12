@@ -10,6 +10,8 @@ use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Last\Response as ACalcLastR
 use Praxigento\BonusBase\Repo\Data\Period as EPeriod;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\Plain as APlain;
+use Praxigento\BonusHybrid\Service\Calc\Forecast\Unqualified\Request as ACalcUnqualRequest;
+use Praxigento\BonusHybrid\Service\Calc\Forecast\Unqualified\Response as ACalcUnqualResponse;
 use Praxigento\Core\Api\Helper\Period as HPeriod;
 
 /**
@@ -18,24 +20,26 @@ use Praxigento\Core\Api\Helper\Period as HPeriod;
 class Forecast
     extends \Praxigento\Core\App\Cli\Cmd\Base
 {
-    /** @var \Praxigento\Core\Api\Helper\Period */
-    private $hlpPeriod;
-    /** @var \Praxigento\Core\Api\App\Repo\Transaction\Manager */
-    private $manTrans;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress */
-    private $servCalcCompress;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain */
-    private $servCalcPlain;
-    /** @var \Praxigento\Downline\Api\Service\Snap\Calc */
-    private $servSnapCalc;
-    /** @var \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Last */
-    private $servCalcGetLast;
     /** @var \Praxigento\BonusBase\Repo\Dao\Period */
     private $daoPeriod;
     /** @var \Praxigento\BonusBase\Repo\Dao\Type\Calc */
     private $daoTypeCalc;
+    /** @var \Praxigento\Core\Api\Helper\Period */
+    private $hlpPeriod;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
+    /** @var \Praxigento\Core\Api\App\Repo\Transaction\Manager */
+    private $manTrans;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress */
+    private $servCalcCompress;
+    /** @var \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Last */
+    private $servCalcGetLast;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain */
+    private $servCalcPlain;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Unqualified */
+    private $servCalcUnqual;
+    /** @var \Praxigento\Downline\Api\Service\Snap\Calc */
+    private $servSnapCalc;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
@@ -47,7 +51,8 @@ class Forecast
         \Praxigento\Downline\Api\Service\Snap\Calc $servSnapCalc,
         \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Last $servCalcGetLast,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain $servCalcPlain,
-        \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress $servCalcCompress
+        \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress $servCalcCompress,
+        \Praxigento\BonusHybrid\Service\Calc\Forecast\Unqualified $servCalcUnqual
     ) {
         parent::__construct(
             $manObj,
@@ -63,6 +68,7 @@ class Forecast
         $this->servCalcGetLast = $servCalcGetLast;
         $this->servCalcPlain = $servCalcPlain;
         $this->servCalcCompress = $servCalcCompress;
+        $this->servCalcUnqual = $servCalcUnqual;
     }
 
     private function calcPeriods()
@@ -83,6 +89,16 @@ class Forecast
         }
 
         return [$periodPrev, $periodCurrent];
+    }
+
+    private function cleanForecastCalcs()
+    {
+        $typeIdPlain = $this->daoTypeCalc->getIdByCode(Cfg::CODE_TYPE_CALC_FORECAST_PLAIN);
+        $typeIdCompress = $this->daoTypeCalc->getIdByCode(Cfg::CODE_TYPE_CALC_FORECAST_PHASE1);
+        $byPlain = EPeriod::A_CALC_TYPE_ID . '=' . (int)$typeIdPlain;
+        $byCompress = EPeriod::A_CALC_TYPE_ID . '=' . (int)$typeIdCompress;
+        $where = "($byPlain) OR ($byCompress)";
+        $this->daoPeriod->delete($where);
     }
 
     protected function execute(
@@ -108,6 +124,7 @@ class Forecast
                 /* ... then perform forecast calculations */
                 $this->servCalcPlain->exec($ctx);
                 $this->servCalcCompress->exec($ctx);
+                $this->calcUnqualified($periodPrev);
             }
             /* calculation for current period */
             $ctx = new \Praxigento\Core\Data();
@@ -115,6 +132,7 @@ class Forecast
             /* ... then perform forecast calculations */
             $this->servCalcPlain->exec($ctx);
             $this->servCalcCompress->exec($ctx);
+            $this->calcUnqualified($periodCurr);
 
             $this->manTrans->commit($def);
         } catch (\Throwable $e) {
@@ -129,15 +147,14 @@ class Forecast
         $this->logger->info($msg);
     }
 
-    private function cleanForecastCalcs()
+    private function calcUnqualified($period)
     {
-        $typeIdPlain = $this->daoTypeCalc->getIdByCode(Cfg::CODE_TYPE_CALC_FORECAST_PLAIN);
-        $typeIdCompress = $this->daoTypeCalc->getIdByCode(Cfg::CODE_TYPE_CALC_FORECAST_PHASE1);
-        $byPlain = EPeriod::A_CALC_TYPE_ID . '=' . (int)$typeIdPlain;
-        $byCompress = EPeriod::A_CALC_TYPE_ID . '=' . (int)$typeIdCompress;
-        $where = "($byPlain) OR ($byCompress)";
-        $this->daoPeriod->delete($where);
+        $req = new ACalcUnqualRequest();
+        $req->setPeriod($period);
+        /** @var ACalcUnqualResponse $resp */
+        $resp = $this->servCalcUnqual->exec($req);
     }
+
     /**
      * MOBI-1026: re-build downline snaps before calculations.
      *
