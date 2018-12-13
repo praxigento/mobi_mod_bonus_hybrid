@@ -8,7 +8,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Inactive;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Repo\Data\Downline\Inactive as EInact;
-use Praxigento\BonusHybrid\Service\Calc\Inactive\Collect\Repo\Query\GetInactiveStats as QBGetStats;
+use Praxigento\BonusHybrid\Repo\Query\GetInactive as QGetInact;
 
 /**
  * Collect customer inactivity stats.
@@ -26,12 +26,10 @@ class Collect
     private $daoInact;
     /** @var \Praxigento\BonusHybrid\Api\Helper\Scheme */
     private $hlpScheme;
-    /** @var \Praxigento\Downline\Api\Helper\Tree */
-    private $hlpTree;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Inactive\Collect\Repo\Query\GetInactiveStats */
-    private $qbGetStats;
+    /** @var \Praxigento\BonusHybrid\Repo\Query\GetInactive */
+    private $qGetInact;
     /** @var \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent */
     private $servGetDepend;
 
@@ -40,20 +38,19 @@ class Collect
         \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
         \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
         \Praxigento\BonusHybrid\Repo\Dao\Downline\Inactive $daoInact,
-        \Praxigento\Downline\Api\Helper\Tree $hlpTree,
+        \Praxigento\BonusHybrid\Repo\Query\GetInactive $qGetInact,
         \Praxigento\BonusHybrid\Api\Helper\Scheme $hlpScheme,
-        \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent $servGetDepend,
-        QBGetStats $qbGetStats
+        \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent $servGetDepend
+
     )
     {
         $this->logger = $logger;
         $this->daoCalc = $daoCalc;
         $this->daoBonDwnl = $daoBonDwnl;
         $this->daoInact = $daoInact;
-        $this->hlpTree = $hlpTree;
+        $this->qGetInact = $qGetInact;
         $this->hlpScheme = $hlpScheme;
         $this->servGetDepend = $servGetDepend;
-        $this->qbGetStats = $qbGetStats;
     }
 
     /**
@@ -68,7 +65,6 @@ class Collect
         /* get customers with forced qualification */
         $forced = $this->hlpScheme->getForcedQualificationCustomersIds();
         /* map inactive statistics by customer ID */
-        $mapMonths = $this->hlpTree->mapValueById($prevStat, QBGetStats::A_CUST_REF, QBGetStats::A_MONTHS_INACT);
         foreach ($tree as $item) {
             $pv = $item->getPv();
             if ($pv < Cfg::DEF_ZERO) {
@@ -77,8 +73,8 @@ class Collect
                 /* skip customers with forced qualification */
                 if (in_array($custId, $forced)) continue;
                 $treeEntryId = $item->getId();
-                if (isset($mapMonths[$custId])) {
-                    $prevMonths = $mapMonths[$custId];
+                if (isset($prevStat[$custId])) {
+                    $prevMonths = $prevStat[$custId];
                     $months = $prevMonths + 1;
                 } else {
                     $months = 1;
@@ -103,13 +99,13 @@ class Collect
         list($writeOffCalc, $writeOffCalcPrev, $collectCalc) = $this->getCalcData();
         $writeOffCalcId = $writeOffCalc->getId();
         $tree = $this->daoBonDwnl->getByCalcId($writeOffCalcId);
-        $prevStat = [];
+        $inactPrev = [];
         if ($writeOffCalcPrev) {
             $writeOffCalcIdPrev = $writeOffCalcPrev->getId();
-            $prevStat = $this->getPreviousStats($writeOffCalcIdPrev);
+            $inactPrev = $this->getPrevInactStats($writeOffCalcIdPrev);
         }
-        $stats = $this->calc($tree, $prevStat);
-        $this->saveStats($stats);
+        $stats = $this->calc($tree, $inactPrev);
+        $this->saveInactiveCurr($stats);
         /* mark this calculation complete */
         $calcId = $collectCalc->getId();
         $this->daoCalc->markComplete($calcId);
@@ -158,27 +154,32 @@ class Collect
 
     /**
      * @param int $calcId previous Write Off Calculation ID
-     * @return array
+     * @return array [custId=>months]
      */
-    private function getPreviousStats($calcId)
+    private function getPrevInactStats($calcId)
     {
-        $query = $this->qbGetStats->build();
+        $result = [];
+        $query = $this->qGetInact->build();
         $conn = $query->getConnection();
         $bind = [
-            QBGetStats::BND_CALC_REF => $calcId
+            QGetInact::BND_CALC_ID => $calcId
         ];
-        $result = $conn->fetchAll($query, $bind);
+        $rs = $conn->fetchAll($query, $bind);
+        foreach ($rs as $one) {
+            $custId = $one[QGetInact::A_CUST_REF];
+            $months = $one[QGetInact::A_MONTHS];
+            $result[$custId] = $months;
+        }
         return $result;
     }
 
     /**
-     * @param \Praxigento\BonusHybrid\Repo\Data\Downline\Inactive[] $stats
+     * @param EInact[] $items
      */
-    private function saveStats($stats)
+    private function saveInactiveCurr($items)
     {
-        /** @var \Praxigento\BonusHybrid\Repo\Data\Downline\Inactive $stat */
-        foreach ($stats as $stat) {
-            $this->daoInact->create($stat);
+        foreach ($items as $item) {
+            $this->daoInact->create($item);
         }
     }
 }

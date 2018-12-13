@@ -11,7 +11,7 @@ use Praxigento\BonusBase\Api\Service\Period\Calc\Get\All\Response as AGetPeriodR
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Repo\Data\Downline\Inactive as EInact;
-use Praxigento\BonusHybrid\Service\Calc\Forecast\Unqualified\A\Repo\Query\GetInactive as QGetInact;
+use Praxigento\BonusHybrid\Repo\Query\GetInactive as QGetInact;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\Unqualified\Request as ARequest;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\Unqualified\Response as AResponse;
 use Praxigento\Core\Api\Helper\Period as HPeriod;
@@ -21,33 +21,33 @@ use Praxigento\Core\Api\Helper\Period as HPeriod;
  */
 class Unqualified
 {
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Unqualified\A\Repo\Query\GetInactive */
-    private $aQGetInact;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $daoBonDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline\Inactive */
-    private $daoBonDwnlInact;
+    private $daoInact;
     /** @var \Praxigento\Core\Api\Helper\Period */
     private $hlpPeriod;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
+    /** @var \Praxigento\BonusHybrid\Repo\Query\GetInactive */
+    private $qGetInact;
     /** @var \Praxigento\BonusBase\Api\Service\Period\Calc\Get\All */
     private $servPeriodGet;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline\Inactive $daoBonDwnlInact,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline\Inactive $daoInact,
+        \Praxigento\BonusHybrid\Repo\Query\GetInactive $qGetInact,
         \Praxigento\Core\Api\Helper\Period $hlpPeriod,
-        \Praxigento\BonusBase\Api\Service\Period\Calc\Get\All $servPeriodGet,
-        \Praxigento\BonusHybrid\Service\Calc\Forecast\Unqualified\A\Repo\Query\GetInactive $aQGetInact
+        \Praxigento\BonusBase\Api\Service\Period\Calc\Get\All $servPeriodGet
     ) {
         $this->logger = $logger;
         $this->daoBonDwnl = $daoBonDwnl;
-        $this->daoBonDwnlInact = $daoBonDwnlInact;
+        $this->daoInact = $daoInact;
+        $this->qGetInact = $qGetInact;
         $this->hlpPeriod = $hlpPeriod;
         $this->servPeriodGet = $servPeriodGet;
-        $this->aQGetInact = $aQGetInact;
     }
 
     /**
@@ -67,7 +67,7 @@ class Unqualified
             $pv = $one->getPv();
             if ($pv <= 0) {
                 if (isset($prev[$custId])) {
-                    $months = $prev[$custId][QGetInact::A_MONTHS_INACT];
+                    $months = $prev[$custId][QGetInact::A_MONTHS];
                 } else {
                     $months = 1;
                 }
@@ -102,7 +102,7 @@ class Unqualified
         $treeCurr = $this->daoBonDwnl->getByCalcId($currCalcId);
         $inactCurr = $this->composeInactive($inactPrev, $treeCurr);
 
-        $this->saveInactCurrent($inactCurr);
+        $this->saveInactiveCurr($inactCurr);
 
         $this->logger->info("Forecast Unqualified calculation is completed.");
 
@@ -164,7 +164,7 @@ class Unqualified
     {
         $result = [];
 
-        $query = $this->aQGetInact->build();
+        $query = $this->qGetInact->build();
         $conn = $query->getConnection();
         $bind = [
             QGetInact::BND_CALC_ID => $calcId
@@ -177,10 +177,13 @@ class Unqualified
         return $result;
     }
 
-    private function saveInactCurrent($items)
+    /**
+     * @param EInact[] $items
+     */
+    private function saveInactiveCurr($items)
     {
         foreach ($items as $item) {
-            $this->daoBonDwnlInact->create($item);
+            $this->daoInact->create($item);
         }
     }
 }

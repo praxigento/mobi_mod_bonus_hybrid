@@ -9,6 +9,7 @@ use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Request as AGetPe
 use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Response as AGetPeriodResponse;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
+use Praxigento\BonusHybrid\Repo\Query\GetInactive as QGetInact;
 
 /**
  * Collect stats for unqualified customers.
@@ -18,29 +19,33 @@ use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 class Collect
     implements \Praxigento\Core\Api\App\Service\Process
 {
-    /** @var \Praxigento\Downline\Api\Helper\Tree */
-    private $hlpTree;
-    /** @var \Praxigento\Core\Api\App\Logger\Main */
-    private $logger;
-    /** @var \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent */
-    private $servPeriodGet;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $daoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $daoCalc;
+    /** @var \Praxigento\Downline\Api\Helper\Tree */
+    private $hlpTree;
+    /** @var \Praxigento\Core\Api\App\Logger\Main */
+    private $logger;
+    /** @var \Praxigento\BonusHybrid\Repo\Query\GetInactive */
+    private $qGetInact;
+    /** @var \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent */
+    private $servPeriodGet;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
-        \Praxigento\Downline\Api\Helper\Tree $hlpTree,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
         \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
+        \Praxigento\BonusHybrid\Repo\Query\GetInactive $qGetInact,
+        \Praxigento\Downline\Api\Helper\Tree $hlpTree,
         \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent $servPeriodGet
     )
     {
         $this->logger = $logger;
-        $this->hlpTree = $hlpTree;
-        $this->daoBonDwnl = $daoBonDwnl;
         $this->daoCalc = $daoCalc;
+        $this->daoBonDwnl = $daoBonDwnl;
+        $this->qGetInact = $qGetInact;
+        $this->hlpTree = $hlpTree;
         $this->servPeriodGet = $servPeriodGet;
     }
 
@@ -48,13 +53,13 @@ class Collect
      * Collect unqualified statistics and update current plain tree (corresponds to PV Write Off calculation).
      *
      * @param EBonDwnl[] $treePlain this data will be updated with new values for unqualified months.
-     * @param EBonDwnl[] $treePlainPrev
+     * @param array $inactPrev [custId => monthsInact]
      * @param EBonDwnl[] $treePhase1
      */
-    private function calc(&$treePlain, $treePlainPrev, $treePhase1)
+    private function calc(&$treePlain, $inactPrev, $treePhase1)
     {
         /* map inactive statistics by customer ID */
-        $mapMonths = $this->hlpTree->mapValueById($treePlainPrev, EBonDwnl::A_CUST_REF, EBonDwnl::A_UNQ_MONTHS);
+        $mapMonths = $inactPrev;
         $mapQual = $this->hlpTree->mapValueById($treePhase1, EBonDwnl::A_CUST_REF, EBonDwnl::A_RANK_REF);
         foreach ($treePlain as $item) {
             $custId = $item->getCustomerRef();
@@ -83,13 +88,13 @@ class Collect
         $phase1CalcId = $phase1Calc->getId();
         $treePlain = $this->daoBonDwnl->getByCalcId($writeOffCalcId);
         $treePhase1 = $this->daoBonDwnl->getByCalcId($phase1CalcId);
-        $treePlainPrev = [];
+        $inactPrev = [];
         if ($writeOffCalcPrev) {
             $writeOffCalcIdPrev = $writeOffCalcPrev->getId();
-            $treePlainPrev = $this->daoBonDwnl->getByCalcId($writeOffCalcIdPrev);
+            $inactPrev = $this->getPrevInactStats($writeOffCalcIdPrev);
         }
         /* $treePlain will be populated with new values for unqualified months */
-        $this->calc($treePlain, $treePlainPrev, $treePhase1);
+        $this->calc($treePlain, $inactPrev, $treePhase1);
         $this->saveDownline($treePlain);
         /* mark this calculation complete */
         $calcId = $unqCollCalc->getId();
@@ -147,6 +152,27 @@ class Collect
          * Compose result.
          */
         $result = [$writeOffCalc, $writeOffCalcPrev, $phase1Calc, $unqCollCalc];
+        return $result;
+    }
+
+    /**
+     * @param int $calcId
+     * @return array [custId=>months]
+     */
+    private function getPrevInactStats($calcId)
+    {
+        $result = [];
+        $query = $this->qGetInact->build();
+        $conn = $query->getConnection();
+        $bind = [
+            QGetInact::BND_CALC_ID => $calcId
+        ];
+        $rs = $conn->fetchAll($query, $bind);
+        foreach ($rs as $one) {
+            $custId = $one[QGetInact::A_CUST_REF];
+            $months = $one[QGetInact::A_MONTHS];
+            $result[$custId] = $months;
+        }
         return $result;
     }
 
