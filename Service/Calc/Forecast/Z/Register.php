@@ -82,7 +82,7 @@ class Register
      * @param string $to end of the period (YYYYMMDD)
      * @param string $calcTypeCode
      * @return int registered calculation ID
-     *
+     * @throws \Exception
      */
     private function registerNewCalc($from, $to, $calcTypeCode)
     {
