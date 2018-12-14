@@ -78,7 +78,6 @@ class GetDownline
             /* init ranks and unqualified months count */
             $rankIdDef = $mapRanks[$customerId];
             $item->setRankRef($rankIdDef);
-            $item->setUnqMonths(0);
             $result[$customerId] = $item;
         }
 

@@ -122,7 +122,6 @@ class SaveDownline
                 $rankIdDef = $mapRanks[$custId];
                 $dwnlData->setRankRef($rankIdDef);
                 $dwnlData->setTv(0);
-                $dwnlData->setUnqMonths(0);
                 $regDwnl[$custId] = $dwnlData;
 
                 /* walk trough the team and add children OV to the customer OV */

@@ -130,7 +130,7 @@ class Team
         /** @var \Praxigento\BonusBase\Repo\Data\Period $teamPeriod */
         $teamPeriod = $resp->getDepPeriodData();
         /** @var \Praxigento\BonusBase\Repo\Data\Calculation $teamCalc */
-        $teamCalc = $resp->getDepCalcData($this->servPeriodGet::CTX_OUT_DEP_CALC_DATA);
+        $teamCalc = $resp->getDepCalcData();
         /**
          * Get period and calc data for compression calc (basic for TV volumes).
          */

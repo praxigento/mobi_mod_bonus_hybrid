@@ -78,10 +78,10 @@ class Unqual
         $this->conn->beginTransaction();
         try {
             $canContinue = $this->calcInactCollect();
-            if ($canContinue) {
-                $output->writeln("<info>Inactive customers stats collection is completed.<info>");
-                $canContinue = $this->calcUnqualCollect();
-            }
+//            if ($canContinue) {
+//                $output->writeln("<info>Inactive customers stats collection is completed.<info>");
+//                $canContinue = $this->calcUnqualCollect();
+//            }
             if ($canContinue) {
                 $output->writeln("<info>Unqualified customers stats collection is completed.<info>");
                 $canContinue = $this->calcUnqualProcess();

@@ -9,6 +9,7 @@ use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Request as AGetPe
 use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Response as AGetPeriodResponse;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
+use Praxigento\BonusHybrid\Repo\Data\Downline\Inactive as EBonInact;
 use Praxigento\BonusHybrid\Repo\Query\GetInactive as QGetInact;
 
 /**
@@ -21,10 +22,10 @@ class Collect
 {
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $daoBonDwnl;
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline\Inactive */
+    private $daoBonInact;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $daoCalc;
-    /** @var \Praxigento\Downline\Api\Helper\Tree */
-    private $hlpTree;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
     /** @var \Praxigento\BonusHybrid\Repo\Query\GetInactive */
@@ -36,48 +37,53 @@ class Collect
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
         \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline\Inactive $daoBonInact,
         \Praxigento\BonusHybrid\Repo\Query\GetInactive $qGetInact,
-        \Praxigento\Downline\Api\Helper\Tree $hlpTree,
         \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent $servPeriodGet
     )
     {
         $this->logger = $logger;
         $this->daoCalc = $daoCalc;
         $this->daoBonDwnl = $daoBonDwnl;
+        $this->daoBonInact = $daoBonInact;
         $this->qGetInact = $qGetInact;
-        $this->hlpTree = $hlpTree;
         $this->servPeriodGet = $servPeriodGet;
     }
 
     /**
-     * Collect unqualified statistics and update current plain tree (corresponds to PV Write Off calculation).
+     * Collect inactive statistics for current period.
      *
-     * @param EBonDwnl[] $treePlain this data will be updated with new values for unqualified months.
      * @param array $inactPrev [custId => monthsInact]
-     * @param EBonDwnl[] $treePhase1
+     * @param EBonDwnl[] $treePlain PV Write Off calculation tree.
+     * @return EBonInact[]
+     * @throws \Exception
      */
-    private function calc(&$treePlain, $inactPrev, $treePhase1)
+    private function calc($inactPrev, $treePlain)
     {
-        /* map inactive statistics by customer ID */
-        $mapMonths = $inactPrev;
-        $mapQual = $this->hlpTree->mapValueById($treePhase1, EBonDwnl::A_CUST_REF, EBonDwnl::A_RANK_REF);
+        $result = [];
         foreach ($treePlain as $item) {
             $custId = $item->getCustomerRef();
-            if (isset($mapQual[$custId])) {
-                /* this customer is qualified in this period, reset counter */
-                $item->setUnqMonths(0);
-            } else {
-                /* increment unqualified months counter */
-                $months = $mapMonths[$custId] ?? 0;
-                $months++;
-                $item->setUnqMonths($months);
+            $pv = $item->getPv();
+            if ($pv <= Cfg::DEF_ZERO) {
+                /* the customer is not active in the current period */
+                if (isset($inactPrev[$custId])) {
+                    $months = $inactPrev[$custId] + 1;
+                } else {
+                    $months = 1;
+                }
+                $entry = new EBonInact();
+                $entryId = $item->getId();
+                $entry->setTreeEntryRef($entryId);
+                $entry->setInactMonths($months);
+                $result[] = $entry;
             }
         }
+        return $result;
     }
 
     public function exec(\Praxigento\Core\Data $ctx)
     {
-        $this->logger->info("'Unqualified Stats Collection' calculation is started.");
+        $this->logger->info("'Inactive Stats Collection' calculation is started.");
         /**
          * perform processing
          */
@@ -94,14 +100,14 @@ class Collect
             $inactPrev = $this->getPrevInactStats($writeOffCalcIdPrev);
         }
         /* $treePlain will be populated with new values for unqualified months */
-        $this->calc($treePlain, $inactPrev, $treePhase1);
-        $this->saveDownline($treePlain);
+        $inactCurr = $this->calc($inactPrev, $treePlain);
+        $this->saveInactive($inactCurr);
         /* mark this calculation complete */
         $calcId = $unqCollCalc->getId();
         $this->daoCalc->markComplete($calcId);
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);
-        $this->logger->info("'Unqualified Stats Collection' calculation is completed.");
+        $this->logger->info("'Inactive Stats Collection' calculation is completed.");
     }
 
     /**
@@ -177,14 +183,12 @@ class Collect
     }
 
     /**
-     * @param \Praxigento\BonusHybrid\Repo\Data\Downline[] $tree
+     * @param EBonInact[] $items
      */
-    private function saveDownline($tree)
+    private function saveInactive($items)
     {
-        /** @var \Praxigento\BonusHybrid\Repo\Data\Downline $one */
-        foreach ($tree as $one) {
-            $id = $one->getId();
-            $this->daoBonDwnl->updateById($id, $one);
+        foreach ($items as $one) {
+            $this->daoBonInact->create($one);
         }
     }
 }

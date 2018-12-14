@@ -223,7 +223,6 @@ class Phase1
             $entity->setPv($pv);
             $entity->setRankRef($rankId);
             $entity->setTv(0);
-            $entity->setUnqMonths(0);
             $this->daoBonDwnl->create($entity);
         }
     }
