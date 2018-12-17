@@ -9,54 +9,42 @@ use Praxigento\Core\Api\App\Service\Process as IProcess;
 use Praxigento\Core\Data as AData;
 
 /**
- * Process inactive & unqualified customers.
+ * Process unqualified customers.
  */
 class Unqual
     extends \Praxigento\Core\App\Cli\Cmd\Base
 {
     /** @var \Magento\Framework\DB\Adapter\AdapterInterface */
     private $conn;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Inactive\Collect */
-    private $procInactCollect;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Unqualified\Collect */
-    private $procUnqualCollect;
+    private $procCollect;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Unqualified\Process */
-    private $procUnqualProcess;
+    private $procProcess;
     /** @var \Magento\Framework\App\ResourceConnection */
     private $resource;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Magento\Framework\App\ResourceConnection $resource,
-        \Praxigento\BonusHybrid\Service\Calc\Inactive\Collect $procInactCollect,
-        \Praxigento\BonusHybrid\Service\Calc\Unqualified\Collect $servUnqualCollect,
-        \Praxigento\BonusHybrid\Service\Calc\Unqualified\Process $servUnqualProcess
+        \Praxigento\BonusHybrid\Service\Calc\Unqualified\Collect $servCollect,
+        \Praxigento\BonusHybrid\Service\Calc\Unqualified\Process $servProcess
     )
     {
         parent::__construct(
             $manObj,
             'prxgt:unqual:process',
-            'Process inactive & unqualified customers.'
+            'Process unqualified customers.'
         );
         $this->resource = $resource;
         $this->conn = $this->resource->getConnection();
-        $this->procInactCollect = $procInactCollect;
-        $this->procUnqualCollect = $servUnqualCollect;
-        $this->procUnqualProcess = $servUnqualProcess;
-    }
-
-    private function calcInactCollect()
-    {
-        $ctx = new AData();
-        $this->procInactCollect->exec($ctx);
-        $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
-        return $result;
+        $this->procCollect = $servCollect;
+        $this->procProcess = $servProcess;
     }
 
     private function calcUnqualCollect()
     {
         $ctx = new AData();
-        $this->procUnqualCollect->exec($ctx);
+        $this->procCollect->exec($ctx);
         $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
@@ -64,7 +52,7 @@ class Unqual
     private function calcUnqualProcess()
     {
         $ctx = new AData();
-        $this->procUnqualProcess->exec($ctx);
+        $this->procProcess->exec($ctx);
         $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
@@ -77,11 +65,7 @@ class Unqual
         $output->writeln("<info>Command '" . $this->getName() . "'<info>");
         $this->conn->beginTransaction();
         try {
-            $canContinue = $this->calcInactCollect();
-//            if ($canContinue) {
-//                $output->writeln("<info>Inactive customers stats collection is completed.<info>");
-//                $canContinue = $this->calcUnqualCollect();
-//            }
+            $canContinue = $this->calcUnqualCollect();
             if ($canContinue) {
                 $output->writeln("<info>Unqualified customers stats collection is completed.<info>");
                 $canContinue = $this->calcUnqualProcess();
@@ -94,7 +78,6 @@ class Unqual
                 $output->writeln("<error>Something goes wrong. Rollback.<error>");
                 $this->conn->rollBack();
             }
-
         } catch (\Throwable $e) {
             $msg = $e->getMessage();
             $trace = $e->getTraceAsString();

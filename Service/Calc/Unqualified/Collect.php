@@ -5,15 +5,14 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Unqualified;
 
-use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Request as AGetPeriodRequest;
-use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Response as AGetPeriodResponse;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
-use Praxigento\BonusHybrid\Repo\Data\Downline\Inactive as EBonInact;
+use Praxigento\BonusHybrid\Repo\Data\Downline\Inactive as EInact;
 use Praxigento\BonusHybrid\Repo\Query\GetInactive as QGetInact;
+use Praxigento\Downline\Repo\Data\Customer as EDwnlCust;
 
 /**
- * Collect stats for unqualified customers.
+ * Collect customer inactivity stats.
  *
  * This is internal service (for this module only), so it has no own interface.
  */
@@ -22,147 +21,166 @@ class Collect
 {
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $daoBonDwnl;
-    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline\Inactive */
-    private $daoBonInact;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $daoCalc;
+    /** @var \Praxigento\Downline\Repo\Dao\Customer */
+    private $daoDwnlCust;
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline\Inactive */
+    private $daoInact;
+    /** @var \Praxigento\BonusHybrid\Api\Helper\Scheme */
+    private $hlpScheme;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
     /** @var \Praxigento\BonusHybrid\Repo\Query\GetInactive */
     private $qGetInact;
     /** @var \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent */
-    private $servPeriodGet;
+    private $servGetDepend;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
+        \Praxigento\Downline\Repo\Dao\Customer $daoDwnlCust,
         \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
         \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline\Inactive $daoBonInact,
+        \Praxigento\BonusHybrid\Repo\Dao\Downline\Inactive $daoInact,
         \Praxigento\BonusHybrid\Repo\Query\GetInactive $qGetInact,
-        \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent $servPeriodGet
+        \Praxigento\BonusHybrid\Api\Helper\Scheme $hlpScheme,
+        \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent $servGetDepend
+
     )
     {
         $this->logger = $logger;
+        $this->daoDwnlCust = $daoDwnlCust;
         $this->daoCalc = $daoCalc;
         $this->daoBonDwnl = $daoBonDwnl;
-        $this->daoBonInact = $daoBonInact;
+        $this->daoInact = $daoInact;
         $this->qGetInact = $qGetInact;
-        $this->servPeriodGet = $servPeriodGet;
+        $this->hlpScheme = $hlpScheme;
+        $this->servGetDepend = $servGetDepend;
     }
 
     /**
-     * Collect inactive statistics for current period.
-     *
-     * @param array $inactPrev [custId => monthsInact]
-     * @param EBonDwnl[] $treePlain PV Write Off calculation tree.
-     * @return EBonInact[]
+     * @param EBonDwnl[] $tree
+     * @param $prevStat
+     * @return array
      * @throws \Exception
      */
-    private function calc($inactPrev, $treePlain)
+    private function calc($tree, $prevStat)
     {
         $result = [];
-        foreach ($treePlain as $item) {
+        /* get qualification data */
+        $forced = $this->hlpScheme->getForcedQualificationCustomersIds();
+        $qLevels = $this->hlpScheme->getQualificationLevels();
+        /* ... and customers to validate scheme (DEF/EU) */
+        $customers = $this->getCustomers();
+        foreach ($tree as $item) {
             $custId = $item->getCustomerRef();
+            $custData = $customers[$custId];
+            $scheme = $this->hlpScheme->getSchemeByCustomer($custData);
             $pv = $item->getPv();
-            if ($pv <= Cfg::DEF_ZERO) {
-                /* the customer is not active in the current period */
-                if (isset($inactPrev[$custId])) {
-                    $months = $inactPrev[$custId] + 1;
+            $level = $qLevels[$scheme];
+            if ($pv < $level) {
+                /* this customer is unqualified in this period */
+                /* skip customers with forced qualification */
+                if (in_array($custId, $forced)) continue;
+                $treeEntryId = $item->getId();
+                if (isset($prevStat[$custId])) {
+                    $prevMonths = $prevStat[$custId];
+                    $months = $prevMonths + 1;
                 } else {
                     $months = 1;
                 }
-                $entry = new EBonInact();
-                $entryId = $item->getId();
-                $entry->setTreeEntryRef($entryId);
-                $entry->setInactMonths($months);
-                $result[] = $entry;
+                $inactItem = new EInact();
+                $inactItem->setTreeEntryRef($treeEntryId);
+                $inactItem->setInactMonths($months);
+                $result[] = $inactItem;
             }
         }
         return $result;
     }
 
+    /**
+     * Get customers data (id & country) to validate scheme (DEF/EU).
+     *
+     * @return EDwnlCust[]
+     */
+    private function getCustomers()
+    {
+        $result = [];
+        $cols = [EDwnlCust::A_CUSTOMER_ID, EDwnlCust::A_COUNTRY_CODE];
+        /** @var EDwnlCust[] $rs */
+        $rs = $this->daoDwnlCust->get(null, null, null, null, $cols);
+        foreach ($rs as $one) {
+            $custId = $one->getCustomerId();
+            $result[$custId] = $one;
+        }
+        return $result;
+    }
     public function exec(\Praxigento\Core\Data $ctx)
     {
-        $this->logger->info("'Inactive Stats Collection' calculation is started.");
+        $this->logger->info("Unqualified Stats Collection calculation is started.");
         /**
          * perform processing
          */
         $ctx->set(self::CTX_OUT_SUCCESS, false);
         /* get dependent calculation data */
-        list($writeOffCalc, $writeOffCalcPrev, $phase1Calc, $unqCollCalc) = $this->getCalcData();
+        list($writeOffCalc, $writeOffCalcPrev, $collectCalc) = $this->getCalcData();
         $writeOffCalcId = $writeOffCalc->getId();
-        $phase1CalcId = $phase1Calc->getId();
-        $treePlain = $this->daoBonDwnl->getByCalcId($writeOffCalcId);
-        $treePhase1 = $this->daoBonDwnl->getByCalcId($phase1CalcId);
+        $tree = $this->daoBonDwnl->getByCalcId($writeOffCalcId);
         $inactPrev = [];
         if ($writeOffCalcPrev) {
             $writeOffCalcIdPrev = $writeOffCalcPrev->getId();
             $inactPrev = $this->getPrevInactStats($writeOffCalcIdPrev);
         }
-        /* $treePlain will be populated with new values for unqualified months */
-        $inactCurr = $this->calc($inactPrev, $treePlain);
-        $this->saveInactive($inactCurr);
+        $stats = $this->calc($tree, $inactPrev);
+        $this->saveInactiveCurr($stats);
         /* mark this calculation complete */
-        $calcId = $unqCollCalc->getId();
+        $calcId = $collectCalc->getId();
         $this->daoCalc->markComplete($calcId);
         /* mark process as successful */
         $ctx->set(self::CTX_OUT_SUCCESS, true);
-        $this->logger->info("'Inactive Stats Collection' calculation is completed.");
+        $this->logger->info("Unqualified Stats Collection calculation is completed.");
     }
 
     /**
-     * Get data for periods & calculations.
+     * Get related calculations data for this calculation.
      *
-     * @return array [$writeOffCalc, $writeOffCalcPrev, $phase1Calc, $unqCollCalc]
+     * @return array [$writeOffCalc, $writeOffCalcPrev, $collectCalc]
      * @throws \Exception
      */
     private function getCalcData()
     {
-        /**
-         * Get PW Write Off data & Phase1 Compression data - to access plain tree & qualified customers data.
-         */
-        $req = new AGetPeriodRequest();
+        /* get period & calc data */
+        $req = new \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Request();
         $req->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
-        $req->setDepCalcTypeCode(Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
-        $req->setDepIgnoreComplete(true);
-        /** @var AGetPeriodResponse $resp */
-        $resp = $this->servPeriodGet->exec($req);
+        $req->setDepCalcTypeCode(Cfg::CODE_TYPE_CALC_UNQUALIFIED_COLLECT);
+        $resp = $this->servGetDepend->exec($req);
+        /** @var \Praxigento\BonusBase\Repo\Data\Period $writeOffPeriod */
+        $writeOffPeriod = $resp->getBasePeriodData();
         /** @var \Praxigento\BonusBase\Repo\Data\Calculation $writeOffCalc */
         $writeOffCalc = $resp->getBaseCalcData();
-        $pwWriteOffPeriod = $resp->getBasePeriodData();
-        $phase1Calc = $resp->getDepCalcData();
+        /** @var \Praxigento\BonusBase\Repo\Data\Calculation $collectCalc */
+        $collectCalc = $resp->getDepCalcData();
         /**
-         * Create Unqualified Collection calculation.
+         * Get previous write off period to access inactive stats history.
          */
-        $req = new AGetPeriodRequest();
-        $req->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
-        $req->setDepCalcTypeCode(Cfg::CODE_TYPE_CALC_UNQUALIFIED_COLLECT);
-        /** @var AGetPeriodResponse $resp */
-        $resp = $this->servPeriodGet->exec($req);
-        /** @var \Praxigento\BonusBase\Repo\Data\Calculation $unqCollCalc */
-        $unqCollCalc = $resp->getDepCalcData();
-        /**
-         * Get previous PV Write Off data to access stats history.
-         */
-        $periodPrev = $pwWriteOffPeriod->getDstampBegin();
-        $req = new AGetPeriodRequest();
+        $periodPrev = $writeOffPeriod->getDstampBegin();
+        $req = new \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Request();
         $req->setBaseCalcTypeCode(Cfg::CODE_TYPE_CALC_PV_WRITE_OFF);
-        $req->setDepCalcTypeCode(Cfg::CODE_TYPE_CALC_COMPRESS_PHASE1);
+        $req->setDepCalcTypeCode(Cfg::CODE_TYPE_CALC_UNQUALIFIED_COLLECT);
         $req->setPeriodEnd($periodPrev);
         $req->setDepIgnoreComplete(true);
-        /** @var AGetPeriodResponse $resp */
-        $resp = $this->servPeriodGet->exec($req);
-        /** @var \Praxigento\BonusBase\Repo\Data\Calculation $phase1CalcPrev */
+        $resp = $this->servGetDepend->exec($req);
+        /** @var \Praxigento\BonusBase\Repo\Data\Calculation $writeOffCalcPrev */
         $writeOffCalcPrev = $resp->getBaseCalcData();
         /**
          * Compose result.
          */
-        $result = [$writeOffCalc, $writeOffCalcPrev, $phase1Calc, $unqCollCalc];
+        $result = [$writeOffCalc, $writeOffCalcPrev, $collectCalc];
         return $result;
     }
 
     /**
-     * @param int $calcId
+     * @param int $calcId previous Write Off Calculation ID
      * @return array [custId=>months]
      */
     private function getPrevInactStats($calcId)
@@ -183,12 +201,12 @@ class Collect
     }
 
     /**
-     * @param EBonInact[] $items
+     * @param EInact[] $items
      */
-    private function saveInactive($items)
+    private function saveInactiveCurr($items)
     {
-        foreach ($items as $one) {
-            $this->daoBonInact->create($one);
+        foreach ($items as $item) {
+            $this->daoInact->create($item);
         }
     }
 }

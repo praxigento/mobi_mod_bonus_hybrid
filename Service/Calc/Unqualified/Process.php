@@ -8,6 +8,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Unqualified;
 use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Request as AGetPeriodRequest;
 use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Response as AGetPeriodResponse;
 use Praxigento\BonusHybrid\Config as Cfg;
+use Praxigento\BonusHybrid\Repo\Query\GetInactive as QGetInact;
 
 /**
  * Change status for unqualified customers and change downline tree.
@@ -17,28 +18,28 @@ use Praxigento\BonusHybrid\Config as Cfg;
 class Process
     implements \Praxigento\Core\Api\App\Service\Process
 {
-    /** @var \Praxigento\Core\Api\App\Logger\Main */
-    private $logger;
-    /** @var \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent */
-    private $servPeriodGet;
-    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
-    private $daoBonDwnl;
-    /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
-    private $daoCalc;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Unqualified\Process\A\Calc */
     private $aCalc;
+    /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
+    private $daoCalc;
+    /** @var \Praxigento\Core\Api\App\Logger\Main */
+    private $logger;
+    /** @var \Praxigento\BonusHybrid\Repo\Query\GetInactive */
+    private $qGetInact;
+    /** @var \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent */
+    private $servPeriodGet;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
         \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
+        \Praxigento\BonusHybrid\Repo\Query\GetInactive $qGetInact,
         \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent $servPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\Unqualified\Process\A\Calc $aCalc
     )
     {
         $this->logger = $logger;
-        $this->daoBonDwnl = $daoBonDwnl;
         $this->daoCalc = $daoCalc;
+        $this->qGetInact = $qGetInact;
         $this->servPeriodGet = $servPeriodGet;
         $this->aCalc = $aCalc;
     }
@@ -58,9 +59,8 @@ class Process
          */
         list($writeOffCalc, $writeOffPeriod, $processCalc) = $this->getCalcData();
         $writeOffCalcId = $writeOffCalc->getId();
-        $periodEnd = $writeOffPeriod->getDstampEnd();
-        $treePlain = $this->daoBonDwnl->getByCalcId($writeOffCalcId);
-        $this->aCalc->exec($treePlain, $periodEnd);
+        $inactStats = $this->getInactivePrev($writeOffCalcId);
+        $this->aCalc->exec($inactStats);
         /* mark this calculation complete */
         $calcId = $processCalc->getId();
         $this->daoCalc->markComplete($calcId);
@@ -69,6 +69,29 @@ class Process
         $this->logger->info("'Unqualified Process' calculation is completed.");
     }
 
+    /**
+     * Get inactivity statistics for previous period.
+     *
+     * @param int $calcId
+     * @return array
+     */
+    private function getInactivePrev($calcId)
+    {
+        $result = [];
+
+        $query = $this->qGetInact->build();
+        $conn = $query->getConnection();
+        $bind = [
+            QGetInact::BND_CALC_ID => $calcId
+        ];
+        $rs = $conn->fetchAll($query, $bind);
+        foreach ($rs as $one) {
+            $custId = $one[QGetInact::A_CUST_REF];
+            $months = $one[QGetInact::A_MONTHS];
+            $result[$custId] = $months;
+        }
+        return $result;
+    }
     /**
      * Get data for periods & calculations.
      *

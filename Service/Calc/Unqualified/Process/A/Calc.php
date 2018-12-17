@@ -9,8 +9,6 @@
 namespace Praxigento\BonusHybrid\Service\Calc\Unqualified\Process\A;
 
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
-use Praxigento\Downline\Api\Service\Customer\Downline\SwitchUp\Request as ASwitchUpRequest;
 
 /**
  * Routine to process plain downline & to perform qualification compression (re-link downlines of the unqualified
@@ -48,18 +46,14 @@ class Calc
     }
 
     /**
-     * @param EBonDwnl[] $tree
-     * @param string $period YYYYMMDD
+     * @param array $inactStats
      */
-    public function exec($tree, $period)
+    public function exec($inactStats)
     {
         /* group ID for unqualified customers */
         $groupIdUnq = $this->hlpCfgDwnl->getDowngradeGroupUnqual();
-        /** @var EBonDwnl $item */
-        foreach ($tree as $item) {
-            $unqMonths = $item->getUnqMonths();
+        foreach ($inactStats as $custId => $unqMonths) {
             if ($unqMonths >= Cfg::MAX_UNQ_MONTHS) {
-                $custId = $item->getCustomerRef();
                 /* get current group and */
                 $groupIdCurrent = $this->hlpCustGroup->getIdByCustomerId($custId);
                 $isAllowed = $this->hlpGroupTrans->isAllowedGroupTransition($groupIdCurrent, $groupIdUnq);
@@ -70,14 +64,10 @@ class Calc
                         $groupId = $cust->getGroupId();
                         if ($groupId != $groupIdUnq) {
                             $cust->setGroupId($groupIdUnq);
+                            /* ... then to switch all customer's children to the customer's parent (on save event) */
                             $this->repoCust->save($cust);
                             $this->logger->info("Customer #$custId is downgraded (from group $groupId to #$groupIdUnq).");
                         }
-                        /* ... then to switch all customer's children to the customer's parent */
-                        $req = new ASwitchUpRequest();
-                        $req->setCustomerId($custId);
-                        $this->servSwitchUp->exec($req);
-
                     } catch (\Throwable $e) {
                         $this->logger->error("Cannot update customer group on unqualified customer ($custId) downgrade.");
                         throw $e;

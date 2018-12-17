@@ -111,7 +111,7 @@ class Forecast
         /* perform the main processing */
         $def = $this->manTrans->begin();
         try {
-            /* rebuild downline snaps for the last day */
+            /* rebuild downline snaps for the last days */
             $this->rebuildDwnlSnaps();
             /* should we calculate one or two periods? */
             list($periodPrev, $periodCurr) = $this->calcPeriods();

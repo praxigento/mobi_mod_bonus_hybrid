@@ -10,7 +10,7 @@ use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Repo\Data\Downline\Inactive as EBonInact;
 
 /**
- * Get customers inactivity data for given period.
+ * Get customers inactivity data for given period (unqualified months).
  */
 class GetInactive
     extends \Praxigento\Core\App\Repo\Query\Builder
