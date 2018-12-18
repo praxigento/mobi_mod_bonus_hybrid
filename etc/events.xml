@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+
+    <event name="customer_save_after_data_object">
+        <!-- Start forecast calculation after group change. -->
+        <observer name="praxigento_donwlilne_observer"
+                  instance="Praxigento\BonusHybrid\Observer\CustomerSaveAfterDataObject"/>
+    </event>
+
+</config>
