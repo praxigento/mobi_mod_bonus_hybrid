@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+
+    <!-- **************************************************** -->
+    <!-- Configuration of the component's data provider.      -->
+    <!-- **************************************************** -->
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">prxgt_bonus_downline_select.prxgt_bonus_downline_select_ds</item>
+        </item>
+    </argument>
+
+    <settings>
+        <buttons>
+            <button name="save" class="Praxigento\BonusHybrid\Block\Adminhtml\Bonus\Downline\Button\Get"/>
+        </buttons>
+        <deps>
+            <dep>prxgt_bonus_downline_select.prxgt_bonus_downline_select_ds</dep>
+        </deps>
+        <!-- to prevent never ending spinner & to post form data to server -->
+        <layout>
+            <type>tabs</type>
+        </layout>
+    </settings>
+
+    <!-- **************************************************** -->
+    <!-- Data Source (is used by data provider).              -->
+    <!-- **************************************************** -->
+    <dataSource name="prxgt_bonus_downline_select_ds"
+                component="Praxigento_BonusHybrid/js/form/provider/bonus_downline">
+        <settings>
+            <submitUrl path="bonus/downline/post"/>
+        </settings>
+        <dataProvider class="Praxigento\Core\App\Ui\DataProvider\Base"
+                      name="prxgt_bonus_downline_select_ds">
+        </dataProvider>
+    </dataSource>
+
+
+    <!--See \Praxigento\Santegra\Block\Adminhtml\Bonus\Overview\Report::FIELDSET -->
+    <fieldset name="downline_select">
+        <!-- Don't remove "settings/label" section, fieldset will be empty on the front -->
+        <settings>
+            <label></label>
+        </settings>
+
+        <field name="period" formElement="select">
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Period</label>
+                <notice translate="true">Downline tree will be loaded for requested period.</notice>
+                <dataScope>period</dataScope>
+            </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <options class="Praxigento\BonusHybrid\Ui\DataProvider\Options\Period"/>
+                    </settings>
+                </select>
+            </formElements>
+        </field>
+
+        <field name="tree_type" formElement="select">
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Tree Type</label>
+                <!--<notice translate="true"></notice>-->
+                <dataScope>tree_type</dataScope>
+            </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <options class="Praxigento\BonusHybrid\Ui\DataProvider\Options\TreeType"/>
+                    </settings>
+                </select>
+            </formElements>
+        </field>
+
+    </fieldset>
+
+
+</form>

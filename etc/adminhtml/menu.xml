@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+
+        <!-- "Grids" group items -->
+        <add id="Praxigento_BonusHybrid::bonus_downline"
+             title="Downline"
+             translate="title"
+             module="Praxigento_BonusHybrid"
+             sortOrder="200"
+             parent="Praxigento_BonusBase::bonus_grids"
+             action="bonus/downline"
+             resource="Praxigento_BonusBase::admin_bonus"/>
+
+    </menu>
+</config>

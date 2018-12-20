@@ -15,6 +15,8 @@ use Praxigento\Wallet\Config as WalletCfg;
 
 class Config extends BonusBaseCfg
 {
+    const ACL_BONUS_DOWNLINE = self::ACL_BONUS_ADMIN;
+
     /**
      * Asset types.
      */
@@ -41,9 +43,9 @@ class Config extends BonusBaseCfg
     const CODE_TYPE_CALC_FORECAST_PHASE1 = 'HYBRID_FORECAST_PHASE1'; // Daily forecast compressed (Phase1)
     const CODE_TYPE_CALC_FORECAST_PLAIN = 'HYBRID_FORECAST_PLAIN'; // Daily forecast calculation (plain tree)
     /** @deprecated use UNQUALIFIED instead */
-    const CODE_TYPE_CALC_INACTIVE_PROCESS = 'HYBRID_INACTIVE_PROCESS';
-    /** @deprecated use UNQUALIFIED instead */
     const CODE_TYPE_CALC_INACTIVE_COLLECT = 'HYBRID_INACTIVE_COLLECT';
+    /** @deprecated use UNQUALIFIED instead */
+    const CODE_TYPE_CALC_INACTIVE_PROCESS = 'HYBRID_INACTIVE_PROCESS';
     const CODE_TYPE_CALC_PV_WRITE_OFF = 'HYBRID_PV_WRITE_OFF';
     const CODE_TYPE_CALC_UNQUALIFIED_COLLECT = 'HYBRID_UNQUALIFIED_COLLECT';
     const CODE_TYPE_CALC_UNQUALIFIED_PROCESS = 'HYBRID_UNQUALIFIED_PROCESS';
@@ -71,9 +73,12 @@ class Config extends BonusBaseCfg
     const COURTESY_BONUS_PERCENT = 0.05;
     const DTPS = DownlineCfg::DTPS;
     const DT_DEPTH_INIT = DownlineCfg::INIT_DEPTH;
+
     /** Max count of the unq. months in a row allowed for distributors before downgrade. */
     const MAX_UNQ_MONTHS = 6;
+    const MENU_BONUS_DOWNLINE = 'bonus_downline';
     const MODULE = 'Praxigento_BonusHybrid';
+
     /**
      * Default qualification levels to compress downline tree in Santegra project.
      */
