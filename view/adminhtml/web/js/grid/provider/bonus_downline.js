@@ -14,10 +14,13 @@ define([
 
     /**
      * URL placed parameters.
-     * See  \Praxigento\BonusHybrid\Ui\DataProvider\Grid\Downline::REQ_...
+     * See  \Praxigento\BonusHybrid\Ui\DataProvider\Downline\Z\Input::REQ_...
      */
     const REQ_PERIOD = "period";
     const REQ_TYPE = "type";
+    /* see \Praxigento\BonusHybrid\Ui\DataProvider\Options\TreeType */
+    const TYPE_PLAIN = 'plain';
+    const TYPE_COMPRESS = 'compressed';
 
     return Element.extend({
 
@@ -31,7 +34,7 @@ define([
             const url = window.location.href;
             const regexpPeriod = new RegExp("/" + REQ_PERIOD + "/(\\d+)", "i");
             /* see \Praxigento\BonusHybrid\Ui\DataProvider\Options\TreeType::VAL_... for type values */
-            const regexpType = new RegExp("/" + REQ_TYPE + "/((compressed)|(plain))", "i");
+            const regexpType = new RegExp("/" + REQ_TYPE + "/((" + TYPE_COMPRESS + ")|(" + TYPE_PLAIN + "))", "i");
             let parsedPeriod = url.match(regexpPeriod);
             let parsedType = url.match(regexpType);
             /* then add parameters to grid data request */

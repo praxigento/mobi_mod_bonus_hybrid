@@ -32,13 +32,13 @@
         <settings>
             <submitUrl path="bonus/downline/post"/>
         </settings>
-        <dataProvider class="Praxigento\Core\App\Ui\DataProvider\Base"
+        <dataProvider class="Praxigento\BonusHybrid\Ui\DataProvider\Downline\Form"
                       name="prxgt_bonus_downline_select_ds">
         </dataProvider>
     </dataSource>
 
 
-    <!--See \Praxigento\Santegra\Block\Adminhtml\Bonus\Overview\Report::FIELDSET -->
+    <!--See \Praxigento\BonusHybrid\Ui\DataProvider\Downline\Form::FIELDSET -->
     <fieldset name="downline_select">
         <!-- Don't remove "settings/label" section, fieldset will be empty on the front -->
         <settings>

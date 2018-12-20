@@ -4,20 +4,20 @@
  * Since: 2018
  */
 
-namespace Praxigento\BonusHybrid\Ui\DataProvider\Grid;
+namespace Praxigento\BonusHybrid\Ui\DataProvider\Downline;
 
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Ui\DataProvider\Grid\Downline\A\Repo\Query\GetCalcId as QGetId;
-use Praxigento\BonusHybrid\Ui\DataProvider\Grid\Downline\A\Repo\Query\Grid as QGrid;
+use Praxigento\BonusHybrid\Ui\DataProvider\Downline\Grid\A\Repo\Query\GetCalcId as QGetId;
+use Praxigento\BonusHybrid\Ui\DataProvider\Downline\Grid\A\Repo\Query\Grid as QGrid;
 use Praxigento\BonusHybrid\Ui\DataProvider\Options\TreeType as OptionTreeType;
+use Praxigento\Core\Api\Helper\Period as HPeriod;
 
 /**
  * Data provider for Bonus Downline grid (with initial parameters for select).
  */
-class Downline
+class Grid
     extends \Praxigento\Core\App\Ui\DataProvider\Grid\Base
 {
-
     /**
      * See "Praxigento_BonusHybrid:view/adminhtml/web/js/form/provider/bonus_downline"
      */
@@ -26,18 +26,18 @@ class Downline
 
     /** @var  \Praxigento\Core\App\Ui\DataProvider\Grid\Query\IBuilder */
     private $gridQueryBuilder;
-    /** @var \Praxigento\Downline\Api\Helper\Tree */
-    private $hlpTree;
-    /** @var \Praxigento\BonusHybrid\Ui\DataProvider\Grid\Downline\A\Repo\Query\GetCalcId */
+    /** @var \Praxigento\Core\Api\Helper\Period */
+    private $hlpPeriod;
+    /** @var \Praxigento\BonusHybrid\Ui\DataProvider\Downline\Grid\A\Repo\Query\GetCalcId */
     private $qGetId;
 
     public function __construct(
         $name,
         \Magento\Framework\Api\Search\SearchCriteriaBuilder $searchCriteriaBuilder,
         \Magento\Framework\App\RequestInterface $request,
-        \Praxigento\BonusHybrid\Ui\DataProvider\Grid\Downline\A\Repo\Query\Grid $gridQueryBuilder,
-        \Praxigento\BonusHybrid\Ui\DataProvider\Grid\Downline\A\Repo\Query\GetCalcId $qGetId,
-        \Praxigento\Downline\Api\Helper\Tree $hlpTree,
+        \Praxigento\BonusHybrid\Ui\DataProvider\Downline\Grid\A\Repo\Query\Grid $gridQueryBuilder,
+        \Praxigento\BonusHybrid\Ui\DataProvider\Downline\Grid\A\Repo\Query\GetCalcId $qGetId,
+        \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         $primaryFieldName = 'primaryFieldName',
         $requestFieldName = 'requestFieldName',
         array $meta = [],
@@ -55,7 +55,29 @@ class Downline
         );
         $this->gridQueryBuilder = $gridQueryBuilder;
         $this->qGetId = $qGetId;
-        $this->hlpTree = $hlpTree;
+        $this->hlpPeriod = $hlpPeriod;
+    }
+
+    /**
+     * Extract and validate input parameters.
+     *
+     * @return array [$dsBegin, $treeType]
+     */
+    private function extractInput()
+    {
+        $params = $this->request->getParams();
+        $period = $params[self::REQ_PERIOD] ?? '';
+        if (empty($period)) {
+            $period = $this->hlpPeriod->getPeriodCurrent(null, 0, HPeriod::TYPE_MONTH);
+        } else {
+            $period = $this->hlpPeriod->normalizePeriod($period, HPeriod::TYPE_MONTH);
+        }
+        $dsBegin = $this->hlpPeriod->getPeriodFirstDate($period);
+        $treeType = $params[self::REQ_TREE_TYPE] ?? '';
+        if ($treeType != OptionTreeType::VAL_PLAIN) {
+            $treeType = OptionTreeType::VAL_COMPRESS; // 'compressed' by default
+        }
+        return [$dsBegin, $treeType];
     }
 
     /**
@@ -65,19 +87,23 @@ class Downline
      */
     private function getBind()
     {
-        $params = $this->request->getParams();
-        $period = $params[self::REQ_PERIOD] ?? '';
-        $treeType = $params[self::REQ_TREE_TYPE] ?? '';
-        $calcId = $this->getCalcId($period, $treeType);
+        [$dsBegin, $treeType] = $this->extractInput();
+        $calcId = $this->getCalcId($dsBegin, $treeType);
         $bind = [
             QGrid::BND_CALC_ID => $calcId
         ];
         return $bind;
     }
 
-    private function getCalcId($period, $treeType)
+    /**
+     * Get calculation ID for given period & tree type.
+     *
+     * @param string $dsBegin YYYYMMDD period's begin datestamp
+     * @param string $treeType [compressed|plain]
+     * @return int
+     */
+    private function getCalcId($dsBegin, $treeType)
     {
-        $dsBegin = $period . '01';
         $codeRegular = $codeForecast = '';
         if ($treeType == OptionTreeType::VAL_PLAIN) {
             $codeRegular = Cfg::CODE_TYPE_CALC_PV_WRITE_OFF;

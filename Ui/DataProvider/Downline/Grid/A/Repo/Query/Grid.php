@@ -4,7 +4,7 @@
  * Since: 2018
  */
 
-namespace Praxigento\BonusHybrid\Ui\DataProvider\Grid\Downline\A\Repo\Query;
+namespace Praxigento\BonusHybrid\Ui\DataProvider\Downline\Grid\A\Repo\Query;
 
 use Praxigento\BonusBase\Repo\Data\Rank as ERank;
 use Praxigento\BonusHybrid\Config as Cfg;

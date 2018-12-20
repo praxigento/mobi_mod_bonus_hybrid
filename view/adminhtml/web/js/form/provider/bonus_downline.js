@@ -10,7 +10,7 @@ define([
     const FIELDSET = "downline_select";
     const FLD_PERIOD = "period";
     const FLD_TYPE = "tree_type";
-    /* see \Praxigento\BonusHybrid\Ui\DataProvider\Grid\Downline::REQ_... */
+    /* see \Praxigento\BonusHybrid\Ui\DataProvider\Downline\Z\Input::REQ_... */
     const REQ_PERIOD = "period";
     const REQ_TYPE = "type";
 

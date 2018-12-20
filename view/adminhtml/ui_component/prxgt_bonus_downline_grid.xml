@@ -20,7 +20,7 @@
     <!-- **************************************************** -->
     <dataSource name="prxgt_bonus_downline_grid_ds"
                 component="Praxigento_BonusHybrid/js/grid/provider/bonus_downline">
-        <dataProvider class="Praxigento\BonusHybrid\Ui\DataProvider\Grid\Downline"
+        <dataProvider class="Praxigento\BonusHybrid\Ui\DataProvider\Downline\Grid"
                       name="prxgt_bonus_downline_grid_ds"/>
     </dataSource>
 
@@ -69,6 +69,51 @@
             </settings>
         </column>
 
+        <column name="rank"
+                component="">
+            <settings>
+                <dataType>text</dataType>
+                <filter>text</filter>
+                <label translate="true">Rank</label>
+            </settings>
+        </column>
+
+        <column name="pv"
+                component="Praxigento_Core/js/grid/columns/integer">
+            <settings>
+                <dataType>number</dataType>
+                <filter>text</filter>
+                <label translate="true">PV</label>
+            </settings>
+        </column>
+
+        <column name="tv"
+                component="Praxigento_Core/js/grid/columns/integer">
+            <settings>
+                <dataType>number</dataType>
+                <filter>text</filter>
+                <label translate="true">TV</label>
+            </settings>
+        </column>
+
+        <column name="ov"
+                component="Praxigento_Core/js/grid/columns/integer">
+            <settings>
+                <dataType>number</dataType>
+                <filter>text</filter>
+                <label translate="true">OV</label>
+            </settings>
+        </column>
+
+        <column name="monthInact"
+                component="Praxigento_Core/js/grid/columns/integer">
+            <settings>
+                <dataType>number</dataType>
+                <filter>text</filter>
+                <label translate="true">Inact.</label>
+            </settings>
+        </column>
+
         <column name="parentMlmId"
                 component="Praxigento_Core/js/grid/columns/integer">
             <settings>
@@ -103,51 +148,6 @@
                 <filter>text</filter>
                 <label translate="true">Path</label>
                 <sorting>asc</sorting>
-            </settings>
-        </column>
-
-        <column name="pv"
-                component="Praxigento_Core/js/grid/columns/integer">
-            <settings>
-                <dataType>number</dataType>
-                <filter>text</filter>
-                <label translate="true">PV</label>
-            </settings>
-        </column>
-
-        <column name="tv"
-                component="Praxigento_Core/js/grid/columns/integer">
-            <settings>
-                <dataType>number</dataType>
-                <filter>text</filter>
-                <label translate="true">TV</label>
-            </settings>
-        </column>
-
-        <column name="ov"
-                component="Praxigento_Core/js/grid/columns/integer">
-            <settings>
-                <dataType>number</dataType>
-                <filter>text</filter>
-                <label translate="true">OV</label>
-            </settings>
-        </column>
-
-        <column name="rank"
-                component="">
-            <settings>
-                <dataType>text</dataType>
-                <filter>text</filter>
-                <label translate="true">Rank</label>
-            </settings>
-        </column>
-
-        <column name="monthInact"
-                component="Praxigento_Core/js/grid/columns/integer">
-            <settings>
-                <dataType>number</dataType>
-                <filter>text</filter>
-                <label translate="true">Inact.</label>
             </settings>
         </column>
 

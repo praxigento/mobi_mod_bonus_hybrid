@@ -21,8 +21,8 @@ class TreeType
     {
         if ($this->options === null) {
             $this->options = [
-                ["label" => self::LBL_PLAIN, "value" => self::VAL_PLAIN],
-                ["label" => self::LBL_COMPRESS, "value" => self::VAL_COMPRESS]
+                ["label" => self::LBL_COMPRESS, "value" => self::VAL_COMPRESS],
+                ["label" => self::LBL_PLAIN, "value" => self::VAL_PLAIN]
             ];
         }
         return $this->options;
