@@ -52,7 +52,7 @@
         </column>
 
         <column name="custMlmId"
-                component="Praxigento_Core/js/grid/columns/integer">
+                component="Praxigento_BonusHybrid/js/grid/downline/column/link/customer_mlm_id">
             <settings>
                 <dataType>text</dataType>
                 <filter>text</filter>
@@ -61,7 +61,7 @@
         </column>
 
         <column name="custName"
-                component="">
+                component="Praxigento_BonusHybrid/js/grid/downline/column/link/customer_name">
             <settings>
                 <dataType>text</dataType>
                 <filter>text</filter>
@@ -115,7 +115,7 @@
         </column>
 
         <column name="parentMlmId"
-                component="Praxigento_Core/js/grid/columns/integer">
+                component="Praxigento_BonusHybrid/js/grid/downline/column/link/parent_mlm_id">
             <settings>
                 <dataType>text</dataType>
                 <filter>text</filter>
@@ -124,7 +124,7 @@
         </column>
 
         <column name="parentName"
-                component="">
+                component="Praxigento_BonusHybrid/js/grid/downline/column/link/parent_name">
             <settings>
                 <dataType>text</dataType>
                 <filter>text</filter>
