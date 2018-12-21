@@ -10,9 +10,13 @@ namespace Praxigento\BonusHybrid\Ui\DataProvider\Downline;
 class Form
     extends \Praxigento\Core\App\Ui\DataProvider\Base
 {
+    /**
+     * @see Praxigento_BonusHybrid:view/adminhtml/ui_component/prxgt_bonus_downline_select.xml
+     */
     public const FIELDSET = 'downline_select';
     public const FLD_PERIOD = 'period';
     public const FLD_TREE_TYPE = 'tree_type';
+    /** @var \Praxigento\BonusHybrid\Ui\DataProvider\Downline\Z\Input  */
     private $zInput;
 
     public function __construct(
