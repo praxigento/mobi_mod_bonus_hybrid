@@ -6,6 +6,7 @@
 
 namespace Praxigento\BonusHybrid\Controller\Adminhtml\Downline;
 
+use Praxigento\BonusBase\Config as CfgBase;
 use Praxigento\BonusHybrid\Config as Cfg;
 
 class Index
@@ -14,7 +15,7 @@ class Index
     public function __construct(
         \Magento\Backend\App\Action\Context $context
     ) {
-        $aclResource = Cfg::MODULE . '::' . Cfg::ACL_BONUS_DOWNLINE;
+        $aclResource = CfgBase::MODULE . '::' . Cfg::ACL_BONUS_DOWNLINE;
         $activeMenu = Cfg::MODULE . '::' . Cfg::MENU_BONUS_DOWNLINE;
         $breadcrumbLabel = 'Bonus Downline';
         $breadcrumbTitle = 'Bonus Downline';
