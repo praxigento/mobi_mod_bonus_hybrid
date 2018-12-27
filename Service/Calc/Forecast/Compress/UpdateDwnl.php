@@ -50,7 +50,7 @@ class UpdateDwnl
 
         /* define local working data */
         $dwnlCust = $this->daoCustDwnl->get();
-        $mapCust = $this->hlpDwnlTree->mapById($dwnlCust, ECustDwnl::A_CUSTOMER_ID);
+        $mapCust = $this->hlpDwnlTree->mapById($dwnlCust, ECustDwnl::A_CUSTOMER_REF);
         $mapByIdDef = $this->hlpDwnlTree->mapById($dwnlPhase2Def, EBonDwnl::A_CUST_REF);
         $mapByIdEu = $this->hlpDwnlTree->mapById($dwnlPhase2Eu, EBonDwnl::A_CUST_REF);
 

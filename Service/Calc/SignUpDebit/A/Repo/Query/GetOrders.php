@@ -71,9 +71,9 @@ class GetOrders
         $as = $asDwnl;
         $cols = [
             self::A_COUNTRY => EDwnlCust::A_COUNTRY_CODE,
-            self::A_PARENT_ID => EDwnlCust::A_PARENT_ID
+            self::A_PARENT_ID => EDwnlCust::A_PARENT_REF
         ];
-        $cond = $as . '.' . EDwnlCust::A_CUSTOMER_ID . '=' . $asCust . '.' . Cfg::E_CUSTOMER_A_ENTITY_ID;
+        $cond = $as . '.' . EDwnlCust::A_CUSTOMER_REF . '=' . $asCust . '.' . Cfg::E_CUSTOMER_A_ENTITY_ID;
         $result->joinLeft([$as => $tbl], $cond, $cols);
 
         /* LEFT JOIN sales_order */
@@ -98,9 +98,9 @@ class GetOrders
         $tbl = $this->resource->getTableName(EDwnlCust::ENTITY_NAME);
         $as = $asParent;
         $cols = [
-            self::A_PARENT_GRAND_ID => EDwnlCust::A_PARENT_ID
+            self::A_PARENT_GRAND_ID => EDwnlCust::A_PARENT_REF
         ];
-        $cond = $as . '.' . EDwnlCust::A_CUSTOMER_ID . '=' . $asDwnl . '.' . EDwnlCust::A_PARENT_ID;
+        $cond = $as . '.' . EDwnlCust::A_CUSTOMER_REF . '=' . $asDwnl . '.' . EDwnlCust::A_PARENT_REF;
         $result->joinLeft([$as => $tbl], $cond, $cols);
 
         /* WHERE */

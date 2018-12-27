@@ -77,7 +77,7 @@ class SaveDownline
     private function getCustomersById()
     {
         $customers = $this->daoDwnlCust->get();
-        $result = $this->hlpDwnl->mapById($customers, EDwnlCust::A_CUSTOMER_ID);
+        $result = $this->hlpDwnl->mapById($customers, EDwnlCust::A_CUSTOMER_REF);
         return $result;
     }
 

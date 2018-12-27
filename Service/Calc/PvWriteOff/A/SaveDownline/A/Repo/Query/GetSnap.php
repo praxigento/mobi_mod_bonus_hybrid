@@ -56,8 +56,8 @@ class GetSnap
         $as = self::AS_DWNL_CUST;
 
         $tbl = $this->resource->getTableName(EDwnlCust::ENTITY_NAME);
-        $on = $as . '.' . EDwnlCust::A_CUSTOMER_ID . '='
-            . QBase::AS_DWNL_SNAP . '.' . ESnap::A_CUSTOMER_ID;
+        $on = $as . '.' . EDwnlCust::A_CUSTOMER_REF . '='
+            . QBase::AS_DWNL_SNAP . '.' . ESnap::A_CUSTOMER_REF;
         $cols = [
             self::A_COUNTRY => EDwnlCust::A_COUNTRY_CODE,
             self::A_MLM_ID => EDwnlCust::A_MLM_ID

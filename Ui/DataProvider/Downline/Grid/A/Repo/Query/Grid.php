@@ -186,7 +186,7 @@ class Grid
         $cols = [
             self::A_CUST_MLM_ID => EDwnlCust::A_MLM_ID
         ];
-        $cond = $as . '.' . EDwnlCust::A_CUSTOMER_ID . '=' . $asDwnlBon . '.' . EBonDwnl::A_CUST_REF;
+        $cond = $as . '.' . EDwnlCust::A_CUSTOMER_REF . '=' . $asDwnlBon . '.' . EBonDwnl::A_CUST_REF;
         $result->joinLeft([$as => $tbl], $cond, $cols);
 
         /* LEFT JOIN customer_entity as customer */
@@ -205,7 +205,7 @@ class Grid
         $cols = [
             self::A_PARENT_MLM_ID => EDwnlCust::A_MLM_ID
         ];
-        $cond = $as . '.' . EDwnlCust::A_CUSTOMER_ID . '=' . $asDwnlBon . '.' . EBonDwnl::A_PARENT_REF;
+        $cond = $as . '.' . EDwnlCust::A_CUSTOMER_REF . '=' . $asDwnlBon . '.' . EBonDwnl::A_PARENT_REF;
         $result->joinLeft([$as => $tbl], $cond, $cols);
 
         /* LEFT JOIN customer_entity as parent */

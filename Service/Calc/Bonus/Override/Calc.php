@@ -104,7 +104,7 @@ class Calc
         $cfgOverride = $this->getCfgOverride();
         /* create maps to access data */
         $mapCmprsById = $this->hlpTree->mapById($dwnlCompress, EBonDwnl::A_CUST_REF);
-        $mapPlainById = $this->hlpTree->mapById($dwnlPlain, ECustomer::A_CUSTOMER_ID);
+        $mapPlainById = $this->hlpTree->mapById($dwnlPlain, ECustomer::A_CUSTOMER_REF);
         $mapTeams = $this->hlpTree->mapByTeams($dwnlCompress, EBonDwnl::A_CUST_REF, EBonDwnl::A_PARENT_REF);
         /* populate compressed data with depth & path values */
         $mapByDepthDesc = $this->hlpTree->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::A_CUST_REF, EBonDwnl::A_DEPTH);

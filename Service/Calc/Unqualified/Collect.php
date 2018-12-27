@@ -106,11 +106,11 @@ class Collect
     private function getCustomers()
     {
         $result = [];
-        $cols = [EDwnlCust::A_CUSTOMER_ID, EDwnlCust::A_COUNTRY_CODE];
+        $cols = [EDwnlCust::A_CUSTOMER_REF, EDwnlCust::A_COUNTRY_CODE];
         /** @var EDwnlCust[] $rs */
         $rs = $this->daoDwnlCust->get(null, null, null, null, $cols);
         foreach ($rs as $one) {
-            $custId = $one->getCustomerId();
+            $custId = $one->getCustomerRef();
             $result[$custId] = $one;
         }
         return $result;

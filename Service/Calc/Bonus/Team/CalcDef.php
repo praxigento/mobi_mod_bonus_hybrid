@@ -69,7 +69,7 @@ class CalcDef
         /* create maps to access data */
         $mapDwnlById = $this->hlpTree->mapById($dwnlCompress, EBonDwnl::A_CUST_REF);
         $mapTeams = $this->hlpTree->mapByTeams($dwnlCompress, EBonDwnl::A_CUST_REF, EBonDwnl::A_PARENT_REF);
-        $mapCustById = $this->hlpTree->mapById($dwnlCurrent, ECustomer::A_CUSTOMER_ID);
+        $mapCustById = $this->hlpTree->mapById($dwnlCurrent, ECustomer::A_CUSTOMER_REF);
         /**
          * Go through all customers from compressed tree and calculate bonus.
          *

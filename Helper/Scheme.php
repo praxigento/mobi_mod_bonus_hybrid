@@ -128,7 +128,7 @@ class Scheme
             $quoted = $this->conn->quote($one);
             $where .= Customer::A_MLM_ID . "=\"$quoted\"";
         }
-        $cols = [Customer::A_CUSTOMER_ID, Customer::A_MLM_ID];
+        $cols = [Customer::A_CUSTOMER_REF, Customer::A_MLM_ID];
         $result = $this->daoGeneric->getEntities(Customer::ENTITY_NAME, $cols, $where);
         return $result;
     }
@@ -162,7 +162,7 @@ class Scheme
             $ranks = $this->getCfgParamsByRanks();
             $this->cacheForcedRanks = [];
             foreach ($custIds as $item) {
-                $custId = $item[Customer::A_CUSTOMER_ID];
+                $custId = $item[Customer::A_CUSTOMER_REF];
                 $ref = $item[Customer::A_MLM_ID];
                 $rankCode = $this->QUALIFIED_CUSTOMERS[$ref][1];
                 $cfgParamsWithSchemes = $ranks[$rankCode];

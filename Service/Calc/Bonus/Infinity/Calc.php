@@ -60,7 +60,7 @@ class Calc
         $ibPercentMax = $this->getMaxPercentForInfinityBonus($cfgParams, $scheme);
         /* create maps to access data */
         $mapById = $this->hlpTree->mapById($dwnlCompress, EBonDwnl::A_CUST_REF);
-        $mapPlainById = $this->hlpTree->mapById($dwnlPlain, ECustomer::A_CUSTOMER_ID);
+        $mapPlainById = $this->hlpTree->mapById($dwnlPlain, ECustomer::A_CUSTOMER_REF);
         /**
          * Process downline tree
          * @var EBonDwnl $custCompress

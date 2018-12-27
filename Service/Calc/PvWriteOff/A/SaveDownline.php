@@ -222,7 +222,7 @@ class SaveDownline
         $rows = $conn->fetchAll($query, $bind);
         foreach ($rows as $one) {
             $item = new ESnap($one);
-            $custId = $item->getCustomerId();
+            $custId = $item->getCustomerRef();
             $result[$custId] = $item;
         }
         return $result;

@@ -136,7 +136,7 @@ class Phase1
                     $foundParentId = null;
                     foreach ($parents as $newParentId) {
                         $parentData = $mapCustomer[$newParentId];
-                        $parentParentId = $parentData->getParentId();
+                        $parentParentId = $parentData->getParentRef();
                         /* MOBI-942: use parent scheme to qualify parents */
                         $parentScheme = $this->hlpScheme->getSchemeByCustomer($parentData);
                         $parentLevel = $qLevels[$parentScheme]; // qualification level for current parent
@@ -227,7 +227,7 @@ class Phase1
     {
         /** @var \Praxigento\Downline\Repo\Data\Customer[] $customers */
         $customers = $this->daoCustDwnl->get();
-        $result = $this->hlpTree->mapById($customers, ECustomer::A_CUSTOMER_ID);
+        $result = $this->hlpTree->mapById($customers, ECustomer::A_CUSTOMER_REF);
         return $result;
     }
 
@@ -272,8 +272,8 @@ class Phase1
         $result = [];
         /** @var \Praxigento\Downline\Repo\Data\Snap $item */
         foreach ($compressed as $item) {
-            $snapCustId = $item->getCustomerId();
-            $snapParentId = $item->getParentId();
+            $snapCustId = $item->getCustomerRef();
+            $snapParentId = $item->getParentRef();
             $snapDepth = $item->getDepth();
             $snapPath = $item->getPath();
             $entry = $mapPlain[$snapCustId];
