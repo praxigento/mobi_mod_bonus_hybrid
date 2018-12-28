@@ -19,13 +19,13 @@ class Forecast
     /** @var \Praxigento\Core\Api\App\Repo\Transaction\Manager */
     private $manTrans;
     /** @var \Praxigento\BonusHybrid\Service\United\Forecast */
-    private $servUnqual;
+    private $servUnited;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Praxigento\Core\Api\App\Repo\Transaction\Manager $manTrans,
-        \Praxigento\BonusHybrid\Service\United\Forecast $servUnqual
+        \Praxigento\BonusHybrid\Service\United\Forecast $servUnited
     ) {
         parent::__construct(
             $manObj,
@@ -34,7 +34,7 @@ class Forecast
         );
         $this->logger = $logger;
         $this->manTrans = $manTrans;
-        $this->servUnqual = $servUnqual;
+        $this->servUnited = $servUnited;
     }
 
     protected function execute(
@@ -47,10 +47,9 @@ class Forecast
         /* perform the main processing */
         $def = $this->manTrans->begin();
         try {
-            /* rebuild downline snaps for the last days */
             $req = new ARequest();
             /** @var AResponse $resp */
-            $resp = $this->servUnqual->exec($req);
+            $resp = $this->servUnited->exec($req);
 
             $this->manTrans->commit($def);
         } catch (\Throwable $e) {

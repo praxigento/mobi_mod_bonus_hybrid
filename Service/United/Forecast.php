@@ -113,7 +113,7 @@ class Forecast
         assert($request instanceof ARequest);
 
         /* perform the main processing */
-        $this->logger->info("Aggregated activity to perform unqualified calculation is started.");
+        $this->logger->info("Aggregated activity to perform forecast calculation is started.");
         $this->logger->info("Rebuild downline snaps for the last days.");
         $this->rebuildDwnlSnaps();
         /* should we calculate one or two periods? */
@@ -140,7 +140,7 @@ class Forecast
         $this->calcUnqualified($periodCurr);
 
         /** compose result */
-        $this->logger->info("Aggregated activity to perform unqualified calculation is completed.");
+        $this->logger->info("Aggregated activity to perform forecast calculation is completed.");
         $result = new AResponse();
         return $result;
     }
