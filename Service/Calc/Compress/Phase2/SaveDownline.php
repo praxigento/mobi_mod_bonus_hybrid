@@ -91,7 +91,6 @@ class SaveDownline
     private function saveDownline($entries, $plainCalcId, $cmprsCalcId, $scheme)
     {
         $custById = $this->getCustomersById();
-        $plainByCust = $this->getBonTreeByCustId($plainCalcId);
         /** @var \Praxigento\BonusHybrid\Repo\Data\Downline $entry */
         foreach ($entries as $entry) {
             $custId = $entry->getCustomerRef();
@@ -102,15 +101,6 @@ class SaveDownline
             $customer = $custById[$custId];
             $custScheme = $this->hlpScheme->getSchemeByCustomer($customer);
             if ($custScheme == $scheme) {
-                /* get plain entry ID */
-                $plainEntry = $plainByCust[$custId];
-                $plainId = $plainEntry->getId();
-                /* create qualification entry */
-                /* TODO: do we really need this entity? See \Praxigento\BonusHybrid\Repo\Data\Downline::A_RANK_REF */
-                $qual = new EBonDwnQual();
-                $qual->setTreeEntryRef($plainId);
-                $qual->setRankRef($rankId);
-                $this->daoDwnlQual->create($qual);
                 /* update rank in downlines (plain & compressed) */
                 $dwnlData = [EBonDwnl::A_RANK_REF => $rankId];
                 $byCust = EBonDwnl::A_CUST_REF . '=' . (int)$custId;
