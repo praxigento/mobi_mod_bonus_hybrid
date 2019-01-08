@@ -9,7 +9,6 @@
 namespace Praxigento\BonusHybrid\Service\Calc\Compress\Phase2;
 
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
-use Praxigento\BonusHybrid\Repo\Data\Downline\Qualification as EBonDwnQual;
 use Praxigento\Downline\Repo\Data\Customer as EDwnlCust;
 
 /**
@@ -27,8 +26,6 @@ class SaveDownline
     private $daoBonDwnl;
     /** @var \Praxigento\Downline\Repo\Dao\Customer */
     private $daoDwnlCust;
-    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline\Qualification */
-    private $daoDwnlQual;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Compression\Phase2\Legs */
     private $daoLegs;
 
@@ -37,8 +34,7 @@ class SaveDownline
         \Praxigento\BonusHybrid\Api\Helper\Scheme $hlpScheme,
         \Praxigento\Downline\Repo\Dao\Customer $daoDwnlCust,
         \Praxigento\BonusHybrid\Repo\Dao\Compression\Phase2\Legs $daoLegs,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline\Qualification $daoDwnlQual
+        \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl
     )
     {
         $this->hlpDwnl = $hlpDwnl;
@@ -46,7 +42,6 @@ class SaveDownline
         $this->daoDwnlCust = $daoDwnlCust;
         $this->daoLegs = $daoLegs;
         $this->daoBonDwnl = $daoBonDwnl;
-        $this->daoDwnlQual = $daoDwnlQual;
     }
 
     /**

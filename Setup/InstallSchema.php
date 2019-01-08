@@ -12,7 +12,6 @@ use Praxigento\BonusHybrid\Repo\Data\Compression\Phase1\Transfer\Pv as Phase1Tra
 use Praxigento\BonusHybrid\Repo\Data\Compression\Phase2\Legs as Phase2Legs;
 use Praxigento\BonusHybrid\Repo\Data\Downline as Dwnl;
 use Praxigento\BonusHybrid\Repo\Data\Downline\Inactive as DwnlInact;
-use Praxigento\BonusHybrid\Repo\Data\Downline\Qualification as DwnlQual;
 use Praxigento\BonusHybrid\Repo\Data\Registry\SignUpDebit as SignUpDebit;
 
 class InstallSchema
@@ -52,10 +51,6 @@ class InstallSchema
         /* Downline / Inactive */
         $demEntity = $demPackage->get('package/Downline/entity/Inactive');
         $this->toolDem->createEntity(DwnlInact::ENTITY_NAME, $demEntity);
-
-        /* Downline / Qualification */
-        $demEntity = $demPackage->get('package/Downline/entity/Qualification');
-        $this->toolDem->createEntity(DwnlQual::ENTITY_NAME, $demEntity);
 
     }
 
