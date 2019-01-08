@@ -73,6 +73,7 @@ class SaveDownline
         );
         /* default & unqualified ranks IDs */
         $mapRanks = $this->mapDefRanksByCustId();
+        $rankIdUnranked = $this->daoRanks->getIdByCode(Cfg::RANK_UNRANKED);
 
         /* create registries for collected data */
         $regDwnl = [];
@@ -119,8 +120,12 @@ class SaveDownline
                 $dwnlData->setDepth($custDepth);
                 $dwnlData->setPath($custPath);
                 $dwnlData->setPv($custPv);
-                $rankIdDef = $mapRanks[$custId];
-                $dwnlData->setRankRef($rankIdDef);
+                /* use default rank for customer group (unranked or distributor) if qualified */
+                /* (rank will be set by compression calculation) */
+                $rankId = $mapRanks[$custId];
+                if (!$isCustQualified)
+                    $rankId = $rankIdUnranked;
+                $dwnlData->setRankRef($rankId);
                 $dwnlData->setTv(0);
                 $regDwnl[$custId] = $dwnlData;
 
