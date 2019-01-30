@@ -23,7 +23,6 @@ class Downline
     const A_PV = 'pv';
     const A_RANK_REF = 'rank_ref';
     const A_TV = 'tv';
-    /** @deprecated */
     const A_UNQ_MONTHS = 'unq_months';
     /* entity (table) name */
     const ENTITY_NAME = 'prxgt_bon_hyb_dwnl';

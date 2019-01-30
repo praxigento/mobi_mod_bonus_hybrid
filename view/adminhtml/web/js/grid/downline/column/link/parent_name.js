@@ -6,7 +6,7 @@ define([
     return Column.extend({
         defaults: {
             /* see \Praxigento\BonusHybrid\Ui\DataProvider\Downline\Grid\A\Repo\Query\Grid::A_PARENT_ID */
-            idAttrName: "custId",
+            idAttrName: "parentId",
             route: "/customer/index/edit/id/"
         }
     });
