@@ -67,7 +67,7 @@ class Unqualified
             $pv = $one->getPv();
             if ($pv <= 0) {
                 if (isset($prev[$custId])) {
-                    $months = $prev[$custId][QGetInact::A_MONTHS];
+                    $months = $prev[$custId][QGetInact::A_MONTHS] + 1;
                 } else {
                     $months = 1;
                 }
