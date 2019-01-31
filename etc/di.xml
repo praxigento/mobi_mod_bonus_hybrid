@@ -19,8 +19,8 @@
         <arguments>
             <argument name="commands" xsi:type="array">
                 <item name="prxgt:bonus:calc" xsi:type="object">Praxigento\BonusHybrid\Cli\Calc</item>
+                <item name="prxgt:bonus:downgrade" xsi:type="object">Praxigento\BonusHybrid\Cli\Downgrade</item>
                 <item name="prxgt:bonus:forecast" xsi:type="object">Praxigento\BonusHybrid\Cli\Forecast</item>
-                <item name="prxgt:unqual:process" xsi:type="object">Praxigento\BonusHybrid\Cli\Unqual</item>
             </argument>
         </arguments>
     </type>

@@ -5,63 +5,46 @@
 
 namespace Praxigento\BonusHybrid\Cli;
 
-use Praxigento\Core\Api\App\Service\Process as IProcess;
-use Praxigento\Core\Data as AData;
+use Praxigento\BonusHybrid\Service\Downgrade\Request as ARequest;
 
 /**
- * Process unqualified customers.
+ * Downgrade unqualified customers.
  */
-class Unqual
+class Downgrade
     extends \Praxigento\Core\App\Cli\Cmd\Base
 {
     /** @var \Magento\Framework\DB\Adapter\AdapterInterface */
     private $conn;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Unqualified\Process */
-    private $procProcess;
     /** @var \Magento\Framework\App\ResourceConnection */
     private $resource;
+    /** @var \Praxigento\BonusHybrid\Service\Downgrade */
+    private $srvDowngrade;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Magento\Framework\App\ResourceConnection $resource,
-        \Praxigento\BonusHybrid\Service\Calc\Unqualified\Process $servProcess
-    )
-    {
+        \Praxigento\BonusHybrid\Service\Downgrade $servDowngrade
+    ) {
         parent::__construct(
             $manObj,
-            'prxgt:unqual:process',
-            'Process unqualified customers.'
+            'prxgt:bonus:downgrade',
+            'Downgrade unqualified customers.'
         );
         $this->resource = $resource;
         $this->conn = $this->resource->getConnection();
-        $this->procProcess = $servProcess;
-    }
-
-    private function calcUnqualProcess()
-    {
-        $ctx = new AData();
-        $this->procProcess->exec($ctx);
-        $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
-        return $result;
+        $this->srvDowngrade = $servDowngrade;
     }
 
     protected function execute(
         \Symfony\Component\Console\Input\InputInterface $input,
         \Symfony\Component\Console\Output\OutputInterface $output
-    )
-    {
+    ) {
         $output->writeln("<info>Command '" . $this->getName() . "'<info>");
         $this->conn->beginTransaction();
         try {
-            $canContinue = $this->calcUnqualProcess();
-            if ($canContinue) {
-                $output->writeln("<info>Unqualified customers stats processing is completed.<info>");
-                $this->conn->commit();
-                $output->writeln("<info>All data is committed.<info>");
-            } else {
-                $output->writeln("<error>Something goes wrong. Rollback.<error>");
-                $this->conn->rollBack();
-            }
+            $req = new ARequest();
+            $this->srvDowngrade->exec($req);
+            $this->conn->commit();
         } catch (\Throwable $e) {
             $msg = $e->getMessage();
             $trace = $e->getTraceAsString();

@@ -6,9 +6,10 @@
  * Time: 20:29
  */
 
-namespace Praxigento\BonusHybrid\Service\Calc\Unqualified\Process\A;
+namespace Praxigento\BonusHybrid\Service\Downgrade\A;
 
 use Praxigento\BonusHybrid\Config as Cfg;
+use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 
 /**
  * Routine to process plain downline & to perform qualification compression (re-link downlines of the unqualified
@@ -46,13 +47,16 @@ class Calc
     }
 
     /**
-     * @param array $inactStats
+     * @param EBonDwnl[] $treePlain
+     * @throws \Throwable
      */
-    public function exec($inactStats)
+    public function exec($treePlain)
     {
         /* group ID for unqualified customers */
         $groupIdUnq = $this->hlpCfgDwnl->getDowngradeGroupUnqual();
-        foreach ($inactStats as $custId => $unqMonths) {
+        foreach ($treePlain as $one) {
+            $custId = $one->getCustomerRef();
+            $unqMonths = $one->getUnqMonths();
             if ($unqMonths >= Cfg::MAX_UNQ_MONTHS) {
                 /* get current group and */
                 $groupIdCurrent = $this->hlpCustGroup->getIdByCustomerId($custId);

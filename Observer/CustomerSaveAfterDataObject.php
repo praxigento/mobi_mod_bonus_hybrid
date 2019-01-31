@@ -7,7 +7,6 @@
 namespace Praxigento\BonusHybrid\Observer;
 
 use Praxigento\BonusHybrid\Service\United\Forecast\Request as ARequest;
-use Praxigento\BonusHybrid\Service\United\Forecast\Response as AResponse;
 
 /**
  * Run forecast calc on customer group change.
@@ -17,15 +16,19 @@ class CustomerSaveAfterDataObject
 {
     /** @var \Praxigento\Downline\Api\Helper\Group\Transition */
     private $hlpGroupTrans;
+    /** @var \Praxigento\BonusHybrid\Helper\Marker\Downgrade */
+    private $hlpMarkDowngrade;
     /** @var \Praxigento\BonusHybrid\Service\United\Forecast */
-    private $servUnqual;
+    private $servForecast;
 
     public function __construct(
         \Praxigento\Downline\Api\Helper\Group\Transition $hlpGroupTrans,
-        \Praxigento\BonusHybrid\Service\United\Forecast $servUnqual
+        \Praxigento\BonusHybrid\Helper\Marker\Downgrade $hlpMarkDowngrade,
+        \Praxigento\BonusHybrid\Service\United\Forecast $servForecast
     ) {
         $this->hlpGroupTrans = $hlpGroupTrans;
-        $this->servUnqual = $servUnqual;
+        $this->hlpMarkDowngrade = $hlpMarkDowngrade;
+        $this->servForecast = $servForecast;
     }
 
     public function execute(\Magento\Framework\Event\Observer $observer)
@@ -43,10 +46,13 @@ class CustomerSaveAfterDataObject
             if ($groupIdBefore != $groupIdAfter) {
                 $isDowngrade = $this->hlpGroupTrans->isDowngrade($groupIdBefore, $groupIdAfter);
                 $isUpgrade = $this->hlpGroupTrans->isUpgrade($groupIdBefore, $groupIdAfter);
-                if ($isDowngrade || $isUpgrade) {
+                $isInBulk = $this->hlpMarkDowngrade->getMark();
+                if (
+                    ($isDowngrade || $isUpgrade) &&
+                    !$isInBulk
+                ) {
                     $req = new ARequest();
-                    /** @var AResponse $resp */
-                    $resp = $this->servUnqual->exec($req);
+                    $this->servForecast->exec($req);
                 }
             }
         }
