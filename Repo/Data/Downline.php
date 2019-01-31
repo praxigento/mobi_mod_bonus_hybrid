@@ -92,9 +92,6 @@ class Downline
         return $result;
     }
 
-    /**
-     * @deprecated
-     */
     public function getUnqMonths()
     {
         $result = parent::get(self::A_UNQ_MONTHS);
@@ -151,9 +148,6 @@ class Downline
         parent::set(self::A_TV, $data);
     }
 
-    /**
-     * @deprecated
-     */
     public function setUnqMonths($data)
     {
         parent::set(self::A_UNQ_MONTHS, $data);

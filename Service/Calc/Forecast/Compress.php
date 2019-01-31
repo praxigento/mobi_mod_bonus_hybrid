@@ -12,7 +12,6 @@ use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase2 as PCpmrsPh
 use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Ov as POv;
 use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Tv as PTv;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\GetPlainData as PGetPlainData;
-use Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\UpdateDwnl as PUpdateDwnl;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Register as PCalcReg;
 
 class Compress
@@ -38,7 +37,7 @@ class Compress
     private $procOv;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Tv */
     private $procTv;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\UpdateDwnl */
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\A\UpdateDwnl */
     private $procUpdateDwnl;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Register */
     private $zCalcReg;
@@ -53,9 +52,8 @@ class Compress
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Ov $procOv,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Z\Register $zCalcReg,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\GetPlainData $procGetPlainData,
-        \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\UpdateDwnl $procUpdateDwnl
-    )
-    {
+        \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress\A\UpdateDwnl $procUpdateDwnl
+    ) {
         $this->logger = $logger;
         $this->daoCalc = $daoCalc;
         $this->daoBonDwnl = $daoBonDwnl;
@@ -155,7 +153,7 @@ class Compress
         $dwnlPhase2Eu = $this->compressPhase2($calcId, Cfg::SCHEMA_EU, $dwnlPhase1, $period);
 
         /* ... then populate Phase1 downline with ranks from Phase2 downlines */
-        $dwnlPhase1 = $this->updateDwnl($dwnlPhase1, $dwnlPhase2Def, $dwnlPhase2Eu);
+        $dwnlPhase1 = $this->procUpdateDwnl->exec($dwnlPhase1, $dwnlPhase2Def, $dwnlPhase2Eu);
 
         /* save updated Phase1 compression */
         $this->saveDownline($dwnlPhase1);
@@ -210,7 +208,7 @@ class Compress
     {
         foreach ($items as $item) {
             $entryId = $item->getId();
-            $found = $this->daoBonDwnl->getById($entryId);
+            $found = is_null($entryId) ? false : $this->daoBonDwnl->getById($entryId);
             if ($found) {
                 $this->daoBonDwnl->updateById($entryId, $item);
             } else {
@@ -233,20 +231,10 @@ class Compress
                 $zipItem = $dwnlPhase1[$custId];
                 $rankId = $zipItem->getRankRef();
                 $one->setRankRef($rankId);
+                $one->setUnqMonths(0);
                 $itemId = $one->getId();
                 $this->daoBonDwnl->updateById($itemId, $one);
             }
         }
-    }
-
-    private function updateDwnl($dwnlPhase1, $dwnlPhase2Def, $dwnlPhase2Eu)
-    {
-        $in = new \Praxigento\Core\Data();
-        $in->set(PUpdateDwnl::IN_DWNL_PHASE1, $dwnlPhase1);
-        $in->set(PUpdateDwnl::IN_DWNL_PHASE2_DEF, $dwnlPhase2Def);
-        $in->set(PUpdateDwnl::IN_DWNL_PHASE2_EU, $dwnlPhase2Eu);
-        $out = $this->procUpdateDwnl->exec($in);
-        $result = $out->get(PUpdateDwnl::OUT_DWNL_PHASE1);
-        return $result;
     }
 }
