@@ -16,8 +16,6 @@ class Unqual
 {
     /** @var \Magento\Framework\DB\Adapter\AdapterInterface */
     private $conn;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Unqualified\Collect */
-    private $procCollect;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Unqualified\Process */
     private $procProcess;
     /** @var \Magento\Framework\App\ResourceConnection */
@@ -26,7 +24,6 @@ class Unqual
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
         \Magento\Framework\App\ResourceConnection $resource,
-        \Praxigento\BonusHybrid\Service\Calc\Unqualified\Collect $servCollect,
         \Praxigento\BonusHybrid\Service\Calc\Unqualified\Process $servProcess
     )
     {
@@ -37,16 +34,7 @@ class Unqual
         );
         $this->resource = $resource;
         $this->conn = $this->resource->getConnection();
-        $this->procCollect = $servCollect;
         $this->procProcess = $servProcess;
-    }
-
-    private function calcUnqualCollect()
-    {
-        $ctx = new AData();
-        $this->procCollect->exec($ctx);
-        $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
-        return $result;
     }
 
     private function calcUnqualProcess()
@@ -65,11 +53,7 @@ class Unqual
         $output->writeln("<info>Command '" . $this->getName() . "'<info>");
         $this->conn->beginTransaction();
         try {
-            $canContinue = $this->calcUnqualCollect();
-            if ($canContinue) {
-                $output->writeln("<info>Unqualified customers stats collection is completed.<info>");
-                $canContinue = $this->calcUnqualProcess();
-            }
+            $canContinue = $this->calcUnqualProcess();
             if ($canContinue) {
                 $output->writeln("<info>Unqualified customers stats processing is completed.<info>");
                 $this->conn->commit();

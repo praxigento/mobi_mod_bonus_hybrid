@@ -105,12 +105,12 @@
             </settings>
         </column>
 
-        <column name="monthInact"
+        <column name="monthUnq"
                 component="Praxigento_Core/js/grid/column/integer">
             <settings>
                 <dataType>number</dataType>
                 <filter>text</filter>
-                <label translate="true">Inact.</label>
+                <label translate="true">Unq.</label>
             </settings>
         </column>
 

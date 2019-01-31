@@ -9,7 +9,6 @@ namespace Praxigento\BonusHybrid\Ui\DataProvider\Downline\Grid\A\Repo\Query;
 use Praxigento\BonusBase\Repo\Data\Rank as ERank;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
-use Praxigento\BonusHybrid\Repo\Data\Downline\Inactive as EInact;
 use Praxigento\Core\App\Repo\Query\Expression as AnExpression;
 use Praxigento\Downline\Repo\Data\Customer as EDwnlCust;
 
@@ -22,7 +21,6 @@ class Grid
     const AS_DWNL_BON = 'dwnlBon';
     const AS_DWNL_CUST = 'dwnlCust';
     const AS_DWNL_PARENT = 'dwnlParent';
-    const AS_INACT = 'inact';
     const AS_PARENT = 'parent';
     const AS_RANK = 'ranks';
 
@@ -32,7 +30,7 @@ class Grid
     const A_CUST_MLM_ID = 'custMlmId';
     const A_CUST_NAME = 'custName';
     const A_DEPTH = 'depth';
-    const A_MONTH_INACT = 'monthInact';
+    const A_MONTH_UNQ = 'monthUnq';
     const A_OV = 'ov';
     const A_PARENT_ID = 'parentId';
     const A_PARENT_MLM_ID = 'parentMlmId';
@@ -49,7 +47,6 @@ class Grid
     const E_BON = EBonDwnl::ENTITY_NAME;
     const E_CUST = Cfg::ENTITY_MAGE_CUSTOMER;
     const E_DWNL = EDwnlCust::ENTITY_NAME;
-    const E_INACT = EInact::ENTITY_NAME;
     const E_RANK = ERank::ENTITY_NAME;
 
     private function expFullNameCust()
@@ -84,7 +81,7 @@ class Grid
                 self::A_PV => self::AS_DWNL_BON . '.' . EBonDwnl::A_PV,
                 self::A_TV => self::AS_DWNL_BON . '.' . EBonDwnl::A_TV,
                 self::A_RANK => self::AS_RANK . '.' . ERank::A_CODE,
-                self::A_MONTH_INACT => self::AS_INACT . '.' . EInact::A_INACT_MONTHS,
+                self::A_MONTH_UNQ => self::AS_DWNL_BON . '.' . EBonDwnl::A_UNQ_MONTHS,
                 self::A_CUST_MLM_ID => self::AS_DWNL_CUST . '.' . EDwnlCust::A_MLM_ID,
                 self::A_CUST_NAME => $expNameCust,
                 self::A_PARENT_MLM_ID => self::AS_DWNL_PARENT . '.' . EDwnlCust::A_MLM_ID,
@@ -107,8 +104,8 @@ class Grid
      * `dwnlBon`.`path`,
      * `dwnlBon`.`pv`,
      * `dwnlBon`.`tv`,
+     * `dwnlBon`.`unq_months` AS `monthUnq`,
      * `ranks`.`code` AS `rank`,
-     * `inact`.`inact_months` AS `monthInact`,
      * `dwnlCust`.`mlm_id` AS `custMlmId`,
      * (CONCAT(cust.firstname,
      * " ",
@@ -121,8 +118,6 @@ class Grid
      * `prxgt_bon_hyb_dwnl` AS `dwnlBon`
      * LEFT JOIN `prxgt_bon_base_rank` AS `ranks` ON
      * ranks.id = dwnlBon.rank_ref
-     * LEFT JOIN `prxgt_bon_hyb_dwnl_inact` AS `inact` ON
-     * inact.tree_entry_ref = dwnlBon.id
      * LEFT JOIN `prxgt_dwnl_customer` AS `dwnlCust` ON
      * dwnlCust.customer_ref = dwnlBon.cust_ref
      * LEFT JOIN `customer_entity` AS `cust` ON
@@ -143,7 +138,6 @@ class Grid
         $asDwnlBon = self::AS_DWNL_BON;
         $asDwnlCust = self::AS_DWNL_CUST;
         $asDwnlParent = self::AS_DWNL_PARENT;
-        $asInact = self::AS_INACT;
         $asParent = self::AS_PARENT;
         $asRank = self::AS_RANK;
 
@@ -158,7 +152,8 @@ class Grid
             self::A_PARENT_ID => EBonDwnl::A_PARENT_REF,
             self::A_PATH => EBonDwnl::A_PATH,
             self::A_PV => EBonDwnl::A_PV,
-            self::A_TV => EBonDwnl::A_TV
+            self::A_TV => EBonDwnl::A_TV,
+            self::A_MONTH_UNQ => EBonDwnl::A_UNQ_MONTHS
         ];
         $result->from([$as => $tbl], $cols);
 
@@ -169,15 +164,6 @@ class Grid
             self::A_RANK => ERank::A_CODE
         ];
         $cond = $as . '.' . ERank::A_ID . '=' . $asDwnlBon . '.' . EBonDwnl::A_RANK_REF;
-        $result->joinLeft([$as => $tbl], $cond, $cols);
-
-        /* LEFT JOIN prxgt_bon_hyb_dwnl_inact */
-        $tbl = $this->resource->getTableName(self::E_INACT);
-        $as = $asInact;
-        $cols = [
-            self::A_MONTH_INACT => EInact::A_INACT_MONTHS
-        ];
-        $cond = $as . '.' . EInact::A_TREE_ENTRY_REF . '=' . $asDwnlBon . '.' . EBonDwnl::A_ID;
         $result->joinLeft([$as => $tbl], $cond, $cols);
 
         /* LEFT JOIN prxgt_dwnl_customer as customer */

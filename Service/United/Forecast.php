@@ -11,8 +11,6 @@ use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Last\Response as ACalcLastR
 use Praxigento\BonusBase\Repo\Data\Period as EPeriod;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Service\Calc\Forecast\Plain as APlain;
-use Praxigento\BonusHybrid\Service\Calc\Forecast\Unqualified\Request as ACalcUnqualRequest;
-use Praxigento\BonusHybrid\Service\Calc\Forecast\Unqualified\Response as ACalcUnqualResponse;
 use Praxigento\BonusHybrid\Service\United\Forecast\Request as ARequest;
 use Praxigento\BonusHybrid\Service\United\Forecast\Response as AResponse;
 use Praxigento\Core\Api\Helper\Period as HPeriod;
@@ -37,8 +35,6 @@ class Forecast
     private $servCalcGetLast;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain */
     private $servCalcPlain;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Forecast\Unqualified */
-    private $servCalcUnqual;
     /** @var \Praxigento\Downline\Api\Service\Snap\Calc */
     private $servSnapCalc;
 
@@ -50,8 +46,7 @@ class Forecast
         \Praxigento\Downline\Api\Service\Snap\Calc $servSnapCalc,
         \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Last $servCalcGetLast,
         \Praxigento\BonusHybrid\Service\Calc\Forecast\Plain $servCalcPlain,
-        \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress $servCalcCompress,
-        \Praxigento\BonusHybrid\Service\Calc\Forecast\Unqualified $servCalcUnqual
+        \Praxigento\BonusHybrid\Service\Calc\Forecast\Compress $servCalcCompress
     ) {
         $this->logger = $logger;
         $this->daoPeriod = $daoPeriod;
@@ -61,7 +56,6 @@ class Forecast
         $this->servCalcGetLast = $servCalcGetLast;
         $this->servCalcPlain = $servCalcPlain;
         $this->servCalcCompress = $servCalcCompress;
-        $this->servCalcUnqual = $servCalcUnqual;
     }
 
     private function calcPeriods()
@@ -82,14 +76,6 @@ class Forecast
         }
 
         return [$periodPrev, $periodCurrent];
-    }
-
-    private function calcUnqualified($period)
-    {
-        $req = new ACalcUnqualRequest();
-        $req->setPeriod($period);
-        /** @var ACalcUnqualResponse $resp */
-        $resp = $this->servCalcUnqual->exec($req);
     }
 
     private function cleanForecastCalcs()
@@ -128,7 +114,6 @@ class Forecast
             /* ... then perform forecast calculations */
             $this->servCalcPlain->exec($ctx);
             $this->servCalcCompress->exec($ctx);
-            $this->calcUnqualified($periodPrev);
         }
         /* calculation for current period */
         $this->logger->info("Perform calculation for period '$periodCurr' (current).");
@@ -137,7 +122,6 @@ class Forecast
         /* ... then perform forecast calculations */
         $this->servCalcPlain->exec($ctx);
         $this->servCalcCompress->exec($ctx);
-        $this->calcUnqualified($periodCurr);
 
         /** compose result */
         $this->logger->info("Aggregated activity to perform forecast calculation is completed.");

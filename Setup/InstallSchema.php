@@ -11,7 +11,6 @@ use Praxigento\BonusHybrid\Repo\Data\Cfg\Param as CfgParam;
 use Praxigento\BonusHybrid\Repo\Data\Compression\Phase1\Transfer\Pv as Phase1TransPv;
 use Praxigento\BonusHybrid\Repo\Data\Compression\Phase2\Legs as Phase2Legs;
 use Praxigento\BonusHybrid\Repo\Data\Downline as Dwnl;
-use Praxigento\BonusHybrid\Repo\Data\Downline\Inactive as DwnlInact;
 use Praxigento\BonusHybrid\Repo\Data\Registry\SignUpDebit as SignUpDebit;
 
 class InstallSchema
@@ -47,10 +46,6 @@ class InstallSchema
         /* Compression / Phase II / Legs */
         $demEntity = $demPackage->get('package/Compression/package/Phase2/entity/Legs');
         $this->toolDem->createEntity(Phase2Legs::ENTITY_NAME, $demEntity);
-
-        /* Downline / Inactive */
-        $demEntity = $demPackage->get('package/Downline/entity/Inactive');
-        $this->toolDem->createEntity(DwnlInact::ENTITY_NAME, $demEntity);
 
     }
 

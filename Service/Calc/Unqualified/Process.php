@@ -8,7 +8,6 @@ namespace Praxigento\BonusHybrid\Service\Calc\Unqualified;
 use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Request as AGetPeriodRequest;
 use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Response as AGetPeriodResponse;
 use Praxigento\BonusHybrid\Config as Cfg;
-use Praxigento\BonusHybrid\Repo\Query\GetInactive as QGetInact;
 
 /**
  * Change status for unqualified customers and change downline tree.
@@ -24,22 +23,17 @@ class Process
     private $daoCalc;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
-    /** @var \Praxigento\BonusHybrid\Repo\Query\GetInactive */
-    private $qGetInact;
     /** @var \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent */
     private $servPeriodGet;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\BonusBase\Repo\Dao\Calculation $daoCalc,
-        \Praxigento\BonusHybrid\Repo\Query\GetInactive $qGetInact,
         \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent $servPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\Unqualified\Process\A\Calc $aCalc
-    )
-    {
+    ) {
         $this->logger = $logger;
         $this->daoCalc = $daoCalc;
-        $this->qGetInact = $qGetInact;
         $this->servPeriodGet = $servPeriodGet;
         $this->aCalc = $aCalc;
     }
@@ -69,29 +63,6 @@ class Process
         $this->logger->info("'Unqualified Process' calculation is completed.");
     }
 
-    /**
-     * Get inactivity statistics for previous period.
-     *
-     * @param int $calcId
-     * @return array
-     */
-    private function getInactivePrev($calcId)
-    {
-        $result = [];
-
-        $query = $this->qGetInact->build();
-        $conn = $query->getConnection();
-        $bind = [
-            QGetInact::BND_CALC_ID => $calcId
-        ];
-        $rs = $conn->fetchAll($query, $bind);
-        foreach ($rs as $one) {
-            $custId = $one[QGetInact::A_CUST_REF];
-            $months = $one[QGetInact::A_MONTHS];
-            $result[$custId] = $months;
-        }
-        return $result;
-    }
     /**
      * Get data for periods & calculations.
      *
@@ -127,6 +98,20 @@ class Process
          * Compose result.
          */
         $result = [$writeOffCalc, $writeOffPeriod, $processCalc];
+        return $result;
+    }
+
+    /**
+     * Get inactivity statistics for previous period.
+     *
+     * @param int $calcId
+     * @return array
+     */
+    private function getInactivePrev($calcId)
+    {
+        $result = [];
+
+        throw new \Exception("Please, implement this method.");
         return $result;
     }
 
