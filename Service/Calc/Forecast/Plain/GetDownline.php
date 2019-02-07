@@ -5,13 +5,8 @@
 
 namespace Praxigento\BonusHybrid\Service\Calc\Forecast\Plain;
 
-use Praxigento\BonusBase\Repo\Data\Calculation as ECalc;
-use Praxigento\BonusBase\Repo\Data\Period as EPeriod;
-use Praxigento\BonusBase\Repo\Data\Type\Calc as ECalcType;
-use Praxigento\BonusBase\Repo\Query\Period\Calcs\Builder as QGetCalcs;
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
-use Praxigento\Core\Api\Helper\Period as HPeriod;
 use Praxigento\Downline\Repo\Query\Snap\OnDate\Builder as QSnapOnDate;
 
 /**
@@ -24,41 +19,29 @@ class GetDownline
     const CTX_IN_DATE_ON = 'dateOn';
     const CTX_OUT_DWNL = 'downline';
 
-    /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
-    private $daoBonDwnl;
     /** @var \Praxigento\Core\Api\App\Repo\Generic */
     private $daoGeneric;
     /** @var \Praxigento\BonusBase\Repo\Dao\Rank */
     private $daoRanks;
     /** @var \Praxigento\Downline\Api\Helper\Config */
     private $hlpCfgDwnl;
-    /** @var \Praxigento\Core\Api\Helper\Period */
-    private $hlpPeriod;
-    /** @var \Praxigento\Downline\Api\Helper\Tree */
-    private $hlpTree;
-    /** @var \Praxigento\BonusBase\Repo\Query\Period\Calcs\Builder */
-    private $qGetCalcs;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Z\Helper\GetDownlinePlainPrev */
+    private $hlpGetDownlinePlainPrev;
     /** @var \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder */
     private $qSnapOnDate;
 
     public function __construct(
         \Praxigento\Core\Api\App\Repo\Generic $daoGeneric,
         \Praxigento\BonusBase\Repo\Dao\Rank $daoRank,
-        \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
-        \Praxigento\BonusBase\Repo\Query\Period\Calcs\Builder $qGetCalcs,
         \Praxigento\Downline\Repo\Query\Snap\OnDate\Builder $qSnapOnDate,
-        \Praxigento\Core\Api\Helper\Period $hlpPeriod,
-        \Praxigento\Downline\Api\Helper\Tree $hlpTree,
-        \Praxigento\Downline\Api\Helper\Config $hlpCfgDwnl
+        \Praxigento\Downline\Api\Helper\Config $hlpCfgDwnl,
+        \Praxigento\BonusHybrid\Service\Calc\Z\Helper\GetDownlinePlainPrev $hlpGetDownlinePlainPrev
     ) {
         $this->daoGeneric = $daoGeneric;
         $this->daoRanks = $daoRank;
-        $this->daoBonDwnl = $daoBonDwnl;
-        $this->qGetCalcs = $qGetCalcs;
         $this->qSnapOnDate = $qSnapOnDate;
-        $this->hlpPeriod = $hlpPeriod;
-        $this->hlpTree = $hlpTree;
         $this->hlpCfgDwnl = $hlpCfgDwnl;
+        $this->hlpGetDownlinePlainPrev = $hlpGetDownlinePlainPrev;
     }
 
     /**
@@ -80,7 +63,7 @@ class GetDownline
         $mapRanks = $this->mapDefRanksByCustId();
         /* ... and unq. months for previous period */
         /** @var EBonDwnl[] $mapPlain */
-        $mapPlain = $this->mapTreePlainPrev($dateOn);
+        $mapPlain = $this->hlpGetDownlinePlainPrev->exec($dateOn);
 
         /* convert downline data to the entity (prxgt_bon_hyb_dwnl) */
         $result = [];
@@ -120,51 +103,6 @@ class GetDownline
     }
 
     /**
-     * Get calc ID (Forecast or PV Write Off) to load plain tree for previous period for $dateOn.
-     *
-     * @param string $dateOn
-     * @return int
-     */
-    private function getPrevTreeCalcId($dateOn)
-    {
-        /* get plain tree calc (PV_WRITE_OFF) for prev. period */
-        $periodPrev = $this->hlpPeriod->getPeriodPrev($dateOn, HPeriod::TYPE_MONTH);
-        $dsLast = $this->hlpPeriod->getPeriodLastDate($periodPrev);
-
-        $query = $this->qGetCalcs->build();
-
-        /* WHERE */
-        $bndTypeForecast = 'forecast';
-        $bndTypeWriteOff = 'writeOff';
-        $bndEnd = 'end';
-        $bndState = 'state';
-        $byTypeForecast = QGetCalcs::AS_CALC_TYPE . '.' . ECalcType::A_CODE . "=:$bndTypeForecast";
-        $byTypeWriteOff = QGetCalcs::AS_CALC_TYPE . '.' . ECalcType::A_CODE . "=:$bndTypeWriteOff";
-        $byDateEnd = QGetCalcs::AS_PERIOD . '.' . EPeriod::A_DSTAMP_END . "=:$bndEnd";
-        $byState = QGetCalcs::AS_CALC . '.' . ECalc::A_STATE . "=:$bndState";
-        $where = "(($byTypeForecast) OR ($byTypeWriteOff)) AND ($byDateEnd) AND ($byState)";
-        $query->where($where);
-
-        /* ORDER BY */
-        $byCalcIdDesc = QGetCalcs::AS_CALC . '.' . ECalc::A_ID . ' DESC';
-        $query->order($byCalcIdDesc);
-
-        /* EXEC QUERY */
-        $bind = [
-            $bndTypeForecast => Cfg::CODE_TYPE_CALC_FORECAST_PLAIN,
-            $bndTypeWriteOff => Cfg::CODE_TYPE_CALC_PV_WRITE_OFF,
-            $bndEnd => $dsLast,
-            $bndState => Cfg::CALC_STATE_COMPLETE,
-        ];
-        $conn = $query->getConnection();
-        $rs = $conn->fetchAll($query, $bind);
-        $one = reset($rs);
-        $result = $one[QGetCalcs::A_CALC_ID];
-
-        return $result;
-    }
-
-    /**
      * @return array [custId => rankId]
      */
     private function mapDefRanksByCustId()
@@ -191,17 +129,4 @@ class GetDownline
         return $result;
     }
 
-    /**
-     * Get plain tree for previous period (with unq. months data).
-     *
-     * @param string $dateOn YYYYMMDD
-     * @return EBonDwnl
-     */
-    private function mapTreePlainPrev($dateOn)
-    {
-        $prevCalcId = $this->getPrevTreeCalcId($dateOn);
-        $tree = $this->daoBonDwnl->getByCalcId($prevCalcId);
-        $result = $this->hlpTree->mapById($tree, EBonDwnl::A_CUST_REF);
-        return $result;
-    }
 }

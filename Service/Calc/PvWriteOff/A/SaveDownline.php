@@ -27,6 +27,8 @@ class SaveDownline
     private $hlpCfgDwnl;
     /** @var \Praxigento\Downline\Api\Helper\Tree */
     private $hlpDwnlTree;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Z\Helper\GetDownlinePlainPrev */
+    private $hlpGetDwnlPlainPrev;
     /** @var  \Praxigento\BonusHybrid\Api\Helper\Scheme */
     private $hlpScheme;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Z\Helper\GetCustomersIds */
@@ -43,9 +45,9 @@ class SaveDownline
         \Praxigento\BonusHybrid\Service\Calc\Z\Helper\GetCustomersIds $hlpSignUpDebitCust,
         \Praxigento\Downline\Api\Helper\Tree $hlpDwnlTree,
         \Praxigento\Downline\Api\Helper\Config $hlpCfgDwnl,
+        \Praxigento\BonusHybrid\Service\Calc\Z\Helper\GetDownlinePlainPrev $hlpGetDwnlPlainPrev,
         \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\SaveDownline\A\Repo\Query\GetSnap $qDwnlSnap
-    )
-    {
+    ) {
         $this->daoGeneric = $daoGeneric;
         $this->daoAcc = $daoAcc;
         $this->daoRanks = $daoRank;
@@ -54,6 +56,7 @@ class SaveDownline
         $this->hlpSignUpDebitCust = $hlpSignUpDebitCust;
         $this->hlpDwnlTree = $hlpDwnlTree;
         $this->hlpCfgDwnl = $hlpCfgDwnl;
+        $this->hlpGetDwnlPlainPrev = $hlpGetDwnlPlainPrev;
         $this->qDwnlSnap = $qDwnlSnap;
     }
 
@@ -74,6 +77,8 @@ class SaveDownline
         /* default & unqualified ranks IDs */
         $mapRanks = $this->mapDefRanksByCustId();
         $rankIdUnranked = $this->daoRanks->getIdByCode(Cfg::RANK_UNRANKED);
+        /* plain tree with unq. months info */
+        $mapPlainPrev = $this->hlpGetDwnlPlainPrev->exec($periodEnd);
 
         /* create registries for collected data */
         $regDwnl = [];
@@ -120,12 +125,23 @@ class SaveDownline
                 $dwnlData->setDepth($custDepth);
                 $dwnlData->setPath($custPath);
                 $dwnlData->setPv($custPv);
+                if (isset($mapPlainPrev[$custId])) {
+                    /** @var EBonDwnl $prevItem */
+                    $prevItem = $mapPlainPrev[$custId];
+                    $unqMonths = $prevItem->getUnqMonths() + 1;
+                } else {
+                    $unqMonths = 1;
+                }
                 /* use default rank for customer group (unranked or distributor) if qualified */
                 /* (rank will be set by compression calculation) */
                 $rankId = $mapRanks[$custId];
-                if (!$isCustQualified)
+                if (!$isCustQualified) {
                     $rankId = $rankIdUnranked;
+                } else {
+                    $unqMonths = 0;
+                }
                 $dwnlData->setRankRef($rankId);
+                $dwnlData->setUnqMonths($unqMonths);
                 $dwnlData->setTv(0);
                 $regDwnl[$custId] = $dwnlData;
 
