@@ -242,6 +242,10 @@ class Scheme
             $countryCode = $data[Customer::A_COUNTRY_CODE];
         } elseif ($data instanceof \Praxigento\Core\Data) {
             $countryCode = $data->get(Customer::A_COUNTRY_CODE);
+        } else {
+            $msg = "Unexpected input data (schema): " . \json_encode(\var_dump($data, true));
+            $msg .= \json_encode(\debug_backtrace());
+            throw new \Exception($msg);
         }
         $code = strtoupper($countryCode);
         if (
