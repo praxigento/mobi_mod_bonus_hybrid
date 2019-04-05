@@ -14,10 +14,6 @@ use Praxigento\Core\Api\App\Service\Process as IProcess;
 class Calc
     extends \Praxigento\Core\App\Cli\Cmd\Base
 {
-    /** @var \Magento\Framework\DB\Adapter\AdapterInterface */
-    private $conn;
-    /** @var \Magento\Framework\App\ResourceConnection */
-    private $resource;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Aggregate */
     private $servAgg;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Courtesy */
@@ -44,8 +40,6 @@ class Calc
     private $servValueTv;
 
     public function __construct(
-        \Magento\Framework\ObjectManagerInterface $manObj,
-        \Magento\Framework\App\ResourceConnection $resource,
         \Praxigento\BonusHybrid\Service\Calc\Aggregate $servAgg,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Courtesy $servBonusCourtesy,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Infinity $servBonusInfinity,
@@ -60,12 +54,9 @@ class Calc
         \Praxigento\BonusHybrid\Service\Calc\Value\Tv $servValueTv
     ) {
         parent::__construct(
-            $manObj,
             'prxgt:bonus:calc',
             'Calculate hybrid bonus (run all calcs one-by-one).'
         );
-        $this->resource = $resource;
-        $this->conn = $this->resource->getConnection();
         $this->servAgg = $servAgg;
         $this->servBonusCourtesy = $servBonusCourtesy;
         $this->servBonusInfinity = $servBonusInfinity;
@@ -190,90 +181,74 @@ class Calc
         return $result;
     }
 
-    protected function execute(
-        \Symfony\Component\Console\Input\InputInterface $input,
-        \Symfony\Component\Console\Output\OutputInterface $output
-    ) {
-        $output->writeln("<info>Command '" . $this->getName() . "'<info>");
-        $this->conn->beginTransaction();
-        try {
-            $canContinue = $this->calcSignUpDebit();
-            if ($canContinue) {
-                $output->writeln("<info>'Sign Up Volume Debit' calculation is completed.<info>");
-                $canContinue = $this->calcPvWriteOff();
-            }
-            if ($canContinue) {
-                $output->writeln("<info>'PV Write Off' calculation is completed.<info>");
-                $canContinue = $this->calcCompressPhase1();
-            }
-            if ($canContinue) {
-                $output->writeln("<info>'Phase I' compression is completed.<info>");
-                $canContinue = $this->calcBonusPersonal();
-            }
-            if ($canContinue) {
-                $output->writeln("<info>Personal bonus is calculated.<info>");
-                $canContinue = $this->calcValueTv();
-            }
-            if ($canContinue) {
-                $output->writeln("<info>TV are calculated.<info>");
-                $canContinue = $this->calcBonusTeamDef();
-            }
-            if ($canContinue) {
-                $output->writeln("<info>Team bonus (DEFAULT) is calculated.<info>");
-                $canContinue = $this->calcBonusTeamEu();
-            }
-            if ($canContinue) {
-                $output->writeln("<info>Team bonus (EU) is calculated.<info>");
-                $canContinue = $this->calcBonusCourtesy();
-            }
-            if ($canContinue) {
-                $output->writeln("<info>Courtesy bonus is calculated.<info>");
-                $canContinue = $this->calcValueOv();
-            }
-            if ($canContinue) {
-                $output->writeln("<info>OV are calculated.<info>");
-                $canContinue = $this->calcCompressPhase2(Cfg::SCHEMA_DEFAULT);
-            }
-            if ($canContinue) {
-                $output->writeln("<info>Phase II compression (DEFAULT) is completed.<info>");
-                $canContinue = $this->calcCompressPhase2(Cfg::SCHEMA_EU);
-            }
-            if ($canContinue) {
-                $output->writeln("<info>Phase II compression (EU) is completed.<info>");
-                $canContinue = $this->calcBonusOverride(Cfg::SCHEMA_DEFAULT);
-            }
-            if ($canContinue) {
-                $output->writeln("<info>Override bonus (DEFAULT) is calculated.<info>");
-                $canContinue = $this->calcBonusOverride(Cfg::SCHEMA_EU);
-            }
-            if ($canContinue) {
-                $output->writeln("<info>Override bonus (EU) is calculated.<info>");
-                $canContinue = $this->calcBonusInfinity(Cfg::SCHEMA_DEFAULT);
-            }
-            if ($canContinue) {
-                $output->writeln("<info>Infinity bonus (DEFAULT) is calculated.<info>");
-                $canContinue = $this->calcBonusInfinity(Cfg::SCHEMA_EU);
-            }
-            if ($canContinue) {
-                $output->writeln("<info>Infinity bonus (EU) is calculated.<info>");
-                $canContinue = $this->calcAggregate();
-            }
-            if ($canContinue) {
-                $output->writeln("<info>Bonus aggregation is calculated.<info>");
-                $this->conn->commit();
-                $output->writeln("<info>All data is committed.<info>");
-            } else {
-                $output->writeln("<error>Something goes wrong. Rollback.<error>");
-                $this->conn->rollBack();
-            }
-
-        } catch (\Throwable $e) {
-            $msg = $e->getMessage();
-            $trace = $e->getTraceAsString();
-            $output->writeln("<error>$msg<error>\n$trace");
-            $this->conn->rollBack();
+    protected function process(\Symfony\Component\Console\Input\InputInterface $input)
+    {
+        $canContinue = $this->calcSignUpDebit();
+        if ($canContinue) {
+            $this->logInfo("'Sign Up Volume Debit' calculation is completed.");
+            $canContinue = $this->calcPvWriteOff();
         }
-        $output->writeln('<info>Command \'' . $this->getName() . '\' is completed.<info>');
+        if ($canContinue) {
+            $this->logInfo("'PV Write Off' calculation is completed.");
+            $canContinue = $this->calcCompressPhase1();
+        }
+        if ($canContinue) {
+            $this->logInfo("'Phase I' compression is completed.");
+            $canContinue = $this->calcBonusPersonal();
+        }
+        if ($canContinue) {
+            $this->logInfo("Personal bonus is calculated.");
+            $canContinue = $this->calcValueTv();
+        }
+        if ($canContinue) {
+            $this->logInfo("TV are calculated.");
+            $canContinue = $this->calcBonusTeamDef();
+        }
+        if ($canContinue) {
+            $this->logInfo("Team bonus (DEFAULT) is calculated.");
+            $canContinue = $this->calcBonusTeamEu();
+        }
+        if ($canContinue) {
+            $this->logInfo("Team bonus (EU) is calculated.");
+            $canContinue = $this->calcBonusCourtesy();
+        }
+        if ($canContinue) {
+            $this->logInfo("Courtesy bonus is calculated.");
+            $canContinue = $this->calcValueOv();
+        }
+        if ($canContinue) {
+            $this->logInfo("OV are calculated.");
+            $canContinue = $this->calcCompressPhase2(Cfg::SCHEMA_DEFAULT);
+        }
+        if ($canContinue) {
+            $this->logInfo("Phase II compression (DEFAULT) is completed.");
+            $canContinue = $this->calcCompressPhase2(Cfg::SCHEMA_EU);
+        }
+        if ($canContinue) {
+            $this->logInfo("Phase II compression (EU) is completed.");
+            $canContinue = $this->calcBonusOverride(Cfg::SCHEMA_DEFAULT);
+        }
+        if ($canContinue) {
+            $this->logInfo("Override bonus (DEFAULT) is calculated.");
+            $canContinue = $this->calcBonusOverride(Cfg::SCHEMA_EU);
+        }
+        if ($canContinue) {
+            $this->logInfo("Override bonus (EU) is calculated.");
+            $canContinue = $this->calcBonusInfinity(Cfg::SCHEMA_DEFAULT);
+        }
+        if ($canContinue) {
+            $this->logInfo("Infinity bonus (DEFAULT) is calculated.");
+            $canContinue = $this->calcBonusInfinity(Cfg::SCHEMA_EU);
+        }
+        if ($canContinue) {
+            $this->logInfo("Infinity bonus (EU) is calculated.");
+            $canContinue = $this->calcAggregate();
+        }
+        if ($canContinue) {
+            $this->logInfo("Bonus aggregation is calculated.");
+        } else {
+            throw new \Exception("Something goes wrong in bonus calculation. Rollback.");
+        }
     }
 
 }
