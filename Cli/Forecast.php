@@ -14,17 +14,19 @@ use Praxigento\BonusHybrid\Service\United\Forecast\Response as AResponse;
 class Forecast
     extends \Praxigento\Core\App\Cli\Cmd\Base
 {
+    /** @var \Magento\Framework\DB\Adapter\AdapterInterface */
+    private $conn;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
-    /** @var \Praxigento\Core\Api\App\Repo\Transaction\Manager */
-    private $manTrans;
+    /** @var \Magento\Framework\App\ResourceConnection */
+    private $resource;
     /** @var \Praxigento\BonusHybrid\Service\United\Forecast */
     private $servUnited;
 
     public function __construct(
-        \Praxigento\Core\Api\App\Logger\Main $logger,
         \Magento\Framework\ObjectManagerInterface $manObj,
-        \Praxigento\Core\Api\App\Repo\Transaction\Manager $manTrans,
+        \Magento\Framework\App\ResourceConnection $resource,
+        \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\BonusHybrid\Service\United\Forecast $servUnited
     ) {
         parent::__construct(
@@ -32,8 +34,9 @@ class Forecast
             'prxgt:bonus:forecast',
             'Daily calculations to forecast results on final bonus calc.'
         );
+        $this->resource = $resource;
+        $this->conn = $resource->getConnection();
         $this->logger = $logger;
-        $this->manTrans = $manTrans;
         $this->servUnited = $servUnited;
     }
 
@@ -45,19 +48,19 @@ class Forecast
         $output->writeln("<info>$msg<info>");
         $this->logger->info($msg);
         /* perform the main processing */
-        $def = $this->manTrans->begin();
+        $this->conn->beginTransaction();
         try {
             $req = new ARequest();
             /** @var AResponse $resp */
             $resp = $this->servUnited->exec($req);
 
-            $this->manTrans->commit($def);
+            $this->conn->commit();
         } catch (\Throwable $e) {
             $msg = $e->getMessage();
             $trace = $e->getTraceAsString();
             $output->writeln("<error>$msg<error>\n$trace");
             $this->logger->error($msg);
-            $this->manTrans->rollback($def);
+            $this->conn->rollBack();
         }
         $msg = 'Command is completed.';
         $output->writeln("<info>$msg<info>");
