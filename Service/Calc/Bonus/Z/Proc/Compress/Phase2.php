@@ -26,8 +26,6 @@ class Phase2
     const IN_DWNL_PHASE1 = 'dwnlPhase1';
     /** Plain downline */
     const IN_DWNL_PLAIN = 'dwnlPlain';
-    /** array none-compressed PV by customer ID */
-    const IN_MAP_PV = 'mapPV';
     /** string Scheme code (see \Praxigento\BonusHybrid\Config::SCHEMA_XXX) */
     const IN_SCHEME = 'scheme';
     /** \Praxigento\BonusHybrid\Repo\Data\Downline[] */
@@ -36,18 +34,18 @@ class Phase2
     const OUT_LEGS = 'legs';
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase2\Fun\Act\Qualify */
     private $actQualify;
-    /** @var \Praxigento\Downline\Api\Helper\Tree */
-    private $hlpTree;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase2\IsQualified */
-    private $hlpIsQualified;
-    /** @var \Praxigento\BonusHybrid\Api\Helper\Scheme */
-    private $hlpScheme;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Downline */
     private $daoBonDwnl;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Cfg\Param */
     private $daoCfgParam;
     /** @var \Praxigento\BonusBase\Repo\Dao\Rank */
     private $daoRank;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase2\IsQualified */
+    private $hlpIsQualified;
+    /** @var \Praxigento\BonusHybrid\Api\Helper\Scheme */
+    private $hlpScheme;
+    /** @var \Praxigento\Downline\Api\Helper\Tree */
+    private $hlpTree;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase2\Fun\Rou\CalcLegs */
     private $rouCalcLegs;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase2\Fun\Rou\ComposeLegs */
@@ -63,8 +61,7 @@ class Phase2
         ActQualify $actQualify,
         RouCalcLegs $rouCalcLegs,
         RouComposeLegs $rouComposeLegs
-    )
-    {
+    ) {
         $this->hlpTree = $hlpTree;
         $this->hlpScheme = $hlpScheme;
         $this->hlpIsQualified = $hlpIsQualified;
@@ -82,7 +79,6 @@ class Phase2
         $phase2CalcId = $ctx->get(self::IN_CALC_ID_PHASE2);
         $dwnlCompress = $ctx->get(self::IN_DWNL_PHASE1);
         $dwnlPlain = $ctx->get(self::IN_DWNL_PLAIN);
-        $mapPv = $ctx->get(self::IN_MAP_PV);
         $scheme = $ctx->get(self::IN_SCHEME);
 
         /* define local working data */
@@ -97,7 +93,8 @@ class Phase2
          */
         $mapByIdCompress = $this->hlpTree->mapById($dwnlCompress, EBonDwnl::A_CUST_REF);
         $mapByTeamCompress = $this->hlpTree->mapByTeams($dwnlCompress, EBonDwnl::A_CUST_REF, EBonDwnl::A_PARENT_REF);
-        $mapByDepthCompress = $this->hlpTree->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::A_CUST_REF, EBonDwnl::A_DEPTH);
+        $mapByDepthCompress = $this->hlpTree->mapByTreeDepthDesc($dwnlCompress, EBonDwnl::A_CUST_REF,
+            EBonDwnl::A_DEPTH);
         $mapByIdPlain = $this->hlpTree->mapById($dwnlPlain, EBonDwnl::A_CUST_REF);
         $mapByTeamPlain = $this->hlpTree->mapByTeams($dwnlPlain, EBonDwnl::A_CUST_REF, EBonDwnl::A_PARENT_REF);
         $rankIdMgr = $this->daoRank->getIdByCode(Cfg::RANK_MANAGER);
@@ -112,7 +109,6 @@ class Phase2
                 /** @var EBonDwnl $custData */
                 $custData = $mapByIdCompress[$custId];
                 $parentId = $custData->getParentRef();
-                $pvOwn = $mapPv[$custId] ?? 0;
                 $pvCompress = $custData->getPv();
                 $tvCompress = $custData->getTv();
                 $ovCompress = $custData->getOv();
@@ -130,7 +126,7 @@ class Phase2
                  */
                 $ctxHlpQ = new \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase2\IsQualified\Context();
                 $ctxHlpQ->setCustId($custId);
-                $ctxHlpQ->setPv($pvOwn);
+                $ctxHlpQ->setPv($pvCompress);
                 $ctxHlpQ->setTv($tvCompress);
                 $ctxHlpQ->setScheme($scheme);
                 $ctxHlpQ->setCfgParams($cfgParams);
@@ -191,12 +187,12 @@ class Phase2
                  */
                 /** @var EBonDwnl $parentData */
                 $parentData = $mapByIdCompress[$parentId];
-                $parentPvOwn = isset($mapPv[$parentId]) ? $mapPv[$parentId] : 0;
+                $parentPv = $parentData->getPv();
                 $parentTv = $parentData->getTv();
                 /* validate parent qualification */
                 $ctxHlpQ = new \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase2\IsQualified\Context();
                 $ctxHlpQ->setCustId($parentId);
-                $ctxHlpQ->setPv($parentPvOwn);
+                $ctxHlpQ->setPv($parentPv);
                 $ctxHlpQ->setTv($parentTv);
                 $ctxHlpQ->setScheme($scheme);
                 $ctxHlpQ->setCfgParams($cfgParams);
@@ -213,12 +209,12 @@ class Phase2
                     foreach ($parents as $newParentId) {
                         /** @var EBonDwnl $newParentData */
                         $newParentData = $mapByIdCompress[$newParentId];
-                        $newParentPvOwn = isset($mapPv[$newParentId]) ? $mapPv[$newParentId] : 0;
+                        $newParentPv = $newParentData->getPv();
                         $newParentTv = $newParentData->getTv();
                         /* validate parent qualification */
                         $ctxHlpQ = new \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase2\IsQualified\Context();
                         $ctxHlpQ->setCustId($newParentId);
-                        $ctxHlpQ->setPv($newParentPvOwn);
+                        $ctxHlpQ->setPv($newParentPv);
                         $ctxHlpQ->setTv($newParentTv);
                         $ctxHlpQ->setScheme($scheme);
                         $ctxHlpQ->setCfgParams($cfgParams);

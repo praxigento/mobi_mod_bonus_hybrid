@@ -124,7 +124,6 @@ class Compress
         list($pv, $dwnlPlain) = $this->getDwnlPlain($period);
         $ctx = new \Praxigento\Core\Data();
         $ctx->set(PCpmrsPhase2::IN_CALC_ID_PHASE2, $calcId);
-        $ctx->set(PCpmrsPhase2::IN_MAP_PV, $pv);
         $ctx->set(PCpmrsPhase2::IN_DWNL_PLAIN, $dwnlPlain);
         $ctx->set(PCpmrsPhase2::IN_DWNL_PHASE1, $dwnlPhase1);
         $ctx->set(PCpmrsPhase2::IN_SCHEME, $scheme);

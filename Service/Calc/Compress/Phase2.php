@@ -26,8 +26,6 @@ class Phase2
     private $daoBonDwnl;
     /** @var \Praxigento\BonusBase\Repo\Dao\Calculation */
     private $daoCalc;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\Phase2\GetPv */
-    private $rouGetPv;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Compress\Phase2\SaveDownline */
     private $rouSaveDwnl;
 
@@ -37,7 +35,6 @@ class Phase2
         \Praxigento\BonusHybrid\Repo\Dao\Downline $daoBonDwnl,
         \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent $servPeriodGet,
         \Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase2 $procCmprsPhase2,
-        \Praxigento\BonusHybrid\Service\Calc\Compress\Phase2\GetPv $rouGetPv,
         \Praxigento\BonusHybrid\Service\Calc\Compress\Phase2\SaveDownline $rouSaveDwnl
     ) {
         $this->logger = $logger;
@@ -45,7 +42,6 @@ class Phase2
         $this->daoBonDwnl = $daoBonDwnl;
         $this->servPeriodGet = $servPeriodGet;
         $this->procCmprsPhase2 = $procCmprsPhase2;
-        $this->rouGetPv = $rouGetPv;
         $this->rouSaveDwnl = $rouSaveDwnl;
     }
 
@@ -60,7 +56,6 @@ class Phase2
      */
     private function compressPhase2($calcIdWriteOff, $calcIdPhase1, $calcIdPhase2, $scheme)
     {
-        $pv = $this->rouGetPv->exec($calcIdWriteOff);
         $dwnlPlain = $this->daoBonDwnl->getByCalcId($calcIdWriteOff);
         $dwnlPhase1 = $this->daoBonDwnl->getByCalcId($calcIdPhase1);
         $ctx = new \Praxigento\Core\Data();
@@ -68,7 +63,6 @@ class Phase2
         $ctx->set(PCpmrsPhase2::IN_SCHEME, $scheme);
         $ctx->set(PCpmrsPhase2::IN_DWNL_PLAIN, $dwnlPlain);
         $ctx->set(PCpmrsPhase2::IN_DWNL_PHASE1, $dwnlPhase1);
-        $ctx->set(PCpmrsPhase2::IN_MAP_PV, $pv);
         $out = $this->procCmprsPhase2->exec($ctx);
         $dwnlPhase2 = $out->get(PCpmrsPhase2::OUT_DWNL_PHASE2);
         $legs = $out->get(PCpmrsPhase2::OUT_LEGS);
