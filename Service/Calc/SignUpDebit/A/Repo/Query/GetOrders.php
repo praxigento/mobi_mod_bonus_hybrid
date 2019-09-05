@@ -23,6 +23,7 @@ class GetOrders
     const AS_CUST = 'cust';
     const AS_DWNL = 'dwnl';
     const AS_DWNL_PARENT = 'dwnp';
+    const AS_INVOICE = 'invoice';
     const AS_PV = 'pv';
     const AS_SALE = 'sale';
 
@@ -43,6 +44,7 @@ class GetOrders
     const E_CUST = Cfg::ENTITY_MAGE_CUSTOMER;
     const E_DWNL = EDwnlCust::ENTITY_NAME;
     const E_DWNL_PARENT = EDwnlCust::ENTITY_NAME;
+    const E_INVOICE = Cfg::ENTITY_MAGE_SALES_INVOICE;
     const E_PV = EPvSale::ENTITY_NAME;
     const E_SALE = Cfg::ENTITY_MAGE_SALES_ORDER;
 
@@ -54,12 +56,13 @@ class GetOrders
         /* define tables aliases for internal usage (in this method) */
         $asCust = self::AS_CUST;
         $asDwnl = self::AS_DWNL;
-        $asSale = self::AS_SALE;
-        $asPv = self::AS_PV;
+        $asInv = self::AS_INVOICE;
         $asParent = self::AS_DWNL_PARENT;
+        $asPv = self::AS_PV;
+        $asSale = self::AS_SALE;
 
         /* SELECT FROM customer_entity */
-        $tbl = $this->resource->getTableName(Cfg::ENTITY_MAGE_CUSTOMER);
+        $tbl = $this->resource->getTableName(self::E_CUST);
         $as = $asCust;
         $cols = [
             self::A_CUST_ID => Cfg::E_CUSTOMER_A_ENTITY_ID
@@ -67,7 +70,7 @@ class GetOrders
         $result->from([$as => $tbl], $cols);
 
         /* LEFT JOIN prxgt_dwnl_customer */
-        $tbl = $this->resource->getTableName(EDwnlCust::ENTITY_NAME);
+        $tbl = $this->resource->getTableName(self::E_DWNL);
         $as = $asDwnl;
         $cols = [
             self::A_COUNTRY => EDwnlCust::A_COUNTRY_CODE,
@@ -77,7 +80,7 @@ class GetOrders
         $result->joinLeft([$as => $tbl], $cond, $cols);
 
         /* LEFT JOIN sales_order */
-        $tbl = $this->resource->getTableName(Cfg::ENTITY_MAGE_SALES_ORDER);
+        $tbl = $this->resource->getTableName(self::E_SALE);
         $as = $asSale;
         $cols = [
             self::A_SALE_ID => Cfg::E_SALE_ORDER_A_ENTITY_ID
@@ -85,8 +88,15 @@ class GetOrders
         $cond = $as . '.' . Cfg::E_SALE_ORDER_A_CUSTOMER_ID . '=' . $asCust . '.' . Cfg::E_CUSTOMER_A_ENTITY_ID;
         $result->joinLeft([$as => $tbl], $cond, $cols);
 
+        /* LEFT JOIN sales_invoice */
+        $tbl = $this->resource->getTableName(self::E_INVOICE);
+        $as = $asInv;
+        $cols = [];
+        $cond = $as . '.' . Cfg::E_SALE_INVOICE_A_ORDER_ID . '=' . $asSale . '.' . Cfg::E_SALE_ORDER_A_ENTITY_ID;
+        $result->joinLeft([$as => $tbl], $cond, $cols);
+
         /* LEFT JOIN prxgt_pv_sale  */
-        $tbl = $this->resource->getTableName(EPvSale::ENTITY_NAME);
+        $tbl = $this->resource->getTableName(self::E_PV);
         $as = $asPv;
         $cols = [
             self::A_PV => EPvSale::A_TOTAL
@@ -95,7 +105,7 @@ class GetOrders
         $result->joinLeft([$as => $tbl], $cond, $cols);
 
         /* LEFT JOIN prxgt_dwnl_customer (as parent) */
-        $tbl = $this->resource->getTableName(EDwnlCust::ENTITY_NAME);
+        $tbl = $this->resource->getTableName(self::E_DWNL_PARENT);
         $as = $asParent;
         $cols = [
             self::A_PARENT_GRAND_ID => EDwnlCust::A_PARENT_REF
@@ -110,13 +120,15 @@ class GetOrders
         $byCustGroup = $asCust . '.' . Cfg::E_CUSTOMER_A_GROUP_ID . '=:' . self::BND_CUST_GROUP_ID;
         $byPv = $asPv . '.' . EPvSale::A_TOTAL . ' >= 100';
         $quoted = $conn->quote(MSaleOrder::STATE_PROCESSING);
-        $byStateProcessing = $asSale . '.' . Cfg::E_SALE_ORDER_A_STATE . "=$quoted";
+        $bySaleStateProcessing = $asSale . '.' . Cfg::E_SALE_ORDER_A_STATE . "=$quoted";
         $quoted = $conn->quote(MSaleOrder::STATE_COMPLETE);
-        $byStateComplete = $asSale . '.' . Cfg::E_SALE_ORDER_A_STATE . "=$quoted";
-        $byState = "($byStateProcessing) OR ($byStateComplete)";
-        $bySaleCreated = $asSale . '.' . Cfg::E_SALE_ORDER_A_CREATED_AT . '<:' . self::BND_DATE_TO;
+        $bySaleStateComplete = $asSale . '.' . Cfg::E_SALE_ORDER_A_STATE . "=$quoted";
+        $bySaleState = "($bySaleStateProcessing) OR ($bySaleStateComplete)";
+        $quoted = $conn->quote(\Magento\Sales\Model\Order\Invoice::STATE_PAID);
+        $byInvState = $asInv . '.' . Cfg::E_SALE_INVOICE_A_STATE . "=$quoted";
+        $byInvCreated = $asInv . '.' . Cfg::E_SALE_INVOICE_A_CREATED_AT . '<:' . self::BND_DATE_TO;
         $where = "($byCreatedAfter) AND ($byCreatedBefore) AND ($byCustGroup) AND ($byPv) "
-            . "AND ($byState) AND ($bySaleCreated)";
+            . "AND ($bySaleState) AND ($byInvState) AND ($byInvCreated)";
         $result->where($where);
 
         /* ORDER by sale id */
