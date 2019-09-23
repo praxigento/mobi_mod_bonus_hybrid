@@ -16,7 +16,7 @@ class PvWriteOff
 {
     /** @var \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\PrepareTrans */
     private $aPrepareTrans;
-    /** @var \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Query\GetData\Builder */
+    /** @var \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Query\GetData */
     private $aQGetData;
     /** @var \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\SaveDownline */
     private $aSaveDownline;
@@ -48,7 +48,7 @@ class PvWriteOff
         \Praxigento\BonusBase\Repo\Dao\Log\Opers $daoLogOper,
         \Praxigento\Accounting\Service\Operation\Create $servOperation,
         \Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent $servPeriodGet,
-        \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Query\GetData\Builder $aQGetData,
+        \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Query\GetData $aQGetData,
         \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\PrepareTrans $aPrepareTrans,
         \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\SaveDownline $aSaveDownline,
         \Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Validate $aValidate

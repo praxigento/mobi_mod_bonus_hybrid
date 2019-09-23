@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Query\GetData;
+namespace Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Query;
 
 use Praxigento\Accounting\Repo\Data\Account as EAcc;
 use Praxigento\Accounting\Repo\Data\Transaction as ETrans;
@@ -11,27 +11,8 @@ use Praxigento\BonusHybrid\Service\Calc\PvWriteOff\A\Data\Trans as DTrans;
 
 /**
  * Compose query to get accounting data for "PV Write Off" calculation:
- *
- * SELECT
- * `pat`.`debit_acc_id` AS `accIdDebit`,
- * `pat`.`credit_acc_id` AS `accIdCredit`,
- * `pat`.`value` AS `amount`
- * FROM
- * `prxgt_acc_transaction` AS `pat`
- * LEFT JOIN `prxgt_acc_account` AS `paa` ON
- * paa.id = pat.debit_acc_id
- * WHERE
- * (
- * paa.asset_type_id =:assetTypeId
- * )
- * AND(
- * pat.date_applied >=:dateFrom
- * )
- * AND(
- * pat.date_applied <:dateTo
- * )
  */
-class Builder
+class GetData
     extends \Praxigento\Core\App\Repo\Query\Builder
 {
     /** Tables aliases for external usage ('camelCase' naming) */
