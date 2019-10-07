@@ -62,7 +62,7 @@ class Validate
                 }
                 /* catch not-distributors PV */
                 $groupId = $mapGroups[$accId]; // exception is awaited if account has no mapping to the customer group
-                if (!in_array($groupId, $groupsAllowed)) {
+                if (!in_array($groupId, $groupsAllowed) && ($amount > Cfg::DEF_ZERO)) {
                     $foundNotDistr[$accId] = $groupId;
                 }
             }
