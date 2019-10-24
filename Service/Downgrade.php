@@ -65,11 +65,12 @@ class Downgrade
         /**
          * @var \Praxigento\BonusBase\Repo\Data\Calculation $writeOffCalc
          * @var \Praxigento\BonusBase\Repo\Data\Calculation $processCalc
+         * @var \Praxigento\BonusBase\Repo\Data\Period $processPeriod
          */
-        list($writeOffCalc, $processCalc) = $this->getCalcData();
+        list($writeOffCalc, $processCalc, $processPeriod) = $this->getCalcData();
         $writeOffCalcId = $writeOffCalc->getId();
         $treePlain = $this->daoBonDwl->getByCalcId($writeOffCalcId);
-        $this->aCalc->exec($treePlain);
+        $this->aCalc->exec($treePlain, $processPeriod);
         /* mark this calculation complete */
         $calcId = $processCalc->getId();
         $this->daoCalc->markComplete($calcId);
@@ -101,10 +102,12 @@ class Downgrade
         $writeOffCalc = $resp->getBaseCalcData();
         /** @var \Praxigento\BonusBase\Repo\Data\Calculation $pwWriteOffCalc */
         $processCalc = $resp->getDepCalcData();
+        /** @var \Praxigento\BonusBase\Repo\Data\Period $processPeriod */
+        $processPeriod = $resp->getDepPeriodData();
         /**
          * Compose result.
          */
-        $result = [$writeOffCalc, $processCalc];
+        $result = [$writeOffCalc, $processCalc, $processPeriod];
         return $result;
     }
 

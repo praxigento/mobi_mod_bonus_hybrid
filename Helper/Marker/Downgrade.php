@@ -8,7 +8,7 @@ namespace Praxigento\BonusHybrid\Helper\Marker;
 
 
 /**
- * Set/get mark that downgrade process is running to prevent extra cacls on customer group changes.
+ * Set/get mark that downgrade process is running to prevent extra calcs on customer group changes.
  */
 class Downgrade
 {
