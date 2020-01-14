@@ -122,6 +122,7 @@ class GetBonusTotals
 
         /* WHERE */
         $byType = "$asCalcType." . ETypeCalc::A_CODE . " IN (" .
+            "'" . Cfg::CODE_TYPE_CALC_BONUS_SIGN_UP_DEBIT . "', " .
             "'" . Cfg::CODE_TYPE_CALC_BONUS_PERSONAL . "', " .
             "'" . Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF . "', " .
             "'" . Cfg::CODE_TYPE_CALC_BONUS_TEAM_EU . "', " .
