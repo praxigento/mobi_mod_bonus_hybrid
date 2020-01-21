@@ -9,6 +9,7 @@ namespace Praxigento\BonusHybrid\Service\Calc\Aggregate\A\Repo\Query;
 use Praxigento\Accounting\Repo\Data\Account as EAcc;
 use Praxigento\Accounting\Repo\Data\Operation as EOper;
 use Praxigento\Accounting\Repo\Data\Transaction as ETran;
+use Praxigento\Accounting\Repo\Data\Type\Asset as ETypeAsset;
 use Praxigento\BonusBase\Repo\Data\Calculation as ECalc;
 use Praxigento\BonusBase\Repo\Data\Log\Opers as ELog;
 use Praxigento\BonusBase\Repo\Data\Period as EPeriod;
@@ -25,11 +26,12 @@ class GetBonusTotals
     /** Tables aliases for external usage ('camelCase' naming) */
     const AS_ACC = 'acc';
     const AS_CALC = 'calc';
-    const AS_CALC_TYPE = 'calcType';
     const AS_LOG = 'log';
     const AS_OPER = 'oper';
     const AS_PERIOD = 'period';
     const AS_TRANS = 'tran';
+    const AS_TYPE_ASSET = 'assetType';
+    const AS_TYPE_CALC = 'calcType';
 
     /** Columns/expressions aliases for external usage ('camelCase' naming) */
     const A_ACC_ID = 'accId';
@@ -47,6 +49,7 @@ class GetBonusTotals
     const E_OPER = EOper::ENTITY_NAME;
     const E_PERIOD = EPeriod::ENTITY_NAME;
     const E_TRAN = ETran::ENTITY_NAME;
+    const E_TYPE_ASSET = ETypeAsset::ENTITY_NAME;
     const E_TYPE_CALC = ETypeCalc::ENTITY_NAME;
 
 
@@ -57,15 +60,16 @@ class GetBonusTotals
         /* define tables aliases for internal usage (in this method) */
         $asAcc = self::AS_ACC;
         $asCalc = self::AS_CALC;
-        $asCalcType = self::AS_CALC_TYPE;
         $asLog = self::AS_LOG;
         $asOper = self::AS_OPER;
         $asPeriod = self::AS_PERIOD;
         $asTrans = self::AS_TRANS;
+        $asTypeAsset = self::AS_TYPE_ASSET;
+        $asTypeCalc = self::AS_TYPE_CALC;
 
         /* FROM prxgt_bon_base_type_calc  */
         $tbl = $this->resource->getTableName(self::E_TYPE_CALC);
-        $as = $asCalcType;
+        $as = $asTypeCalc;
         $cols = [];
         $result->from([$as => $tbl], $cols);
 
@@ -73,7 +77,7 @@ class GetBonusTotals
         $tbl = $this->resource->getTableName(self::E_PERIOD);
         $as = $asPeriod;
         $cols = [];
-        $cond = "$as." . EPeriod::A_CALC_TYPE_ID . "=$asCalcType." . ETypeCalc::A_ID;
+        $cond = "$as." . EPeriod::A_CALC_TYPE_ID . "=$asTypeCalc." . ETypeCalc::A_ID;
         $result->joinLeft([$as => $tbl], $cond, $cols);
 
         /* LEFT JOIN prxgt_bon_base_calc */
@@ -118,10 +122,15 @@ class GetBonusTotals
         $cond = "$as." . EAcc::A_ID . "=$asTrans." . ETran::A_CREDIT_ACC_ID;
         $result->joinLeft([$as => $tbl], $cond, $cols);
 
-        $q = Cfg::CODE_TYPE_CALC_BONUS_AGGREGATE;
+        /* LEFT JOIN prxgt_acc_type_asset */
+        $tbl = $this->resource->getTableName(self::E_TYPE_ASSET);
+        $as = $asTypeAsset;
+        $cols = [];
+        $cond = "$as." . ETypeAsset::A_ID . "=$asAcc." . EAcc::A_ASSET_TYPE_ID;
+        $result->joinLeft([$as => $tbl], $cond, $cols);
 
         /* WHERE */
-        $byType = "$asCalcType." . ETypeCalc::A_CODE . " IN (" .
+        $byType = "$asTypeCalc." . ETypeCalc::A_CODE . " IN (" .
             "'" . Cfg::CODE_TYPE_CALC_BONUS_SIGN_UP_DEBIT . "', " .
             "'" . Cfg::CODE_TYPE_CALC_BONUS_PERSONAL . "', " .
             "'" . Cfg::CODE_TYPE_CALC_BONUS_TEAM_DEF . "', " .
@@ -134,7 +143,8 @@ class GetBonusTotals
         $byBegin = "$asPeriod." . EPeriod::A_DSTAMP_BEGIN . "=:" . self::BND_PERIOD_BEGIN;
         $byEnd = "$asPeriod." . EPeriod::A_DSTAMP_END . "=:" . self::BND_PERIOD_END;
         $byState = "$asCalc." . ECalc::A_STATE . "='" . Cfg::CALC_STATE_COMPLETE . "'";
-        $result->where("($byType) AND ($byBegin) AND ($byEnd) AND ($byState)");
+        $byAsset = "$asTypeAsset." . ETypeAsset::A_CODE . "='" . Cfg::CODE_TYPE_ASSET_BONUS . "'";
+        $result->where("($byType) AND ($byBegin) AND ($byEnd) AND ($byState) AND ($byAsset)");
 
         /* GROUP */
         $result->group("$asAcc." . EAcc::A_ID);
