@@ -572,6 +572,81 @@
                     "alias": "reg",
                     "comment": "Registry for additional data.",
                     "entity": {
+                      "Downgrade": {
+                        "alias": "downgrade",
+                        "comment": "Registry for customers downgrades.",
+                        "attribute": {
+                          "CalculationRef": {
+                            "alias": "calc_ref",
+                            "comment": "Reference to the related calculation (type 'HYBRID_UNQUALIFIED_PROCESS' is expected).",
+                            "nullable": false,
+                            "type": {
+                              "integer": {
+                                "unsigned": true
+                              }
+                            }
+                          },
+                          "CustomerRef": {
+                            "alias": "cust_ref",
+                            "comment": "Reference to the customer been downgraded.",
+                            "nullable": false,
+                            "type": {
+                              "integer": {
+                                "unsigned": true
+                              }
+                            }
+                          }
+                        },
+                        "index": {
+                          "primary": {
+                            "type": "primary",
+                            "aliases": [
+                              "calc_ref",
+                              "cust_ref"
+                            ]
+                          }
+                        },
+                        "relation": {
+                          "toCalculation": {
+                            "own": {
+                              "aliases": [
+                                "calc_ref"
+                              ]
+                            },
+                            "reference": {
+                              "entity": {
+                                "completeAlias": "prxgt_bon_base_calc"
+                              },
+                              "aliases": [
+                                "id"
+                              ]
+                            },
+                            "action": {
+                              "delete": "cascade",
+                              "update": "restrict"
+                            }
+                          },
+                          "toCustomer": {
+                            "own": {
+                              "aliases": [
+                                "cust_ref"
+                              ]
+                            },
+                            "reference": {
+                              "entity": {
+                                "completeAlias": "prxgt_dwnl_customer"
+                              },
+                              "aliases": [
+                                "customer_ref"
+                              ]
+                            },
+                            "action": {
+                              "delete": "cascade",
+                              "update": "restrict"
+                            }
+                          }
+                        }
+                      },
                       "SignUpVolumeDebit": {
                         "alias": "signup",
                         "comment": "Registry for Sign Up Volume Debit calc.",
