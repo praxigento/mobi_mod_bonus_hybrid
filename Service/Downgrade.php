@@ -69,10 +69,10 @@ class Downgrade
          */
         list($writeOffCalc, $processCalc, $processPeriod) = $this->getCalcData();
         $writeOffCalcId = $writeOffCalc->getId();
-        $treePlain = $this->daoBonDwl->getByCalcId($writeOffCalcId);
-        $this->aCalc->exec($treePlain, $processPeriod);
-        /* mark this calculation complete */
         $calcId = $processCalc->getId();
+        $treePlain = $this->daoBonDwl->getByCalcId($writeOffCalcId);
+        $this->aCalc->exec($treePlain, $processPeriod, $calcId);
+        /* mark this calculation complete */
         $this->daoCalc->markComplete($calcId);
         $this->hlpMarkDowngrade->cleanMark();
 

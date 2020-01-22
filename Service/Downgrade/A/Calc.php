@@ -10,6 +10,7 @@ namespace Praxigento\BonusHybrid\Service\Downgrade\A;
 
 use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
+use Praxigento\BonusHybrid\Repo\Data\Registry\Downgrade as ERegDwngrd;
 use Praxigento\Downline\Repo\Data\Change\Group as EDwnlChangeGroup;
 
 /**
@@ -20,6 +21,8 @@ class Calc
 {
     /** @var \Praxigento\Downline\Repo\Dao\Change\Group */
     private $daoDwnlChangeGroup;
+    /** @var \Praxigento\BonusHybrid\Repo\Dao\Registry\Downgrade */
+    private $daoRegDwngrd;
     /** @var \Praxigento\Downline\Api\Helper\Config */
     private $hlpCfgDwnl;
     /** @var \Praxigento\Core\Api\Helper\Customer\Group */
@@ -43,6 +46,7 @@ class Calc
         \Praxigento\Downline\Api\Helper\Config $hlpCfgDwnl,
         \Praxigento\Downline\Api\Helper\Group\Transition $hlpGroupTrans,
         \Praxigento\Downline\Repo\Dao\Change\Group $daoDwnlChangeGroup,
+        \Praxigento\BonusHybrid\Repo\Dao\Registry\Downgrade $daoRegDwngrd,
         \Praxigento\Downline\Api\Service\Customer\Downline\SwitchUp $servSwitchUp
     ) {
         $this->logger = $logger;
@@ -52,15 +56,17 @@ class Calc
         $this->hlpCfgDwnl = $hlpCfgDwnl;
         $this->hlpGroupTrans = $hlpGroupTrans;
         $this->daoDwnlChangeGroup = $daoDwnlChangeGroup;
+        $this->daoRegDwngrd = $daoRegDwngrd;
         $this->servSwitchUp = $servSwitchUp;
     }
 
     /**
      * @param EBonDwnl[] $treePlain
      * @param \Praxigento\BonusBase\Repo\Data\Period $period
+     * @param int $calcId
      * @throws \Throwable
      */
-    public function exec($treePlain, $period)
+    public function exec($treePlain, $period, $calcId)
     {
         /* group ID for unqualified customers */
         $groupIdUnq = $this->hlpCfgDwnl->getDowngradeGroupUnqual();
@@ -84,6 +90,11 @@ class Calc
                                 $cust->setGroupId($groupIdUnq);
                                 /* ... then to switch all customer's children to the customer's parent (on save event) */
                                 $this->repoCust->save($cust);
+                                /* save item do downgrade registry */
+                                $dwngrd = new ERegDwngrd();
+                                $dwngrd->setCalcRef($calcId);
+                                $dwngrd->setCustomerRef($custId);
+                                $this->daoRegDwngrd->create($dwngrd);
                                 $this->logger->info("Customer #$custId is downgraded (from group $groupId to #$groupIdUnq).");
                             }
                         } catch (\Throwable $e) {
