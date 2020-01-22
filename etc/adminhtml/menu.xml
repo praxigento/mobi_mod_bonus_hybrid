@@ -13,5 +13,14 @@
              action="bonus/downline"
              resource="Praxigento_BonusBase::admin_bonus"/>
 
+        <add id="Praxigento_BonusHybrid::customer_downgrade"
+             title="Downgrade"
+             translate="title"
+             module="Praxigento_BonusHybrid"
+             sortOrder="250"
+             parent="Praxigento_Core::customers_grids"
+             action="customer/downgrade"
+             resource="Praxigento_BonusBase::admin_bonus"/>
+
     </menu>
 </config>

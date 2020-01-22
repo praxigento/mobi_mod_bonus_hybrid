@@ -77,6 +77,7 @@ class Config extends BonusBaseCfg
 
     /** Max count of the unq. months in a row allowed for distributors before downgrade. */
     const MAX_UNQ_MONTHS = 6;
+    const MENU_CUSTOMER_DOWNGRADE = 'customer_downgrade';
     const MENU_BONUS_DOWNLINE = 'bonus_downline';
     const MODULE = 'Praxigento_BonusHybrid';
 
