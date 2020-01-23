@@ -31,6 +31,8 @@ class Calc
     private $hlpGroupTrans;
     /** @var \Praxigento\Core\Api\Helper\Period */
     private $hlpPeriod;
+    /** @var \Praxigento\BonusHybrid\Api\Helper\Scheme */
+    private $hlpScheme;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
     /** @var \Magento\Customer\Api\CustomerRepositoryInterface */
@@ -45,6 +47,7 @@ class Calc
         \Praxigento\Core\Api\Helper\Period $hlpPeriod,
         \Praxigento\Downline\Api\Helper\Config $hlpCfgDwnl,
         \Praxigento\Downline\Api\Helper\Group\Transition $hlpGroupTrans,
+        \Praxigento\BonusHybrid\Api\Helper\Scheme $hlpScheme,
         \Praxigento\Downline\Repo\Dao\Change\Group $daoDwnlChangeGroup,
         \Praxigento\BonusHybrid\Repo\Dao\Registry\Downgrade $daoRegDwngrd,
         \Praxigento\Downline\Api\Service\Customer\Downline\SwitchUp $servSwitchUp
@@ -55,6 +58,7 @@ class Calc
         $this->hlpPeriod = $hlpPeriod;
         $this->hlpCfgDwnl = $hlpCfgDwnl;
         $this->hlpGroupTrans = $hlpGroupTrans;
+        $this->hlpScheme = $hlpScheme;
         $this->daoDwnlChangeGroup = $daoDwnlChangeGroup;
         $this->daoRegDwngrd = $daoRegDwngrd;
         $this->servSwitchUp = $servSwitchUp;
@@ -76,38 +80,42 @@ class Calc
             $custId = $one->getCustomerRef();
             $unqMonths = $one->getUnqMonths();
             if ($unqMonths >= Cfg::MAX_UNQ_MONTHS) {
-                /* get current group and */
-                $groupIdCurrent = $this->hlpCustGroup->getIdByCustomerId($custId);
-                $isTransAllowed = $this->hlpGroupTrans->isAllowedGroupTransition($groupIdCurrent, $groupIdUnq);
-                if ($isTransAllowed) {
-                    $isNew = $this->isNewDistr($custId, $groupIdsDistr, $dsEnd);
-                    if (!$isNew) {
-                        /* we should change customer group */
-                        try {
-                            $cust = $this->repoCust->getById($custId);
-                            $groupId = $cust->getGroupId();
-                            if ($groupId != $groupIdUnq) {
-                                $cust->setGroupId($groupIdUnq);
-                                /* ... then to switch all customer's children to the customer's parent (on save event) */
-                                $this->repoCust->save($cust);
-                                /* save item do downgrade registry */
-                                $dwngrd = new ERegDwngrd();
-                                $dwngrd->setCalcRef($calcId);
-                                $dwngrd->setCustomerRef($custId);
-                                $this->daoRegDwngrd->create($dwngrd);
-                                $this->logger->info("Customer #$custId is downgraded (from group $groupId to #$groupIdUnq).");
+                $forcedCustIds = $this->hlpScheme->getForcedQualificationCustomersIds();
+                if (!in_array($custId, $forcedCustIds)) {
+                    /* get current group and */
+                    $groupIdCurrent = $this->hlpCustGroup->getIdByCustomerId($custId);
+                    $isTransAllowed = $this->hlpGroupTrans->isAllowedGroupTransition($groupIdCurrent, $groupIdUnq);
+                    if ($isTransAllowed) {
+                        $isNew = $this->isNewDistr($custId, $groupIdsDistr, $dsEnd);
+                        if (!$isNew) {
+                            /* we should change customer group */
+                            try {
+                                $cust = $this->repoCust->getById($custId);
+                                $groupId = $cust->getGroupId();
+                                if ($groupId != $groupIdUnq) {
+                                    $cust->setGroupId($groupIdUnq);
+                                    /* ... then to switch all customer's children to the customer's parent (on save event) */
+                                    $this->repoCust->save($cust);
+                                    /* save item do downgrade registry */
+                                    $dwngrd = new ERegDwngrd();
+                                    $dwngrd->setCalcRef($calcId);
+                                    $dwngrd->setCustomerRef($custId);
+                                    $this->daoRegDwngrd->create($dwngrd);
+                                    $this->logger->info("Customer #$custId is downgraded (from group $groupId to #$groupIdUnq).");
+                                }
+                            } catch (\Throwable $e) {
+                                $this->logger->error("Cannot update customer group on unqualified customer ($custId) downgrade.");
+                                throw $e;
                             }
-                        } catch (\Throwable $e) {
-                            $this->logger->error("Cannot update customer group on unqualified customer ($custId) downgrade.");
-                            throw $e;
+                        } else {
+                            $this->logger->info("Customer #$custId should not be downgraded (group is assigned after bonus period).");
                         }
                     } else {
-                        $this->logger->info("Customer #$custId should not be downgraded (group is assigned after bonus period).");
+                        $this->logger->info("Downgrade for customer #$custId is not allowed (group id: $groupIdCurrent).");
                     }
                 } else {
-                    $this->logger->info("Downgrade for customer #$custId is not allowed (group id: $groupIdCurrent).");
+                    $this->logger->info("Downgrade for customer #$custId is not allowed (forced qualification).");
                 }
-
             }
         }
     }

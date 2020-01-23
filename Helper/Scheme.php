@@ -16,9 +16,6 @@ use Praxigento\Downline\Repo\Data\Customer;
 class Scheme
     implements \Praxigento\BonusHybrid\Api\Helper\Scheme
 {
-    const A_RANK_ID = 'RankId';
-    const A_SCHEME = 'Scheme';
-
     /**
      * There are 2 customers with forced qualifications and ranks in Santegra project.
      *
