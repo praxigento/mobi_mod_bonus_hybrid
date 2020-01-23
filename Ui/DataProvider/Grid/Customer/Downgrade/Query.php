@@ -22,6 +22,7 @@ class Query
 
     /**#@+ Columns/expressions aliases for external usage */
     const A_CALC_ID = 'calcId';
+    const A_COUNTRY_CODE = 'countryCode';
     const A_CUST_ID = 'custId';
     const A_CUST_MLM_ID = 'custMlmId';
     const A_CUST_NAME = 'custName';
@@ -54,6 +55,7 @@ class Query
         if (is_null($this->mapper)) {
             $map = [
                 self::A_CALC_ID => self::AS_REG_DWNGRD . '.' . ERegDwngrd::A_CALC_REF,
+                self::A_COUNTRY_CODE => self::AS_CUST_DWNL . '.' . EDwnlCust::A_COUNTRY_CODE,
                 self::A_CUST_ID => self::AS_REG_DWNGRD . '.' . ERegDwngrd::A_CUST_REF,
                 self::A_CUST_MLM_ID => self::AS_CUST_DWNL . '.' . EDwnlCust::A_MLM_ID,
                 self::A_CUST_NAME => $this->getExpForCustName(),
@@ -118,7 +120,8 @@ class Query
         $tbl = $this->resource->getTableName(EDwnlCust::ENTITY_NAME);
         $as = $asDwnl;
         $cols = [
-            self::A_CUST_MLM_ID => EDwnlCust::A_MLM_ID
+            self::A_CUST_MLM_ID => EDwnlCust::A_MLM_ID,
+            self::A_COUNTRY_CODE => EDwnlCust::A_COUNTRY_CODE
         ];
         $cond = $as . '.' . EDwnlCust::A_CUSTOMER_REF . '=' . $asReg . '.' . ERegDwngrd::A_CUST_REF;
         $result->joinLeft([$as => $tbl], $cond, $cols);
