@@ -10,6 +10,7 @@ use Praxigento\BonusBase\Api\Service\Period\Calc\Get\Dependent\Response as AGetP
 use Praxigento\BonusBase\Repo\Data\Log\Customers as ELogCust;
 use Praxigento\BonusBase\Repo\Data\Log\Opers as ELogOper;
 use Praxigento\BonusHybrid\Config as Cfg;
+use Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Data\Bonus as DBonus;
 
 /**
  * Calculate Team Bonus.
@@ -150,9 +151,10 @@ class Team
     }
 
     /**
-     * @param array $bonus [custId => bonusValue]
+     * @param DBonus[] $bonus
      * @param \Praxigento\BonusBase\Repo\Data\Period $period
      * @return \Praxigento\Accounting\Repo\Data\Transaction[]
+     * @throws \Exception
      */
     private function getTransactions($bonus, $period)
     {
