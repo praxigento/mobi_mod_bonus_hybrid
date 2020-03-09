@@ -31,8 +31,7 @@ class SignUpDebit
         \Praxigento\BonusHybrid\Service\Calc\SignUpDebit\A\Repo\Query\GetOrders $qbGetOrders,
         \Praxigento\BonusBase\Service\Period\Calc\Get\IBasis $servPeriodGetBasis,
         \Praxigento\BonusHybrid\Service\Calc\SignUpDebit\A\ProcessOrders $ownProcessOrders
-    )
-    {
+    ) {
         $this->logger = $logger;
         $this->hlpPeriod = $hlpPeriod;
         $this->daoCalc = $daoCalc;
@@ -57,7 +56,7 @@ class SignUpDebit
         $calcState = $calcData->getState();
         $this->logger->info("Processing period #$periodId ($periodBegin-$periodEnd), Sign Up Volume Debit calculation #$calcId ($calcState).");
         if ($calcState != Cfg::CALC_STATE_COMPLETE) {
-            $dateApplied = $this->hlpPeriod->getTimestampUpTo($periodEnd);
+            $dateApplied = $this->hlpPeriod->getTimestampLastSecond($periodEnd);
             /* get first orders for just signed up customers */
             $orders = $this->getOrders($periodBegin, $periodEnd);
             $this->ownProcessOrders->exec($orders, $dateApplied, $calcId);
