@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusHybrid\Service\Calc\SignUpDebit\A\Repo\Query;
+namespace Praxigento\BonusHybrid\Service\Calc\SignUp\Debit\A\Repo\Query;
 
 use Magento\Sales\Model\Order as MSaleOrder;
 use Praxigento\BonusHybrid\Config as Cfg;
@@ -22,7 +22,6 @@ class GetOrders
     /** Tables aliases for external usage ('camelCase' naming) */
     const AS_CUST = 'cust';
     const AS_DWNL = 'dwnl';
-    const AS_DWNL_PARENT = 'dwnp';
     const AS_INVOICE = 'invoice';
     const AS_PV = 'pv';
     const AS_SALE = 'sale';
@@ -30,10 +29,9 @@ class GetOrders
     /** Columns/expressions aliases for external usage ('camelCase' naming) */
     const A_COUNTRY = EDwnlCust::A_COUNTRY_CODE;
     const A_CUST_ID = 'custId';
-    const A_PARENT_GRAND_ID = 'parentGrandId';
-    const A_PARENT_ID = 'parentId';
     const A_PV = 'pv';
     const A_SALE_ID = 'saleId';
+    const A_SALE_INC_ID = 'saleIncId';
 
     /** Bound variables names ('camelCase' naming) */
     const BND_CUST_GROUP_ID = 'custGroupId';
@@ -43,7 +41,6 @@ class GetOrders
     /** Entities are used in the query */
     const E_CUST = Cfg::ENTITY_MAGE_CUSTOMER;
     const E_DWNL = EDwnlCust::ENTITY_NAME;
-    const E_DWNL_PARENT = EDwnlCust::ENTITY_NAME;
     const E_INVOICE = Cfg::ENTITY_MAGE_SALES_INVOICE;
     const E_PV = EPvSale::ENTITY_NAME;
     const E_SALE = Cfg::ENTITY_MAGE_SALES_ORDER;
@@ -57,7 +54,6 @@ class GetOrders
         $asCust = self::AS_CUST;
         $asDwnl = self::AS_DWNL;
         $asInv = self::AS_INVOICE;
-        $asParent = self::AS_DWNL_PARENT;
         $asPv = self::AS_PV;
         $asSale = self::AS_SALE;
 
@@ -73,8 +69,7 @@ class GetOrders
         $tbl = $this->resource->getTableName(self::E_DWNL);
         $as = $asDwnl;
         $cols = [
-            self::A_COUNTRY => EDwnlCust::A_COUNTRY_CODE,
-            self::A_PARENT_ID => EDwnlCust::A_PARENT_REF
+            self::A_COUNTRY => EDwnlCust::A_COUNTRY_CODE
         ];
         $cond = $as . '.' . EDwnlCust::A_CUSTOMER_REF . '=' . $asCust . '.' . Cfg::E_CUSTOMER_A_ENTITY_ID;
         $result->joinLeft([$as => $tbl], $cond, $cols);
@@ -83,7 +78,8 @@ class GetOrders
         $tbl = $this->resource->getTableName(self::E_SALE);
         $as = $asSale;
         $cols = [
-            self::A_SALE_ID => Cfg::E_SALE_ORDER_A_ENTITY_ID
+            self::A_SALE_ID => Cfg::E_SALE_ORDER_A_ENTITY_ID,
+            self::A_SALE_INC_ID => Cfg::E_SALE_ORDER_A_INCREMENT_ID
         ];
         $cond = $as . '.' . Cfg::E_SALE_ORDER_A_CUSTOMER_ID . '=' . $asCust . '.' . Cfg::E_CUSTOMER_A_ENTITY_ID;
         $result->joinLeft([$as => $tbl], $cond, $cols);
@@ -102,15 +98,6 @@ class GetOrders
             self::A_PV => EPvSale::A_TOTAL
         ];
         $cond = $as . '.' . EPvSale::A_SALE_REF . '=' . $asSale . '.' . Cfg::E_SALE_ORDER_A_ENTITY_ID;
-        $result->joinLeft([$as => $tbl], $cond, $cols);
-
-        /* LEFT JOIN prxgt_dwnl_customer (as parent) */
-        $tbl = $this->resource->getTableName(self::E_DWNL_PARENT);
-        $as = $asParent;
-        $cols = [
-            self::A_PARENT_GRAND_ID => EDwnlCust::A_PARENT_REF
-        ];
-        $cond = $as . '.' . EDwnlCust::A_CUSTOMER_REF . '=' . $asDwnl . '.' . EDwnlCust::A_PARENT_REF;
         $result->joinLeft([$as => $tbl], $cond, $cols);
 
         /* WHERE */

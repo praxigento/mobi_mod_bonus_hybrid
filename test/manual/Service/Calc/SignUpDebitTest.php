@@ -16,8 +16,8 @@ class SignUpDebitTest
     public function test_exec()
     {
         $obm = \Magento\Framework\App\ObjectManager::getInstance();
-        /** @var  $proc \Praxigento\BonusHybrid\Service\Calc\SignUpDebit */
-        $proc = $obm->get(\Praxigento\BonusHybrid\Service\Calc\SignUpDebit::class);
+        /** @var  $proc \Praxigento\BonusHybrid\Service\Calc\SignUp\Debit */
+        $proc = $obm->get(\Praxigento\BonusHybrid\Service\Calc\SignUp\Debit::class);
         $ctx = new \Praxigento\Core\Data();
         $proc->exec($ctx);
         $this->assertTrue($ctx->get($proc::CTX_OUT_SUCCESS));

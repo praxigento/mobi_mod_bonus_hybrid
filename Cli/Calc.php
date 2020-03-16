@@ -32,8 +32,10 @@ class Calc
     private $servCompressPhase2;
     /** @var \Praxigento\BonusHybrid\Service\Calc\PvWriteOff */
     private $servPvWriteOff;
-    /** @var  \Praxigento\BonusHybrid\Service\Calc\SignUpDebit */
-    private $servSignup;
+    /** @var \Praxigento\BonusHybrid\Service\Calc\SignUp\Credit */
+    private $servSignUpCredit;
+    /** @var  \Praxigento\BonusHybrid\Service\Calc\SignUp\Debit */
+    private $servSignUpDebit;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Value\Ov */
     private $servValueOv;
     /** @var \Praxigento\BonusHybrid\Service\Calc\Value\Tv */
@@ -49,7 +51,8 @@ class Calc
         \Praxigento\BonusHybrid\Service\Calc\Compress\Phase1 $servCompressPhase1,
         \Praxigento\BonusHybrid\Service\Calc\Compress\Phase2 $servCompressPhase2,
         \Praxigento\BonusHybrid\Service\Calc\PvWriteOff $servPvWriteOff,
-        \Praxigento\BonusHybrid\Service\Calc\SignUpDebit $servSignup,
+        \Praxigento\BonusHybrid\Service\Calc\SignUp\Debit $servSignUpDebit,
+        \Praxigento\BonusHybrid\Service\Calc\SignUp\Credit $servSignUpCredit,
         \Praxigento\BonusHybrid\Service\Calc\Value\Ov $servValueOv,
         \Praxigento\BonusHybrid\Service\Calc\Value\Tv $servValueTv
     ) {
@@ -66,7 +69,8 @@ class Calc
         $this->servCompressPhase1 = $servCompressPhase1;
         $this->servCompressPhase2 = $servCompressPhase2;
         $this->servPvWriteOff = $servPvWriteOff;
-        $this->servSignup = $servSignup;
+        $this->servSignUpDebit = $servSignUpDebit;
+        $this->servSignUpCredit = $servSignUpCredit;
         $this->servValueOv = $servValueOv;
         $this->servValueTv = $servValueTv;
     }
@@ -157,10 +161,18 @@ class Calc
         return $result;
     }
 
+    private function calcSignUpCredit()
+    {
+        $req = new \Praxigento\BonusHybrid\Service\Calc\SignUp\Credit\Request();
+        $resp = $this->servSignUpCredit->exec($req);
+        $result = $resp->isSucceed();
+        return $result;
+    }
+
     private function calcSignUpDebit()
     {
         $ctx = new \Praxigento\Core\Data();
-        $this->servSignup->exec($ctx);
+        $this->servSignUpDebit->exec($ctx);
         $result = (bool)$ctx->get(IProcess::CTX_OUT_SUCCESS);
         return $result;
     }
@@ -185,7 +197,7 @@ class Calc
     {
         $canContinue = $this->calcSignUpDebit();
         if ($canContinue) {
-            $this->logInfo("'Sign Up Volume Debit' calculation is completed.");
+            $this->logInfo("'Sign Up PV Debit' calculation is completed.");
             $canContinue = $this->calcPvWriteOff();
         }
         if ($canContinue) {
@@ -194,6 +206,10 @@ class Calc
         }
         if ($canContinue) {
             $this->logInfo("'Phase I' compression is completed.");
+            $canContinue = $this->calcSignUpCredit();
+        }
+        if ($canContinue) {
+            $this->logInfo("'Sign Up Bonus Credit' calculation is completed.");
             $canContinue = $this->calcBonusPersonal();
         }
         if ($canContinue) {

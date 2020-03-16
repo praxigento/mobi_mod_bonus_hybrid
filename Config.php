@@ -34,6 +34,7 @@ class Config extends BonusBaseCfg
     const CODE_TYPE_CALC_BONUS_OVERRIDE_EU = 'HYBRID_BON_OVERRIDE_EU';
     const CODE_TYPE_CALC_BONUS_PERSONAL = 'HYBRID_BON_PERSONAL';
     const CODE_TYPE_CALC_BONUS_QUICK_START = 'HYBRID_BON_QUICK_START';
+    const CODE_TYPE_CALC_BONUS_SIGN_UP_CREDIT = 'HYBRID_BON_SIGN_UP_CREDIT';
     const CODE_TYPE_CALC_BONUS_SIGN_UP_DEBIT = 'HYBRID_BON_SIGN_UP_DEBIT';
     const CODE_TYPE_CALC_BONUS_TEAM_DEF = 'HYBRID_BON_TEAM_DEF';
     const CODE_TYPE_CALC_BONUS_TEAM_EU = 'HYBRID_BON_TEAM_EU';
@@ -62,6 +63,7 @@ class Config extends BonusBaseCfg
     const CODE_TYPE_OPER_BONUS_OVERRIDE = 'HYBRID_BONUS_OVERRIDE';
     const CODE_TYPE_OPER_BONUS_PERSONAL = 'HYBRID_BONUS_PERSONAL';
     const CODE_TYPE_OPER_BONUS_SIGNUP_DEBIT = 'HYBRID_BONUS_SIGNUP_DEBIT';
+    const CODE_TYPE_OPER_BONUS_SIGNUP_CREDIT= 'HYBRID_BONUS_SIGNUP_CREDIT';
     const CODE_TYPE_OPER_BONUS_TEAM = 'HYBRID_BONUS_TEAM';
     const CODE_TYPE_OPER_ODOO_DEBIT = OdooCfg::CODE_TYPE_OPER_WALLET_DEBIT;
     const CODE_TYPE_OPER_PV_FORWARD = 'HYBRID_PV_FWRD';
@@ -77,8 +79,8 @@ class Config extends BonusBaseCfg
 
     /** Max count of the unq. months in a row allowed for distributors before downgrade. */
     const MAX_UNQ_MONTHS = 6;
-    const MENU_CUSTOMER_DOWNGRADE = 'customer_downgrade';
     const MENU_BONUS_DOWNLINE = 'bonus_downline';
+    const MENU_CUSTOMER_DOWNGRADE = 'customer_downgrade';
     const MODULE = 'Praxigento_BonusHybrid';
 
     /**
