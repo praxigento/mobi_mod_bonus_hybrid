@@ -27,6 +27,7 @@ class Query
     const A_CUST_MLM_ID = 'custMlmId';
     const A_CUST_NAME = 'custName';
     const A_DATE_CREATED = 'dateCreated';
+    const A_EMAIL = 'email';
     const A_PERIOD = 'period';
     /**#@- */
 
@@ -60,6 +61,7 @@ class Query
                 self::A_CUST_MLM_ID => self::AS_CUST_DWNL . '.' . EDwnlCust::A_MLM_ID,
                 self::A_CUST_NAME => $this->getExpForCustName(),
                 self::A_DATE_CREATED => self::AS_CUST . '.' . Cfg::E_CUSTOMER_A_CREATED_AT,
+                self::A_EMAIL => self::AS_CUST . '.' . Cfg::E_CUSTOMER_A_EMAIL,
                 self::A_PERIOD => $this->getExpForPeriod()
             ];
             $this->mapper = new \Praxigento\Core\App\Repo\Query\Criteria\Def\Mapper($map);
@@ -111,7 +113,8 @@ class Query
         $exp = $this->getExpForCustName();
         $cols = [
             self::A_CUST_NAME => $exp,
-            self::A_DATE_CREATED => Cfg::E_CUSTOMER_A_CREATED_AT
+            self::A_DATE_CREATED => Cfg::E_CUSTOMER_A_CREATED_AT,
+            self::A_EMAIL=> Cfg::E_CUSTOMER_A_EMAIL
         ];
         $cond = $as . '.' . Cfg::E_CUSTOMER_A_ENTITY_ID . '=' . $asReg . '.' . ERegDwngrd::A_CUST_REF;
         $result->joinLeft([$as => $tbl], $cond, $cols);

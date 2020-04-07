@@ -90,6 +90,14 @@
             </settings>
         </column>
 
+        <column name="email">
+            <settings>
+                <dataType>text</dataType>
+                <filter>text</filter>
+                <label translate="true">Email</label>
+            </settings>
+        </column>
+
         <column name="countryCode">
             <settings>
                 <dataType>text</dataType>
