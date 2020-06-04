@@ -2,6 +2,7 @@
 /**
  * User: Alex Gusev <alex@flancer64.com>
  */
+
 namespace Praxigento\BonusHybrid\Service\Calc\Bonus\Z\Proc\Compress\Phase2;
 
 
@@ -46,8 +47,9 @@ class IsQualified
             $params = $cfgParams[$scheme];
             /** @var \Praxigento\BonusHybrid\Repo\Data\Cfg\Param $param */
             foreach ($params as $param) {
-                $qpv = $param->getQualifyPv();
-                $qtv = $param->getQualifyTv();
+                /* subtract ZERO to handle float equality (750 - 750 = - 0.0000... */
+                $qpv = $param->getQualifyPv() - Cfg::DEF_ZERO;
+                $qtv = $param->getQualifyTv() - Cfg::DEF_ZERO;
                 if (
                     ($pv >= $qpv) &&
                     ($tv >= $qtv)

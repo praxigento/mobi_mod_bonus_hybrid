@@ -65,17 +65,14 @@ class Config extends BonusBaseCfg
     const CODE_TYPE_OPER_BONUS_SIGNUP_DEBIT = 'HYBRID_BONUS_SIGNUP_DEBIT';
     const CODE_TYPE_OPER_BONUS_SIGNUP_CREDIT= 'HYBRID_BONUS_SIGNUP_CREDIT';
     const CODE_TYPE_OPER_BONUS_TEAM = 'HYBRID_BONUS_TEAM';
-    const CODE_TYPE_OPER_ODOO_DEBIT = OdooCfg::CODE_TYPE_OPER_WALLET_DEBIT;
     const CODE_TYPE_OPER_PV_FORWARD = 'HYBRID_PV_FWRD';
     const CODE_TYPE_OPER_PV_WRITE_OFF = 'HYBRID_PV_WRITE_OFF';
-    const CODE_TYPE_OPER_WALLET_TRANSFER = WalletCfg::CODE_TYPE_OPER_WALLET_TRANSFER;
 
     /**
      * Other hardcode.
      */
     const COURTESY_BONUS_PERCENT = 0.05;
     const DTPS = DownlineCfg::DTPS;
-    const DT_DEPTH_INIT = DownlineCfg::INIT_DEPTH;
 
     /** Max count of the unq. months in a row allowed for distributors before downgrade. */
     const MAX_UNQ_MONTHS = 6;
@@ -102,10 +99,6 @@ class Config extends BonusBaseCfg
     const RANK_SEN_VICE = 'SENIOR VICE';
     const RANK_SUPERVISOR = 'SUPERVISOR';
     const RANK_UNRANKED = 'UNRANKED';
-    /**
-     * Rebate bonus percent for qualified distributors (Personal bonus in EU).
-     */
-    const REBATE_PERCENT = 0.4;
     /**
      * Default schemas are used in the Santegra Projects.
      */

@@ -37,12 +37,12 @@ class Qualify
         $ovMin = 0;
         if (is_null($rankId)) {
             /* qualification params: PV & TV */
-            $pv = $dwnlEntry->getPv();
-            $tv = $dwnlEntry->getTv();
+            $pv = $dwnlEntry->getPv() + Cfg::DEF_ZERO;
+            $tv = $dwnlEntry->getTv() + Cfg::DEF_ZERO;
             /* qualification params:  legs */
-            $legMax = $legsEntry->getLegMax();
-            $legSecond = $legsEntry->getLegSecond();
-            $legSummary = $legsEntry->getLegOthers();
+            $legMax = $legsEntry->getLegMax() + Cfg::DEF_ZERO;
+            $legSecond = $legsEntry->getLegSecond() + Cfg::DEF_ZERO;
+            $legSummary = $legsEntry->getLegOthers() + Cfg::DEF_ZERO;
             /* sort legs values to use in 3-legs qualification */
             $sorted = [$legMax, $legSecond, $legSummary];
             sort($sorted);
