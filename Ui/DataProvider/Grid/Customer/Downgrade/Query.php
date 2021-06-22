@@ -9,14 +9,15 @@ use Praxigento\BonusHybrid\Repo\Data\Registry\Downgrade as ERegDwngrd;
 use Praxigento\Downline\Repo\Data\Customer as EDwnlCust;
 
 class Query
-    extends \Praxigento\Core\App\Ui\DataProvider\Grid\Query\Builder
-{
+    extends \Praxigento\Core\App\Ui\DataProvider\Grid\Query\Builder {
 
     /**#@+ Tables aliases for external usage ('camelCase' naming) */
     const AS_CALC = 'calc';
     const AS_CUST = 'cust';
     const AS_CUST_DWNL = 'dwnl';
     const AS_PERIOD = 'period';
+    const AS_PRNT_CUST = 'prntCust';
+    const AS_PRNT_DWNL = 'prntDwnl';
     const AS_REG_DWNGRD = 'reg';
     /**#@- */
 
@@ -28,15 +29,30 @@ class Query
     const A_CUST_NAME = 'custName';
     const A_DATE_CREATED = 'dateCreated';
     const A_EMAIL = 'email';
+    const A_PARENT_ID = 'parentId';
+    const A_PARENT_MLM_ID = 'parentMlmId';
+    const A_PARENT_NAME = 'parentName';
     const A_PERIOD = 'period';
     /**#@- */
 
     /**
      * Construct expression for customer name ("firstName lastName").
      */
-    public function getExpForCustName()
-    {
-        $value = 'CONCAT(' . Cfg::E_CUSTOMER_A_FIRSTNAME . ", ' ', " . Cfg::E_CUSTOMER_A_LASTNAME . ')';
+    public function getExpForCustName() {
+        $value = 'CONCAT(' . self::AS_CUST . '.' . Cfg::E_CUSTOMER_A_FIRSTNAME
+            . ", ' ', "
+            . self::AS_CUST . '.' . Cfg::E_CUSTOMER_A_LASTNAME . ')';
+        $result = new \Praxigento\Core\App\Repo\Query\Expression($value);
+        return $result;
+    }
+
+    /**
+     * Construct expression for customer name ("firstName lastName").
+     */
+    public function getExpForParentName() {
+        $value = 'CONCAT(' . self::AS_PRNT_CUST . '.' . Cfg::E_CUSTOMER_A_FIRSTNAME
+            . ", ' ', "
+            . self::AS_PRNT_CUST . '.' . Cfg::E_CUSTOMER_A_LASTNAME . ')';
         $result = new \Praxigento\Core\App\Repo\Query\Expression($value);
         return $result;
     }
@@ -44,8 +60,7 @@ class Query
     /**
      * Construct expression for period (YYYYMMDD => YYYYMM).
      */
-    public function getExpForPeriod()
-    {
+    public function getExpForPeriod() {
         $value = 'SUBSTRING(' . EPeriod::A_DSTAMP_END . ', 1, 6)';
         $result = new \Praxigento\Core\App\Repo\Query\Expression($value);
         return $result;
@@ -62,6 +77,8 @@ class Query
                 self::A_CUST_NAME => $this->getExpForCustName(),
                 self::A_DATE_CREATED => self::AS_CUST . '.' . Cfg::E_CUSTOMER_A_CREATED_AT,
                 self::A_EMAIL => self::AS_CUST . '.' . Cfg::E_CUSTOMER_A_EMAIL,
+                self::A_PARENT_MLM_ID => self::AS_PRNT_DWNL . '.' . EDwnlCust::A_MLM_ID,
+                self::A_PARENT_NAME => $this->getExpForParentName(),
                 self::A_PERIOD => $this->getExpForPeriod()
             ];
             $this->mapper = new \Praxigento\Core\App\Repo\Query\Criteria\Def\Mapper($map);
@@ -70,16 +87,17 @@ class Query
         return $result;
     }
 
-    protected function getQueryItems()
-    {
+    protected function getQueryItems() {
         $result = $this->conn->select();
 
         /* define tables aliases for internal usage (in this method) */
         $asCalc = self::AS_CALC;
         $asCust = self::AS_CUST;
         $asDwnl = self::AS_CUST_DWNL;
-        $asReg = self::AS_REG_DWNGRD;
         $asPeriod = self::AS_PERIOD;
+        $asPrntCust = self::AS_PRNT_CUST;
+        $asPrntDwnl = self::AS_PRNT_DWNL;
+        $asReg = self::AS_REG_DWNGRD;
 
         /* SELECT FROM prxgt_bon_hyb_reg_downgrade */
         $tbl = $this->resource->getTableName(ERegDwngrd::ENTITY_NAME);
@@ -124,9 +142,29 @@ class Query
         $as = $asDwnl;
         $cols = [
             self::A_CUST_MLM_ID => EDwnlCust::A_MLM_ID,
+            self::A_PARENT_ID => EDwnlCust::A_PARENT_REF,
             self::A_COUNTRY_CODE => EDwnlCust::A_COUNTRY_CODE
         ];
         $cond = $as . '.' . EDwnlCust::A_CUSTOMER_REF . '=' . $asReg . '.' . ERegDwngrd::A_CUST_REF;
+        $result->joinLeft([$as => $tbl], $cond, $cols);
+
+        /* LEFT JOIN customer_entity as parent */
+        $tbl = $this->resource->getTableName(Cfg::ENTITY_MAGE_CUSTOMER);
+        $as = $asPrntCust;
+        $exp = $this->getExpForParentName();
+        $cols = [
+            self::A_PARENT_NAME => $exp,
+        ];
+        $cond = $as . '.' . Cfg::E_CUSTOMER_A_ENTITY_ID . '=' . $asDwnl . '.' . EDwnlCust::A_PARENT_REF;
+        $result->joinLeft([$as => $tbl], $cond, $cols);
+
+        /* LEFT JOIN prxgt_dwnl_customer as parent */
+        $tbl = $this->resource->getTableName(EDwnlCust::ENTITY_NAME);
+        $as = $asPrntDwnl;
+        $cols = [
+            self::A_PARENT_MLM_ID => EDwnlCust::A_MLM_ID,
+        ];
+        $cond = $as . '.' . EDwnlCust::A_CUSTOMER_REF . '=' . $asDwnl . '.' . EDwnlCust::A_PARENT_REF;
         $result->joinLeft([$as => $tbl], $cond, $cols);
 
         /* return  result */

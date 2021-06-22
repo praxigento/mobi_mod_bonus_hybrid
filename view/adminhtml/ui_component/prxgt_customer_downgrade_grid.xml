@@ -90,6 +90,24 @@
             </settings>
         </column>
 
+        <column name="parentName"
+                component="Praxigento_BonusHybrid/js/grid/downline/column/link/parent_name">
+            <settings>
+                <dataType>text</dataType>
+                <filter>text</filter>
+                <label translate="true">Sponsor Name</label>
+            </settings>
+        </column>
+
+        <column name="parentMlmId"
+                component="Praxigento_BonusHybrid/js/grid/downline/column/link/parent_mlm_id">
+            <settings>
+                <dataType>text</dataType>
+                <filter>text</filter>
+                <label translate="true">Sponsor MLM ID</label>
+            </settings>
+        </column>
+
         <column name="email">
             <settings>
                 <dataType>text</dataType>
