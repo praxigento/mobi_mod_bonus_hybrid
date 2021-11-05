@@ -57,8 +57,9 @@
 
         <column name="period">
             <settings>
-                <dataType>text</dataType>
-                <filter>text</filter>
+                <dataType>select</dataType>
+                <filter>select</filter>
+                <options class="Praxigento\Santegra\Model\Config\Source\Bonus\Period"/>
                 <label translate="true">Period</label>
             </settings>
         </column>
