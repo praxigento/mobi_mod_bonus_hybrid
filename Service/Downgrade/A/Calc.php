@@ -12,13 +12,15 @@ use Praxigento\BonusHybrid\Config as Cfg;
 use Praxigento\BonusHybrid\Repo\Data\Downline as EBonDwnl;
 use Praxigento\BonusHybrid\Repo\Data\Registry\Downgrade as ERegDwngrd;
 use Praxigento\Downline\Repo\Data\Change\Group as EDwnlChangeGroup;
+use Praxigento\Downline\Repo\Data\Customer as EDwnlCust;
 
 /**
  * Routine to process plain downline & to perform qualification compression (re-link downlines of the unqualified
  * customers to the his parents).
  */
-class Calc
-{
+class Calc {
+    /** @var  \Praxigento\Downline\Repo\Dao\Customer */
+    private $daoDwnlCust;
     /** @var \Praxigento\Downline\Repo\Dao\Change\Group */
     private $daoDwnlChangeGroup;
     /** @var \Praxigento\BonusHybrid\Repo\Dao\Registry\Downgrade */
@@ -37,8 +39,6 @@ class Calc
     private $logger;
     /** @var \Magento\Customer\Api\CustomerRepositoryInterface */
     private $repoCust;
-    /** @var \Praxigento\Downline\Api\Service\Customer\Downline\SwitchUp */
-    private $servSwitchUp;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
@@ -48,9 +48,9 @@ class Calc
         \Praxigento\Downline\Api\Helper\Config $hlpCfgDwnl,
         \Praxigento\Downline\Api\Helper\Group\Transition $hlpGroupTrans,
         \Praxigento\BonusHybrid\Api\Helper\Scheme $hlpScheme,
+        \Praxigento\Downline\Repo\Dao\Customer $daoDwnlCust,
         \Praxigento\Downline\Repo\Dao\Change\Group $daoDwnlChangeGroup,
-        \Praxigento\BonusHybrid\Repo\Dao\Registry\Downgrade $daoRegDwngrd,
-        \Praxigento\Downline\Api\Service\Customer\Downline\SwitchUp $servSwitchUp
+        \Praxigento\BonusHybrid\Repo\Dao\Registry\Downgrade $daoRegDwngrd
     ) {
         $this->logger = $logger;
         $this->repoCust = $repoCust;
@@ -59,9 +59,9 @@ class Calc
         $this->hlpCfgDwnl = $hlpCfgDwnl;
         $this->hlpGroupTrans = $hlpGroupTrans;
         $this->hlpScheme = $hlpScheme;
+        $this->daoDwnlCust = $daoDwnlCust;
         $this->daoDwnlChangeGroup = $daoDwnlChangeGroup;
         $this->daoRegDwngrd = $daoRegDwngrd;
-        $this->servSwitchUp = $servSwitchUp;
     }
 
     /**
@@ -70,54 +70,77 @@ class Calc
      * @param int $calcId
      * @throws \Throwable
      */
-    public function exec($treePlain, $period, $calcId)
-    {
+    public function exec($treePlain, $period, $calcId) {
         /* group ID for unqualified customers */
         $groupIdUnq = $this->hlpCfgDwnl->getDowngradeGroupUnqual();
         $groupIdsDistr = $this->hlpCfgDwnl->getDowngradeGroupsDistrs();
+        $custIdsForced = $this->hlpScheme->getForcedQualificationCustomersIds();
+        $custIdsWar = $this->selectWarCustomers();
         $dsEnd = $period->getDstampEnd();
         foreach ($treePlain as $one) {
             $custId = $one->getCustomerRef();
             $unqMonths = $one->getUnqMonths();
             if ($unqMonths >= Cfg::MAX_UNQ_MONTHS) {
-                $forcedCustIds = $this->hlpScheme->getForcedQualificationCustomersIds();
-                if (!in_array($custId, $forcedCustIds)) {
+                $isForced = in_array($custId, $custIdsForced);
+                if ($isForced) {
+                    $this->logger->info("Downgrade for customer #$custId is not allowed (forced qualification).");
+                } else {
                     /* get current group and */
                     $groupIdCurrent = $this->hlpCustGroup->getIdByCustomerId($custId);
                     $isTransAllowed = $this->hlpGroupTrans->isAllowedGroupTransition($groupIdCurrent, $groupIdUnq);
                     if ($isTransAllowed) {
-                        $isNew = $this->isNewDistr($custId, $groupIdsDistr, $dsEnd);
-                        if (!$isNew) {
-                            /* we should change customer group */
-                            try {
-                                $cust = $this->repoCust->getById($custId);
-                                $groupId = $cust->getGroupId();
-                                if ($groupId != $groupIdUnq) {
-                                    $cust->setGroupId($groupIdUnq);
-                                    /* ... then to switch all customer's children to the customer's parent (on save event) */
-                                    $this->repoCust->save($cust);
-                                    /* save item do downgrade registry */
-                                    $dwngrd = new ERegDwngrd();
-                                    $dwngrd->setCalcRef($calcId);
-                                    $dwngrd->setCustomerRef($custId);
-                                    $this->daoRegDwngrd->create($dwngrd);
-                                    $this->logger->info("Customer #$custId is downgraded (from group $groupId to #$groupIdUnq).");
-                                }
-                            } catch (\Throwable $e) {
-                                $this->logger->error("Cannot update customer group on unqualified customer ($custId) downgrade.");
-                                throw $e;
-                            }
+                        $isWar = in_array($custId, $custIdsWar);
+                        if ($isWar) {
+                            $this->logger->info("Downgrade for customer #$custId is not allowed (from RU or UA).");
                         } else {
-                            $this->logger->info("Customer #$custId should not be downgraded (group is assigned after bonus period).");
+                            $isNew = $this->isNewDistr($custId, $groupIdsDistr, $dsEnd);
+                            if (!$isNew) {
+                                /* we should change customer group */
+                                try {
+                                    $cust = $this->repoCust->getById($custId);
+                                    $groupId = $cust->getGroupId();
+                                    if ($groupId != $groupIdUnq) {
+                                        $cust->setGroupId($groupIdUnq);
+                                        /* ... then to switch all customer's children to the customer's parent (on save event) */
+                                        $this->repoCust->save($cust);
+                                        /* save item do downgrade registry */
+                                        $dwngrd = new ERegDwngrd();
+                                        $dwngrd->setCalcRef($calcId);
+                                        $dwngrd->setCustomerRef($custId);
+                                        $this->daoRegDwngrd->create($dwngrd);
+                                        $this->logger->info("Customer #$custId is downgraded (from group $groupId to #$groupIdUnq).");
+                                    }
+                                } catch (\Throwable $e) {
+                                    $this->logger->error("Cannot update customer group on unqualified customer ($custId) downgrade.");
+                                    throw $e;
+                                }
+                            } else {
+                                $this->logger->info("Customer #$custId should not be downgraded (group is assigned after bonus period).");
+                            }
                         }
                     } else {
                         $this->logger->info("Downgrade for customer #$custId is not allowed (group id: $groupIdCurrent).");
                     }
-                } else {
-                    $this->logger->info("Downgrade for customer #$custId is not allowed (forced qualification).");
                 }
             }
         }
+    }
+
+    /**
+     * Select IDs of the customers from RU & UA.
+     * @return array
+     */
+    private function selectWarCustomers() {
+        $result = [];
+        $whereRu = EDwnlCust::A_COUNTRY_CODE . '="RU"';
+        $whereUa = EDwnlCust::A_COUNTRY_CODE . '="UA"';
+        $where = "($whereRu) OR ($whereUa)";
+        $all = $this->daoDwnlCust->get($where);
+        /** @var EDwnlCust $one */
+        foreach ($all as $one) {
+            $result[] = $one->getCustomerRef();
+        }
+        return $result;
     }
 
     /**
@@ -128,8 +151,7 @@ class Calc
      * @param $periodEnd
      * @return bool
      */
-    private function isNewDistr($custId, $groupsDistr, $periodEnd)
-    {
+    private function isNewDistr($custId, $groupsDistr, $periodEnd) {
         // 'false' by default, because old customers don't have records in 'Group Changed' registry.
         $result = false;
         $byCust = EDwnlChangeGroup::A_CUSTOMER_REF . '=' . (int)$custId;
