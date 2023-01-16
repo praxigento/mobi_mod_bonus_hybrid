@@ -91,7 +91,7 @@ class Calc {
                     if ($isTransAllowed) {
                         $isWar = in_array($custId, $custIdsWar);
                         if ($isWar) {
-                            $this->logger->info("Downgrade for customer #$custId is not allowed (from RU or UA).");
+                            $this->logger->info("Downgrade for customer #$custId is not allowed (from UA).");
                         } else {
                             $isNew = $this->isNewDistr($custId, $groupIdsDistr, $dsEnd);
                             if (!$isNew) {
@@ -132,9 +132,10 @@ class Calc {
      */
     private function selectWarCustomers() {
         $result = [];
-        $whereRu = EDwnlCust::A_COUNTRY_CODE . '="RU"';
+//        $whereRu = EDwnlCust::A_COUNTRY_CODE . '="RU"';
         $whereUa = EDwnlCust::A_COUNTRY_CODE . '="UA"';
-        $where = "($whereRu) OR ($whereUa)";
+//        $where = "($whereRu) OR ($whereUa)";
+        $where = "($whereUa)";
         $all = $this->daoDwnlCust->get($where);
         /** @var EDwnlCust $one */
         foreach ($all as $one) {
