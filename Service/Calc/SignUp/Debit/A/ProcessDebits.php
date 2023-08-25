@@ -72,6 +72,7 @@ class ProcessDebits
         $req->setAsTransRef($transRef);
         /* prepare transactions */
         $trans = [];
+        $ordersEu = [];
         foreach ($orders as $one) {
             $custId = $one[QGetOrders::A_CUST_ID];
             $saleId = $one[QGetOrders::A_SALE_ID];
@@ -79,6 +80,7 @@ class ProcessDebits
             $scheme = $this->hlpScheme->getSchemeByCustomer($one);
             /** Sign Up Debit bonus is applied for EU customers only */
             if ($scheme == Cfg::SCHEMA_EU) {
+                $ordersEu[] = $saleId;
                 /* prepare data for transactions */
                 $accPvCust = $this->getAccCust(Cfg::CODE_TYPE_ASSET_PV, $custId);
                 $note = "Sign Up PV Debit for order #$saleIncId";
@@ -109,11 +111,14 @@ class ProcessDebits
         foreach ($orders as $one) {
             $custId = $one[QGetOrders::A_CUST_ID];
             $saleId = $one[QGetOrders::A_SALE_ID];
-            $this->daoRegSignUpDebit->create([
-                RegSignup::A_CALC_REF => $calcId,
-                RegSignup::A_CUST_REF => $custId,
-                RegSignup::A_SALE_REF => $saleId
-            ]);
+            // save only the orders for EU customers
+            if (in_array($saleId, $ordersEu)) {
+                $this->daoRegSignUpDebit->create([
+                    RegSignup::A_CALC_REF => $calcId,
+                    RegSignup::A_CUST_REF => $custId,
+                    RegSignup::A_SALE_REF => $saleId
+                ]);
+            }
         }
     }
 

@@ -44,7 +44,7 @@ class Ov
         /* get working data from input */
         /** @var EBonDwnl[] $dwnlBonus */
         $dwnlCompress = $ctx->get(self::IN_DWNL);
-        $useSignUp = (bool)$ctx->get(self::IN_DWNL);
+        $useSignUp = (bool)$ctx->get(self::IN_USE_SIGN_UP);
 
         /* define local working data */
 
